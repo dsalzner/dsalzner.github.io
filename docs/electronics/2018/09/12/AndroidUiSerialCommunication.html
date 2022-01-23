@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/electronics/2018/09/12/AndroidUiSerialCommunication.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Touchscreen UIs on Android for controlling microcontrollers in electronics projects via serial communication with USB-OTG - Dennis Salzner" />
+  <meta property="og:description" content="An old rooted Android device can be used to display a user interface for controlling electronics projects via serial port. We can achieve this elegantly by r..." />
+  <meta property="og:url" content="/site/electronics/2018/09/12/AndroidUiSerialCommunication.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2018-09-12 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2018-09-12 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2018-09-12 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="An old rooted Android device can be used to display a user interface for controlling electronics projects via serial port. We can achieve this elegantly by r..." />
+  <meta name="twitter:title" content="Touchscreen UIs on Android for controlling microcontrollers in electronics projects via serial communication with USB-OTG - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2018-09-12-AndroidUiSerialCommunication</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">Touchscreen UIs on Android for controlling microcontrollers in electronics projects via serial communication with USB-OTG</div>
+<div class="page-subtitle">Using an Android device to control microcontrollers in electronics projects via serial communication using an USB-OTG adapter and a WebUI written in QPython with SL4A/Flask/SocketIO and JQueryUI all running on the device</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>For various electronics projects it would be nice to have means to build a touchscreen interface conviniently. Let’s consider some options first:</p>
+
+<ul>
+  <li>
+    <ol>
+      <li>Arduino with touchscreen shield, user interface implemented in C/C++ with basic drawing functions</li>
+    </ol>
+  </li>
+  <li>
+    <ol>
+      <li>Raspberry PI and touchscreen module, user interface implemented with graphics library such as GTK, QT</li>
+    </ol>
+  </li>
+  <li>
+    <ol>
+      <li>Full blown laptop computer</li>
+    </ol>
+  </li>
+</ul>
+
+<p>Each of these options have disadvantages:</p>
+<ul>
+  <li>with option 1 you will be writing very low-level code and the Arduino will not have the processing power to draw a serious UI. It is also very hard to debug. You will need to deal with custom hardware and driver libraries.</li>
+  <li>for option 2 you will need to spend a lot of money on a quality touch screen. For it you will need drivers. Your project will only function when the Raspberry Pi boots its entire Linux system. You will need an enclosure. You may need to connect a monitor/keyboard/mouse for debugging. C++ graphics libraries such as GTK, QT and hardware access will probably mean you will be dealing with multi-threading. You could of course use Python on the Raspberry Pi. You will need to set up things like init scripts. If you software closes you will may need to connect monitor/keyboard/mouse again or install init scripts.</li>
+  <li>and with 3 you will need a laptop, which has similar advantages/disadvantages as 2, but it is easier to debug and comes with a screen. It will be hard to find a computer with a proper touchscreen, tough, and a computer is too much for most projects, especially ragarding the energy consumption.</li>
+</ul>
+
+<p>There is a better solution: Using an old Android Tablet or Phone. If we write Python code in QPython with Flask to create a WebUI and the Android Scripting Layer (SL4A) for serial port access, we won’t have to deal with low-level code. The Anroid Tablet will come with a nice integrated touchscreen. By writing a WebUI we can use HTML and JavaScript to very easily create an impressive user interface.</p>
+
+<p>This is how such a UI can look like on the device:
+<strong>Image</strong></p>
+
+<p>The approach has downsides, though: The initial setup is extremly tricky: Serial port access on Android is more than finicky with some USB-Serial-Adapters that are recognized and some that aren’t. You will also need to root the device and better flash it with a custom bootloader and then custom OS such as CynogenMod or the successor, LineageOS.</p>
+
+<p>In order to properly work with the device it is beneficial to install termux, an android terminal emulator that comes with a package manager. With this package manager we can install an SSH-Server to access termux. This will help to conviniently load our source code to the device. We can use a software version control system such as git within Termux to automatically load the code from a git server and keep track of changes. From the SSH Server we can also run our Python code in QPython and start the Android Scripting Layer (SL4A) that is required in order to gain access to the serial port and start a fullscreen WebView to display the user interface.</p>
+
+<p>For the code we will need to install Python packages in QPython: Flask and Flask-SocketIO. Pip does not seem to function properly in QPython, but there is a work around for this. With Flask we can serve a WebUI, with Flask-SocketIO we can communicate back and forth with the JavaScript Code in the WebUI without reloading the page on user interaction. The Android Scripting Layer (SL4A) will enable us to access the serial port and to start a WebView Window that will open the WebUI in fullscreen automatically.
+In order to achieve a nice looking UI and use UI widgets such as progress bars, we can use JQuery and the JQuery-UI JavaScript packages in the HTML templates of the WebUI.</p>
+
+<p>But be warned, the list of pitfalls is long:</p>
+<ul>
+  <li>unsupported serial port adapters, usb-otg and serial port adapters on android are not a common use-case for an android device.</li>
+  <li>android devices without usb-otg capabilities</li>
+  <li>potential brick of the device and warranty void due to custom bootloader and flashing a custom os</li>
+  <li>different qpython packages</li>
+  <li>python on Android isn’t well supported</li>
+  <li>the terminal emulator and package manager termux for android is under heavy developement</li>
+  <li>python package install issues</li>
+  <li>lack of documentation</li>
+  <li>similarity to other approaches make it difficult to find answers online i.e. using a serial port over bluetooth, android ioio boards, …</li>
+  <li>complex and very niche concept where most hobbyists rather give up at some stage</li>
+  <li>short and elegant code, but a lot to consider</li>
+</ul>
+
+<p>But once the right hardware has been chosen and the hurdles of the initial setup are overcome, you will have a very convinient and quick way to build user interfaces for your projects.
+In the following I will describe how I have had success with an old android tablet.</p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>I have been researching the topic for quite some time. It really became eminent when I was working on my cocktail mixing machine (see <a href="/electronics/2018/09/05/CocktailMachine.html">other post</a>), because there I needed a user interface.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>The advantages of using an Android Tablet for controlling microcontrollers are clear. It makes sense to use a Tablet with built in touchscreen and operating system for controlling projects instead of wiring your own touchscreen module and writing your own interface library, when this is essentially already done for you.
+However due to running Python and especially serial port communications via USB OTG adapters not being the prime use-case for an Android device, it is more than tricky.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="hardware">Hardware</h2>
+
+<p>I use an old 7-inch “Samsung Galaxy Tab 2.7.0” tablet. Some time ago I had gained root access and installed the “ClockworkMod” bootloader. With it a nightly build of the custom OS CyanogenMod, “CyanogenMod 10.2-20131123-Nightly-p3110”, was flashed. It is based on Android version 4.3.1.
+In the meantime the “ClockworkMod” bootloader was discontinued. The terminal emulator “Termux”, which I use for installing an SSH-Server to convinently configure the tablet, requires Android 5.0 or higher in recent versions. Also QPython and SL4A, the Python Scripting Library for Android, has been combined and greatly improved. We will need it to gain serial access and start fullscreen web views. Even “CyanogenMod” is now called “LineageOS”, but we will be using the last CyanogenMod version, which provides Android 6.0.</p>
+
+<p>So the first step was to flash the Tablet to a newer version of Android.</p>
+
+<p>Disclaimer: It may brick your device. If you choose to do this, it is at your own risk.</p>
+
+<p>Also you might want to backup any files on the tablet, as the tablet storage will be reformated in the process.</p>
+
+<p>I use a Linux computer which is why you will see a lot of “wget”. If you are on Windows you can download the urls via your web browser. On both plattforms you will need to install the Android Debug Bridge, “adb”, which is out of scope for this guide.</p>
+
+<h2 id="flashing-a-new-boot-loader">Flashing a new boot loader</h2>
+
+<p>As mentioned above, the “ClockworkMod” bootloader has been discontinued. It will yield an “unexpected contents after ota update” error, when trying to flash more modern custom OSes. I have an old CyanogenMod installed and thus have root access to the Tablet already.</p>
+
+<p><strong>TODO: udev rules</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/udev/rules.d/50-usb.rules
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SUBSYSTEM=="tty", ATTRS{idVendor}=="19d2", ATTRS{idProduct}=="0031", SYMLINK+="ONDA"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="12d1", ATTRS{idProduct}=="14ac", SYMLINK+="HUAWEI"
+</code></pre></div></div>
+
+<p>We will download new bootloader “twrp”, connect the Tablet to the computer via adb and push the new bootloader to the Tablet via adb push.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://dl.twrp.me/p3110/twrp-3.1.1-0-p3110.img
+adb push twrp-3.1.1-0-p3110.img /storage/sdcard0
+</code></pre></div></div>
+
+<p>Next we flash the bootloader by entering “adb shell”. This is the risky step:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb shell
+</code></pre></div></div>
+<p>and then in the shell</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>su
+dd if=/sdcard/0/twrp-3.1.1-0-p3110.img of=/dev/block/mmcblk0p6
+</code></pre></div></div>
+
+<p>Reboot the tablet and hold power + vol up, release power when the logo appears. The tablet should now boot into the new bootloader “twrp”.</p>
+
+<h2 id="flashing-a-custom-operating-system">Flashing a custom operating system</h2>
+
+<p>We will install a more recent CyanogenMod 13. It is based on Android 6.0 which should be sufficient for us.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cm-13.0-20160222-2054-unofficial-p3110.zip
+</code></pre></div></div>
+
+<p>I have downloaded this unofficial OS by following <a href="https://forum.xda-developers.com/galaxy-tab-2/galaxy-tab-2-unified/rom-cyanogenmod-13-cm13-0-t3303798">links in a thread</a> of the xda-developers forum.</p>
+
+<p>We can push the image to the tablet straight in twrp by issueing:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb push cm-13.0-20160222-2054-unofficial-p3110.zip /mnt/sdcard
+</code></pre></div></div>
+
+<p>Then we can flash it by selecting “Install” and pointing the to the file.
+After flashing we should use the option “wipe cache and dalvik” to clear the data of the old OS and reboot.</p>
+
+<p>The tablet should now boot into CyanogenMod 13 which will give us Android 6.0.</p>
+
+<h2 id="terbuchet-was-closed-error">“Terbuchet was closed” Error</h2>
+
+<p>In my case, the Tablet often showed a popup dialog with an error “Trebuchet was closed”. This is somehow related to the homescreen.
+I found a solution online: Unter “Settings” go to “Apps -&gt; All -&gt; Trebuchet” and klick on “Delete data” (or similar).</p>
+
+<h2 id="load-software">Load software</h2>
+
+<p>Software can be loaded onto our new installation of CyanogenMod 13 convinently by using downloading from f-droid.org, an online repository for FOSS (Free/Libre Open Source Software) Android software and using “adb install”. Note that the links change as packages are updated on f-droid.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://f-droid.org/repo/com.amaze.filemanager_63.apk
+
+wget https://f-droid.org/repo/com.termux.window_11.apk
+wget https://f-droid.org/repo/com.termux.widget_9.apk
+
+wget https://f-droid.org/repo/com.termux_65.apk
+wget https://f-droid.org/repo/com.termux.api_26.apk
+
+for f in *.apk
+do
+  adb install "$f"
+done
+</code></pre></div></div>
+
+<p>This will give us a filemanager and the terminal emulator “termux”, which will be helpful for running an SSH Server and loading our code onto the tablet and running it remotely.</p>
+
+<h2 id="configuring-termux">Configuring Termux</h2>
+
+<p>With “termux” installed we can configure it to access the external storage.</p>
+
+<p>On your computer</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb shell am start -n com.termux/com.termux.app.TermuxActivity
+</code></pre></div></div>
+<p>will start the Termux App. Unlock your screen, put the app in focus. Then, on your computer, enter:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb shell "input text 'termux-setup-storage' &amp;&amp; input keyevent KEYCODE_ENTER"
+</code></pre></div></div>
+<p>This will automatically type the command and press enter. Now we exit termux and start it again, to apply the changes.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb shell "input text 'exit' &amp;&amp; input keyevent KEYCODE_ENTER"
+adb shell am start -n com.termux/com.termux.app.TermuxActivity
+</code></pre></div></div>
+
+<h2 id="ssh-server">SSH Server</h2>
+
+<p>Next we will install an SSH Server in Termux. Again focus Termux and on the computer enter:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb shell "input text 'pkg install openssh' &amp;&amp; input keyevent KEYCODE_ENTER"
+adb push ~/.ssh/id_rsa.pub /mnt/sdcard/Download/id_rsa.pub
+adb shell "input text 'cat ~/storage/downloads/id_rsa.pub &gt;&gt; ~/.ssh/authorized_keys' &amp;&amp; input keyevent KEYCODE_ENTER"
+adb shell "input text 'sshd' &amp;&amp; input keyevent KEYCODE_ENTER"
+</code></pre></div></div>
+<p>That will install the OpenSSH server in Termux, copy your computers public SSH-Key over to the tablet, copy it to the OpenSSH servers authorized_keys on the tablet and finally run the OpenSSH server.</p>
+
+<p>If you want to connect to the SSH Server on the Tablet via WiFi, you will need to connect the Tablet to your home WiFi. You can also connect to the SSH Server via USB, by forwarding the network port from the Tablet to your computer.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb forward tcp:8023 tcp:8022
+</code></pre></div></div>
+<p>Finally, we can now connect to the SSH Server on the Tablet from the computer by issueing:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh root@127.0.0.1 -p 8023
+</code></pre></div></div>
+<p>On Windows you may want to use the “Putty” SSH-Client.</p>
+
+<h2 id="installing-packages-in-termux">Installing packages in Termux</h2>
+
+<p>With the SSH connection to the OpenSSH Server on the Tablet, we can install packages within termux:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pkg install util-linux
+pkg install vim
+</code></pre></div></div>
+<p>These commands will install a proper console texteditor and some useful tools such as “ifconfig” and “wget”.
+If the lengthy motd (message of the day) that the OpenSSH greets you with upon logging in bothers you, you may clear it by running:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>echo "" &gt;  /data/data/com.termux/files/usr/etc/motd # remove sshd message of the day
+</code></pre></div></div>
+
+<p><strong>Todo: install QPython, not python in termux</strong></p>
+
+<p>We can move on to installing Python</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pkg install python
+</code></pre></div></div>
+
+<p>And then using the python package manager, pip, to upgrade and then install flask</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install --upgrade pip
+pip install flask
+</code></pre></div></div>
+
+<h2 id="testing-the-installation">Testing the installation</h2>
+
+<p>We can now build a small Python/Flask microservice, serve it and see if we can point the web browser to it:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim main.py
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>from flask import Flask, render_template, request, url_for
+app = Flask(__name__)
+
+@app.route('/')
+def page():
+	return render_template('page.html')
+
+if __name__ == '__main__':
+	app.run()
+</code></pre></div></div>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir templates
+vim templates/page.html
+</code></pre></div></div>
+<html>
+	<head>
+		<title>Page</title>
+	</head>
+	<body>
+		Test page
+	</body>
+</html>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+Run it from your computer by, in a new terminal window, issueing:
+</code></pre></div></div>
+<p>ssh root@127.0.0.1 -p 8023 “python main.py”</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+and then, on the Tablet, open a Webbrowser and enter the URL
+</code></pre></div></div>
+<p>http://127.0.0.1:5000/</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>You can also do this from the computer by running an intent via adb:
+</code></pre></div></div>
+<p>adb shell am start -a “android.intent.action.VIEW” -d “http://127.0.0.1:5000/”</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+## Test the Serial Port
+
+The next important building block is the serial port support. As mentioned above this is a bit finicky, because there are a few different usb to ttl(serial port) adapters and some will work, while others will not. This is due to special init sequences, for instance to set the baudrate, that need to be sent to the adpater. The android app "DroidTerm" will support most adapters. The QPython SL4A Android Scripting, specifically the "USBHostSerialFacade", currently only supports a smaller subset of adapters. We need support in QPython SL4A in order to access the adapter from Python.
+
+Unfortunatly the Arduino Uno/Nano have the "QinHeng Electronics HL-340 USB-Serial adapter" on the PCB board, which uses an "ch341" compatible chip, which is not supported by SL4A. We can workaroudn this issue by attaching additional TTL adapters to Arduninos and connecting them to RXD/TXD and GND pins - just remember not to use both at the same time. This is by far the easier solution than patching the Android Kernel oder QPython/SL4A, which is very involved and will break everytime you choose to update the software.
+
+Not that technically, I am referring to USB-to-TTL adapters with low-voltage pin-outs. USB-to-Serial adapters from computer stores provide an 9-pin RS-232 DB9 connector. They transport higher voltages, because they have a voltage level converter integrated for use with old computer hardware. I will refer to them as USB-to-RS232 in the following to avoid confusion. We want the adapters without level converters, the USB-to-TTL adapters.
+
+USB devices can usually distinguished by looking at their unique VendorID and ProductID. You can look them up by running
+</code></pre></div></div>
+<p>lsusb</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Either in Termux with the adapter connected to the Tablet with an USB-OTG adapter or with the adapter connected to your computers usb port. On Windows you will need to look the values up in the devices dialog box under Settings/System/Hardware devices.
+
+What adds to confusion is that there are a lot of counterfeit chips, that act differently, in online stores. FTDIs struggle and their back-fired attempt to combat it, has become well known.
+**Todo: Link zu FTDI stress**
+I've ordered two pl2303 USB-to-TTL adapters from the same supplier in one order on eBay. Each has a different font for the silkscreen markings on the PCB and a different pin ordering. They both use identical VendorID and ProductID for pl2303. One seems to work and one does not.
+
+In order to easily test a USB-to-TLL or USB-to-RS232 one only needs to connect TX and RX together, i.e. by using a Jumper. Sending data via a serial console should then echo the data back to you. If you remove the connection, the echo should stop.
+
+I have tested USB-to-TTL adapters that I have at hand:
+
+| Serial Port Adapter                                      | USB VendorID:ProductID | Supported in DroidTerm | Supported in QPython/SL4a | Attached as /dev/ttyUSBx |
+|----------------------------------------------------------|------------------------|------------------------|---------------------------|--------------------------|
+| Adruino Uno/Nano USB-to-TTL integrated, CH341 compatible | 1a86:7523              | yes                    | no                        | no                       |
+| FT232R USB-to-TTL                                        | 0403:6001              | yes                    | no                        | no                       |
+| pl2303 USB-to-RS232                                      | 067b:2303              | yes                    | yes                       | yes                      |
+| pl2303 USB-to-TTL #1                                     | 067b:2303              | no receive             | no                        | yes                      |
+| pl2303 USB-to-TTL #2                                     | 067b:2303              | no receive ?           | yes                       | yes                      |
+
+## Serial Port access in QPython on the Tablet
+
+There is [python example code](https://github.com/crckyl/sl4a-froyo/blob/master/android/USBHostSerialFacade/samplescripts/testusbserial.py) floating around in the web on an old github repo. It shows how we can use QPython and SL4A to send data back and forth to and from a USB serial port.
+
+I have adapted this code to send "hello" once every second and retrieve and print received data. If you connect TX and RX together and you data coming in, then you will be able to use serial port communication with the connected USB-to-TTL from QPython.
+
+In Termux, open a new file in the vim texteditor:
+</code></pre></div></div>
+<p>vim testserial.py</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>and add:
+</code></pre></div></div>
+<p>import json
+import time</p>
+
+<p>try:
+  import androidhelper
+  droid = androidhelper.Android()
+  h = None
+  for k, v in droid.usbserialGetDeviceList().result.items():
+    print v
+    if ‘“1A86”,”7523”’ in v: # arduino vendor id and product id
+      print “WARNING: Arduino UNO R3 (CH340 USB-Serial-Converter Chip) not supported”
+      h = json.loads(v)[-1]
+    if ‘“0403”,”6001”’ in v: # ftdi vendor id and product id
+      print “WARNING: FTDI (USB-Serial-Converter Chip) not supported”
+      h = json.loads(v)[-1]
+    if ‘“067B”,”2303”’ in v: # prolific pl2303 vendor id and product id
+      h = json.loads(v)[-1]
+  if h is None:
+    print “device not found”
+  ret = droid.usbserialConnect(h, “,pl2303,”) # pl2303 trg78k
+  if not “OK” in ret.result:
+    print(“can’t connect to device: “, ret.result)
+  uuid = json.loads(ret.result)[-1]
+  print(“connected with “, h, uuid)</p>
+
+<p>name = droid.usbserialGetDeviceName(uuid)
+  print “name = “ + str(name)
+  active = droid.usbserialActiveConnections()
+  print ‘active = ‘ + str(active)</p>
+
+<p>androidSerial = uuid
+except ImportError:
+  print “no serial port found”</p>
+
+<p>msg = “hello”
+if androidSerial != None:
+  while True:
+    out = droid.usbserialRead(androidSerial)
+    print ‘ : ‘ + str(out).strip()
+    buf = droid.usbserialWrite(msg + ‘\n’, androidSerial)
+    time.sleep(1)</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Save and run it
+</code></pre></div></div>
+
+<p><strong>Todo: run with qpython, start sl4a first</strong></p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

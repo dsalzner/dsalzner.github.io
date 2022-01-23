@@ -1,0 +1,293 @@
+<html>
+<head>
+	<title>Dennis Salzner - 2016-02-16-Di-AutomatedStoveControl</title>
+
+	<style>
+ hr {
+    display: block;
+    height: 2px;
+    border: 0;
+    border-top: 2px solid rgba(150,0,0, 1);
+    margin: 1em 0;
+    padding: 0; 
+	
+	width:28%;
+	text-align:left;
+	margin-left:70%;
+}
+h2 {
+	font-size:150%; 
+	color:rgba(120,0,0, 1);
+	text-align:right;
+	margin-right:2%;
+	border-bottom: 1px
+}
+
+h3 {
+	font-size:110%; 
+	color:rgba(120,0,0, 1);
+	text-align:left;
+	margin-right:2%;
+	border-bottom: 1px
+}
+
+h4 {
+	text-align:right;
+}
+
+titel {
+	font-size:110%; 
+	color:rgba(120,0,0, 1);
+	text-align:left;
+	margin-right:2%;
+	border-bottom: 1px
+}
+
+h2,h3,h4 {
+    margin: 0;
+    padding: 0;
+}
+ 
+html, body {
+    height: 100%;
+}
+
+#seite {
+    position: relative;
+    min-height: 100%;
+    width: 90%;
+    margin: 0 auto;
+    /* background-color: silver; */
+	margin-bottom: 15px;
+	margin-top: 20px;
+}
+
+#fussbereich {
+    position:absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: rgba(120,0,0, 0.7);
+    height: 15px;
+	font-size:70%; 
+	text-align:right;
+}
+
+#eintrag {
+	margin-bottom: 25px;
+}
+</style>
+
+  <!-- stats -->
+<script type="text/javascript">
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//dennissalzner.de/stats/matomo/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+  <!-- stats -->
+</head>
+
+<body>
+
+<div id="seite">
+
+<h1>Dennis Salzner - 2016-02-16-Di-AutomatedStoveControl</h1>
+<link rel="image_src" href="grafiken/2016-02-16-Di-AutomatedStoveControl/005t.jpg" />
+
+<p align="right" style="font-size:80%">
+	<a href="../"><< Back Home</a> 
+</p>
+				
+<table style="width:100%">
+	<tr>
+		<td style="vertical-align: top;">
+			<a href="#null" onclick="newWindow('grafiken/2016-02-16-Di-AutomatedStoveControl/001.jpg','','640','583','')">
+				<img src="grafiken/2016-02-16-Di-AutomatedStoveControl/001t.jpg" width="160" height="146">
+			</a>
+			<p style="font-size:75%; margin-top: 0;">
+				Fig.1: The Problem
+			</p>
+			<a href="#null" onclick="newWindow('grafiken/2016-02-16-Di-AutomatedStoveControl/002.jpg','','640','395','')">
+				<img src="grafiken/2016-02-16-Di-AutomatedStoveControl/002t.jpg" width="160" height="105">
+			</a>
+			<p style="font-size:75%; margin-top: 0;">
+				Fig.3: The Solution
+			</p>
+			<a href="#null" onclick="newWindow('grafiken/2016-02-16-Di-AutomatedStoveControl/003.jpg','','640','403','')">
+				<img src="grafiken/2016-02-16-Di-AutomatedStoveControl/003t.jpg" width="160" height="101">
+			</a>
+			<p style="font-size:75%; margin-top: 0;">
+				Fig.4: Gripper for round stove nobs
+			</p>
+			<a href="#null" onclick="newWindow('grafiken/2016-02-16-Di-AutomatedStoveControl/004.jpg','','640','312','')">
+				<img src="grafiken/2016-02-16-Di-AutomatedStoveControl/004t.jpg" width="160" height="80">
+			</a>
+			<p style="font-size:75%; margin-top: 0;">
+				Fig.5: Gripper actually fits
+			</p>
+			<a href="#null" onclick="newWindow('grafiken/2016-02-16-Di-AutomatedStoveControl/006.jpg','','640','414','')">
+				<img src="grafiken/2016-02-16-Di-AutomatedStoveControl/006t.jpg" width="160" height="104">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.6: Servo Motor control
+			</p>
+			<a href="#null" onclick="newWindow('grafiken/2016-02-16-Di-AutomatedStoveControl/007.jpg','','640','371','')">
+				<img src="grafiken/2016-02-16-Di-AutomatedStoveControl/007t.jpg" width="160" height="93">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.7: Prototyping
+			</p>
+			<a href="#null" onclick="newWindow('grafiken/2016-02-16-Di-AutomatedStoveControl/008.jpg','','640','585','')">
+				<img src="grafiken/2016-02-16-Di-AutomatedStoveControl/008t.jpg" width="160" height="146">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.8: Lasercutting
+			</p>
+		</td>
+		<td style="vertical-align: top;">
+			<!-- Titel -->
+			<h2>
+				Automated Stove Control
+			</h2>
+			<h4>
+				Course work submission for the 2016 "Do it yourself" (DIY) lecture at the University of Erlangen-Nürnberg
+			</h4>
+			<hr>
+			
+			
+			<table>
+				<tr>
+					<td rowspan="4"> <!-- Video -->
+							<!-- 500 x 375 - 250 x 188 -->
+							<!-- http://andrew.hedges.name/experiments/aspect_ratio/ -->
+							<iframe src="https://player.vimeo.com/video/155592106" width="320" height="241" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+					</td> 
+					<td></td> <!-- Text -->
+					<td></td>
+					<td> <!--- Struktur -->
+						<!-- Was -->
+						<p align="right" style="font-size:60%">What?</p>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<p style="font-size:80%">
+							Cooking can be a real hassle at times. Especially, when one has a manually controlled stove (Fig.1). It is very difficult to keep an eye on the clock, while stiring. It is even more difficult to adjust the stove spot on time, before risking to overcook. Overcooking can not only result in indigestable food, but also in home fires. Kitchen accidents account for 45% of home fires [1]. Meanwhile, society has reached the 21st century. Experts say the next industrial revolution is a more tighly connected network of devices. Predictions state that the Internet of Things and Industry 4.0 are just around the corner.
+							<br>
+							Therefore, we propose the next logical step: bring the revolution to the kitchen! We start by automating the stove.
+						</p>
+					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td>
+						<!-- Wann -->
+						<p align="right" style="font-size:60%">When?</p>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<p style="font-size:80%">
+						This description is part of my project for the DIY course at university. We were given freedom to design anything. The primary objective was to design something we feel could be useful and didn't exist so far. Secondary objectives are to use machines available at the universities fabrication laboratory (FabLab). This may include 3D printers, laser cutters, PCB etching tools and CNC routers.
+						</p>
+					</td>
+					<td></td>
+				</tr>
+			</table>
+				
+				
+	
+			<!-- Warum -->
+			<p align="right" style="font-size:60%">Why?</p>
+			<p style="font-size:80%">
+				In all seriousnes: My stove is infact very difficult to handle. The thought of automating it has come to mind often. An issue, which kept me from doing this so far - apart from having little time next to my university studies -, has always been the difficulty of mounting a motor to the rotating nobs of the stove.
+			</p>
+			<!-- Hintergrund -->
+			<p align="right" style="font-size:60%">Background?</p>
+			<p style="font-size:80%">
+				The possibility of using a laser cutter to acurately manufacture the necessary parts has made this project possible. The methods described make easy computer control a servo motor feasible (see below).
+				<br>
+				This leaves only one challenge: Writing flexible software control.
+			</p>
+			<!-- Wie -->
+			<p align="right" style="font-size:60%">How?</p>
+			<p style="font-size:80%">
+				The project consists of the following basic components:
+				<ul style="font-size:80%">
+					<li><b>Mechanics, Gripper:</b> Laser cut and glued fiberwood latches onto the nob of the stove (Fig.4,5). Small pieces cut from anti-slip mats, a screw and nut attach to the nob firmly. The Gripper also has lasercut gear wheel glued onto it. The Gripper has the dual purpose of holding the base plate onto the stove aswell. </li>
+					<li><b>Mechanics, Base plate:</b> The base plate was cut by hand using a scroll saw. One such plate slides over three of the nobs to the left and another such plate slides over the three nodes on the right. The purpose of this plate is to hold the motors and direct the rotary forces onto the nobs instead letting the motors turn themselves.</li>
+					<li><b>Electornics, Motors:</b> The used are 360 Degree free-spinning Servos (Fig.6). Pulse-width modulating such motors means controlling how far the motor turns, not to which angle (as with non-free-spinning Servos). This makes a light barrier necessary in order to home the nob, bevor the stove can be operated autonomously.</li>
+					<li><b>Electornics, Motor control:</b> Motor control is very similar to an earlier project.  (see <a href="2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver.html">here</a> for details on I2C and FTDI FT232RL bit-bang-mode). A 16-channel I2C controlled PCA9685 PWM driver controls the servo motors directly and receives commands from an FTDI FT232RL, which is operated from in bit-bang mode.</li>
+					<li><b>Software:</b> The software is written entirly in Python. This eases development as it can be written and tested on a laptop computer and later moved to an embedded computer. Control is achieved by either directly using the web-interface or other software which submites requests to it.</li>
+			    </ul>
+				
+			</p>
+			<!-- Fortschritt -->
+			<p align="right" style="font-size:60%">Progress?</p>
+			<p style="font-size:80%">
+				As of now the first designs are completed (Fig.7) and the first parts have been laser cut (Fig.8). Motorized control of a nob is possible (see video). The next step is to cut identical parts for the rest of the nobs and attach additional motors in the same fashsion.
+				<br>
+				<b>Future plans</b>
+				<br>
+				<ul style="font-size:80%">
+					<li><b>Scripting:</b> in order to create reproducable, automated, cooking roadmaps. Such scripts may consist of wait-Commands, Motor-Commands and Conditional statements depending on sensor values.</li>
+					<li><b>Sensors:</b> such as temperature sensors, which can be dropped into the pots. This, in combination with scripting, will enable adjusting the stove depending on the water temperature within the pot.</li>
+					<li><b>Actuators:</b> such as servo controlled mounts to automatically flip beakers, for automatically adding ingredients. This should be freely arrangable in order to cook with multiple pots and pans.</li>
+					<li><b>Stiring device: </b> is a necessity for fully automated cooking</li>
+				</ul>
+			</p>
+			<p style="font-size:80%">
+			The first tests have been a success. It is therefore undoubtedly feasible to implement these future plans. Volunteers? 
+			</p>
+			
+			<br>
+			<p style="font-size:60%">
+			[1] http://www.nfpa.org/research/reports-and-statistics/fire-causes/appliances-and-equipment/cooking-equipment
+			</p>
+			<br>
+		</td>
+
+	</tr>
+</table>
+
+<div id="fussbereich">
+    D.Salzner : hello |at| dennissalzner.de : www.dennissalzner.de : 2016
+</div>
+	
+</div> <!-- seite -->
+
+<!-- -------------------------------------------------------------------------------------- -->
+<script type="text/javascript" language="JavaScript">
+// Centered Pop-Up Window (v1.0)
+// (C) 2002-2005 www.smileycat.com
+// Free for all users, but leave in this header</code><br>
+
+var win = null;
+function newWindow(mypage,myname,w,h,features) {
+  var winl = (screen.width-w)/2;
+  var wint = (screen.height-h)/2;
+  if (winl = 0) winl = 0;
+  if (wint = 0) wint = 0;
+  var settings = 'height=' + h + ',';
+  settings += 'width=' + w + ',';
+  settings += 'top=' + wint + ',';
+  settings += 'left=' + winl + ',';
+  settings += features;
+  win = window.open(mypage,myname,settings);
+  win.window.focus();
+}
+</script>
+
+</body>
+</html>

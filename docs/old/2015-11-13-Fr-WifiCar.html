@@ -1,0 +1,239 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252">
+	<title>Dennis Salzner - 2015-11-13-Fr-WifiCar</title>
+
+  <!-- stats -->
+<script type="text/javascript">
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//dennissalzner.de/stats/matomo/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+  <!-- stats -->
+</head>
+
+<body>
+
+<h1>Dennis Salzner - 2015-11-13-Fr-WifiCar</h1>
+<link rel="image_src" href="grafiken/2015-11-13-Fr-WifiCar/001t.jpg">
+
+<p align="right" style="font-size:80%">
+	<a href="../"><< Back Home</a> 
+</p>
+			
+<table style="width:100%">
+	<tbody><tr>
+
+		<td style="vertical-align: top;">
+			<a href="#null" onclick="newWindow('grafiken/2015-11-13-Fr-WifiCar/001.jpg','','640','480','')">
+				<img src="grafiken/2015-11-13-Fr-WifiCar/001t.jpg" height="90" width="160">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.1: completed car
+			</p>
+			<a href="#null" onclick="newWindow('grafiken/2015-11-13-Fr-WifiCar/002.jpg','','640','480','')">
+				<img src="grafiken/2015-11-13-Fr-WifiCar/002t.jpg" height="116" width="160">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.2: old chassis
+			</p>
+			
+			<a href="#null" onclick="newWindow('grafiken/2015-11-13-Fr-WifiCar/003.jpg','','640','480','')">
+				<img src="grafiken/2015-11-13-Fr-WifiCar/003t.jpg" height="114" width="160">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.3: motor controller
+			</p>
+			
+			<a href="#null" onclick="newWindow('grafiken/2015-11-13-Fr-WifiCar/004.jpg','','640','480','')">
+				<img src="grafiken/2015-11-13-Fr-WifiCar/004t.jpg" height="92" width="160">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.4: new aluminum chassis
+			</p>
+
+			<a href="#null" onclick="newWindow('grafiken/2015-11-13-Fr-WifiCar/005.jpg','','640','480','')">
+				<img src="grafiken/2015-11-13-Fr-WifiCar/005t.jpg" height="86" width="160">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.5: computer control
+			</p>
+			
+			<a href="#null" onclick="newWindow('grafiken/2015-11-13-Fr-WifiCar/006.jpg','','640','480','')">
+				<img src="grafiken/2015-11-13-Fr-WifiCar/006.jpg" height="86" width="160">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.6: front camera
+			</p>
+			
+			<a href="#null" onclick="newWindow('grafiken/2015-11-13-Fr-WifiCar/007.jpg','','640','480','')">
+				<img src="grafiken/2015-11-13-Fr-WifiCar/007.jpg" height="89" width="160">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.7: components
+			</p>
+			<!--
+			<a href="#null" onclick="newWindow('grafiken/2015-11-13-Fr-WifiCar/008.jpg','','640','480','')">
+				<img src="grafiken/2015-11-13-Fr-WifiCar/008.jpg" height="147" width="160">
+			</a>
+			<p style="font-size:75%; margin-top: 0; margin-bottom: 0;">
+				Fig.8: humble beginnings
+			</p>
+			-->
+		</td>
+		<td style="vertical-align: top;">
+			<!-- Titel -->
+			<h2>
+A WiFi controlled car with camera
+			</h2>
+			<!-- Was -->
+			<p style="font-size:60%" align="right">What?</p>
+			<p style="font-size:80%">
+I've finally gotten around to completing my WiFi controlled car. This project has been lying around for ages. I recently bought a hand-held circular saw and with it I can cut aluminum rods. That got me the motivation to finish the cars chassis.
+			</p>
+			<p style="font-size:80%">
+The car connects to the local area network via WiFi. It runs two web servers, one for controlling the motors and one for viewing the web cam. After turning it on all I need to do is open the two webpages in my browser and I can control the car and see where it's going.
+			</p>
+			<!-- Wann -->
+			<p style="font-size:60%" align="right">When?</p>
+			<p style="font-size:80%">
+Computer controlled cars with cameras have fascinated me for a long time. But I didn't have the knowledge to build one myself, when I was younger. My first humble attempts were to strap a Super Nintendo, with a GameBoy Cartridge Adapter and a GameBoy Camera to a remote controlled car. This did work, but the load was way too heavy for the car and there were cables dangling off the back.
+			</p>
+			<p style="font-size:80%">
+With the advent of network routers like the Asus WL-500g, that could be modified to run linux and had a USB Port, I knew where I wanted to go. The USB port could be used for a web cam, as IP and Wifi cameras are still very expensive. Now we have miniature embedded Linux computers such as the RaspberryPi or BeagleboneBlack, which a perfect for the purpose.
+			</p>
+			<p style="font-size:80%">
+What was troubling me then was building the chassis, battery powering the car, the software and the electronics. I got into Linux and electronics since the days my first attempts, but now I wanted flexibility in adding sensors to the car. Completing the car didn't have a high priority anymore, as other projects interested me more. I didn't want to work on the car until I had enough knowledge to quickly complete it.
+Discovering the I2C bus system was the final tool I needed for quickly completing the car. With it I can attach and detach boards by connecting only two wires. I don't need to plan which pins I use for what or use complicated plugs. Now I can make small boards for each purpose and connect them with I2C. Once a board is finished, it is finished and needs no further modification. 
+			</p>
+			<p style="font-size:80%">
+With the electronics in hand I needed a chassis. I didn't like the idea of cutting it from wood as sturdy wood is heavy. It is also very difficult to quickly add components. I needed some sort of compartmentalization.
+			</p>
+			<p style="font-size:80%">
+I got rectangular aluminum tubes for my CNC mill project, but both the car and the CNC mill were lying around, because I couldn't easily cut it. Now I have the saw and the first thing I did was finish the car. With the aluminum tubes I can quickly add and remove components by screwing them into the aluminum. And aluminum rods are sturdy, cheap and light-weight.
+			</p>
+			<!-- Warum -->
+			<p style="font-size:60%" align="right">Why?</p>
+			<p style="font-size:80%">
+A remote controlled car is something that almost every kid is fascinated by. Now this fascination has changed only slightly. After getting into machine learning and robot navigation through my university studies I've become interested in the idea of having an autonomous robot driving around in the apartment. In order to autonomously drive, the car needs to navigate in a map of the apartment. It therefore needs to know where it is. Indoor navigation is very difficult and requires lots of sensors. This is why I wanted a versatile robot car platform to quickly try things out.
+One of my previous projects was reading out a compass via I2C (see <a href="http://wwwcip.cs.fau.de/~zu13cibu/2015-04-02-Do-HMC5883compassFT232RLbitbangI2CPython.html">here</a>)
+and this is one step in the direction of adding sensors.
+			</p>
+			<!-- Hintergrund -->
+			<p style="font-size:60%" align="right">Background?</p>
+			<p style="font-size:80%">
+There are many different types of remote controlled cars. The most basic have a 433 MHz remote control. They drive around, but they can't transmit any video. Transmitting video is actually really difficult, as it needs sophisticated hardware. Sometimes wireless cameras are added to remote controlled airplanes, but they are very expensive. When people started replacing the firmware running on home network routers, one of the first uses was connecting web cams and using them as IP cameras. Then adding motor control and adding motors and wheels from torn apart remote control cars. Robot vacuum cleaners, such as the Roomba were no good for vacuuming at first, but they had interfaces for manually controlling the motors from the very start. This combination has lead to quite a few WiFi enabled robot projects on the internet.
+			</p>
+			<!-- Wie -->
+			<p style="font-size:60%" align="right">How?</p>
+			<p style="font-size:80%">
+My car isn't much different from the hundreds of Wifi cars on the internet, but mine uses I2C for controlling all of it's sensors and actuators - that includes the motors for driving and steering. And it uses an embedded computer for control with a web cam and wireless LAN USB dongle. In order to really simplify the software I've used Python Flask as in many of my previous projects (see <a href="http://wwwcip.cs.fau.de/~zu13cibu/2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver.html">here</a>).
+The software consists of less than 50 lines of code and allows control over a web browser. That means it can also be controlled from smartphones.
+			</p>
+			<p style="font-size:80%">
+I won't go into too much detail on how it works, as it is quite basic. The necessary information for building such a car can be quickly found on the internet.
+
+			</p>
+				<ul style="font-size:80%">
+					<li>Main Processor: The main processor is a RaspberryPi. It runs Rasbian and has all the necessary software installed for interfacing with I2C. Python and web cam streaming software have also been installed.</li>
+					<li>Camera: The camera is simply a USB web cam connected to a USB Port on the RaspberryPi. The "motion" package was installed. It automatically starts a stream which I can connect to with my web browser.</li>
+					<li>Motors: The motors are taken from an old remote control car I've taken apart. It's Nikko Deceptor - a very old remote control car - any car will do.</li>
+					<li>Power: I'm using the batteries that came with the remote controlled car for it's the motors. The RaspberryPi is hooked up to a USB power pack, as it needs far more energy for the web cam and the Wireless LAN.</li>
+					<li>Motor control: Motor control is handled by an L298 H-Bridge chip. This is connected to an I2C port-expander, the PCF8574. The H-Bridge is connected to the port-expander as if it were directly connected to the GPIO-Pins of the RaspberryPi. Search for "RaspberryPi L298 Motor control" on the Internet for more information.
+					All of that is soldered on to a strip board (Fig.3). The batteries for the motor connect to it, as do the motors and the RaspberryPi via I2C for controlling it.</li>
+					<li>Chassis: The chassis is build out of four aluminum rods. Two short rods are screwed into two longer rods close to the center in a right angle (Fig.4). The axles from the remote control car are fastened to this using cable binders. I've added some thin wood which is screwed onto the aluminum rods in order to have non-conductive plates to which the circuit boards and the RaspberryPi are attached with screws. The batteries and the camera is also fastened with cable binders (Fig. 7).</li>
+			    </ul>
+			<p style="font-size:80%">
+
+			<!-- Fortschritt -->
+			<p style="font-size:60%" align="right">Progress?</p>
+			<p style="font-size:80%">
+The car works well, but some issues remain. The camera stream from the web cam is unbearably slow. The RaspberryPi should have enough processing power to handle a web cam stream, so I don't really know what the issue is. Motor control works almost instantly.
+The batteries of the remote controlled car are very weak, perhaps I will replace them. It might be possible to run the motors off of the USB power pack. This would give me flexibility in adding a more powerful USB power pack. They also come with charging cables, are safe to use and have displays showing how much power is left.
+			</p>
+			<p style="font-size:80%">
+Some ideas for components I could add:
+			</p>
+				<ul style="font-size:80%">
+				      
+				      <li>nice to have
+				      
+					<ul style="font-size:80%">
+					  <li>an I2C chip for monitoring the battery packs</li>
+					  <li>another web cam which can rotate using servo motors
+					  <li>led lights and color indicators
+					</ul>
+					
+				      </li>
+				      
+				    <li>for localization/autonomous driving
+				    
+					<ul style="font-size:80%">
+					  <li>a laser pointer which can be used to estimate distance using the cameras
+					  <li>push buttons in order to detect collisions
+					  <li>ultrasonic range finders
+					  <li>compass
+					  <li>rotary encoders for each wheel
+					  <li>USB WiFi dongles which can measure signal strength and are pointed in different directions for WiFi localization
+					</ul>
+					
+				    </li>
+				
+				    <li>crazy
+					<ul style="font-size:80%">
+					  <li>drive-in charging or battery pack switching. inductive charging, so the car only needs to drive over a spot to charge.
+					  <li>speaker and microphone for voice control
+					  <li>face recognition and tracking with OpenCV
+					</ul>
+				    </li>
+				    
+				    <li>really crazy
+				      <ul style="font-size:80%">
+					  <li>eyes with servo controlled eye lids and color LEDs</li>
+					  <li>a Geiger counter for measuring radioactivity - nevermind</li>
+					  <li>bridge launching and retrieval (see <a href="https://de.wikipedia.org/wiki/Br%C3%BCckenlegepanzer">here</a>)</li>
+					</ul>
+				    </li>
+				  </ul>
+			</p>
+			<p style="font-size:80%">
+But who knows when I'll get around to adding any of that.
+			</p>
+			
+		</td>
+
+	</tr>
+</tbody></table>
+
+<!-- -------------------------------------------------------------------------------------- -->
+<script type="text/javascript" language="JavaScript">
+// Centered Pop-Up Window (v1.0)
+// (C) 2002-2005 www.smileycat.com
+// Free for all users, but leave in this header</code><br>
+
+var win = null;
+function newWindow(mypage,myname,w,h,features) {
+  var winl = (screen.width-w)/2;
+  var wint = (screen.height-h)/2;
+  if (winl = 0) winl = 0;
+  if (wint = 0) wint = 0;
+  var settings = 'height=' + h + ',';
+  settings += 'width=' + w + ',';
+  settings += 'top=' + wint + ',';
+  settings += 'left=' + winl + ',';
+  settings += features;
+  win = window.open(mypage,myname,settings);
+  win.window.focus();
+}
+
+</script>
+
+
+</body></html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/astronomy/2018/08/21/LocationOfStars.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Computing positions of stars - Dennis Salzner" />
+  <meta property="og:description" content="I will walk you through the steps of computing the position of a star at a given time and at a given location." />
+  <meta property="og:url" content="/site/astronomy/2018/08/21/LocationOfStars.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="astronomy" />
+  <meta property="article:published_time" content="2018-08-21 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2018-08-21 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2018-08-21 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="I will walk you through the steps of computing the position of a star at a given time and at a given location." />
+  <meta name="twitter:title" content="Computing positions of stars - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2018-08-21-LocationOfStars</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">Computing positions of stars</div>
+<div class="page-subtitle">Given the current local time and your location, we can compute where a star is in the sky above you</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p>http://127.0.0.1:4000/astronomy/2018/08/21/LocationOfStars.html</p>
+
+<h3 id="overview">Overview</h3>
+
+<p>Imagine you are standing on a rock. This rock travels around the Sun and through space. While doing so, it rotates around an axis thorugh it’s center of mass. Additionally this axis wobbles as it moves.
+As you travel on this rock, stars pass by. Each star is another sun in itself. Around these other suns are planets, perhaps just like the rock you are currently standing on and they also wobble arround. The gravitaional forces cause their suns to move, yet they are so far away, that we need not consider this in our computation.</p>
+
+<p>So where is a given star relative to your location in this instant? Is it left, right, behind or in front of you and at what altitude? We are trying to find an angle, the azimuth, from North (to capture left and right) and a second angle, the declination (to capture up and down).</p>
+
+<p>Since you and the rock you are standing on is moving and your location depends on the time (or rather where the rock is currently located on its elliptic around the sun), the rotation of the rock and your position on the rock, we need to define a new coordinate system. which is independant of all of this, and in which we can define a fixed set of coordinates per star that do not change.</p>
+
+<p>Luckily such a coordinate system already exists. Humanity has traveled space, after all. In it, a star named “Vega” has the following location:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Name of Star:       Vega
+Right ascension:    18h 36m 56.33635s
+Declination         +38° 47' 01.2802
+</code></pre></div></div>
+
+<p>Many such locations can be found on the internet. They have been spoted and measured by astronomers for centuries.</p>
+
+<p><em>Note that hours, minutes, seconds can be converted into radians. Also degrees, arcminutes and arcseconds can be converted into radians. The degrees of your current location on the earths surface, longitudes and latitudes, can also be converted to radians.
+Part of what makes these computations so involved is converting all the different units.</em></p>
+
+<p>But in order to know where this star is relative to you right now, we need to know where we are in this same coordinate system.</p>
+
+<p>The center of this coordinate system is called the “vernal equinox”. If you consider the equator of the earth a disc and you were to extend this disc, then one of the intersections of it with the path of the earth around the sun, is the center. The other intersection is called the “autumnal equinox”.</p>
+
+<p>Since the earth travels around the sun over time, this distance along its path can be measured in time. We call it “sidereal time”.
+Essentially we are looking for a function that, given the stars coordinates and the current sidereal time at our location, yields the stars current azimuth and declination at our location.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(starAzimuthNowAtOurLocation, starDeclinationNowAtOurLocation) = f(starRightAscension, starDeclination, siderealTimeNowAtOurLocation, latitudeOfOurLocation)
+</code></pre></div></div>
+
+<p>In order to get the sidereal time, we need your current location (longitude and latitude) and the current time. We can use a shortcut by computing the current sidereal time in Greenwich and offsetting this time based on your location. This is easy, as the observatory in Greenwich is at Longitute 0° and we can mix time and longitude in our computations as the earth rotates a certain longitude distance around its rotational axis over time.</p>
+
+<p>First we need to remove the time zone from yourlocal time by converting it to UTC (universal time):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(utcDay, utcMonth, utcYear, utcHours, utcMinutes) = utcFromLocalTime(localDay, localMonth, localYear, localHours, localMinutes, localTimeZone)
+</code></pre></div></div>
+
+<p>We need to consider the date as well, as subtracting the local time zone may set us in a day earlier or later.</p>
+
+<p>From there we can compute the “Julian Date” at 0h UTC at that day. The “Julian Date” is used by astronomers in equations for computing the sidereal time. It counts whole solar days starting from January 1st 4713 BC. One advantage of the julian date is that it omits those pesky leap years.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nowUtcAt0hJulian_sec = julianDateAt0h_sec(utcDay, utcMonth, utcYear)
+</code></pre></div></div>
+
+<p>Using the julian date, there are conversions to the sidereal time at Longiture 0° (Greenwich):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nowGreenwichSidereal0h_sec = siderealTimeGreenwich0h_sec(nowUtcAt0hJulian_sec)
+</code></pre></div></div>
+
+<p>From the sidereal time in Greenwich we can get to the sidereal time at your location by simply adding the longitude of your location. We then add the time that has passed since 0h, because the greenwich sidreal time is for 0h.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>nowSidereal_sec = nowGreenwichSidereal_sec + lon_sec + timePassedSince0h_sec(utcHours, utcMinutes)
+</code></pre></div></div>
+
+<p>With this we can now use our aforementioned function:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>(starAzimuthNowAtOurLocation, starDeclinationNowAtOurLocation) = f(starRightAscension, starDeclination, siderealTimeNowAtOurLocation, latitudeOfOurLocation)
+</code></pre></div></div>
+
+<p>In order for these function to work, we need to make rows of conversions. For this we define helper functions:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- dmsToDeg: convert degrees, minutes, seconds to degrees
+- degToHms: convert degrees to hours, minutes, seconds
+- hmsToSec: convert hours, minutes, seconds to seconds
+- hmsToDeg: convert hours, minutes, seconds to degrees
+- degToRad: convert degrees to radians
+- radToDeg: convert radians to degrees
+- secToHms: convert seconds to hours, minutes, seconds
+</code></pre></div></div>
+
+<h3 id="example">Example</h3>
+
+<p>Now that you’ve suffered through this with me, an example:</p>
+
+<p>Vega</p>
+<ul>
+  <li>ra, dec</li>
+  <li>stelarium coordinates</li>
+</ul>
+
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

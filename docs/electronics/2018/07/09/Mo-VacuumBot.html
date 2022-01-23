@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/electronics/2018/07/09/Mo-VacuumBot.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Modifying the DirtDevil Spider M607 - Dennis Salzner" />
+  <meta property="og:description" content="The DirtDevil Spider M607 is a cheap entry-level vacuum robot. It does not feature optical mapping, but rather randomly moves around until it hits an obstacl..." />
+  <meta property="og:url" content="/site/electronics/2018/07/09/Mo-VacuumBot.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2018-07-09 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2018-07-09 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2018-07-09 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="The DirtDevil Spider M607 is a cheap entry-level vacuum robot. It does not feature optical mapping, but rather randomly moves around until it hits an obstacl..." />
+  <meta name="twitter:title" content="Modifying the DirtDevil Spider M607 - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2018-07-09-Mo-VacuumBot</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">Modifying the DirtDevil Spider M607</div>
+<div class="page-subtitle">NodeMCU-controlled DirtDevil Spider M607 with a 4-cell Li-Ion battery pack</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>The DirtDevil Spider M607 is a cheap entry-level vacuum robot. It does not feature optical mapping, but rather randomly moves around until it hits an obstacle and then turns to avoid it. This works reasonably well, but I purchased the robot in order to modify it.</p>
+
+<table>
+<tr>
+<td>
+
+<div id="movie-area" style="width: 640px; height: 480px;}">&nsbp;</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#movie-area').html('<iframe src="https://player.vimeo.com/video/255459717" width="640" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>');
+  });
+</script>
+
+</td>
+<td>
+<img src="../../../../images/2018-07-09-Mo-VacuumBot/011-20180513.jpg" width="320px" /> 
+</td>
+</tr>
+</table>
+
+<p>The software I wrote for the robot responds to REST-style API calls. As of now each motor can be controlled individually and the state of the front bumper can be retrieved. This allows a daemon software written in Python that runs on a computer to control the robot. If the robot does not hear from the computer in a pre-configured amount of time, the robot shuts off in order to avoid running in one direction infinitely, when the WiFi signal is lost.</p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>Over the course of a year - I didn’t have the time to work on it continuously - I’ve replaced the entire electronics of the robot, CNC-milled a base plate for my own electronics and wrote software to control the robot.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>My original plan was to use an old android mobile phone to control the robot. A mobile phone has some advantages: it uses it’s own battery, has a camera and sensors, built-in WiFi and is built in an energy efficient way by design. I ditched this idea for a small WiFi board, the NodeMCU, because it is much less of a hassle to program. It appears to be non-trivial to get a serial connection or any kind of hardware connection to an android phone. This can be achieved with USB-to-Serial Adapters, but not all phones support USB On-The-Go, not all Android versions support serial communication via USB and the phone has to be rooted. I might get back to the Android phone later, but for now I can easily control the robot via the NodeMCU and use the phone additionally for a video feed using the phone’s IP address in the WiFi network.
+While testing the mobile phone concept, I used a small wide angle lense which I’ve glued to the mobile phone. velcro was used to connect a card board mount to the robots housing and the android phone. An Android App, “IP Webcam”, can be used to receive the video feed on a computer.</p>
+
+<p><a href="../../../../images/2018-07-09-Mo-VacuumBot/001-20161216.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/001-20161216-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-07-09-Mo-VacuumBot/002-20161215.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/002-20161215-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>While this was fun, the robot was not controllable by the computer yet and instead followed its random path controlled by the factory firmware. It was time to open the robot and have a look at the electronics.</p>
+
+<p><a href="../../../../images/2018-07-09-Mo-VacuumBot/003-20170520.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/003-20170520-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-07-09-Mo-VacuumBot/004-20170520.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/004-20170520-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-07-09-Mo-VacuumBot/005-20170525.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/005-20170525-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>The robot has two wheel modules with a motor on each side. In order to see how the wheel modules work and whether they have rotary encoders, I opened the enclosure of one wheel module. The wheel modules contain no rotary encoders and consist of small DC motors with a plastic worm gear and the rubber coated wheel itself.
+I might add some sort of rotary encoder (perhaps magnetic), but this will be difficult due to the tight spaces in the wheel modules.</p>
+
+<p><a href="../../../../images/2018-07-09-Mo-VacuumBot/006-20170520.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/006-20170520-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>Next I built a small cardboard prototyp replacement for the PCB that runs all the connectors to the outside of the robot enclosure. Once I was sure about all the connectors and was able to run each motor and see the robot move accordingly, I CNC milled a proper replacement for the main PCB of the robot.</p>
+
+<p><a href="../../../../images/2018-07-09-Mo-VacuumBot/007-20171106.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/007-20171106-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-07-09-Mo-VacuumBot/008-20171130.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/008-20171130-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-07-09-Mo-VacuumBot/009-20171227.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/009-20171227-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>This wooden replacement for the main PCB serves as a basis for the electronics and the photo sensor, which had to be placed in the same exact position as on the original PCB in order for the front bumper to be able to interrupt the photosensor, when the robot runs into an obstacle.
+Due to the batteries, which are larger than the original and can not be placed in the battery holder on the under side of the robot, I needed more space and CNC milled an additional wooden plate for most of the electronics and the batteries. The batteries are placed such that the robot  has a perfect center of mass and does not tip over to the back. This can happen with a two wheel drive robot, such as this one, as it only has a single additional wheel in the front.
+The large plate also serves additional duties: It sits over the dust container and pushes against it to keep it shut. It also pushes the spring-loaded wheel modules against the ground. It can be removed by releasing four screws. I will use wing nuts in the future to more easily access the dust bin for emptying.</p>
+
+<p><a href="../../../../images/2018-07-09-Mo-VacuumBot/010-20161222.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/010-20161222-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-07-09-Mo-VacuumBot/011-20180513.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/011-20180513-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>Some time later I decided to place the batteries into a junction box rated for 380V as a means of fire protection. The 18650 Li-Ion cells from an old Laptop I’ve used should be handled with care as they have a high energy density and are therefore capable of catching fire easily, if shorted or damaged. The junction box prevents wires from getting caught when the robot moves around under furnature.
+I use a battery protection circuit to prevent over-chaging or discharging beyond the advised ranges for Li-Ion cells. The cells are charged in a load-balancing charger outside of the robot for safety. I use a “Nitecore Intellicharger i4” as a battery charger, which is claimed to be especially safe.</p>
+
+<p><a href="../../../../images/2018-07-09-Mo-VacuumBot/012-20180513.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/012-20180513-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>The finished device consists of the two base plates mounted on the robot. The front plate replaces the original PCB and the photo sensor is mounted to the front of it with hot glue. The larger rear plate contains, from left to right, the NodeMCU main micro-controller with WiFi, the junction box with four Li-Ion 18650 battery cells and battery protection circuit and the motor driver board. In front of the junction box is a small perfboard with a small circuit consisting of a transistor array to control the left and right wiper motors and the vacuum motor.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<div class="mermaid" style="width: 800px">
+graph TD;
+    A(Motor Driver, L298)--&gt; B(Main Processor, NodeMCU);
+    C(Battery Protection Board)--&gt;F(Power Switch);
+    F--&gt;B;
+    D(Battery Cells, 18650 Li-Ion)--&gt;C;
+    
+    E(Light Barrier)--&gt;B;
+
+    G(Left Drive Motor)--&gt;A;
+    H(Right Drive Motor)--&gt;A;
+
+    
+    K(Front Bumper)--&gt;E;
+    
+    L(Transistor Array, ULN2003A)--&gt;B
+    I(Left Wiper)--&gt;L;
+    J(Right Wiper)--&gt;L;
+    M(Vacuum Motor)--&gt;L;
+</div>
+
+<p>The electronics consist of the a main processor board, the NodeMCU. It contains the ESP8266 WiFi chip and the required electronics for it to function. The NodeMCU is powered by the Li-Ion cells that are protected by the battery protection system. The NodeMCU is also connected to the L298 motor driver board for the left and right motors and to an ULN2003A transistor array that is connected to the left and right wiper motors and the vacuum motor. The photo sensor for the front bumper is also connected to the NodeMCU with two resistors as a voltage divider.</p>
+
+<div class="mermaid" style="width: 320px">
+classDiagram
+CWebserver &lt;|-- Main : init(), loop()
+CState &lt;|-- Main : loop()
+CState &lt;|-- CWebserver : toJson(), updateFromJson()
+Main : setup()
+Main : loop()
+CWebserver : CWebserver(CState * state)
+CWebserver : init(char * ssid, char * password)
+CWebserver : loop()
+CWebserver : CState * m_state
+CState
+CState : CState()
+CState : toJson()
+CState : updateFromJson(String data)
+CState : loop()
+</div>
+
+<p>The software is structured in two classes and a main function. One feature of the NodeMCU is that it can be easily integrated with the ArduinoIDE. By doing this I can use Arduino libraries such as the ArduinoJSON library for serializing and deserializing from/to objects.</p>
+
+<p>The general concept of the software is to have the CWebserver class run a small webserver. This webserver responds to GET requests with a JSON string of the serialized state. A POST command with an identically structured JSON will overwrite all JSON fields with the ones received in the JSON string.
+The second class, CState, holds the state. It handles the serializing and deserializing and automatically applys the current state to the actuators. It also reads the photo sensor, that is interrupted by the front bumper on collision, and stores the current value in the state.</p>
+
+<p>By writing the software this way I’ve effectively avoided having to write software for sockets and invent a protocol for controlling the robot. The software is far more simple and the entire state of the robot can be received with a command-line tool for HTTP-Requests such as “curl” or even the web browser.</p>
+
+<p>A small batch script with a curl command for receiving the state of the robot may look like this:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">IP</span><span class="o">=</span><span class="s2">"&lt;IP of the NodeMCU&gt;"</span>
+curl http://<span class="nv">$IP</span>/get</code></pre></figure>
+
+<p>the robot responds with something like:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="o">{</span>
+  <span class="s2">"mode"</span>: <span class="s2">"idle"</span>,
+  <span class="s2">"motorLeft"</span>: <span class="s2">"off"</span>,
+  <span class="s2">"motorRight"</span>: <span class="s2">"off"</span>,
+  <span class="s2">"wiperLeft"</span>: <span class="s2">"off"</span>,
+  <span class="s2">"wiperRight"</span>: <span class="s2">"off"</span>,
+  <span class="s2">"vacuum"</span>: <span class="s2">"off"</span>,
+  <span class="s2">"bumperFront"</span>: <span class="s2">"false"</span>,
+<span class="o">}</span></code></pre></figure>
+
+<p>Similarly, in order to set the left and right wheel motors to move the robot forward, the following can be run:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">IP</span><span class="o">=</span><span class="s2">"&lt;IP of the NodeMCU&gt;"</span>
+curl <span class="nt">-d</span> <span class="s1">'{ "motorLeft" : "fwd"}'</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="nt">-X</span> POST http://<span class="nv">$IP</span>/post
+curl <span class="nt">-d</span> <span class="s1">'{ "motorRight" : "fwd"}'</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="nt">-X</span> POST http://<span class="nv">$IP</span>/post</code></pre></figure>
+
+<p>and to stop the robot:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nv">IP</span><span class="o">=</span><span class="s2">"&lt;IP of the NodeMCU&gt;"</span>
+curl <span class="nt">-d</span> <span class="s1">'{ "motorLeft" : "off"}'</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="nt">-X</span> POST http://<span class="nv">$IP</span>/post
+curl <span class="nt">-d</span> <span class="s1">'{ "motorRight" : "off"}'</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="nt">-X</span> POST http://<span class="nv">$IP</span>/post</code></pre></figure>
+
+<p>For more convenience I’ve also written a small Python controller tool with buttons for driving the robot around:</p>
+
+<p><a href="../../../../images/2018-07-09-Mo-VacuumBot/013-Controller.png" data-lightbox="image" data-title=""><img src="../../../../images/2018-07-09-Mo-VacuumBot/013-Controller-t.png" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>The relevant portion of the Python code for the controller tool is similar to the “curl” calls. Python has two usefull libraries: The ‘requests’ library for making HTTP requests and the ‘json’ library reading and writing JSON strings.</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">  <span class="kn">import</span> <span class="nn">requests</span><span class="p">,</span> <span class="n">json</span>
+
+  <span class="k">def</span> <span class="nf">sendCommand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">loads</span><span class="p">(</span><span class="s">'{}'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">command</span><span class="p">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">"stop"</span><span class="p">):</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorLeft'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'off'</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorRight'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'off'</span>
+    <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s">"forward"</span><span class="p">:</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorLeft'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'fwd'</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorRight'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'fwd'</span>
+    <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s">"reverse"</span><span class="p">:</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorLeft'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'rev'</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorRight'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'rev'</span>
+    <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s">"left"</span><span class="p">:</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorLeft'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'rev'</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorRight'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'fwd'</span>
+    <span class="k">if</span> <span class="n">command</span> <span class="o">==</span> <span class="s">"right"</span><span class="p">:</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorLeft'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'fwd'</span>
+      <span class="n">data</span><span class="p">[</span><span class="s">'motorRight'</span><span class="p">]</span> <span class="o">=</span> <span class="s">u'rev'</span>
+
+    <span class="n">poststr</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">poststr</span> <span class="o">=</span> <span class="n">poststr</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'"'</span><span class="p">,</span> <span class="s">'</span><span class="se">\'</span><span class="s">'</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="n">post</span><span class="p">(</span><span class="s">"http://"</span> <span class="o">+</span> <span class="n">ip</span> <span class="o">+</span> <span class="s">"/post"</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">poststr</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">requests</span><span class="p">.</span><span class="n">exceptions</span><span class="p">.</span><span class="nb">ConnectionError</span><span class="p">,</span> <span class="n">requests</span><span class="p">.</span><span class="n">exceptions</span><span class="p">.</span><span class="n">ReadTimeout</span><span class="p">):</span>
+      <span class="k">print</span> <span class="s">"connection lost"</span></code></pre></figure>
+
+<p>And with that in place it is easy to immitate the original robots behaviour by writing a python script that automatically controls the robot via WiFi, the aforementioned daemon software that I have running in the background on a Linux computer.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<p>The robot runs well unless it loses the WiFi connection. I’ve set up the WiFi router in a high location and that helps a great deal. I may need to add a bigger antenna to the robot and/or the router.</p>
+
+<p>The battery run time is around 2 hours on a single set of four fully-charged 18650 cells. That’s quite impressive and especially since they can be swapped for new fully-charged cells immediatly to increase the run time.</p>
+
+<p>Next I will add more sensors. The software is easily extensible to add more sensor values to the JSON that can then be queried by the python daemon on the computer. The ultrasonic distance sensors I have may open opportunities to try some mapping and localisation or just some smarter movements than randomly bouncing off of obstacles.</p>
+
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

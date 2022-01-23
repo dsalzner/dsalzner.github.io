@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/programming/2021/12/20/Di-CustomOsPt4-Interrupts.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.4 - Adding Interrupts - Dennis Salzner" />
+  <meta property="og:description" content="" />
+  <meta property="og:url" content="/site/programming/2021/12/20/Di-CustomOsPt4-Interrupts.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2021-12-20 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2021-12-20 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2021-12-20 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="" />
+  <meta name="twitter:title" content="CustomOS - Pt.4 - Adding Interrupts - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2021-12-20-Di-CustomOs-Pt4-Interrupts</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">CustomOS - Pt.4 - Adding Interrupts</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS) - How hard could that be?</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<h2>What we are trying to achieve</h2>
+
+<p>In the last part of the series about keyboard input we have seen that we can read the state of the keyboard by actively polling it. This means the CPU is busy waiting for keyboard input and can’t complete other tasks in the meantime. This is not a good way to handle keyboad input.</p>
+
+<p>As an example if we think of common OSes that show a clock on their task bars, with busy waiting this clock could only be updated when a button is pressed, because only by pressing a button would you let the CPU take control, as it leaves the loop that actively waits for keyboard input, to update the clock on the screen.</p>
+
+<p>A solution to this predicament are interrupts. With interrupts the CPU can be configured to react to certain events by “interrupting” what it is currently doing and jumping to a function we provide.</p>
+
+<h2>What to expect</h2>
+
+<p>At the end of this part of the series we will have keyboard interrupts set up. With interrupts the CPU does not continiously check the keyboard anymore and is free to do other tasks.
+This can be seen by repeatidly printing a character on the screen within a loop, while still reacting to keyboard input.</p>
+
+<p><img src="../../../../images/2021-12-21-Di-CustomOsPt4-Interrupts/keyboard-with-interrupts.gif" /></p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2>Why interrupts so early on</h2>
+
+<p>Since we need interrupts sooner or later and since they make developement and error handling a lot easier, most OS developers would suggest adding interrupts early on. They are also unavoidable for any kind of device drivers or in order to, for instance, render graphics as we’re waiting for keyboard input.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h2>Why interrupts</h2>
+
+<p>As seen in the last part, we can get around interrupt handling by actively polling, but this suboptimal. For device drivers such as for Floppy Disks that have long delays until they are ready, there is no practical way around interrupts.</p>
+
+<p>Once we have interrupts set up we can handle a wide range of important features:</p>
+
+<ul>
+  <li>Get Interrupts from the keyboard and avoid busy-waiting</li>
+  <li>Likewise from the floppy drive controller</li>
+  <li>Handle common errors such as divisions by zero, out of bounds, etc</li>
+  <li>Handle exceptions</li>
+</ul>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2>Interrupts are simple conceptionally, but complicated to set up on x86</h2>
+
+<p>On microcontrollers such as the Atmega’s setting up interrupts is merely three calls to library functions.
+What we are attempting to achieve is to</p>
+
+<ul>
+  <li>define a custom function (also called the "interrupt service routing", ISR) to be called when a given interrupt occurs.</li>
+  <li>We then configure the CPU, so that it knows what to call for what interrupt.</li>
+</ul>
+
+<p>Now on x86 CPUs setting up interrupts is fairly complicated and online forums are full of developers asking questions on how to debug their interrupt handlers.
+In contrast to Atmega’s we need to provide the CPU with multiple correctly aligned table in a memory block that we define in C-Code and load into the CPU in assembler.</p>
+
+<h2>Steps to set up interrupts</h2>
+
+<p>To get interrupts working and to set an interrupt for keyboard input we need to:</p>
+
+<ol>
+  <li>Allocate the "Global Descriptor Table" (GDT) and load it in assembly</li>
+  <li>Allocate the "Interrupt Descriptor Table" (IDT) and load it in assembly</li>
+  <li>Add functionality to register handler functions for interrupts "Interrupt Service Routine" (ISR).</li>
+  <li>Define a keyboard interrupt handler function</li>
+  <li>Set the address to that handler function in our IDT</li>
+  <li>Enable interrupts in the CPU</li>
+</ol>
+
+<p>Debugging Interrupt Handlers is difficult, because we’re dealing with VMs that lock-up as things go wrong.
+There are also numerous pitfalls when dealing with sample codes found online:</p>
+
+<p>The osdev-Wiki helps in getting a basic overview [1,2] of what we are trying to achieve. After looking at some other custom OSes on GitHub, two were particularly close to what we’re attemping to achieve here: Interrupt handling on i686-elf compiler with NASM, compilable on Linux that is kept as simple as possible [3,4]. I used both of them and the osdev tutorials and wiki [5] to build the solution in the following. A detailed description on GDT can be found here [6].</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2>The Assembly Boot code</h2>
+
+<p>The code comes in two parts: the assembly and the C-code. The GDT and IDT’s are very similar in structure.</p>
+
+<p>First we need the assembly code for our GDT and IDT. It will allocate the interrupt handling routines and allow us to call “gdt_flush” and “idt_load” from C. Inside of the “irq_common_stub” and “isr_common_stub” are calls to our C-Code we will later add, the “irq_handler” and  “isr_handler”.</p>
+
+<p>Take not of the “lgdt” and “lidt”, where the “l” stands for “load”, they are used to “load” the gdt and idt tables into the CPU.</p>
+
+<p><b>boot.asm</b></p>
+
+<figure class="highlight"><pre><code class="language-nasm" data-lang="nasm"><span class="nf">bits</span> <span class="mi">32</span>
+<span class="nf">section</span> <span class="nv">.text</span>
+  <span class="nf">align</span>	<span class="mi">4</span>
+  <span class="kd">dd</span> <span class="mh">0x1BADB002</span>
+  <span class="kd">dd</span> <span class="mh">0x00</span>
+  <span class="kd">dd</span> <span class="o">-</span> <span class="p">(</span><span class="mh">0x1BADB002</span><span class="o">+</span><span class="mh">0x00</span><span class="p">)</span>
+	
+<span class="nf">global</span> <span class="nv">start</span>
+<span class="nf">extern</span> <span class="nv">kernel_main</span>
+<span class="nl">start:</span>
+  <span class="nf">sti</span>
+  <span class="nf">mov</span>    <span class="nb">esp</span><span class="p">,</span><span class="mh">0x4000</span>
+  <span class="nf">sti</span> <span class="c1">; needed twice</span>
+  <span class="nf">call</span> <span class="nv">kernel_main</span>
+  <span class="nf">cli</span>
+  <span class="nf">hlt</span>
+<span class="nl">.Lhang:</span>
+  <span class="nf">jmp</span> <span class="nv">.Lhang</span>
+
+<span class="nf">global</span> <span class="nv">gdt_flush</span>
+<span class="nf">extern</span> <span class="nv">gp</span>
+<span class="nl">gdt_flush:</span>
+  <span class="nf">lgdt</span>  <span class="p">[</span><span class="nv">gp</span><span class="p">]</span> 
+  <span class="nf">mov</span> <span class="nb">ax</span><span class="p">,</span> <span class="mh">0x10</span>
+  <span class="nf">mov</span> <span class="nb">ds</span><span class="p">,</span> <span class="nb">eax</span>
+  <span class="nf">mov</span> <span class="nb">es</span><span class="p">,</span> <span class="nb">eax</span>
+  <span class="nf">mov</span> <span class="nb">fs</span><span class="p">,</span> <span class="nb">eax</span>
+  <span class="nf">mov</span> <span class="nb">gs</span><span class="p">,</span> <span class="nb">eax</span>
+  <span class="nf">mov</span> <span class="nb">ss</span><span class="p">,</span> <span class="nb">eax</span>
+  <span class="nf">jmp</span> <span class="mh">0x08</span><span class="p">:</span><span class="nv">flush2</span>
+<span class="nl">flush2:</span>
+  <span class="nf">ret</span>	
+
+<span class="nf">global</span> <span class="nv">idt_load</span>
+<span class="nf">extern</span> <span class="nv">idtp</span>
+<span class="nl">idt_load:</span>
+  <span class="nf">lidt</span>  <span class="p">[</span><span class="nv">idtp</span><span class="p">]</span>
+  <span class="nf">ret</span>
+<span class="cp">    
+%include "../isr.asm"
+%include "../irq.asm"</span></code></pre></figure>
+
+<h2>The Assembly ISR code</h2>
+
+<p>I’ve separated the code for the isr’s and irq’s to includes, because they are fairly long. 
+Both <b>isr.asm</b> and <b>isq.asm</b> are very similar. This is because they use the same type of GDT table. Their purpose differs: one is for handling processor errors while the other is for handling handware interrupts.
+Die to the similarities in structure we could use NASM macros to automatically generate the isr and irq handlers, but that makes the code a lot less readable.</p>
+
+<p>For the ISR’s let’s create <b>isr.asm</b>.</p>
+
+<details>
+<summary>
+<b>isr.asm</b> (new file)
+</summary>
+
+<figure class="highlight"><pre><code class="language-nasm" data-lang="nasm"><span class="nf">global</span> <span class="nv">isr0</span>
+<span class="nf">global</span> <span class="nv">isr1</span>
+<span class="nf">global</span> <span class="nv">isr2</span>
+<span class="nf">global</span> <span class="nv">isr3</span>
+<span class="nf">global</span> <span class="nv">isr4</span>
+<span class="nf">global</span> <span class="nv">isr5</span>
+<span class="nf">global</span> <span class="nv">isr6</span>
+<span class="nf">global</span> <span class="nv">isr7</span>
+<span class="nf">global</span> <span class="nv">isr8</span>
+<span class="nf">global</span> <span class="nv">isr9</span>
+<span class="nf">global</span> <span class="nv">isr10</span>
+<span class="nf">global</span> <span class="nv">isr11</span>
+<span class="nf">global</span> <span class="nv">isr12</span>
+<span class="nf">global</span> <span class="nv">isr13</span>
+<span class="nf">global</span> <span class="nv">isr14</span>
+<span class="nf">global</span> <span class="nv">isr15</span>
+<span class="nf">global</span> <span class="nv">isr16</span>
+<span class="nf">global</span> <span class="nv">isr17</span>
+<span class="nf">global</span> <span class="nv">isr18</span>
+<span class="nf">global</span> <span class="nv">isr19</span>
+<span class="nf">global</span> <span class="nv">isr20</span>
+<span class="nf">global</span> <span class="nv">isr21</span>
+<span class="nf">global</span> <span class="nv">isr22</span>
+<span class="nf">global</span> <span class="nv">isr23</span>
+<span class="nf">global</span> <span class="nv">isr24</span>
+<span class="nf">global</span> <span class="nv">isr25</span>
+<span class="nf">global</span> <span class="nv">isr26</span>
+<span class="nf">global</span> <span class="nv">isr27</span>
+<span class="nf">global</span> <span class="nv">isr28</span>
+<span class="nf">global</span> <span class="nv">isr29</span>
+<span class="nf">global</span> <span class="nv">isr30</span>
+<span class="nf">global</span> <span class="nv">isr31</span>
+
+<span class="c1">;  0: Divide By Zero Exception</span>
+<span class="nl">isr0:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">;  1: Debug Exception</span>
+<span class="nl">isr1:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">1</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">;  2: Non Maskable Interrupt Exception</span>
+<span class="nl">isr2:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">2</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">;  3: Int 3 Exception</span>
+<span class="nl">isr3:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">3</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">;  4: INTO Exception</span>
+<span class="nl">isr4:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">4</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">;  5: Out of Bounds Exception</span>
+<span class="nl">isr5:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">5</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">;  6: Invalid Opcode Exception</span>
+<span class="nl">isr6:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">6</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">;  7: Coprocessor Not Available Exception</span>
+<span class="nl">isr7:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">7</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">;  8: Double Fault Exception (With Error Code!)</span>
+<span class="nl">isr8:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">8</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">;  9: Coprocessor Segment Overrun Exception</span>
+<span class="nl">isr9:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">9</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 10: Bad TSS Exception (With Error Code!)</span>
+<span class="nl">isr10:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">10</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 11: Segment Not Present Exception (With Error Code!)</span>
+<span class="nl">isr11:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">11</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 12: Stack Fault Exception (With Error Code!)</span>
+<span class="nl">isr12:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">12</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 13: General Protection Fault Exception (With Error Code!)</span>
+<span class="nl">isr13:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">13</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 14: Page Fault Exception (With Error Code!)</span>
+<span class="nl">isr14:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">14</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 15: Reserved Exception</span>
+<span class="nl">isr15:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">15</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 16: Floating Point Exception</span>
+<span class="nl">isr16:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">16</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 17: Alignment Check Exception</span>
+<span class="nl">isr17:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">17</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 18: Machine Check Exception</span>
+<span class="nl">isr18:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">18</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 19: Reserved</span>
+<span class="nl">isr19:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">19</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 20: Reserved</span>
+<span class="nl">isr20:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">20</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 21: Reserved</span>
+<span class="nl">isr21:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">21</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 22: Reserved</span>
+<span class="nl">isr22:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">22</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 23: Reserved</span>
+<span class="nl">isr23:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">23</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 24: Reserved</span>
+<span class="nl">isr24:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">24</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 25: Reserved</span>
+<span class="nl">isr25:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">25</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 26: Reserved</span>
+<span class="nl">isr26:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">26</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 27: Reserved</span>
+<span class="nl">isr27:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">27</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 28: Reserved</span>
+<span class="nl">isr28:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">28</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 29: Reserved</span>
+<span class="nl">isr29:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">29</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 30: Reserved</span>
+<span class="nl">isr30:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">30</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+
+<span class="c1">; 31: Reserved</span>
+<span class="nl">isr31:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">31</span>
+    <span class="nf">jmp</span> <span class="nv">isr_common_stub</span>
+ 
+<span class="nf">extern</span> <span class="nv">isr_handler</span>
+ 
+<span class="nl">isr_common_stub:</span>
+    <span class="nf">pusha</span>
+    <span class="nf">push</span> <span class="nb">ds</span>
+    <span class="nf">push</span> <span class="nb">es</span>
+    <span class="nf">push</span> <span class="nb">fs</span>
+    <span class="nf">push</span> <span class="nb">gs</span>
+    <span class="nf">mov</span> <span class="nb">ax</span><span class="p">,</span> <span class="mh">0x10</span>
+    <span class="nf">mov</span> <span class="nb">ds</span><span class="p">,</span> <span class="nb">ax</span>
+    <span class="nf">mov</span> <span class="nb">es</span><span class="p">,</span> <span class="nb">ax</span>
+    <span class="nf">mov</span> <span class="nb">fs</span><span class="p">,</span> <span class="nb">ax</span>
+    <span class="nf">mov</span> <span class="nb">gs</span><span class="p">,</span> <span class="nb">ax</span>
+    <span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="nb">esp</span>
+    <span class="nf">push</span> <span class="nb">eax</span>
+    <span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="nv">isr_handler</span>
+    <span class="nf">call</span> <span class="nb">eax</span>
+    <span class="nf">pop</span> <span class="nb">eax</span>
+    <span class="nf">pop</span> <span class="nb">gs</span>
+    <span class="nf">pop</span> <span class="nb">fs</span>
+    <span class="nf">pop</span> <span class="nb">es</span>
+    <span class="nf">pop</span> <span class="nb">ds</span>
+    <span class="nf">popa</span>
+    <span class="nf">add</span> <span class="nb">esp</span><span class="p">,</span> <span class="mi">8</span>
+    <span class="nf">iret</span></code></pre></figure>
+
+</details>
+
+<h2>The Assembly IRQ code</h2>
+
+<p>And for the IRQ’s <b>irq.asm</b>.</p>
+
+<details>
+<summary>
+<b>irq.asm</b> (new file)
+</summary>
+
+<figure class="highlight"><pre><code class="language-nasm" data-lang="nasm"><span class="nf">global</span> <span class="nv">irq0</span>
+<span class="nf">global</span> <span class="nv">irq1</span>
+<span class="nf">global</span> <span class="nv">irq2</span>
+<span class="nf">global</span> <span class="nv">irq3</span>
+<span class="nf">global</span> <span class="nv">irq4</span>
+<span class="nf">global</span> <span class="nv">irq5</span>
+<span class="nf">global</span> <span class="nv">irq6</span>
+<span class="nf">global</span> <span class="nv">irq7</span>
+<span class="nf">global</span> <span class="nv">irq8</span>
+<span class="nf">global</span> <span class="nv">irq9</span>
+<span class="nf">global</span> <span class="nv">irq10</span>
+<span class="nf">global</span> <span class="nv">irq11</span>
+<span class="nf">global</span> <span class="nv">irq12</span>
+<span class="nf">global</span> <span class="nv">irq13</span>
+<span class="nf">global</span> <span class="nv">irq14</span>
+<span class="nf">global</span> <span class="nv">irq15</span>
+
+<span class="c1">; 32: IRQ0</span>
+<span class="nl">irq0:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">32</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 33: IRQ1</span>
+<span class="nl">irq1:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">33</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 34: IRQ2</span>
+<span class="nl">irq2:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">34</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 35: IRQ3</span>
+<span class="nl">irq3:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">35</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 36: IRQ4</span>
+<span class="nl">irq4:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">36</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 37: IRQ5</span>
+<span class="nl">irq5:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">37</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 38: IRQ6</span>
+<span class="nl">irq6:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">38</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 39: IRQ7</span>
+<span class="nl">irq7:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">39</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 40: IRQ8</span>
+<span class="nl">irq8:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">40</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 41: IRQ9</span>
+<span class="nl">irq9:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">41</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 42: IRQ10</span>
+<span class="nl">irq10:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">42</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 43: IRQ11</span>
+<span class="nl">irq11:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">43</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 44: IRQ12</span>
+<span class="nl">irq12:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">44</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 45: IRQ13</span>
+<span class="nl">irq13:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">45</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 46: IRQ14</span>
+<span class="nl">irq14:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">46</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="c1">; 47: IRQ15</span>
+<span class="nl">irq15:</span>
+    <span class="nf">cli</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">0</span>
+    <span class="nf">push</span> <span class="kt">byte</span> <span class="mi">47</span>
+    <span class="nf">jmp</span> <span class="nv">irq_common_stub</span>
+
+<span class="nf">extern</span> <span class="nv">irq_handler</span>
+
+<span class="nl">irq_common_stub:</span>
+    <span class="nf">pusha</span>
+    <span class="nf">push</span> <span class="nb">ds</span>
+    <span class="nf">push</span> <span class="nb">es</span>
+    <span class="nf">push</span> <span class="nb">fs</span>
+    <span class="nf">push</span> <span class="nb">gs</span>
+
+    <span class="nf">mov</span> <span class="nb">ax</span><span class="p">,</span> <span class="mh">0x10</span>
+    <span class="nf">mov</span> <span class="nb">ds</span><span class="p">,</span> <span class="nb">ax</span>
+    <span class="nf">mov</span> <span class="nb">es</span><span class="p">,</span> <span class="nb">ax</span>
+    <span class="nf">mov</span> <span class="nb">fs</span><span class="p">,</span> <span class="nb">ax</span>
+    <span class="nf">mov</span> <span class="nb">gs</span><span class="p">,</span> <span class="nb">ax</span>
+    <span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="nb">esp</span>
+
+    <span class="nf">push</span> <span class="nb">eax</span>
+    <span class="nf">mov</span> <span class="nb">eax</span><span class="p">,</span> <span class="nv">irq_handler</span>
+    <span class="nf">call</span> <span class="nb">eax</span>
+    <span class="nf">pop</span> <span class="nb">eax</span>
+
+    <span class="nf">pop</span> <span class="nb">gs</span>
+    <span class="nf">pop</span> <span class="nb">fs</span>
+    <span class="nf">pop</span> <span class="nb">es</span>
+    <span class="nf">pop</span> <span class="nb">ds</span>
+    <span class="nf">popa</span>
+    <span class="nf">add</span> <span class="nb">esp</span><span class="p">,</span> <span class="mi">8</span>
+    <span class="nf">iret</span></code></pre></figure>
+
+</details>
+
+<h2>The C-Code for the GDT</h2>
+
+<p>So at this point we have the Assembler-Code set up. Next we will build the code that can allocate the required structures in C, call the assembly load functions to load them into the CPU and the C-Functions that get called when an interrupt occurs.</p>
+
+<p>For this we need our “General Descriptor Table” (GDT).</p>
+
+<p><b>gdt.h</b> (new file)</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#pragma once
+#include "common.h"
+</span>
+<span class="k">struct</span> <span class="nc">gdt_entry</span> <span class="p">{</span>
+  <span class="kt">uint16_t</span> <span class="n">limit_low</span><span class="p">;</span>
+  <span class="kt">uint16_t</span> <span class="n">base_low</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">base_middle</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">access</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">granularity</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">base_high</span><span class="p">;</span>
+<span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+
+<span class="k">struct</span> <span class="nc">gdt_ptr</span> <span class="p">{</span>
+  <span class="kt">uint16_t</span> <span class="n">limit</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="nc">gdt_entry</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
+<span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">gdt_flush</span><span class="p">();</span>
+
+<span class="k">struct</span> <span class="nc">gdt_entry</span> <span class="n">gdt</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="k">struct</span> <span class="nc">gdt_ptr</span> <span class="n">gp</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">gdt_set_gate</span><span class="p">(</span><span class="kt">uint32_t</span> <span class="n">num</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">base</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">limit</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">access</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">gran</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_low</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">);</span>
+  <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_middle</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
+  <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&gt;&gt;</span> <span class="mi">24</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
+
+  <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">limit_low</span> <span class="o">=</span> <span class="p">(</span><span class="n">limit</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">);</span>
+  <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">granularity</span> <span class="o">=</span> <span class="p">(</span><span class="n">limit</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x0F</span><span class="p">;</span>
+
+  <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">granularity</span> <span class="o">|=</span> <span class="p">(</span><span class="n">gran</span> <span class="o">&amp;</span> <span class="mh">0xF0</span><span class="p">);</span>
+  <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">access</span> <span class="o">=</span> <span class="n">access</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">gdt_install</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">gp</span><span class="p">.</span><span class="n">limit</span> <span class="o">=</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="nc">gdt_entry</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">gp</span><span class="p">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">gdt</span><span class="p">;</span>
+
+  <span class="n">gdt_set_gate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="n">gdt_set_gate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0xFFFFFFFF</span><span class="p">,</span> <span class="mh">0x9A</span><span class="p">,</span> <span class="mh">0xCF</span><span class="p">);</span>
+  <span class="n">gdt_set_gate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mh">0xFFFFFFFF</span><span class="p">,</span> <span class="mh">0x92</span><span class="p">,</span> <span class="mh">0xCF</span><span class="p">);</span>
+
+  <span class="n">gdt_flush</span><span class="p">(</span><span class="o">&amp;</span><span class="n">gp</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2>The C-Code for the IDT</h2>
+
+<p>The “Interrupt Descriptor Tables” (IDT)</p>
+
+<p><b>idt.h</b> (new file)</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#pragma once
+#include "common.h"
+</span>
+<span class="k">struct</span> <span class="nc">idt_entry</span> <span class="p">{</span>
+  <span class="kt">uint16_t</span> <span class="n">base_low</span><span class="p">;</span>
+  <span class="kt">uint16_t</span> <span class="n">selector</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">zero</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">flags</span><span class="p">;</span>
+  <span class="kt">uint16_t</span> <span class="n">base_high</span><span class="p">;</span>
+<span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+
+<span class="k">struct</span> <span class="nc">idt_ptr</span> <span class="p">{</span>
+  <span class="kt">uint16_t</span> <span class="n">limit</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="nc">idt_entry</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
+<span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">idt_load</span><span class="p">(</span><span class="k">struct</span> <span class="nc">idt_ptr</span> <span class="o">*</span><span class="p">);</span>
+
+<span class="k">struct</span> <span class="nc">idt_entry</span> <span class="n">idt</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+<span class="k">struct</span> <span class="nc">idt_ptr</span> <span class="n">idtp</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">idt_set_gate</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">num</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">base</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">sel</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">flags</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">idt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_low</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">);</span>
+  <span class="n">idt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">;</span>
+
+  <span class="n">idt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">selector</span> <span class="o">=</span> <span class="n">sel</span><span class="p">;</span>
+  <span class="n">idt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">zero</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">idt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">idt_install</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">idtp</span><span class="p">.</span><span class="n">limit</span> <span class="o">=</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="nc">idt_entry</span><span class="p">)</span> <span class="o">*</span> <span class="mi">256</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">idtp</span><span class="p">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">idt</span><span class="p">;</span>
+
+  <span class="n">memset</span><span class="p">((</span><span class="kt">uint8_t</span> <span class="o">*</span><span class="p">)</span><span class="n">idt</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="nc">idt_entry</span><span class="p">)</span> <span class="o">*</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+  <span class="n">idt_load</span><span class="p">(</span><span class="o">&amp;</span><span class="n">idtp</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2>The C-Code for the Interrupt Handlers</h2>
+
+<p>And our handler functions, so-called “Interrupt Service Routines” (ISRs).</p>
+
+<p><b>isrs.h</b> (new file)</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#pragma once
+</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr0</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr1</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr2</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr3</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr4</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr5</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr6</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr7</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr8</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr9</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr10</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr11</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr12</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr13</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr14</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr15</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr16</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr17</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr18</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr19</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr20</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr21</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr22</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr23</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr24</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr25</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr26</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr27</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr28</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr29</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr30</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">isr31</span><span class="p">();</span>
+
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq0</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq1</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq2</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq3</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq4</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq5</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq6</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq7</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq8</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq9</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq10</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq11</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq12</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq13</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq14</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">irq15</span><span class="p">();</span>
+
+<span class="k">typedef</span> <span class="nf">void</span> <span class="p">(</span><span class="o">*</span><span class="n">isr</span><span class="p">)(</span><span class="k">struct</span> <span class="nc">regs</span> <span class="o">*</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">isrs_install</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0xA0</span><span class="p">,</span> <span class="mh">0x11</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x21</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0xA1</span><span class="p">,</span> <span class="mh">0x28</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x21</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0xA1</span><span class="p">,</span> <span class="mh">0x02</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x21</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0xA1</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x21</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0xA1</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">);</span>
+
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr0</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr1</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr2</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr3</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr4</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr5</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr6</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr7</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr8</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr9</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr10</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr11</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr12</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr13</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">14</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr14</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr15</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr16</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr17</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr18</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">19</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr19</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr20</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">21</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr21</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">22</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr22</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">23</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr23</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr24</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr25</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">26</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr26</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">27</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr27</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">28</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr28</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">29</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr29</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr30</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">31</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">isr31</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">32</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq0</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">33</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq1</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">34</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq2</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">35</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq3</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">36</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq4</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">37</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq5</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">38</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq6</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">39</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq7</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq8</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">41</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq9</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">42</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq10</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">43</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq11</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">44</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq12</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">45</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq13</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">46</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq14</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+  <span class="n">idt_set_gate</span><span class="p">(</span><span class="mi">47</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint32_t</span><span class="p">)</span><span class="n">irq15</span><span class="p">,</span> <span class="mh">0x08</span><span class="p">,</span> <span class="mh">0x8E</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">isr</span> <span class="n">interrupt_handlers</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">exception_messages</span><span class="p">[]</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="s">"Division By Zero"</span><span class="p">,</span>
+  <span class="s">"Debug"</span><span class="p">,</span>
+  <span class="s">"Non Maskable Interrupt"</span><span class="p">,</span>
+  <span class="s">"Breakpoint"</span><span class="p">,</span>
+  <span class="s">"Into Detected Overflow"</span><span class="p">,</span>
+  <span class="s">"Out of Bounds"</span><span class="p">,</span>
+  <span class="s">"Invalid Opcode"</span><span class="p">,</span>
+  <span class="s">"No Coprocessor"</span><span class="p">,</span>
+  <span class="s">"Double Fault"</span><span class="p">,</span>
+  <span class="s">"Coprocessor Segment Overrun"</span><span class="p">,</span>
+  <span class="s">"Bad TSS"</span><span class="p">,</span>
+  <span class="s">"Segment Not Present"</span><span class="p">,</span>
+  <span class="s">"Stack Fault"</span><span class="p">,</span>
+  <span class="s">"General Protection Fault"</span><span class="p">,</span>
+  <span class="s">"Page Fault"</span><span class="p">,</span>
+  <span class="s">"Unknown Interrupt"</span><span class="p">,</span>
+  <span class="s">"Coprocessor Fault"</span><span class="p">,</span>
+  <span class="s">"Alignment Check (486+)"</span><span class="p">,</span>
+  <span class="s">"Machine Check (Pentium/586+)"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span><span class="p">,</span>
+  <span class="s">"Reserved"</span>
+<span class="p">};</span>
+
+<span class="kt">void</span> <span class="nf">isr_handler</span><span class="p">(</span><span class="k">struct</span> <span class="nc">regs</span> <span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">interrupt_handlers</span><span class="p">[</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span><span class="p">])</span> <span class="p">{</span>
+    <span class="n">isr</span> <span class="n">handler</span> <span class="o">=</span> <span class="n">interrupt_handlers</span><span class="p">[</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span><span class="p">];</span>
+    <span class="n">handler</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span> <span class="o">&lt;</span> <span class="mi">32</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">terminal_putchar</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
+    <span class="n">terminal_writestring</span><span class="p">(</span><span class="n">exception_messages</span><span class="p">[</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span><span class="p">]);</span>
+    <span class="n">terminal_writestring</span><span class="p">(</span><span class="s">" Interrupt received!"</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">irq_handler</span><span class="p">(</span><span class="k">struct</span> <span class="nc">regs</span> <span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span> <span class="o">&gt;=</span> <span class="mi">40</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">outportb</span><span class="p">(</span><span class="mh">0xA0</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x20</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">);</span>
+  
+  <span class="k">if</span> <span class="p">(</span><span class="n">interrupt_handlers</span><span class="p">[</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span><span class="p">])</span> <span class="p">{</span>
+    <span class="n">isr</span> <span class="n">handler</span> <span class="o">=</span> <span class="n">interrupt_handlers</span><span class="p">[</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span><span class="p">];</span>
+    <span class="n">handler</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">register_interrupt_handler</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">n</span><span class="p">,</span> <span class="n">isr</span> <span class="n">handler</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">interrupt_handlers</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2>One last bit</h2>
+
+<p>I’ve moved the inportb/outportb/delay functions to a common.h as we’re now using them from the keyboard and interrupts.</p>
+
+<p><b>common.h</b> (new)</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#pragma once
+#include &lt;stdbool.h&gt;
+#include &lt;stddef.h&gt;
+#include &lt;stdint.h&gt;
+</span>
+<span class="kt">uint8_t</span> <span class="o">*</span><span class="nf">memset</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">dest</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">dest</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">struct</span> <span class="nc">regs</span> <span class="p">{</span>
+  <span class="kt">uint32_t</span> <span class="n">gs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">es</span><span class="p">,</span> <span class="n">ds</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">edi</span><span class="p">,</span> <span class="n">esi</span><span class="p">,</span> <span class="n">ebp</span><span class="p">,</span> <span class="n">esp</span><span class="p">,</span> <span class="n">ebx</span><span class="p">,</span> <span class="n">edx</span><span class="p">,</span> <span class="n">ecx</span><span class="p">,</span> <span class="n">eax</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">int_no</span><span class="p">,</span> <span class="n">err_code</span><span class="p">;</span>
+  <span class="kt">uint32_t</span> <span class="n">eip</span><span class="p">,</span> <span class="n">cs</span><span class="p">,</span> <span class="n">eflags</span><span class="p">,</span> <span class="n">useresp</span><span class="p">,</span> <span class="n">ss</span><span class="p">;</span>
+<span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">));</span>
+
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">outportb</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">port</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">asm</span> <span class="k">volatile</span> <span class="p">(</span><span class="s">"outb %0, %1"</span> <span class="o">:</span> <span class="o">:</span> <span class="s">"a"</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="s">"Nd"</span><span class="p">(</span><span class="n">port</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">uint8_t</span> <span class="nf">inportb</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">port</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">uint8_t</span> <span class="n">ret</span><span class="p">;</span>
+    <span class="k">asm</span> <span class="k">volatile</span> <span class="p">(</span><span class="s">"inb %1, %0"</span> <span class="o">:</span> <span class="s">"=a"</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">:</span> <span class="s">"Nd"</span><span class="p">(</span><span class="n">port</span><span class="p">));</span>
+    <span class="k">return</span> <span class="n">ret</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2>Include and Build</h2>
+
+<p>Now we can include all our headers in kernel.c</p>
+
+<p><b>kernel.c</b> (modify)</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include "common.h"
+#include "gdt.h"
+#include "idt.h"
+#include "isrs.h"</span></code></pre></figure>
+
+<p>Modify the line for the assembler of our build script to include the parent directory by adding “-i ../” for the “%include” statements.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="k">${</span><span class="nv">AS</span><span class="k">}</span> <span class="nt">-felf32</span> <span class="nt">-i</span> ../ ../boot.asm <span class="nt">-o</span> boot.o </code></pre></figure>
+
+<h2>A Keyboard interrupt</h2>
+
+<p>With all of the above we can now finally register an interrupt for our keyboard.
+For this, inside <b>kernel.c</b>, setup a handler function for the keyboard interrupt.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">void</span> <span class="nf">cb_keyboardInterrupt</span><span class="p">(</span><span class="k">struct</span> <span class="nc">regs</span> <span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">terminal_writestring</span><span class="p">(</span><span class="s">"KEY"</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>and modify our kernel_main initialize and register it with</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="n">register_interrupt_handler</span><span class="p">(</span><span class="n">IRQ</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">cb_keyboardInterrupt</span><span class="p">);</span></code></pre></figure>
+
+<p>We can now adapt our code from the last part of the series to print “.” on the screen continiously and still react to key presses.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#define IRQ(x) x+32
+</span>
+<span class="kt">void</span> <span class="nf">kernel_main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">gdt_install</span><span class="p">();</span>
+  <span class="n">idt_install</span><span class="p">();</span>
+  <span class="n">isrs_install</span><span class="p">();</span>
+  <span class="n">terminal_initialize</span><span class="p">();</span>
+
+  <span class="n">register_interrupt_handler</span><span class="p">(</span><span class="n">IRQ</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">cb_keyboardInterrupt</span><span class="p">);</span>
+ 
+  <span class="n">terminal_writestring</span><span class="p">(</span><span class="s">"Hello, kernel World!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+  
+  <span class="n">keyboardActivePolling_init</span><span class="p">();</span>
+  <span class="k">while</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">uint8_t</span> <span class="n">scancode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="n">scancode</span> <span class="o">=</span> <span class="n">keyboardActivePolling_getScancode</span><span class="p">();</span>
+    <span class="n">delay</span><span class="p">();</span>
+    <span class="n">terminal_putchar</span><span class="p">(</span><span class="sc">'.'</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>The “1” in “IRQ(1)” is what specifies that we’re interested in interrupts from the keyboard.
+For the Floppy Disk Controller we would use “IRQ(6)”, see [7].</p>
+
+<p>See the video above for the result.</p>
+
+<p>We could of course easily request the scancode from the keyboard within the “cb_keyboardInterrupt()” interrupt callback by calling “keyboardActivePolling_getScancode()”. We could then convert it to ASCII and print it on the screen as seen in the keyboard by polling part of the series.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<p>With interrupts working and the keyboard interrupt, we can now focus on loading and saving data to disk.
+The easiest approach to getting functional disk input/output is to write a small floppy disk driver as seen in the next part of the series. Interrupts are useful, because we need to react to the drive changing state.</p>
+
+<hr />
+
+<pre>
+1] https://wiki.osdev.org/Interrupts
+2] https://wiki.osdev.org/Global_Descriptor_Table
+3] https://github.com/deepgovind/MyDOS
+4] https://github.com/Jumhyn/JumOS
+5] https://wiki.osdev.org/Bare_Bones
+6] https://wiki.osdev.org/GDT_Tutorial
+7] https://wiki.osdev.org/Interrupts#General_IBM-PC_Compatible_Interrupt_Information
+</pre>
+
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

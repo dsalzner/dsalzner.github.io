@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/electronics/2015/04/15/Fr-DigiSparkLcdCompassBusPirate.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content=" - Dennis Salzner" />
+  <meta property="og:description" content="" />
+  <meta property="og:url" content="/site/electronics/2015/04/15/Fr-DigiSparkLcdCompassBusPirate.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2015-04-15 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2015-04-15 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2015-04-15 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="" />
+  <meta name="twitter:title" content=" - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2016-04-15-Fr-DigiSparkLcdCompassBusPirate</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title"></div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <h2>Display compass values on a LCD using the DigiSpark</h2>
+<h4>A basis for many common applications.</h4>
+
+<hr />
+
+<p style="font-size: 60%;" align="right">What?</p>
+
+<p style="margin-bottom:16px;">
+Setting up the DigiSpark is described <a href="http://www.dennissalzner.de/wp/2016/03/27/2016-03-27-so-digisparkusb/">here</a>.
+</p>
+
+<p style="margin-bottom:16px;">
+The DigiSpark is a small Arduino-style microcontroller plattform which comes with an on-board power regulator, an Attiny85 and a bootloader which enables programming it via USB. Debugging can be achieved by sending messages through the same USB connection via HID messages. After development, the device can be powered from a USB power source such as a mobile phone charger or a mobile USB battery.
+</p>
+
+<p style="margin-bottom:16px;">
+This guide will discribe how to connect and control an LCD (liquid crystal display) and read a sensor and display the values on the display. Add an actuator and you have a useful device. This can be used for building a thermostat by connecting a temperature sensor and a relay (i.e. thermostat for etching, reflow oven controller). Or  for building a timer that automatically turns on or off a device connected via a relay (i.e. UV exposure box for etching)
+</p>
+
+<p style="font-size: 60%;" align="right">When?</p>
+
+<p style="margin-bottom:16px;">
+Long before Arduinos people would solder their own microcontroller boards on strip boards or etch their own boards. The Atmel AVR microcontroller make this relatively easy, but it is still necessary to wire up at least a power regulator, connectors for programmers and some sort of connection for debugging such as a UART, perhaps with a level-shifter.
+</p>
+
+<p style="margin-bottom:16px;">
+The big potential in Arduino devices is that they have all these features integrated. This requires a lot less soldering. Programming libraries make it a lot easier to develop software for the micro-controllers. Unless you build your own circuit boards with surface mount technology, they will never reach the small size of for instance an Arduino Nano or a DigiSpark. Prices have also dropped far enough to make etching and soldering your own microcontroller boards alsmost totally obsolete, at least for small quantities.
+</p>
+
+<p style="font-size: 60%;" align="right">Background?</p>
+
+<p style="margin-bottom:16px;">
+I have a number of microcontroller projects and ideas that have piled up over recent years, but not too many make it to completion. Oftentimes some flaky connections on the circuit board pospone completing the projects and then something else comes up. This is why I now look into more flexible plattforms I can use for a whole host of applications. DigiSparks with I2C LCDs and Sensors are one such plattform
+</p>
+
+<p style="font-size: 60%;" align="right">How?</p>
+
+<p style="font-size: 150%; margin-bottom:32px; margin-top:32px">
+<b>I2C</b>
+</p>
+
+<p style="margin-bottom:16px;">
+We will be using I2C for the LC-Display and for the sensor. I2C Sensors are very common. There are temperatur sensors, gyroscopes, magnetometers/compass, port expanders and a lot more.
+</p>
+
+<p style="margin-bottom:16px;">
+I2C is a bus system which means that multiple devices are daisy-chained along its communication lines. We will be connecting an LC-Display and a compass module.
+</p>
+
+<p style="font-size: 150%; margin-bottom:32px; margin-top:32px">
+<b>Connecting I2C devices to the DigiSpark</b>
+</p>
+
+<p style="margin-bottom:16px;">
+The DigiSpark has five accessable pins. It is important to note that, as with most protocols, there are special pins on the microcontrollers which need to be used.
+</p>
+
+<p><a href="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/001-digisparkpins.jpg" rel="attachment wp-att-110"><img src="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/001-digisparkpins-300x116.jpg" alt="001-digisparkpins" width="300" height="116" class="alignnone size-medium wp-image-110" /></a></p>
+
+<p style="margin-bottom:16px;">
+The pin 5 (MOSI, Master-Out-Slave-In) and pin 7 (SCK) on the Attiny85 are necessary for I2C communications. These pins are connected to the DigiSpark pins 0 and 2.
+</p>
+
+<p style="margin-bottom:16px;">
+This means I2C SDA (data) must be connected to pin 0 on the DigiSpark and I2C SCL (clock) must be connected to pin 2 on the DigiSpark.
+</p>
+
+<p style="margin-bottom:16px;">
+Vcc and GND must be connected to the I2C devices.
+<p>
+
+<p style="margin-bottom:16px;">
+Also I2C requires pull-ups. I connect two 1,5k Resistors from SDA and SCL to Vcc.
+</p>
+
+<p style="font-size: 150%; margin-bottom:32px; margin-top:32px">
+<b>Connecting the LC-Display</b>
+</p>
+
+<p style="margin-bottom:16px;">
+Connect SCL, SDA, Vcc and GND from the DigiSpark to the LC-Display
+</p>
+
+<a href="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/002-digisparklcd.jpg" rel="attachment wp-att-111"><img src="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/002-digisparklcd-208x300.jpg" alt="002-digisparklcd" width="208" height="300" class="alignnone size-medium wp-image-111" /></a>
+
+<p style="margin-bottom:16px;">
+There is a code example in the DigiSpark code library. Access it from the Arduino Library under "File" -&gt; "Examples" -&gt; "DigiSparkLCD", "Basic Usage".
+
+The code looks like this:
+
+<code>
+#include &quot;LiquidCrystal_I2C_b.h&quot;<br />#include &lt;TinyWireM.h&gt;<br /><br />LiquidCrystal_I2C lcd(0x27,16,2);<br /><br />void setup() {<br />  lcd.init();<br />  lcd.backlight();<br />  lcd.print(&quot;Hello World!&quot;);<br />}<br /><br />void loop(){}
+</code>
+
+<p style="margin-bottom:16px;">
+I found that this worked out of the box once I had the contrast potentiometer on the display set correctly. 
+</p>
+
+<p style="margin-bottom:16px;">
+My display uses the pcf8574 i2c port expander. It's I2C adress is 0x27. Other port expanders have different adresses. I have verfied this using a BusPirate, but this information can also be found in the data sheet. The port expander is soldered to the back of an HD44780 conform display.
+</p>
+
+<a href="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/003-lcdi2c.jpg" rel="attachment wp-att-112"><img src="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/003-lcdi2c-300x278.jpg" alt="003-lcdi2c" width="300" height="278" class="alignnone size-medium wp-image-112" /></a>
+
+<p style="margin-bottom:16px;">
+Another very interesting example can be found in the Arduino IDE under  "File" -&gt; "Examples" -&gt; "DigiSparkUSB", "DigiUSB2LCD". That example receives USB HID messages via USB and displays them on the LC-Display. You can use "monitor.exe" (see <a href="http://www.dennissalzner.de/wp/2016/03/27/2016-03-27-so-digisparkusb/">here</a>) to directly write to the Display. This is by far the most convinient way I have seen to hook an LC-Display to a computer.
+</p>
+
+<a href="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/005-DigiSparkUsbwriteToLcd.jpg" rel="attachment wp-att-113"><img src="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/005-DigiSparkUsbwriteToLcd-267x300.jpg" alt="005-DigiSparkUsbwriteToLcd" width="267" height="300" class="alignnone size-medium wp-image-113" /></a>
+
+<p style="font-size: 150%; margin-bottom:32px; margin-top:32px">
+<b>Connecting the Sensor</b>
+</p>
+
+<p style="margin-bottom:16px;">
+The sensor I use in this example is an HMC5883L triple axis magnetometer. 
+</p>
+
+<p style="margin-bottom:16px;">
+It is connected to the DigiSparks I2C connections in-line with the LC-Display.
+</p>
+
+<a href="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/004-digisparkCompassLcd.jpg" rel="attachment wp-att-114"><img src="https://www.dennissalzner.de/wp/wp-content/uploads/2016/04/004-digisparkCompassLcd-300x152.jpg" alt="004-digisparkCompassLcd" width="300" height="152" class="alignnone size-medium wp-image-114" /></a>
+
+<p style="margin-bottom:16px;">
+I found some code for the DigiSpark which is very similar to my own code (<a href="http://www.dennissalzner.de/2015-04-02-Do-HMC5883compassFT232RLbitbangI2CPython.html">here</a>) and it worked. The only changes I made was to replace "Wire.h" by "TinyWireM.h and modify the rest of the code accordingly. The original code is <a href="https://digistump.com/wiki/digispark/tutorials/9dof">here</a>.
+</p>
+
+<code>
+#define HMC5883       0x3C<br /><br />void writeRegister(uint8_t address, uint8_t reg, uint8_t val){<br />      TinyWireM.beginTransmission(address);<br />      TinyWireM.send(reg);<br />      TinyWireM.send(val);<br />      TinyWireM.endTransmission();<br />    }<br /><br />void initMagnetometer(){<br />  writeRegister(HMC5883, 0x02, 0x00); //enable<br />}<br /><br />void readMagnetometer(){<br />  TinyWireM.beginTransmission(HMC5883);<br />  TinyWireM.send(0x03);  //format X_H_M <br />  TinyWireM.endTransmission();<br />  TinyWireM.requestFrom(HMC5883, (byte)6);<br /><br />  // Wait around until enough data is available<br />  while (Wire.available() &lt; 6);<br /><br />  // Note high before low (different than accel)<br />  uint8_t hi = TinyWireM.receive();<br />  uint8_t lo = TinyWireM.receive();<br />  // Shift values to create properly formed integer (low byte first)<br />  magX = (int16_t)(hi | ((int16_t)lo &lt;&lt; 8));<br />  // Note high before low (different than accel) <br />  hi = TinyWireM.receive();<br />  lo = TinyWireM.receive();<br />  // Shift values to create properly formed integer (low byte first)<br />  magY = (int16_t)(hi | ((int16_t)lo &lt;&lt; 8));<br />  // Note high before low (different than accel)<br />  hi = TinyWireM.receive();<br />  lo = TinyWireM.receive();<br />  // Shift values to create properly formed integer (low byte first)<br />  magZ = (int16_t)(hi | ((int16_t)lo &lt;&lt; 8));  <br />}
+</code>
+
+<p style="font-size: 150%; margin-bottom:32px; margin-top:32px">
+<b>Putting it all together</b>
+</p>
+
+<p style="margin-bottom:16px;">
+The goal is to display the compass values on the LC-Display. 
+</p>
+
+This is the completed code:
+
+<code>
+#include &lt;TinyWireM.h&gt;<br />#include &lt;LiquidCrystal_I2C.h&gt;<br /><br />#define GPIO_ADDR     0x27<br />#define HMC5883       0x1E<br /><br />int16_t magX = 0;<br />int16_t magY = 0;<br />int16_t magZ = 0;<br /><br />LiquidCrystal_I2C lcd(GPIO_ADDR,16,2);<br /><br />void setup(){<br />  TinyWireM.begin();<br />  initMagnetometer();<br />  lcd.init();<br />  lcd.backlight();<br />  lcd.print(&quot;Hello!&quot;);<br />  delay (1000);<br />}<br /><br />void loop(){<br />  readMagnetometer();<br />  lcd.clear();<br />  lcd.print(&quot;x: &quot;);<br />  lcd.print(magX,DEC);<br />  lcd.setCursor(7,0);<br />  lcd.print(&quot;y: &quot;);<br />  lcd.print(magY,DEC);<br /><br />  delay (500);<br />}<br /><br />void writeRegister(uint8_t address, uint8_t reg, uint8_t val){<br />      TinyWireM.beginTransmission(address);<br />      TinyWireM.send(reg);<br />      TinyWireM.send(val);<br />      TinyWireM.endTransmission();<br />    }<br />    <br />void initMagnetometer(){<br />  writeRegister(HMC5883, 0x02, 0x00); //enable<br />}<br /><br />void readMagnetometer(){<br />  TinyWireM.beginTransmission(HMC5883);<br />  TinyWireM.send(0x03);  //format X_H_M <br />  TinyWireM.endTransmission();<br />  TinyWireM.requestFrom(HMC5883, (byte)6);<br /><br />  // Wait around until enough data is available<br />  while (Wire.available() &lt; 6);<br /><br />  // Note high before low (different than accel)<br />  uint8_t hi = TinyWireM.receive();<br />  uint8_t lo = TinyWireM.receive();<br />  // Shift values to create properly formed integer (low byte first)<br />  magX = (int16_t)(hi | ((int16_t)lo &lt;&lt; 8));<br />  // Note high before low (different than accel) <br />  hi = TinyWireM.receive();<br />  lo = TinyWireM.receive();<br />  // Shift values to create properly formed integer (low byte first)<br />  magY = (int16_t)(hi | ((int16_t)lo &lt;&lt; 8));<br />  // Note high before low (different than accel)<br />  hi = TinyWireM.receive();<br />  lo = TinyWireM.receive();<br />  // Shift values to create properly formed integer (low byte first)<br />  magZ = (int16_t)(hi | ((int16_t)lo &lt;&lt; 8));  <br />}
+</code>
+
+<p style="font-size: 60%;" align="right">Progress?</p>
+
+<p style="margin-bottom:16px;">
+It took a while for me to piece this together, but I am certain it will be very useful on many occasions.
+</p>
+
+<script type="text/javascript">
+     SyntaxHighlighter.all()
+</script>
+</p></p></p>
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

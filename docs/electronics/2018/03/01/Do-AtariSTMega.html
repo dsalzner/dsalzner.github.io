@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/electronics/2018/03/01/Do-AtariSTMega.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Running the Atari ST Mega from the 1980s early 90s in 2017 - Dennis Salzner" />
+  <meta property="og:description" content="The Atari ST Mega home computer was produced from 1985 to 1994. It uses the Motorola 68k line of chips as its main processor with a 16 bit data bus. The Atar..." />
+  <meta property="og:url" content="/site/electronics/2018/03/01/Do-AtariSTMega.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2018-03-01 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2018-03-01 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2018-03-01 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="The Atari ST Mega home computer was produced from 1985 to 1994. It uses the Motorola 68k line of chips as its main processor with a 16 bit data bus. The Atar..." />
+  <meta name="twitter:title" content="Running the Atari ST Mega from the 1980s early 90s in 2017 - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2018-03-01-Do-AtariSTMega</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">Running the Atari ST Mega from the 1980s early 90s in 2017</div>
+<div class="page-subtitle">Bringing the Atari ST Mega to 2017</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p><img src="../../../../images/2018-03-01-Do-AtariSTMega/001-atari-r.jpg" width="320px" /></p>
+
+<p style="font-size: 60%;" align="right">What</p>
+
+<p>The Atari ST Mega home computer was produced from 1985 to 1994. It uses the Motorola 68k line of chips as its main processor with a 16 bit data bus. The Atari ST Mega that I have came with an Atari Megafile hard disk and Atari SM124 monochrome monitor. In the following I describe the modifications I have made to make the computer useable in the 21st century. I have taken great care to keep the machine unaltered and merely added adaptors and replaced components that can be reverted back, in order to preserve the computer for future years to come.</p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>I have revisited this project from time to time. The Atari ST sat on my shelf for years, but ever so often I try some software, devlop something or program assembler code on it. To me it’s the perfect plattform to try out assembler, because the plattform is at a bare minimum in terms of complexity. I use the Mas-86k assembler, Omikron Basic or Turbo C to programm software for the Atari.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>The Atari ST is the first computer I learned programming on and it holds a sentimental value for me since. Running the computer today requires overcoming a few challenges. Most notably the hard drives are common to fail after such a long time. I also wouldn’t trust the monitor anymore and would not leave it running unsupervised.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<p><strong>Floppy Drive:</strong></p>
+
+<p>The first modification I made date back to 2013. The original floppy drive in the Atari ST did not function anymore. With the hard drive being defunct as well, there was no way to use the computer at all. I found a way to connect standard IDE floppy drives to the Atari. The procedure is fairly simple: It requires resoldering an old Floppy IDE cable. Floppy cables twist some of the inner wires. On IBM computers this selects whether the drive is to be recognized as A: or B:. For the Atari, we need to get rid of this twist and solder the wires straght. An old Windows computer with another IDE floppy was used to write floppy images found on the Internet. This way I was able to load and run software.</p>
+
+<p><a href="../../../../images/2018-03-01-Do-AtariSTMega/002-floppy.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/002-floppy-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-03-01-Do-AtariSTMega/003-floppy.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/003-floppy-t.jpg" alt="" class="" style="" /></a></p>
+
+<p><strong>Serial Port:</strong></p>
+
+<p>After that I built a small RS232 adapter for serial connections. This adapter converts the Atari ST’s DB25 Modem Connector to modern DB9 RS232 that can be connected to a modern computer either directly or via a USB-to-Serial Adapter. Atari software such as “TAZ” from 1994 can be used to send messages back and forth from the Atari and a serial communication sesson in Putty on the modern computer. By using TAZ on the Atari ST and minicom on Linux, files can be transfered via the serial connection.</p>
+
+<p><a href="../../../../images/2018-03-01-Do-AtariSTMega/004-serial.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/004-serial-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-03-01-Do-AtariSTMega/005-serial.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/005-serial-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p><strong>Power Cord:</strong></p>
+
+<p>In 2014, after switching apartments, I was out of power cords. The Atari ST requires three for the main computer, the hard drive and the monitor. I built a custom plug that connects to one wall socket and provides three plugs for the Atari on the other end.</p>
+
+<p><a href="../../../../images/2018-03-01-Do-AtariSTMega/006-power.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/006-power-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p><strong>Hard Drive Plug:</strong></p>
+
+<p>The defunct hard drive meant having to switch floppy disks for loading different desktop environments, software and accessing files. In 2016, I started reading about hard drive adapters. The Atari uses a fairly uncommon hard drive interface “ACSI”. It is similar to “SCSI”, but not compatible. SCSI drives can be connected via expensive adapters. Another solution are ACSI-to-IDE or SD-Card adapters. Apparantly also old Iomega ZIP and JAZ Drives can be connected via rare adapters. I didn’t find a compelling solution so far. I did however build a plug for the ACSI port. For this I cut out a segment from a standard DB25 plug and then glued together the two halves. Seeing that the prices for FPGAs have decresed quite a bit, I might try to design my own SD-Card to ACSI adapter. This has been done before using a CPLD to catch the timing in conjunction with a micro-controller for the protocol translation (see Jookie’s <a href="http://joo.kie.sk/?page_id=55/">work</a>).</p>
+
+<p><a href="../../../../images/2018-03-01-Do-AtariSTMega/007-acsi.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/007-acsi-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-03-01-Do-AtariSTMega/008-acsi.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/008-acsi-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p><strong>Monitor Adapter:</strong></p>
+
+<p>Also in 2016 I tried to build a VGA adapter. The Atari Monitor, SM124, I have works fine, but I’m not sure for how long and I’m concerened that such an old monitor may implode at some point. The first adapter I built didn’t work and I let it rest. In 2017 I succeeded using a different LCD Monitor and 75 Ohm Resistors for each the Red, Green and Blue VGA channels. This worked extremly well. In order to connect the adapter to the Atari ST a special plug was necessary. I took a shortcut here and put individual pins in the Atari’s Monitor port. I then soldered these pins to a perfboard. After soldering wires to that and adding the female VGA connector to the other end, the whole contraption was sealed with lots of hot glue. Hot glue can be molded when it’s cooled down, but not fully hardened yet. This was an easy solution for a fairly rigid adapter. The blue wire, together with the black Ground wire, can be used for audio, but I haven’t connected that yet.</p>
+
+<p><a href="../../../../images/2018-03-01-Do-AtariSTMega/009-monitor.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/009-monitor-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-03-01-Do-AtariSTMega/010-monitor.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/010-monitor-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2018-03-01-Do-AtariSTMega/011-monitor.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2018-03-01-Do-AtariSTMega/011-monitor-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<p><strong>Mouse and Keyboard:</strong></p>
+
+<p>What’s missing now are proper mouse and keyboard adapters. I’ve read a lot online and it seems to be a fairly easy to build such adapters. It does however require a microcontroller to actively translate the signals. The easiest approach is to use a PS/2 Keyboard and Mouse. There are many Arduino PS/2 software libraries. Most USB keyboards and mice have a fallback mode to PS/2. Otherwise adapters can be found online that translate USB to PS/2. Using PS/2 instead of USB makes the adapter a lot easier to build, because it doesn’t require a USB stack. From there the adapter needs to translate PS/2 to the Atari Mouse and Keyboard signals.</p>
+
+<p><strong>Floppy Drive Emulation:</strong></p>
+
+<p>Regarding the hard drive I’ve found a cheaper and easier solution than converting ACSI - for now. The Gotek Floppy Emulator is a drop-in replacement for IDE Floppy drives. It reads floppy images from a USB Stick. Two buttons allow switching to the next or previous image. This is transparent to the Atarias it sees a standard floppy disk drive from which the previous disk was removed and a new one was inserted.</p>
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

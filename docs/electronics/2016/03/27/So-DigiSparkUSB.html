@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/electronics/2016/03/27/So-DigiSparkUSB.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="DigiSparkUSB - Dennis Salzner" />
+  <meta property="og:description" content="The DigiStump DigiSpark is an excellent microcontroller development board. The price of only 1-2 Euro is so low you can drop it in your designs and leave it ..." />
+  <meta property="og:url" content="/site/electronics/2016/03/27/So-DigiSparkUSB.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2016-03-27 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2016-03-27 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2016-03-27 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="The DigiStump DigiSpark is an excellent microcontroller development board. The price of only 1-2 Euro is so low you can drop it in your designs and leave it ..." />
+  <meta name="twitter:title" content="DigiSparkUSB - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2016-03-27-So-DigiSparkUSB</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">DigiSparkUSB</div>
+<div class="page-subtitle">Setting up the DigiSpark for easy Arduino Development</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>The DigiStump DigiSpark is an excellent microcontroller development board. The price of only 1-2 Euro is so low you can drop it in your designs and leave it there. This even beats the price of soldering your own AVR Board which would require connecting a programmer, a UART for debugging and a some sort of power circuitry. The DigiStump has all of this integrated at the size of a postage stamp.</p>
+
+<p>This Guide will show you how to setup the Arduino IDE, configure it for use with the DigiSpark Board, set up the drivers, connect it and compile and program the „Echo“ Example, which enables sending data to and from the DigiSpark via USB using either Python or C++.</p>
+
+<p>The result is a very useful environment for programming micro-controllers. A single USB cable is used for powering the DigiSpark, programming it and debugging it by enabling commands to be sent to and from the DigiSpark via the computer. No programming adapter and no UART setup is required. All the pins remain free for other purposes. The USB cable can later be swapped for a USB battery pack or phone charger for in-circuit use.</p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>I’ve had a few DigiStump board lying around for a while, but I never got around to using them for anything good. I’ve also avoided Arduinos, because I want to write my own code and build my own custom boards. They are also too expensive for me to add to projects and forget. One day I put a DigiSpark to the test for a bathroom scale project. I had found code for the talking to the sensor chip in the scale and it had multiple dependencies on Arduino libraries.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>The prospect is to have a small and simple microcontroller board which can be conviniently programmed and debugged without connecting a whole harness of cables to it. I have a number of small projects such as sensors I need to interface the computer with or sensors I want to translate to I2C, so larger microcontrollers can access them.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>I came across these boards when I had a look at a bootloader for an Atmega8, the TinyUSBBoard. It allows the Atmega8 to be programmed via USB without connecting an external Programmer. Some tricks also allow it to communicate to the PC via USB HID messages, but this is somewhat difficult to set up. In my experience the Board is rather instable and requires a lot of soldering.</p>
+
+<p>The DigiStump also uses the micronucleus bootloader, but as a commercial product, it is far better supported. The Board nearly works out of the box.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h3 id="1-download-and-install-arduino-ide">1. Download and install Arduino IDE</h3>
+
+<p>Download and run „arduino-1.6.8-windows.exe“ from <a href="https://www.arduino.cc/en/Main/Software">https://www.arduino.cc/en/Main/Software</a>.</p>
+
+<h3 id="2-configure-ide-for-digispark">2. Configure IDE for DigiSpark</h3>
+
+<p>In the „File“ menu, select „Preferences“.</p>
+
+<p><a href="../../../../images/2016-03-27-So-DigiSparkUSB/001.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-03-27-So-DigiSparkUSB/001-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>In the box labeled “Additional Boards Manager URLs” enter: http://digistump.com/package_digistump_index.json</p>
+
+<p><a href="../../../../images/2016-03-27-So-DigiSparkUSB/002.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-03-27-So-DigiSparkUSB/002-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>Then, in the „Tools“ menu go to the „Board“ submenu and select „Board Manager“. Select „Contributed“ in the „Type“ drop-down menu. Then select the „Digistump AVR Boards“ package and click on „Install“.</p>
+
+<p><a href="../../../../images/2016-03-27-So-DigiSparkUSB/003.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-03-27-So-DigiSparkUSB/003-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p><a href="../../../../images/2016-03-27-So-DigiSparkUSB/004.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-03-27-So-DigiSparkUSB/004-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p><a href="../../../../images/2016-03-27-So-DigiSparkUSB/005.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-03-27-So-DigiSparkUSB/005-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>After completion „Digispark (Default – 16.5mhz)“ will be available in the „Boards“ submenu under „Tools“.</p>
+
+<p><a href="../../../../images/2016-03-27-So-DigiSparkUSB/006.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-03-27-So-DigiSparkUSB/006-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p>(see also <a href="https://digistump.com/wiki/digispark/tutorials/connecting">here</a>)</p>
+
+<h3 id="3-driver-installation">3. Driver installation</h3>
+
+<p>The DigiStump connects to the computer via USB and needs drivers. Download them from <a href="https://github.com/digistump/DigistumpArduino/releases/download/1.6.7/DigistumpDrivers.zip">https://github.com/digistump/DigistumpArduino/releases/download/1.6.7/DigistumpDrivers.zip</a></p>
+
+<p>(see also <a href="https://digistump.com/wiki/digispark/tutorials/connecting">here</a>)</p>
+
+<h3 id="4-connect">4. Connect</h3>
+
+<p>Connect the DigiSpark to the USB port.</p>
+
+<p>Note: It should show up as „DigiUSB“ under „libusb-win32-devices“ in the Windows Device Manager. If it appears as an „unknown device“, something with the driver installation went wrong.</p>
+
+<p><a href="../../../../images/2016-03-27-So-DigiSparkUSB/007.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-03-27-So-DigiSparkUSB/007-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<h3 id="5-upload-a-program-for-testing">5. Upload a program for testing</h3>
+
+<p>The demo program we will be uploading is called „Echo“. It utilizes the USB HID interface to send messages back and forth between the DigiSpark and the computer. This is very useful for debugging and controlling software as this enables – albeit slow – bidirectional communication via the same USB cable the DigiSpark is programmed by without additional hardware.</p>
+
+<p>In the „File“ menu under „Examples“ open „DigiSparkUSB“ and select „Echo“.</p>
+
+<p>After the program/sketch opens, click on „Upload“ in the „Sketch“ menu.</p>
+
+<p>In order to programm the DigiSpark it has to be disconnected and reconnected to the USB port. The Arduino IDE waits for this to happen.</p>
+
+<h3 id="6-run-receiver-software">6. Run receiver-software</h3>
+
+<p>On the computer we need to run special software to receive the USB HID messages from the DigiSpark.</p>
+
+<p>There are three different versions available. A version written in Ruby which I found to work under Linux, but not under Windows. It is a bit of a hassle to install, if you need to install Ruby first. The C++ version needs to be compiled. Then there is a Python version, which I use, because I write most of my software in Python. It also pre-compiled and runs out of the box.</p>
+
+<p>Download the master zip-File from <a href="https://github.com/digistump/DigisparkExamplePrograms.git">https://github.com/digistump/DigisparkExamplePrograms.git</a>
+. (This is an approx. 110 MB file).</p>
+
+<p>Extract and run „monitor.exe“ from „DigisparkExamplePrograms-master\DigisparkExamplePrograms-master\Python\DigiUSB\windows“</p>
+
+<p>It should now be possible to send and receive messages from the DigiSpark.</p>
+
+<p><a href="../../../../images/2016-03-27-So-DigiSparkUSB/008.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-03-27-So-DigiSparkUSB/008-t.jpg" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<p>The DigiSpark is now set up and ready for use. Programming it can be achieved without connecting additional hardware. Sending debug messages to the computer is possible via the USB HID connection. This yields a very versatile platform, which will be very useful in future projects.</p>
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/programming/2021/12/16/Do-CustomOsPt3-KeyboardPolling.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.3 - Keyboard input with active polling - Dennis Salzner" />
+  <meta property="og:description" content="For a Custom OS to be any kind of useful we need some means of interaction with the user. One way to interact with our custom OS is keyboard input. With the ..." />
+  <meta property="og:url" content="/site/programming/2021/12/16/Do-CustomOsPt3-KeyboardPolling.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2021-12-16 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2021-12-16 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2021-12-16 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="For a Custom OS to be any kind of useful we need some means of interaction with the user. One way to interact with our custom OS is keyboard input. With the ..." />
+  <meta name="twitter:title" content="CustomOS - Pt.3 - Keyboard input with active polling - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2021-12-16-Do-CustomOs-Pt3-KeyboardWithActivePolling</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">CustomOS - Pt.3 - Keyboard input with active polling</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS) - How hard could that be?</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<h2>What we are trying to achieve</h2>
+
+<p>For a Custom OS to be any kind of useful we need some means of interaction with the user. We already have printing on screen since Part 2 of the series, but this is only one way: the OS can speak to the user, but the user can’t talk back.</p>
+
+<p>One way to interact with our custom OS is keyboard input. With the ability to print text on screen and get keyboard input from the user we can already build simple dialog systems.</p>
+
+<h2>What to expect</h2>
+
+<p>At the end of this part of the series you will be able to type on your keyboard and see the characters be printed on screen by your CustomOS.</p>
+
+<p><img src="../../../../images/2021-12-16-Do-CustomOsPt3-KeyboardPolling/customos-typing.gif" /></p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2>Keyboard input early on</h2>
+
+<p>I’ve chosen to put keyboard input early on, as point two of this projects roadmap (see roadmap in Part 1 of the series), in order to get means to interact with our kernel. This will also become valuable for debugging and testing purposes.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h2>Why keyboard input</h2>
+
+<p>With keyboard input we can already implement first useable applications. We could for instance print a menu and a user can make his selection by keyboard. We could then carry on in our program depending on that user selection. This is aleady enough for e.g. a simple text based adventure game.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2>Keyboards, PIC and PS/2 Emulation</h2>
+
+<p>Traditionally on x86 computers the keyboard input is handled by the 8259A Programmable Interrupt Controller (PIC).
+The keyboard is electrically connected to the PIC and can be queried for the scancode of the keyboard. This scancode alters depending on what button was pressed or released.</p>
+
+<p>Modern computers have an APIC, a further advancement of that original PIC. Modern computers also support USB-Keyboards by the USB-HID(Human Interface Device) class.
+USB-HID is relatively complicated to support in a Custom OS, although it can of course, be done and there are small libraries for Arduino’s (based on ATmega micro-controllers).</p>
+
+<p>As a starting point and for simplicity we can rely on the PS/2-Emulation of most modern BIOSes that emulates the old PIC and use that directly. This is far easier than implementing a USB-HID-Device-Interface and is sufficient for now.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2>Reading and Writing to Keyboard Buffers</h2>
+
+<p><b>keyboard/keyboardActivePolling.h</b></p>
+
+<p>The following code snippets can be copied to a file, <b>keyboardActivePolling.h</b>, one after another.</p>
+
+<p>To read and write to the keyboard, we use special buffers reserved for the keyboard in the PIC.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#define KBC_STATUS   0x64
+#define KBC_EA       0x60</span></code></pre></figure>
+
+<p>I’ll be dropping the scancode we’ve read from the keyboard to a global variable for simplicity.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">uint8_t</span> <span class="n">keyboardActivePolling_lastScanCode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span></code></pre></figure>
+
+<p>To read and write to these buffers we use the <b>inb</b> and <b>outb</b> CPU instructions. As we’re running our own kernel we have full privilidges to run these low-level commands.
+We can run these assembly commands straight from our C-Code as inline assembly:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">static</span> <span class="kr">inline</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="nf">inportb</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">_port</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">rv</span><span class="p">;</span>
+  <span class="n">__asm__</span> <span class="n">__volatile__</span> <span class="p">(</span><span class="s">"inb %1, %0"</span> <span class="o">:</span> <span class="s">"=a"</span> <span class="p">(</span><span class="n">rv</span><span class="p">)</span> <span class="o">:</span> <span class="s">"dN"</span> <span class="p">(</span><span class="n">_port</span><span class="p">));</span>
+  <span class="k">return</span> <span class="n">rv</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">outportb</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">_port</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">_data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">__asm__</span> <span class="n">__volatile__</span> <span class="p">(</span><span class="s">"outb %1, %0"</span> <span class="o">:</span> <span class="o">:</span> <span class="s">"dN"</span> <span class="p">(</span><span class="n">_port</span><span class="p">),</span> <span class="s">"a"</span> <span class="p">(</span><span class="n">_data</span><span class="p">));</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Much of the fun of writing your own Custom OS is that we can do this sort of low-level programming which would not be possible in a conventional operating system.</p>
+
+<p>If we were to run our kernel on real hardware we would, of course, risk potentially damaging the hardware. I suggest to stay in QEmu-Emulation and if you’d like to run the kernel on real hardware to do that only on old dispensable computers.</p>
+
+<p>Almost all machine interaction in the kernel of our custom OS is reading and writing bytes by these two functions.</p>
+
+<p>As a start I’ve chosen to use <b>active polling</b>. Active polling means continiously asking the keyboard if it has a scancode that we can read. This is highly inefficient as during polling the CPU is unable to carry out other tasks.</p>
+
+<p>A much better approach, which I will be covering in the next post, is to set a keyboard intterupt and use an interrupt handling routing. With that in place the CPU can work on other tasks and get “interrupted” by the keyboard only when there is new input instead of consuming all of its CPU cycles with continiously checking the keyboard.</p>
+
+<h2>A Delay function</h2>
+
+<p>For the first approach with active polling we need a way to add a delay between each request to the keyboard.
+Traditionally programming languages provide a delay function.
+A good delay function would be given a number in units of time. It would then count CPU cycles that have passed and, having queries the CPU and realtime clock, can compute the number of CPU cycles per micro-seconds in order to wait the expected time.</p>
+
+<p>Since we don’t have the code for enumerating the CPU cycles or the realtime clock a rough delay function that executes the “nop” machine instruction (nop=”no operation”) can be used.
+The actual delay will vary depending on the current CPU frequency, but it’s sufficient for our first active polling keyboard driver.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">void</span> <span class="nf">delay</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">1000000</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// accurate time delay would require CPU ClockCycles/USec conversion</span>
+    <span class="n">__asm__</span> <span class="n">__volatile__</span> <span class="p">(</span><span class="s">"nop"</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2>Sending commands to a keyboard</h2>
+
+<p>In order to send commands to the keyboard we should make sure the buffers are free and the keyboard is ready</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">static</span> <span class="kt">void</span> <span class="nf">keyboardActivePolling_sendCommand</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">command</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">while</span> <span class="p">((</span><span class="n">inportb</span><span class="p">(</span><span class="n">KBC_STATUS</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">2</span><span class="p">))</span> <span class="p">{}</span> <span class="c1">// wait until cmd buffer is free</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="n">KBC_EA</span><span class="p">,</span> <span class="n">command</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2>Retrieving scancodes from the keyboard</h2>
+
+<p>The scancode we will receive from the keyboard consist of lower and upper-bytes that need to be combined.
+This code is taken from the osdev bare bones tutorial [1].</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">uint32_t</span> <span class="nf">keyboardActivePolling_getScancode</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">static</span> <span class="kt">unsigned</span> <span class="n">e0_code</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">static</span> <span class="kt">unsigned</span> <span class="n">e1_code</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">static</span> <span class="kt">uint16_t</span> <span class="n">e1_prev</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kt">uint8_t</span> <span class="n">scancode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">inportb</span><span class="p">(</span><span class="n">KBC_STATUS</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// a scancode is available in the buffer</span>
+    <span class="n">scancode</span> <span class="o">=</span> <span class="n">inportb</span><span class="p">(</span><span class="n">KBC_EA</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">e0_code</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// scancode is an e0 code</span>
+      <span class="n">e0_code</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="k">return</span> <span class="p">(</span><span class="mh">0xe000</span> <span class="o">|</span> <span class="n">scancode</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">e1_code</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// scancode is first byte of e1 code</span>
+      <span class="n">e1_prev</span> <span class="o">=</span> <span class="n">scancode</span><span class="p">;</span>
+      <span class="n">e1_code</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span>  <span class="k">if</span> <span class="p">(</span><span class="n">e1_code</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// scancode is second byte of e1 code (first is in e1_prev)</span>
+      <span class="n">e1_code</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+      <span class="k">return</span> <span class="p">(</span><span class="mh">0xe10000</span> <span class="o">|</span> <span class="n">e1_prev</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">|</span> <span class="n">scancode</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scancode</span> <span class="o">==</span> <span class="mh">0xe0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">e0_code</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="n">scancode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scancode</span> <span class="o">==</span> <span class="mh">0xe1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">e1_code</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="n">scancode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">scancode</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2>Access functions for our Keyboard code</h2>
+
+<p>With that we can build an init and loop function. The latter polls the keyboard, thereby blocking (active polling) until a key is pressed.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">void</span> <span class="nf">keyboardActivePolling_init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// empty keyboard buffer</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">inportb</span><span class="p">(</span><span class="n">KBC_STATUS</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">inportb</span><span class="p">(</span><span class="n">KBC_EA</span><span class="p">);</span>
+  <span class="p">}</span>
+
+  <span class="c1">// activate keyboard</span>
+  <span class="n">keyboardActivePolling_sendCommand</span><span class="p">(</span><span class="mh">0xF4</span><span class="p">);</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">inportb</span><span class="p">(</span><span class="n">KBC_STATUS</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">inportb</span><span class="p">(</span><span class="n">KBC_EA</span><span class="p">);</span> <span class="c1">// read (and drop) what's left in the keyboard buffer</span>
+  <span class="p">}</span>
+
+  <span class="c1">// self-test (should answer with 0xEE)</span>
+  <span class="n">keyboardActivePolling_sendCommand</span><span class="p">(</span><span class="mh">0xEE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">keyboardActivePolling_loop</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">uint8_t</span> <span class="n">scancode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">((</span><span class="n">scancode</span> <span class="o">=</span> <span class="n">keyboardActivePolling_getScancode</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>  <span class="p">{</span> <span class="c1">// loop until we get a keypress</span>
+    <span class="n">delay</span><span class="p">();</span>
+  <span class="p">}</span>
+  <span class="n">keyboardActivePolling_lastScanCode</span> <span class="o">=</span> <span class="n">scancode</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>Now with that we initialize the keyboard from the Kernel with “keyboardActivePolling_init()” and then ask for the last pressed key on the keyboard with “keyboardActivePolling_loop()”.
+The scancode of that key is then stored in “keyboardActivePolling_lastScanCode”.</p>
+
+<h2>Translating Keyboard scancodes to readable ASCII text</h2>
+
+<p><b>keyboard/keyboardActivePolling.h</b></p>
+
+<p>The scancode is only in-part useful. The control sequences (tab, shift, control, enter, …) can be used directly.
+But if we want to convert what was typed to readable text we need to convert to ASCII-symbols.</p>
+
+<p>The conversion will depend on your keyboard layout. For a US-keyboard layout the following mapping is floating around on the web [1]:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">char</span> <span class="n">kbd_US</span> <span class="p">[</span><span class="mi">128</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="mi">27</span><span class="p">,</span> <span class="sc">'1'</span><span class="p">,</span> <span class="sc">'2'</span><span class="p">,</span> <span class="sc">'3'</span><span class="p">,</span> <span class="sc">'4'</span><span class="p">,</span> <span class="sc">'5'</span><span class="p">,</span> <span class="sc">'6'</span><span class="p">,</span> <span class="sc">'7'</span><span class="p">,</span> <span class="sc">'8'</span><span class="p">,</span> <span class="sc">'9'</span><span class="p">,</span> <span class="sc">'0'</span><span class="p">,</span> <span class="sc">'-'</span><span class="p">,</span> <span class="sc">'='</span><span class="p">,</span> <span class="sc">'\b'</span><span class="p">,</span>
+  <span class="sc">'\t'</span><span class="p">,</span> <span class="cm">/* &lt;-- Tab */</span>
+  <span class="sc">'q'</span><span class="p">,</span> <span class="sc">'w'</span><span class="p">,</span> <span class="sc">'e'</span><span class="p">,</span> <span class="sc">'r'</span><span class="p">,</span> <span class="sc">'t'</span><span class="p">,</span> <span class="sc">'y'</span><span class="p">,</span> <span class="sc">'u'</span><span class="p">,</span> <span class="sc">'i'</span><span class="p">,</span> <span class="sc">'o'</span><span class="p">,</span> <span class="sc">'p'</span><span class="p">,</span> <span class="sc">'['</span><span class="p">,</span> <span class="sc">']'</span><span class="p">,</span> <span class="sc">'\n'</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">,</span> <span class="cm">/* &lt;-- control key */</span>
+  <span class="sc">'a'</span><span class="p">,</span> <span class="sc">'s'</span><span class="p">,</span> <span class="sc">'d'</span><span class="p">,</span> <span class="sc">'f'</span><span class="p">,</span> <span class="sc">'g'</span><span class="p">,</span> <span class="sc">'h'</span><span class="p">,</span> <span class="sc">'j'</span><span class="p">,</span> <span class="sc">'k'</span><span class="p">,</span> <span class="sc">'l'</span><span class="p">,</span> <span class="sc">';'</span><span class="p">,</span> <span class="sc">'\''</span><span class="p">,</span> <span class="sc">'`'</span><span class="p">,</span>  <span class="mi">0</span><span class="p">,</span> <span class="sc">'\\'</span><span class="p">,</span> <span class="sc">'z'</span><span class="p">,</span> <span class="sc">'x'</span><span class="p">,</span> <span class="sc">'c'</span><span class="p">,</span> <span class="sc">'v'</span><span class="p">,</span> <span class="sc">'b'</span><span class="p">,</span> <span class="sc">'n'</span><span class="p">,</span> <span class="sc">'m'</span><span class="p">,</span> <span class="sc">','</span><span class="p">,</span> <span class="sc">'.'</span><span class="p">,</span> <span class="sc">'/'</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>
+  <span class="sc">'*'</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Alt */</span>
+  <span class="sc">' '</span><span class="p">,</span>  <span class="cm">/* Space bar */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Caps lock */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* 59 - F1 key ... &gt; */</span>
+    <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* &lt; ... F10 */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* 69 - Num lock*/</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Scroll Lock */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Home key */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Up Arrow */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Page Up */</span>
+  <span class="sc">'-'</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Left Arrow */</span>
+    <span class="mi">0</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Right Arrow */</span>
+  <span class="sc">'+'</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* 79 - End key*/</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Down Arrow */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Page Down */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Insert Key */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* Delete Key */</span>
+    <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>   <span class="mi">0</span><span class="p">,</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* F11 Key */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* F12 Key */</span>
+    <span class="mi">0</span><span class="p">,</span>  <span class="cm">/* All other keys are undefined */</span>
+<span class="p">};</span></code></pre></figure>
+
+<h2>Integrating Keyboard input into our Kernel</h2>
+
+<p><b>kernel.cpp</b></p>
+
+<p>We can now include both headers at the top of our <b>kernel.cpp</b>.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include "keyboard/keyboardActivePolling.h"
+#include "keyboard/keyboardScancodeToAscii.h"</span></code></pre></figure>
+
+<p>and adapt our kernel_main-function:</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">extern</span> <span class="s">"C"</span> <span class="p">{</span>
+  <span class="kt">void</span> <span class="n">kernel_main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">terminal_initialize</span><span class="p">();</span>
+    <span class="n">terminal_writestring</span><span class="p">(</span><span class="s">"Hello, kernel World!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+
+    <span class="n">keyboardActivePolling_init</span><span class="p">();</span>
+    <span class="k">while</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">keyboardActivePolling_loop</span><span class="p">();</span>
+
+      <span class="kt">char</span> <span class="n">c</span> <span class="o">=</span> <span class="n">kbd_US</span><span class="p">[</span><span class="n">keyboardActivePolling_lastScanCode</span><span class="p">];</span>
+      <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// only printable characters</span>
+        <span class="n">terminal_putchar</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2>Result</h2>
+
+<p>After compiling and booting in QEmu with the <b>build-and-boot.sh</b> from the previous part of the series, we can type on the keyboard and see the text apprearing on the stream.
+As seen in the image above.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<p>So far we’ve got a custom compiler that can compile bootable code. We can compile our own custom kernel with it. Boot it in QEmu and print text.
+We’ve now added Keyboard input by active polling and can print the input on the screen.</p>
+
+<p>Currently the CPU is actively polling the keyboard and can’t do any other tasks while it’s waiting for user input. Next time we’ll change that by adding interrupt handling.</p>
+
+<hr />
+
+<pre>
+1] https://github.com/tehplague/baremetal/blob/master/keyboard.c
+</pre>
+
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

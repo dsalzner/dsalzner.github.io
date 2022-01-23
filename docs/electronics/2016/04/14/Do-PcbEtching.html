@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/electronics/2016/04/14/Do-PcbEtching.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Pcb Etching - Dennis Salzner" />
+  <meta property="og:description" content="PCB etching is the process of making your own circuit boards. There are multiple ways of achieving this. This is a description of my experiences and why I no..." />
+  <meta property="og:url" content="/site/electronics/2016/04/14/Do-PcbEtching.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2016-04-14 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2016-04-14 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2016-04-14 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="PCB etching is the process of making your own circuit boards. There are multiple ways of achieving this. This is a description of my experiences and why I no..." />
+  <meta name="twitter:title" content="Pcb Etching - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2016-04-14-Do-PcbEtching</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">Pcb Etching</div>
+<div class="page-subtitle">Experiences with PCB etching and why I avoid it whenever possible</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>PCB etching is the process of making your own circuit boards. There are multiple ways of achieving this. This is a description of my experiences and why I now avoid PCB etching, whenever possible.</p>
+
+<p>When I first started I used what is known as the „Toner Transfer Method“. The principle is to use a laser printer to print to a transfer foil. This transfer foil is then laid onto a copper PCB plate. Ironing the transfer foil on the PCB melts the plastic particles in the toner of the laser printer and transfers it to the PCB. After removing the foil the PCB is laid into a bowl with a copper etching chemical. After some time the etched PCB can be removed and cleaned.</p>
+
+<p>The more traditional method is using a principle known from developing photos in photography. I moved to this for more precision. The design is printed onto a transparent foil – either by a laser printer or a standard ink printer. This foil is laid onto a PCB with a special coating. After exposing the PCB with UV light through the foil, this special coating gets damaged where it was hit by the UV light. The PCB is then laid into a bowl with a chemical which removes the damaged parts of the coating. After this the PCB is laid into another bowl with a copper etching chemical and after some time the PCB can be retrieved.</p>
+
+<p>Two other ways that lead to a custom circuit board is ordering them on the internet. The prices seem to have dropped significantly making this feasible. Or by directly CNC miling a copper PCB plate, which is what I am currently heading for. The CNC mill can also be used to drill the holes for the through-hole components.</p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>I started PCB etching in ’10 and it was one of the things in electronics I was most excited about. It started with integrated circuits for my 1-Wire Bus. They come in SMD Packages and I was having trouble soldering to them. Now I rather use a strip board, file it down and use magnetwire to build break-out boards or I buy ones online. In fact, I went back to strip boards for almost all my designs and I try to use Arduino Nanos or DigiSparks to spare me the soldering of power regulators and connections for programmers. I actually glue them to strip boards with hot glue. This results in much quicker build times and less frustrations fixing flacky connections.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>PCB etching can save a lot of time for circuit boards of medium to high quantities. For high quantities it is best to send the design to a circuit board manufacturer. Etching at home can be useful for first prototypes. I found that the time needed for drawing the circuit and etching it does not nearly pay off for small quantities. The yield is far to low. I found I had to etch at least twice, sometimes 3-5 times for SMD, to get a descent board. Let alone design flaws, which are difficult to fix due to inaccessable components. This is why I solder most of my designs to strip boards, I keep them as small and modular as possible and I use socket stips that have wires stuck in them going all over the place. If neccessary I glue it all down with hot glue. I hardly ever transfer my designs to anything else anymore.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>My setup for PCB etching has evolved dramatically over time.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="1-steps-using-the-direct-toner-method-i-used-this-from-okt-10-to-dec-13">1. Steps using the Direct Toner Method (I used this from Okt ’10 to Dec ’13)</h2>
+
+<table><tr>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/01-Druck-DirektToner-Folie-20101208.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/01-Druck-DirektToner-Folie-20101208-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.1: Print to foil</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/02-DirektToner-Aufbuegeln.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/02-DirektToner-Aufbuegeln-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.2: Ironing</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/03-DirektToner-Becken.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/03-DirektToner-Becken-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.3: Removing Paper</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/04-DirektToner-Becken2.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/04-DirektToner-Becken2-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.4: Etching</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/05-DirektToner-ErgebnisSchlecht-20101102.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/05-DirektToner-ErgebnisSchlecht-20101102-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.5: Poor Result</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/06-DirektToner-ErgebnisOk-20110730.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/06-DirektToner-ErgebnisOk-20110730-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.6: Acceptable Result</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/07-ThermostatIMG_2787.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/07-ThermostatIMG_2787-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.7: Finished Product</p>
+</td>
+
+</tr></table>
+
+<p>I use an HP LaserJet P1005, KiCad for designing the board and very large traces. The toners I use are fake ones from eBay. They waste more Toner, which is good for PCB etching. The whole process is very delicate, which is why I wrote down and optimized each and every step over time. I found that even a change in water hardness, after moving to a new apartment, caused the results to degrade.</p>
+
+<ol>
+
+  <ul>
+    <b>1. Preparation</b>
+    
+    <ul>
+      <b>1.1 Roughen</b><br />
+      Roughen copper board using rough side of sponge, twice: horizontally and vertically
+    </ul>
+
+    <ul>
+      <b>1.2 Clean</b><br />
+      Clean board with aceton
+    </ul>
+    <ul>
+      <b>1.3 Water Clean</b><br />
+      Clean board with water
+    </ul>
+  </ul>
+
+  <ul>
+    <b>2. Printing</b>
+    
+    <ul>
+      <b>2.1 KiCad settings</b><br />
+      After designing in KiCad, switch to "inches" and set track width to 0,0640 under "Design Rules" -&gt; "Design Rules Editor". Set "Distance Measure" to "0,0250". Set Text size "SizeX" to 0,0800, "SizeY" to 0,1200 and "Width" to "0,0200"
+    </ul>
+    
+    <ul>
+      <b>2.2 Print</b><br />
+      Set the printer Paper mode to "rough" and the resolution to "FastRes 1200". Switch off the "Econo Mode", to make the printer use more toner. Print onto catalogue paper. I use a catalogue from an electronics distributor called Reichelt. Other paper works so long as it is glossy. Print on the same sheet 2-3 times.
+    </ul>
+  </ul>
+
+  <ul>
+    <b>3. Ironing</b>
+    
+    <ul>
+      <b>3.1 Preparation</b><br />
+      Lay the print out face down onto the copper plate. Pour thin coating of aceton onto it, this will help transfer the toner. It evaporates quickly, so immediatly drop it unter a thin cloth and  begin ironing. I do this for 20 Minutes straight while rotating the board, to evenly heat it.
+    </ul>
+  </ul>
+
+
+  <ul>
+    <b>4. Clean</b><br />
+    Paper is now stuck to the copper plate due to the molten toner. We need to clean the paper off.
+    
+    <ul>
+      <b>4.1 Water</b><br />
+      Drop the plate into approx. 40-50 C warm water for 15 Minutes. Do not use hot water, because it will cause the plate to extract, losening the toner.
+    </ul>
+    
+    <ul>
+      <b>4.2 Clean Paper</b><br />
+      Using a tooth brush, clean the paper off carefully. Do not use detergent, as it will clean off the toner.
+    </ul>
+    
+    <ul>
+      <b>4.3 Cut</b><br />
+      Cut the board to size using a dremel. Do not scratching it with a carpender knife and crack it on the corner of a table, as this may break the toner.
+    </ul>
+  </ul>
+    
+  <ul>
+    <b>5. Optional steps</b>
+      
+    <ul>
+      <b>5.1 Draw</b>
+      Using a waterproof or etch-resistant pen, draw over the traces
+    </ul>
+      
+    <ul>
+      <b>5.2 Remelt</b>
+      Drop the plate into an oven for approx. 3 Minutes and remelt the toner to improve stickiness to the plate.
+    </ul>
+  </ul>
+      
+  <ul>
+    <b>6. Etch</b>
+        
+    <ul>
+      <b>6.1 Etch</b>
+      Drop the board into a bowl with etching chemicals. Keep it at approximatly 40 C. This can be achieved by using an outer bowl and replacing some of the water in the outer bowl with boiling water from time to time. Or by using a water heater controlled by a thermostat. Aquarium ones generally can&#8217;t heat beyond 35 C, as this would harm fish. I use an immersion heater. The concentration is approx. 1,5 tea spoons of sodium persulfate  (ger.: "Natriumpersulfat") for 500ml of Water. The concentration can be increased, but it won&#8217;t speed up the etching beyond a certain point. Use a plastic tea spoon! Blowing air into the bowl with an aquarium air pump speeds the process up. Speed is crutial, because the toner can only withstand the liquid for a short amount of time.
+    </ul>
+  </ul>
+
+  <ul>
+    <b>7. Clean and Drill</b>
+          
+    <ul>
+      <b>7.3 Clean</b>
+      Clean off all the toner using aceton.
+    </ul>
+          
+    <ul>
+      <b>7.2 Drill</b>
+      Drill the holes for the through-hole components.
+    </ul>
+  </ul>
+</ol>
+
+<h2 id="2-steps-using-the-exposure-method-i-used-this-from-jun-12-to-aug-15">2. Steps using the exposure method (I used this from Jun ’12 to Aug ’15)</h2>
+
+<table><tr>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/08-UV-Belichter-20120601.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/08-UV-Belichter-20120601-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.8: UV Lighting</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/09-Belichten-20120601.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/09-Belichten-20120601-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.9: Exposing</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/10-Schlecht.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/10-Schlecht-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.10: Poor result</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/11-gut.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/11-gut-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.11: Good result </p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/12-IMG_6397.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/12-IMG_6397-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.12: Finished product – 1</p>
+</td>
+
+<td>
+<a href="../../../../images/2016-04-14-Do-PcbEtching/13-IMG_6396.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2016-04-14-Do-PcbEtching/13-IMG_6396-t.jpg" alt="" class="" style="max-width:80%;" /></a>
+<p style="font-size:75%">Fig.13: Finished product – 2 </p>
+</td>
+
+</tr></table>
+
+<ol>
+  <ul>
+    <b>1. Print</b>
+    
+    <ul>
+      <b>1.1 Print</b><br />
+      Print the design onto a foil using much smaller settings than above.
+    </ul>
+  </ul>
+
+  <ul>
+    <b>2. Expose and develop</b><br />
+    These steps need to be followed in almost absolut darkness. Otherwise the PCB will be exposed with light where it should not.
+    
+    <ul>
+      <b>2.1 Expose to UV light</b><br />
+      Lay the foil right side up onto the PCB. Put a glas plate onto the PCB and the foil, to keep it flat. I use a Philips facial tanner with 4 Philips CLEO 15W UV light tubes for exposure. Expose for 11 Minutes at a distance of 5 cm. In my experience 16 minutes was far too long and 8 minutes was far too short. I use stacked books on both sides to get the distance of the facial tanner to the PCB right. But beware: The UV light damages the ink on the books.
+    </ul>
+    
+    <ul>
+      <b>2.2 Develop</b><br />
+      Develop the exposed PCB by dropping it in a bowl with sodium hydroxide (ger.: "Natriumhydroxid"). 1,5 tea spoons is sufficient. Leave the PCB in the bowl for only a few seconds. If it comes out blank, then exposure was too long, the print out was too transparant or other light exposed what should not have been exposed. If it comes out black, then exposure was too short.
+    </ul>
+  </ul>
+
+  <ul>
+    <b>3. Etch</b>
+    
+    <ul>
+      <b>3.1 Etch</b><br />
+      Drop the board into a bowl with etching chemicals. I use 1,5 tea spoons of sodium persulfate  (ger.: "Natriumpersulfat") on 500ml of Water. As before the bowl should be at approximatly 40 C. I use an outer bowl filled with water and an immersion heater controlled by a thermostat.
+    </ul>
+  </ul>
+
+</ol>
+
+<h2 id="3-additional-conciderations">3. Additional Conciderations:</h2>
+
+<ol>
+  <ul>
+    <b>distilled water</b>
+    I use distilled water in the etching bowl, because I found that differences in water hardnes influence the results. It seems that some chemicals in the tap water bind the etching chemicals and the result is much slower etching. Even when using twice as much etching chemicals
+  </ul>
+
+  <ul>
+    <b>chemicals</b>
+    There are alternative etching chemicals. Some use Iron(III) chloride (ger.: Eisen(III)-chlorid). Etching with this apparently works a lot faster, but it is also far more dangerous to handle.
+  </ul>
+
+  <ul>
+    <b>disposal</b>
+    Disposal of the chemical waste is a big issue. I usually reuse the etching chemicals until the the liquid turns darks blue. Then I let it dry up and collect it before bringing it to a recycling center.
+  </ul>
+
+  <ul>
+    <b>air</b>
+    The concentration cannot be infinitly increased to gain higher etching speeds. However, more air does speed up the process. I use an aquarium air pump.
+  </ul>
+
+  <ul>
+    <b>toner transfer with laminators</b>
+    When using the toner transfer method, there are betters ways to transfer the toner. Many people use modified laminiators (ger.: Laminiergerät).
+  </ul>
+
+  <ul>
+    <b>toner transfer with modified printers</b>
+    Some modify laser printers to print directly onto the PCB. This can produce better results, because the toner does not need to be transfered.
+  </ul>
+
+  <ul>
+    <b>exposure</b>
+    When using the exposure method, there are better ways for exposing the PCB. Some build a special exposure box with UV tubes. A scanner can be modified for this purpose. It already has the glas plate.
+  </ul>
+
+  <ul>
+    <b>printing with conductive ink</b>
+    A new trend in research seems to be printing with conductive ink. Conductive ink is extremly expensive and it does not work on all printers.
+  </ul>
+
+  <ul>
+    <b>thermostat</b>
+    It is important to keep the etching bowl at approximatly 40 &#8211; 50 C. I have built a thermostat for this process which automatically turns on and off an immersion heater.
+  </ul>
+
+  <ul>
+    <b>vertical setup</b>
+    Most professional set ups are built vertically. This has the advantage of being able to having air bubbles move along the board being etched. Warm water moves upwards, so a heater at the bottom will automatically stir the etching chemical up. A vertical setup also requires less etching liquid and loses less temperature.
+  </ul>
+</ol>
+
+<h2 id="4-additional-sources">4. Additional Sources:</h2>
+
+<ul>
+  <li>Laminators
+    <ul>
+      <li>Discussion <a href="http://www.mikrocontroller.net/articles/Platinenlaminator">mikrocontroller.net</a></li>
+      <li>Genie L-405 HC <a href="http://www.mikrocontroller.net/topic/39028">mikrocontroller.net</a></li>
+      <li>GBC H65 Laminator <a href="http://www.makehackvoid.com/projects/pc-pcb-under-30-minutes-quick-n-easy-pcb-fabrication">makehackvoid.com</a></li>
+    </ul>
+  </li>
+  <li>Facial tanners
+    <ul>
+      <li>Philips TL 29D 16/09N <a href="http://www.blafusel.de/misc/platine.html">blafusel.de</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<p>As mentioned above I try to move away from PCB etching, because the work by far outweighs the results. Strip boards and breakout boards for SMD components are usually sufficient. Perhaps CNC milling is a viable alternative. The prospect with CNC milling a copper PCB is to be able to practically print the circuit board directly.</p>
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/programming/2021/12/21/Mi-CustomOsPt5-DiskIo.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.5 - Basic Floppy Disk Input/Output - Dennis Salzner" />
+  <meta property="og:description" content="Reading and writing to a disk for data persistency is a pre-requisite for most applications. I'll be working on basic functionality to store data by reading ..." />
+  <meta property="og:url" content="/site/programming/2021/12/21/Mi-CustomOsPt5-DiskIo.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2021-12-21 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2021-12-21 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2021-12-21 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Reading and writing to a disk for data persistency is a pre-requisite for most applications. I'll be working on basic functionality to store data by reading ..." />
+  <meta name="twitter:title" content="CustomOS - Pt.5 - Basic Floppy Disk Input/Output - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2021-12-21-Mi-CustomOs-Pt5-BasicDiskIO</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">CustomOS - Pt.5 - Basic Floppy Disk Input/Output</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS) - How hard could that be?</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>In the previous posts we compiled a i686-elf cross-compiler, built a simple bootloader and kernel, write text on screen and received input from the keyboard.
+Now I’d like to implement features to store data by reading and writing to the hard disk.</p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>Hard Disk is the fourth point on this projects roadmap. Combined with the features we already have we will be able to write a simple text editor.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>This will be the pre-requisite for loading, compiling and executing source code from within our OS.</p>
+
+<p>With hard disk support we can edit - currently in a text-based mode - , load and store data. This is already somewhat useful for simple userspace applications.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>As with the keyboard input we could make this infinitely more complicated, than it has to be. I rather start with the smallest increment, gain an understanding and then expand form there where necessary.</p>
+
+<p>Note though that for efficient hard disk I/O you would want to control and fine-tine Direct Memory Access (DMA) to offload work from the CPU.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<p>To keep things nice and simple we will be using the BIOS-Interrupt 0x13. It tells the BIOS to load a sector of data from the hard disk.</p>
+
+<p>Traditionally, in early computers, data storage was no more than a tape. This tape could be forwarded and rewound to any position by an address. Then a block of data that was currently under the read head could be read.</p>
+
+<p>Accessing a hard disk is not much different than accessing such a tape. We provide the address of the block of data we want to read and then retrieve that block of data.</p>
+
+<p>Now computer filesystems have directory structures and files. This is achieved by keeping a table of contents, much like in a book, that points to addresses where the data resides.</p>
+
+<p>How this table of contents is set up depends on a the file system that is used. One simple file system that dates back to ‘77 is FAT (File Allocation Table), the successor FAT32 (supports 32-bit addressing for larger volumes) is still supported on most modern systems.</p>
+
+<p>File systems have improved a lot since the early days. Modern file systems such as EXT2, EXT3 or EXT4, NTFS and ZFS have added numerous advanced features to prevent data corruption.
+As we’re not aiming for a perfect or even production ready OS, we will throw most of the advanced features overboard and go with a simple FAT file system.</p>
+
+<p>There are two basic addressing modes with the BIOS-Interrupt 0x13. We can use CHS (Cylinder, Head, Sector) addressing - essentially a 3-digit number - that required to read floppy disks and sufficient for very small file systems. Or LBA addresing (Logical Block Array) that can be used to address Blocks on much larger hard disks.</p>
+
+<p>As with many things related to Custom OS there are already some excellent examples online that we can use as a starting point [1].</p>
+
+<ul>
+  <li>1] https://github.com/mpetch/OSDev/tree/861a52b70779403e26118d5143e620f654b6c712/examples/gcc-2stage-bootloader</li>
+</ul>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

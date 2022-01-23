@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/programming/2021/12/11/Sa-CustomOsPt1-CrossCompiler.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.1 - The Cross-Compiler - Dennis Salzner" />
+  <meta property="og:description" content="Inspired by the osdev-forums and the likes of TempleOS, as a challenge and to learn more about modern computer architectures, I'll give writing a tiny custom..." />
+  <meta property="og:url" content="/site/programming/2021/12/11/Sa-CustomOsPt1-CrossCompiler.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2021-12-11 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2021-12-11 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2021-12-11 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Inspired by the osdev-forums and the likes of TempleOS, as a challenge and to learn more about modern computer architectures, I'll give writing a tiny custom..." />
+  <meta name="twitter:title" content="CustomOS - Pt.1 - The Cross-Compiler - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2021-12-11-Sa-CustomOs-Pt1-CrossCompiler</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">CustomOS - Pt.1 - The Cross-Compiler</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS) - How hard could that be?</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<h2>What this is about</h2>
+
+<p>Inspired by the osdev-forums and the likes of TempleOS, as a challenge and to learn more about modern computer architectures, I’ll give writing a tiny custom operating system from scratch a try. I’ll be documenting the process in this multi-part series.</p>
+
+<p>The objective here is not write a full operating system with task scheduling, multi-processing and advanced hardware support or even caching and page faults, but something simple and minimalistic. Getting it to boot, print text on screen, get input from the keyboard and read files from disk is all I’ll be trying to achieve here.</p>
+
+<h2>A Computer's boot process</h2>
+
+<p>In a computer the central processing unit (CPU) runs commands, the machine instructions. These commands are run, one after the other, in sequence.
+During boot of computer a series of events occurs. First the CPU loads instructions from a hard-coded address in the ROM, then from the Flash-Chip containing the BIOS, then the Bootloader, which is stored on the Hard Disk’s boot partition, the Kernel and finally the actual Operating System.</p>
+
+<div class="mermaid" style="width: 800px">
+graph TD;
+    A(Power Button was pressed) --&gt; B(CPU jumps to predefined memory location of BIOS in ROM)
+    B --&gt; C(CPU loads BIOS and runs it)
+    C --&gt; D(BIOS performs POST, the Power-On Self Tests)
+    D --&gt; E(it then loads the Hard Disk Partition Table)
+    E --&gt; F(and runs the Bootloader from Hard Disk Partition)
+    F --&gt; G(which contains instructions to load the Operating System Kenel)
+    G --&gt; H(that then runs the Operating System);
+</div>
+
+<p>For a Custom Operating System we step in at the bootloader stage. We write our own Bootloader and place it on the primary boot disk. This bootloader will have to be compiled with a custom cross-compile-chain, without much of the modern dependencies, for it to be able to be compatible to run barebones on our x86 CPU.
+We can then add the functionality we need to our bootloader to extend it far enough for our own Custom OS.</p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2>Scope of this multi-part series</h2>
+
+<p>Writing an even moderately useful custom Operating System is a large task. After setting up the bootloader we will be greated with text upon boot and the possibility to print custom messages from our code. From there we will need to achieve keyboard input, and perhaps mouse input. Then we can load a hard disk driver and read the directory tree from the hard disk. We can add a simple text editor to read and write files.
+At that point things begin to become somewhat useful - we can now read and write files and do simple note-taking.
+From there, if we can add a compiler directly to our kernel, we can build and run code from the hard disk. By enabling VESA-Video-Output we gain the ability to draw on the screen. At that stage the rest is a huge programming exercise of adding useful software, perhaps a window manager and for instance network drivers.</p>
+
+<p>Some experience can be taken from working with microcontrollers that can be programmed to receive PS/2-Keyboard-Input or load entire TCP/IP-Network-Stacks and can of course drive displays. A modern PC is in essense no more than a very complex micro-controller with lots of hardware peripherals.</p>
+
+<h2>Features of modern Operating Systems compared with a Custom OS</h2>
+
+<p>Modern Operating Systems provide vast amounts of features which can’t all be supported in a Custom OS developed by a single person or a group of hobbyists. Basic funcitonality can be achieved, but it’s important to manage expectations.</p>
+
+<table>
+  <tr>
+    <td>
+      Feature
+    </td>
+    <td>
+      Modern OS
+    </td>
+    <td>
+      Custom OS
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Keyboard
+    </td>
+    <td>
+      full USB HID Device support
+    </td>
+    <td>
+      Use BIOS PS/2 emulation
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Graphics
+    </td>
+    <td>
+      Graphics driver, mostly proprietary, with multi-monitor support, high resolutions and framerates with 3D accelleration
+    </td>
+    <td>
+      Graphics via Bios VESA modes, utilizes only 64k VRAM, 320x200 at 256 colors or 640x480 at 16 colors
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Paging
+    </td>
+    <td>
+      Pagefile on hard disk to expand Memory and automatic caching
+    </td>
+    <td>
+      Probably no paging support
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Disk IO
+    </td>
+    <td>
+      fast vendor specific device drivers for NVMes, SSDs, CD-Rom Drives, USB-Sticks, Floppy's and more
+    </td>
+    <td>
+      only rudimentary Floppy Disk IO
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Network
+    </td>
+    <td>
+      driver for multiple Network cards at full speeds
+    </td>
+    <td>
+      none or perhaps basic support for common features in most Intel NIC's
+    </td>
+  </tr>
+  
+  <tr>
+    <td>
+      Software
+    </td>
+    <td>
+      Installers, Package Managers, thousands of applications.
+    </td>
+    <td>
+      A few applications to provide basic functionality such as text editing, either hardcoded into the Kernel or run at runtime by C-Script.
+    </td>
+  </tr>
+  
+</table>
+
+<h2>Milestones</h2>
+
+<p>As such the milestones are as follows:</p>
+
+<ol>
+  <li><b>Create a Custom-Cross-Compile Chain</b> - We can then produce machine code that can be run directly on the CPU</li>
+  <li><b>Compile our own Bootloader</b> - We can place it on the boot disk and print simple text on screen.</li>
+  <li><b>Read Keyboard-Input</b> by using low-level inb/outb to read/write to the x86-compatible 8259A Programmable Interrupt Controller (PIC) - We can now build a simple dialogue system that prints a text menu and accepts user interaction.</li>
+  <li><b>Add a file system driver</b> for FAT32 or similar - this allows us to issue a "dirlist" command that will list the files on the hard disk partition.</li>
+  <li><b>Write a simple text editor</b> with, for instance, "textcreate [file]", "textappend [file] [line of text]", "textview [file]" - we can now edit basic text</li>
+  <li><b>Add a Compiler</b>, such as TinyCC, to the Kernel - with it we can now run C-Code from source code text files on the CPU like scripts (Just-In-Time Compilation)</li>
+  <li><b>Enable VESA-Video Output</b> - now we can draw shapes on the screen</li>
+  <li><b>Write first useful applications</b>, e.g. a graphical Window Manager - this allows us to actually use the operating system for basic tasks</li>
+</ol>
+
+<p>The process will, of course, require a lot of work even for a tiny custom OS. I’m doing this purely for fun and educational purposes. The goal is not to compete with existing operating systems that take hundreds of thousands of hours in development time.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h2>Why are we doing this?</h2>
+
+<p>When most people think of an Operating System they think of Windows, MacOS, Linux and perhaps OpenBSD. But there is an entire community of developers [1], some hobbyists, some from research, that are writing their own custom OS as a learning experience, for fun or to experiment with new concepts.
+In fact one custom Operating System that was designed for research is Minix. Minix evolved when AT&amp;T restricted licensing for Unix and universities began developing Minix as an alternative for their lectures. As a side note Linus Torvalds, the initiator of Linux, wrote his first versions of Linux on Minix - and so Linux started as the Custom OS of a single developer.</p>
+
+<p>The developer of one such CustomOS is the late Terry A. Davis. He spent over a decade developing TempleOS and became somewhat of an internet sensation due to his project and his oftentimes awkward social media posts.
+His work, though perhaps not useful to most, is fascinating. It completly rethinks modern operating systems and shows that a project of this scale is possible even by a single person.</p>
+
+<p>Reading and understanding the ideas and concepts behind TempleOS has lead me to internet communities of hobbyists specialized in Custom Operating Systems and, being a devolper myself, has inspired me to give developing a small Custom OS a try myself.</p>
+
+<ul>
+  <li>1] https://forum.osdev.org/</li>
+</ul>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2>Other Custom-OSes</h2>
+
+<p>Looking at Terry Davis’ Custom Operating System, which was the main inspiration for me to try writing my own OS, you can find the binary blob of the Kernel he wrote [2].</p>
+
+<p>When booting TempleOS on real hardware this Kernel is eventually loaded to RAM and executed by a bootloader. This is best seen by looking at the syslinux, a booloader for Linux, configuration files of TinkerOS, a TempleOS fork, that was made to make TempleOS more accessible [3]. The syslinux configuration of TinkerOS loads the memdisk Kernel, that triggers loading the TempleOS ISO-CD-Image, which in turn contains the TempleOS Bootloader, that then boots TempleOS as intended by its creator.</p>
+
+<p>The TempleOS Bootloader contains a C-Compiler that supports Just-In-Time execution - that is running C-Code like a script directly, without creating binary executables first. The modified C-Compiler, dubbed HolyC, is then able to run the TempleOS Kernel via KMain.HC [4] which then loads Adam, the TempleOS Window-Manager.</p>
+
+<ul>
+  <li>2] https://github.com/cia-foundation/TempleOS/tree/archive/0000Boot</li>
+  <li>3] https://github.com/tinkeros/TinkerOS/blob/main/USBBoot/isolinux.cfg</li>
+  <li>4] https://github.com/cia-foundation/TempleOS/blob/archive/Kernel/KMain.HC</li>
+</ul>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2>Setting up a cross-compile chain for i686-elf</h2>
+
+<p>As a first step to get our CustomOS to even boot, we will need to set up a cross-compile chain to build our own bootloader.</p>
+
+<p>Now to build this code they recommend setting up a GCC Cross-Compiler for i686-elf binaries which is what I’ve also done.</p>
+
+<p>In order to build the GCC-Cross-Compiler I’ve built a small bash-script based on various sources and adapted to requirements of my machine, an Ubuntu 20.04.2 LTS.</p>
+
+<p><b>gccbuild.sh</b></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="nv">BASEDIR</span><span class="o">=</span><span class="si">$(</span><span class="nb">cd</span> <span class="sb">`</span><span class="nb">dirname</span> <span class="nv">$0</span><span class="sb">`</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span><span class="si">)</span>
+<span class="nb">export </span><span class="nv">PREFIX</span><span class="o">=</span><span class="s2">"</span><span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span><span class="s2">/out/path/"</span>
+<span class="nb">export </span><span class="nv">TARGET</span><span class="o">=</span>i686-elf
+<span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PREFIX</span><span class="s2">/bin:</span><span class="nv">$PATH</span><span class="s2">"</span>
+
+<span class="nb">echo</span> <span class="s2">"[ ] Install dependencies"</span>
+<span class="nb">sudo </span>apt <span class="nt">-y</span> <span class="nb">install </span>libgmp3-dev libmpfr-dev libisl-dev  libmpc-dev texinfo <span class="nt">-y</span>
+<span class="nb">sudo </span>apt <span class="nt">-y</span> <span class="nb">install </span>nasm qemu-system-i386 xorriso
+
+<span class="nb">echo</span> <span class="s2">"[ ] Create directories"</span>
+<span class="nb">rm</span> <span class="nt">-rf</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">PREFIX</span><span class="k">}</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/src/
+<span class="nb">cd</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/src/
+
+<span class="nb">echo</span> <span class="s2">"[ ] Download code archives"</span>
+<span class="nb">cd</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>
+wget <span class="nt">--no-clobber</span> ftp://ftp.gnu.org/gnu/binutils/binutils-2.26.tar.gz
+wget <span class="nt">--no-clobber</span> ftp://ftp.gnu.org/gnu/gcc/gcc-6.1.0/gcc-6.1.0.tar.gz
+
+<span class="nb">echo</span> <span class="s2">"[ ] Build binutils"</span>
+<span class="nb">mkdir</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/src/build-binutils/
+<span class="nb">cd</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/src/
+<span class="nb">tar</span> <span class="nt">-xzf</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/binutils-2.26.tar.gz
+<span class="nb">cd</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/src/build-binutils/
+../binutils-2.26/configure <span class="nt">--target</span><span class="o">=</span><span class="nv">$TARGET</span> <span class="nt">--prefix</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PREFIX</span><span class="s2">"</span> <span class="nt">--disable-nls</span> <span class="nt">--disable-werror</span>
+make
+make <span class="nb">install
+
+echo</span> <span class="s2">"[ ] Build gcc"</span>
+<span class="nb">mkdir</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/src/build-gcc/
+<span class="nb">cd</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/src/
+<span class="nb">tar</span> <span class="nt">-xzf</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/gcc-6.1.0.tar.gz
+<span class="nb">cd</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/src/build-gcc/
+
+<span class="c"># -- patch isl include header</span>
+<span class="nb">sed</span> <span class="nt">-i</span> <span class="s1">'s/#include &lt;isl\/ast_build.h&gt;/#include &lt;isl\/ast_build.h&gt;\n#include &lt;isl\/id.h&gt;\n#include &lt;isl\/space.h&gt;\n/g'</span> ../gcc-6.1.0/gcc/graphite.h
+
+../gcc-6.1.0/configure <span class="nv">CXXFLAGS</span><span class="o">=</span><span class="s2">"-fpermissive"</span> <span class="nt">--target</span><span class="o">=</span><span class="nv">$TARGET</span> <span class="nt">--prefix</span><span class="o">=</span><span class="s2">"</span><span class="nv">$PREFIX</span><span class="s2">"</span> <span class="nt">--disable-nls</span> <span class="nt">--enable-languages</span><span class="o">=</span>c,c++ <span class="nt">--without-headers</span>
+
+make all-gcc
+make all-target-libgcc
+
+make install-gcc
+make install-target-libgcc</code></pre></figure>
+
+<p>After running this script the compiler should be created and reside under</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">out/path/bin/i686-elf-g++</code></pre></figure>
+
+<ul>
+  <li>5] https://wiki.osdev.org/Bare_Bones</li>
+</ul>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2>Result</h2>
+
+<p>So far we’ve built a custom cross-compiler. In the next post we’ll be using that cross-compiler to compile our first kernel that can print text on a computer screen. We will then be booting it in QEmu to test it.</p>
+
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

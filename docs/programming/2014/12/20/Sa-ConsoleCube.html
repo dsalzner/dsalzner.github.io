@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/programming/2014/12/20/Sa-ConsoleCube.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Printing a cube on the console, Python, Rotation Matrices, Ascii-Art - Dennis Salzner" />
+  <meta property="og:description" content="This is a small script that will display a cube on the linux terminal. The rotation angles around the x-, y- and z-axis can be set. " />
+  <meta property="og:url" content="/site/programming/2014/12/20/Sa-ConsoleCube.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2014-12-20 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2014-12-20 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2014-12-20 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="This is a small script that will display a cube on the linux terminal. The rotation angles around the x-, y- and z-axis can be set. " />
+  <meta name="twitter:title" content="Printing a cube on the console, Python, Rotation Matrices, Ascii-Art - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2014-12-20-Sa-ConsoleCube</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">Printing a cube on the console, Python, Rotation Matrices, Ascii-Art</div>
+<div class="page-subtitle">Programming: Printing a cube on the console, Python, Rotation Matrices, Ascii-Art</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>This is a small script that will display a cube on the linux terminal. The rotation angles around the x-, y- and z-axis can be set. The code is a fairly long and contains some redundancy.</p>
+<ul>
+  <li>I can think of many way in which I could’ve reduced the number of for loops for generating the cube.</li>
+  <li>Also the coordinates could have been stored in an array directly to avoid translating it from a 3D space of ASCII symbols to do the rotation.</li>
+  <li>The sperate array for the cube could have been avoided, if the entire screen would have been rotated and the frame could have been printed onto it later.</li>
+  <li>There are even combined rotation matrices for computing all rotations at once.</li>
+  <li>in-line lambda functions instead of for loops could have further reduced the code length
+But it’s easy to read and it works.</li>
+</ul>
+
+<p style="font-size: 60%;" align="right">When</p>
+<p style="font-size: 60%;" align="right">Why</p>
+<p style="font-size: 60%;" align="right">Background</p>
+<p style="font-size: 60%;" align="right">How</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c1">#########################################################################################
+#                                                                                       #
+#                                        x                                              #
+#                                      xxxxx                                            #
+#                                     xx x  xxxx                                        #
+#                                   xx   x      xx                                      #
+#                                 xx     x        xxx                                   #
+#                               xx       x          xxxx                                #
+#                              xx        x              xx                              #
+#                            xxx         x                xxx                           #
+#                            x  xxx     xx                   xxx                        #
+#                            x    xxxx  x                       xx                      #
+#                            x        xxx                         xxxx                  #
+#                            x          xxx                          xxx                #
+#                            x          x xxxx                          xxx             #
+#                            x          x     xx                          xxx           #
+#                            x          x       xxx                       xxx           #
+#                            x          x          xxx                  xx  x           #
+#                            x          x             xx              xx    x           #
+#                            x          x               xxxx        xxx     x           #
+#                            x          x                   xx     xx       x           #
+#                            x        xx xx                   xxxxx         x           #
+#                            x      xx     xxx                  x           x           #
+#                           x      xx         xxx               x          x            #
+#                           x    xx              xx             x          x            #
+#                           x  xx                  xxxx         x          x            #
+#                           xxxx                      xxx       x          x            #
+#                           xxx                          xxx    x          x            #
+#                              xx                           xxx x          x            #
+#                                xxxx                          xx          x            #
+#                                   xxx                         xxxx       x            #
+#                                      xx                       x   xxx    x            #
+#                                        xxxx                   x      xx  x            #
+#                                           xxx                 x        xxx            #
+#                                              xxx              x       xxx             #
+#                                                xxxx           x      xx               #
+#                                                    xx        x     xx                 #
+#                                                      xxxx    x   xx                   #
+#                                                         xxx  x  xx                    #
+#                                                            xxxxx                      #
+#                                                              x                        #
+#                                                                                       #
+#########################################################################################</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c1"># dsalzner 2014-12-20-Sa
+</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="n">winkelX</span> <span class="o">=</span> <span class="mf">30.</span>
+<span class="n">winkelY</span> <span class="o">=</span> <span class="mf">30.</span>
+<span class="n">winkelZ</span> <span class="o">=</span> <span class="mf">20.</span>
+
+<span class="c1"># ---- Terminal Groesse bestimmen
+</span><span class="n">h</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">popen</span><span class="p">(</span><span class="s">'stty size'</span><span class="p">,</span> <span class="s">'r'</span><span class="p">).</span><span class="n">read</span><span class="p">().</span><span class="n">split</span><span class="p">()</span>
+<span class="n">hoehe</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">breite</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+<span class="c1"># ---- Ausgabespeicher reservieren
+</span><span class="n">s</span> <span class="o">=</span> <span class="p">[[</span><span class="s">" "</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">hoehe</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">breite</span><span class="p">)]</span>
+
+<span class="c1"># ---- Rahmen einblenden
+</span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">breite</span><span class="p">):</span>
+	<span class="n">s</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">"#"</span>
+	<span class="n">s</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">hoehe</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">"#"</span>
+<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">hoehe</span><span class="p">):</span>
+	<span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="s">"#"</span>
+	<span class="n">s</span><span class="p">[</span><span class="n">breite</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="s">"#"</span>
+
+<span class="c1"># --- Wuerfelspeicher reservieren
+</span><span class="n">tiefe</span> <span class="o">=</span> <span class="n">breite</span>
+
+<span class="n">wh</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hoehe</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">wb</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">breite</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">wt</span> <span class="o">=</span> <span class="n">wh</span>
+
+<span class="n">wpx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">breite</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">wb</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">wpy</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hoehe</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">wh</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">wpz</span> <span class="o">=</span> <span class="n">wpx</span>
+
+<span class="n">w</span> <span class="o">=</span> <span class="p">[[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">tiefe</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">hoehe</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">breite</span><span class="p">)]</span>
+
+<span class="c1"># --- Wuerfel in Sicht von vorne
+# -- vorne
+# - vorne, oben
+</span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wb</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="n">x</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="mi">0</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+<span class="c1"># - vorne, unten
+</span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wb</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="n">x</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="n">wh</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+<span class="c1"># - vorne, links
+</span><span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="mi">0</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="n">y</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+<span class="c1"># - vorne, rechts
+</span><span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="n">wb</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="n">y</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+
+<span class="c1"># -- hinten
+# - hinten, oben
+</span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wb</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="n">x</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="mi">0</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="n">wt</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+<span class="c1"># - hinten, unten
+</span><span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wb</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="n">x</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="n">wh</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="n">wt</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+<span class="c1"># - hinten, links
+</span><span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="mi">0</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="n">y</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="n">wt</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+<span class="c1"># - hinten, rechts
+</span><span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wh</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="n">wb</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="n">y</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="n">wt</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+	
+<span class="c1"># -- seite links
+# - seite links, oben
+</span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wt</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="mi">0</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="mi">0</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+<span class="c1"># - seite links, unten
+</span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wt</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="mi">0</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="n">wh</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+	
+<span class="c1"># -- seite rechts
+# - seite rechts, oben
+</span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wt</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="n">wb</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="mi">0</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+<span class="c1"># - seite rechts, unten
+</span><span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wt</span><span class="p">):</span>
+	<span class="n">w</span><span class="p">[</span><span class="n">wpx</span><span class="o">+</span><span class="n">wb</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">wpy</span><span class="o">+</span><span class="n">wh</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">wpz</span><span class="o">+</span><span class="n">z</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+
+<span class="c1"># --- Liste aus Koordinaten bauen
+</span><span class="n">ww</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">wy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">hoehe</span><span class="p">):</span>
+	<span class="k">for</span> <span class="n">wx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">breite</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">wz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tiefe</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="n">wx</span><span class="p">][</span><span class="n">wy</span><span class="p">][</span><span class="n">wz</span><span class="p">]</span> <span class="o">==</span> <span class="s">"x"</span><span class="p">:</span>
+				<span class="n">ww</span><span class="p">.</span><span class="n">append</span><span class="p">([</span><span class="n">wx</span><span class="p">,</span> <span class="n">wy</span><span class="p">,</span> <span class="n">wz</span><span class="p">])</span>
+
+<span class="c1"># --- Rotationsmatrix
+# -- Rotation um x Achse
+</span><span class="n">angle</span> <span class="o">=</span> <span class="n">winkelX</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="p">(</span><span class="n">angle</span><span class="o">/</span><span class="mf">180.</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="p">.</span><span class="n">pi</span>
+<span class="n">rotX</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">array</span><span class="p">(</span>	<span class="p">[</span>
+				<span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+				<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">numpy</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="o">-</span><span class="n">numpy</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span>
+				<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">numpy</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span>  <span class="n">numpy</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)]</span>
+			<span class="p">]</span>
+		<span class="p">)</span>
+<span class="n">wrot</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">numpy</span><span class="p">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rotX</span><span class="p">,</span> <span class="n">numpy</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">ww</span><span class="p">)))</span>
+
+<span class="c1"># -- Rotation um y Achse
+</span><span class="n">angle</span> <span class="o">=</span> <span class="n">winkelY</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="p">(</span><span class="n">angle</span><span class="o">/</span><span class="mf">180.</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="p">.</span><span class="n">pi</span>
+<span class="n">rotY</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">array</span><span class="p">(</span>	<span class="p">[</span>
+				<span class="p">[</span><span class="n">numpy</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">numpy</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">)],</span>
+				<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+				<span class="p">[</span><span class="o">-</span><span class="n">numpy</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span>  <span class="n">numpy</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">)]</span>
+			<span class="p">]</span>
+		<span class="p">)</span>
+<span class="n">wrot</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">numpy</span><span class="p">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rotY</span><span class="p">,</span> <span class="n">numpy</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">wrot</span><span class="p">)))</span>
+
+<span class="c1"># -- Rotation um z Achse
+</span><span class="n">angle</span> <span class="o">=</span> <span class="n">winkelZ</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="p">(</span><span class="n">angle</span><span class="o">/</span><span class="mf">180.</span><span class="p">)</span> <span class="o">*</span> <span class="n">numpy</span><span class="p">.</span><span class="n">pi</span>
+<span class="n">rotZ</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">array</span><span class="p">(</span>	<span class="p">[</span>
+				<span class="p">[</span><span class="n">numpy</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="o">-</span><span class="n">numpy</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+				<span class="p">[</span><span class="n">numpy</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="n">numpy</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta</span><span class="p">),</span> <span class="mi">0</span><span class="p">],</span>
+				<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>  <span class="mi">1</span><span class="p">]</span>
+			<span class="p">]</span>
+		<span class="p">)</span>
+<span class="n">wrot</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">numpy</span><span class="p">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rotZ</span><span class="p">,</span> <span class="n">numpy</span><span class="p">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">wrot</span><span class="p">)))</span>
+
+<span class="c1"># --- Koordinatenliste zurueck
+</span><span class="n">w</span> <span class="o">=</span> <span class="p">[[[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">tiefe</span><span class="p">)]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">hoehe</span><span class="p">)]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">xrange</span><span class="p">(</span><span class="n">breite</span><span class="p">)]</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">wrot</span><span class="p">:</span>
+	<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">breite</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">hoehe</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span> <span class="o">&lt;</span> <span class="n">tiefe</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">w</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">])][</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])][</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])]</span> <span class="o">=</span> <span class="s">"x"</span>
+
+<span class="c1"># --- Wuerfel in die Ausgabe
+</span><span class="k">for</span> <span class="n">wy</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">hoehe</span><span class="p">):</span>
+	<span class="k">for</span> <span class="n">wx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">breite</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">wz</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">tiefe</span><span class="p">):</span>
+			<span class="n">v</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">wx</span><span class="p">][</span><span class="n">wy</span><span class="p">][</span><span class="n">wz</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">v</span> <span class="o">==</span> <span class="s">"x"</span><span class="p">:</span>
+				<span class="n">s</span><span class="p">[</span><span class="n">wx</span><span class="p">][</span><span class="n">wy</span><span class="p">]</span> <span class="o">=</span> <span class="s">"x"</span>
+
+<span class="c1"># --- Ausgabe
+</span><span class="n">sys</span><span class="p">.</span><span class="n">stdout</span><span class="p">.</span><span class="n">flush</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">hoehe</span><span class="p">):</span>
+	<span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">breite</span><span class="p">):</span>
+		<span class="n">sys</span><span class="p">.</span><span class="n">stdout</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">s</span><span class="p">[</span><span class="n">x</span><span class="p">][</span><span class="n">y</span><span class="p">])</span>
+	<span class="n">sys</span><span class="p">.</span><span class="n">stdout</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">)</span>
+<span class="n">sys</span><span class="p">.</span><span class="n">stdout</span><span class="p">.</span><span class="n">flush</span><span class="p">()</span>
+<span class="n">sys</span><span class="p">.</span><span class="nb">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></code></pre></figure>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

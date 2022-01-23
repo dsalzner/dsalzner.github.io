@@ -1,0 +1,926 @@
+<html>
+<head>
+	<title>Dennis Salzner - 2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver</title>
+  <style type="text/css">
+td.linenos { background-color: #f0f0f0; padding-right: 10px; }
+span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
+pre { line-height: 125%; }
+body .hll { background-color: #ffffcc }
+body  { background: #f8f8f8; }
+body .c { color: #408080; font-style: italic } /* Comment */
+body .err { border: 1px solid #FF0000 } /* Error */
+body .k { color: #008000; font-weight: bold } /* Keyword */
+body .o { color: #666666 } /* Operator */
+body .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+body .cp { color: #BC7A00 } /* Comment.Preproc */
+body .c1 { color: #408080; font-style: italic } /* Comment.Single */
+body .cs { color: #408080; font-style: italic } /* Comment.Special */
+body .gd { color: #A00000 } /* Generic.Deleted */
+body .ge { font-style: italic } /* Generic.Emph */
+body .gr { color: #FF0000 } /* Generic.Error */
+body .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+body .gi { color: #00A000 } /* Generic.Inserted */
+body .go { color: #888888 } /* Generic.Output */
+body .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+body .gs { font-weight: bold } /* Generic.Strong */
+body .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+body .gt { color: #0044DD } /* Generic.Traceback */
+body .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+body .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+body .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+body .kp { color: #008000 } /* Keyword.Pseudo */
+body .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+body .kt { color: #B00040 } /* Keyword.Type */
+body .m { color: #666666 } /* Literal.Number */
+body .s { color: #BA2121 } /* Literal.String */
+body .na { color: #7D9029 } /* Name.Attribute */
+body .nb { color: #008000 } /* Name.Builtin */
+body .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+body .no { color: #880000 } /* Name.Constant */
+body .nd { color: #AA22FF } /* Name.Decorator */
+body .ni { color: #999999; font-weight: bold } /* Name.Entity */
+body .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+body .nf { color: #0000FF } /* Name.Function */
+body .nl { color: #A0A000 } /* Name.Label */
+body .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+body .nt { color: #008000; font-weight: bold } /* Name.Tag */
+body .nv { color: #19177C } /* Name.Variable */
+body .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+body .w { color: #bbbbbb } /* Text.Whitespace */
+body .mf { color: #666666 } /* Literal.Number.Float */
+body .mh { color: #666666 } /* Literal.Number.Hex */
+body .mi { color: #666666 } /* Literal.Number.Integer */
+body .mo { color: #666666 } /* Literal.Number.Oct */
+body .sb { color: #BA2121 } /* Literal.String.Backtick */
+body .sc { color: #BA2121 } /* Literal.String.Char */
+body .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+body .s2 { color: #BA2121 } /* Literal.String.Double */
+body .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+body .sh { color: #BA2121 } /* Literal.String.Heredoc */
+body .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+body .sx { color: #008000 } /* Literal.String.Other */
+body .sr { color: #BB6688 } /* Literal.String.Regex */
+body .s1 { color: #BA2121 } /* Literal.String.Single */
+body .ss { color: #19177C } /* Literal.String.Symbol */
+body .bp { color: #008000 } /* Name.Builtin.Pseudo */
+body .vc { color: #19177C } /* Name.Variable.Class */
+body .vg { color: #19177C } /* Name.Variable.Global */
+body .vi { color: #19177C } /* Name.Variable.Instance */
+body .il { color: #666666 } /* Literal.Number.Integer.Long */
+
+  </style>
+
+  <!-- stats -->
+<script type="text/javascript">
+  var _paq = window._paq = window._paq || [];
+  /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+  _paq.push(['trackPageView']);
+  _paq.push(['enableLinkTracking']);
+  (function() {
+    var u="//dennissalzner.de/stats/matomo/";
+    _paq.push(['setTrackerUrl', u+'matomo.php']);
+    _paq.push(['setSiteId', '1']);
+    var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+    g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+  })();
+</script>
+  <!-- stats -->
+</head>
+
+<body>
+
+<h1>Dennis Salzner - 2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver</h1>
+<link rel="image_src" href="grafiken/2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver/001t.jpg" />
+
+<p align="right" style="font-size:80%">
+	<a href="../"><< Back Home</a> 
+</p>
+			
+<table style="width:100%">
+	<tr>
+		<td style="vertical-align: top;">
+			<a href="#null" onclick="newWindow('grafiken/2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver/001.jpg','','640','480','')">
+				<img src="grafiken/2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver/001t.jpg" width="160" height="120">
+			</a>
+			<p style="font-size:75%; margin-top: 0;">
+				Fig.1: Driver board
+			</p>
+			
+			<a href="#null" onclick="newWindow('grafiken/2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver/002.png','','640','480','')">
+				<img src="grafiken/2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver/002t.png" width="160" height="117">
+			</a>
+			<p style="font-size:75%; margin-top: 0;">
+				Fig.2: Pulse width modulation
+			</p>
+			
+			<a href="#null" onclick="newWindow('grafiken/2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver/003.png','','640','480','')">
+				<img src="grafiken/2015-04-06-Mo-ServoMotorPCA9685PwmDriverFT232RLbitbangI2CPythonFlaskWebserver/003t.png" width="160" height="94">
+			</a>
+			<p style="font-size:75%; margin-top: 0;">
+				Fig.3: Web interface
+			</p>
+		</td>
+		<td style="vertical-align: top;">
+			<!-- Titel -->
+			<h2>
+				Controlling servo motors using the PCA9685 PWM driver via I2C from a Python Flask Webinterface using an FTDI FT232RL in BitBang-Mode 
+			</h2>
+			<h4>
+				An easy method for controlling servo motors from your computer's USB port
+			</h4>
+
+			<table>
+				<tr>
+					<td rowspan="7"> <!-- Video -->
+							<!-- 500 x 375 - 250 x 188 -->
+							<!-- http://andrew.hedges.name/experiments/aspect_ratio/ -->
+							<iframe src="https://player.vimeo.com/video/124606055" width="320" height="241" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+					</td> 
+					<td></td> <!-- Text -->
+					<td></td>
+					<td> <!--- Struktur -->
+						<!-- Was -->
+						<p align="right" style="font-size:60%">What?</p>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<p style="font-size:80%">
+							I've adapted the I2C script for reading the compass module (see <a href="2015-04-02-Do-HMC5883compassFT232RLbitbangI2CPython.html">here</a> for details on I2C and FTDI FT232RL bit-banging), so that I can now use it to talk to a PCA9685 PWM driver IC. This enables me to control pulse width modulated servo motors (motors that can be set to a specific angle), which are connected to the PCA9685, from Python - very easily. From there it's easy to add a Webinterface with sliders that control the motors.
+						</p>
+					</td>
+					<td></td>
+					
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td>
+						<!-- Wann -->
+						<p align="right" style="font-size:60%">When?</p>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<p style="font-size:80%">
+							This is what I was originally heading for when I started working on the compass module. I wanted to control servo motors for a four-legged walking robot. Reading the compass module is easier than controlling the PWM driver, so I decided to do that first and then use the functioning I2C code and adapt it for the pwm controller.
+						</p>
+					</td>
+					<td></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td>
+						<!-- Warum -->
+						<p align="right" style="font-size:60%">Why?</p>
+					</td>
+				</tr>
+				
+				<tr>
+					<td></td>
+					<td>
+						<p style="font-size:80%">
+							Being able to easily control servo motors from Python will be very useful. I have a number of projects planned that use servo motors. One of which is a walking robot that will use servo motors to control its legs. Another idea is to track a moving object by panning and tilting a webcam.
+						</p>
+			
+					</td>
+					<td></td>
+				</tr>
+			</table>
+			
+			
+			<!-- Hintergrund -->
+			<p align="right" style="font-size:60%">Background?</p>
+			<p style="font-size:80%">
+				<b>FTDI, bit-banging and I2C</b>
+				<br><br>
+				(see <a href="2015-04-02-Do-HMC5883compassFT232RLbitbangI2CPython.html">here</a> for details on I2C and FTDI FT232RL bit-banging),
+				<br><br>
+				<b>Servo motors</b>
+				<br><br>
+				A servo motor is a DC motor with added mechanics and electronics. The added mechanics are a gear box, for increasing the motors torque, and a limit, to constrain the range it can turn. Typical servo motors can turn within a range of +90 to -90 degrees. The added electronics are a potentiometer, which is connected to the motor. So when the motor rotates, so does the potentiometer. By measuring the potentiometer one can determine the angle at which the motor has currently rotated. An additional circuit inside the servo receives a "command" to what angle it should turn and it then rotates the motor until the potentiometer read-out matches that angle.
+				<br><br>
+				<b>PWM modulation</b>
+				<br><br>
+				Most servos are PWM modulated. What this means is that this "command" to the servo's circuit board is a pulse-width modulated (PWM) signal. A PWM signal is a digital signal which is normally on logic 0. It then ramps up to 1 for a specified amount of time and then back down to 0 (see Fig.2). The specified amount is the pulse-width. This pulse-width has to be set accordingly to the desired angle we want the motor to rotate to.
+				<br><br>
+				<b>PWM driver</b>
+				<br><br>
+				Now, I can't accuratly control the width of a signal from the FTDI FT232RL in BitBang-mode, because it is far too slow and inaccurate. But I can make it speak I2C in software - just like I did for the compass module. There are PWM driver integrated circuits which receive commands via I2C and handle the pulse-width-modulation themselves.
+				So all I have to do is tell this chip, via I2C, which pulse-width I want it to modulate. This will enable me to control the servo motor.
+			<!-- Wie -->
+			<p align="right" style="font-size:60%">How?</p>
+			<p style="font-size:80%">
+				<b>Connecting it</b>
+				<br><br>
+				The connection between the FTDI FT232RL break-out board and the PCA9685 break-out board is as you would expect: Vcc and V+ go to the FTDI's Vcc. Ground goes to Ground. And the V+ and GND in the center of the PCA9685 break-out are hooked up in the same way - V+ goes to the FTDI's Vcc and Ground to its Ground. I am in fact running the servos off of the usb ports power.
+				<br><br>
+				This works for me using either one TowardPro MG996R or one TowerPro SG90 servo - both don't need too much power. But hooking up 16 of those MG996Rs will definitely cause trouble. But USB-Ports are in fact protected - this depends on your computer's mainboard. Generally, you do need to go to great lengths to fry them, but they will eventually shut down.
+				<br><br>
+				The PCA9685's I2C SCL line goes to TXD on the FT232RL and SDA goes to RXD. Additional 1,8k pull-ups go from RXD and TXD to Vcc.				
+				<br><br>
+				<b>Servo Library</b>
+				<br><br>
+				I've adopted the I2C code I wrote for the compass module in order to speak to the PCA9685. This code is used by a web interface, so it has to be thread-safe. This is because the webserver will start a new thread for each request and so access to variables which are outside of the functions is not guaranteed.
+				<br><br>
+				The easiest way to make the code thread-safe is to make it free of "side-effects". That is to remove all variables that are outside of functions and pass everything the functions needs to the function via parameters. By doing this the code will have no "state" (or memory) of its own and every function call will work no matter in what order or what else is happening.			
+				<br><br>
+				Of course accessing the FTDI chip locks the USB device associated with it. So we need to make sure we grab and then release it in every call. Other calls which try to grab the device, when another thread already has it, will fail silently. But calling the function again will work as soon as the previous thread has finished - so this is okay for now.
+				<br><br>
+ 
+				<div id='code1short' style='display:block'>
+					<a style="font-size:60%" href="#null" onclick="document.getElementById('code1expanded').style.display='block'; document.getElementById('code1short').style.display='none';">See more</a>
+					<br>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># [...]</span>
+<span class="kn">from</span> <span class="nn">pylibftdi</span> <span class="kn">import</span> <span class="n">BitBangDevice</span>
+<span class="c"># [...]</span>
+<span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">chipAddresse</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+<span class="c"># [...]</span>
+<span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">chipAddresse</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+<span class="c"># [...]</span>
+</pre></div>
+</td></tr></table>
+				</div>
+				<div id='code1expanded' style='display:none'>
+					<a style="font-size:60%" href="#null" onclick="document.getElementById('code1expanded').style.display='none'; document.getElementById('code1short').style.display='block';">Hide</a>
+					<br>
+
+<!-- ============================================================================================================================== -->
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre>  1
+  2
+  3
+  4
+  5
+  6
+  7
+  8
+  9
+ 10
+ 11
+ 12
+ 13
+ 14
+ 15
+ 16
+ 17
+ 18
+ 19
+ 20
+ 21
+ 22
+ 23
+ 24
+ 25
+ 26
+ 27
+ 28
+ 29
+ 30
+ 31
+ 32
+ 33
+ 34
+ 35
+ 36
+ 37
+ 38
+ 39
+ 40
+ 41
+ 42
+ 43
+ 44
+ 45
+ 46
+ 47
+ 48
+ 49
+ 50
+ 51
+ 52
+ 53
+ 54
+ 55
+ 56
+ 57
+ 58
+ 59
+ 60
+ 61
+ 62
+ 63
+ 64
+ 65
+ 66
+ 67
+ 68
+ 69
+ 70
+ 71
+ 72
+ 73
+ 74
+ 75
+ 76
+ 77
+ 78
+ 79
+ 80
+ 81
+ 82
+ 83
+ 84
+ 85
+ 86
+ 87
+ 88
+ 89
+ 90
+ 91
+ 92
+ 93
+ 94
+ 95
+ 96
+ 97
+ 98
+ 99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># D.Salzner 2015-04-05-So</span>
+
+<span class="kn">from</span> <span class="nn">pylibftdi</span> <span class="kn">import</span> <span class="n">BitBangDevice</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+
+<span class="n">debug</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">PIN_0_TXD</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">PIN_1_RXD</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">PIN_I2C_SCL</span> <span class="o">=</span> <span class="n">PIN_0_TXD</span>
+<span class="n">PIN_I2C_SDA</span> <span class="o">=</span> <span class="n">PIN_1_RXD</span>
+
+<span class="c"># --- gpio ---</span>
+<span class="k">def</span> <span class="nf">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">pin</span><span class="p">,</span> <span class="n">wert</span><span class="p">):</span>
+	<span class="k">if</span> <span class="n">wert</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">bb</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">port</span> <span class="o">|</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">pin</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">bb</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">port</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">pin</span><span class="p">)</span>
+	<span class="c">#time.sleep(0.001)</span>
+
+<span class="k">def</span> <span class="nf">pin</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">pin</span><span class="p">):</span>
+	<span class="k">if</span> <span class="n">bb</span><span class="o">.</span><span class="n">port</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">pin</span><span class="p">):</span>
+		<span class="k">return</span> <span class="mi">1</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">return</span> <span class="mi">0</span>
+
+<span class="k">def</span> <span class="nf">pinit</span><span class="p">(</span><span class="n">bb</span><span class="p">):</span>
+	<span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">|</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">PIN_I2C_SCL</span><span class="p">)</span> <span class="c"># Clock aus Ausgang</span>
+	<span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">|</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">PIN_I2C_SDA</span><span class="p">)</span> <span class="c"># SDA als Ausgang</span>
+
+<span class="c"># --- i2c ---</span>
+<span class="k">def</span> <span class="nf">i2cstart</span><span class="p">(</span><span class="n">bb</span><span class="p">):</span>
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">i2cstop</span><span class="p">(</span><span class="n">bb</span><span class="p">):</span>
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">wert</span><span class="p">):</span>
+	<span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;[S: &quot;</span><span class="p">)</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span> <span class="c"># Rueckwaerts rausshiften</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">wert</span> <span class="o">&amp;</span> <span class="mh">0x80</span><span class="p">):</span>
+			<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+		
+		<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+		<span class="n">wert</span> <span class="o">=</span> <span class="n">wert</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	
+	<span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">PIN_I2C_SDA</span><span class="p">)</span> <span class="c"># als Eingang</span>
+	
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="n">ack</span> <span class="o">=</span> <span class="n">pin</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;, &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">ack</span><span class="p">))</span>	<span class="c"># ist 0, wenn der Slave acknowledged. sonst 1 - da wir den Port auf 1 gelassen haben.</span>
+	
+	
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	
+	<span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">|</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">PIN_I2C_SDA</span><span class="p">)</span> <span class="c"># wieder als Ausgang</span>
+	
+	<span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+	
+	<span class="c">#time.sleep(0.01) # bisschen entzerren, damit am Oszi leichter lesbar</span>
+
+<span class="k">def</span> <span class="nf">i2cwrite</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">addresse</span><span class="p">,</span> <span class="n">register</span><span class="p">,</span> <span class="n">wert</span><span class="p">):</span>
+	<span class="c"># Startsequenz</span>
+	<span class="n">i2cstart</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+	
+	<span class="c"># Chip ansprechen und Write vorbereiten</span>
+	<span class="n">ersten8</span> <span class="o">=</span> <span class="n">addresse</span>
+	<span class="n">ersten8</span> <span class="o">=</span> <span class="n">ersten8</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="c"># read/write auf 0, zum schreiben</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">ersten8</span><span class="p">)</span> <span class="c"># erwarte danach 0 als ack</span>
+	
+	<span class="c"># Modus Register auswaehlen</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">register</span><span class="p">)</span> <span class="c"># erwarte danach 0 als ack</span>
+	
+	<span class="c"># und kontinuierliche Messung reinschreiben</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">wert</span><span class="p">)</span> <span class="c"># erwarte danach 0 als ack</span>
+	
+	<span class="c"># Abschliessen</span>
+	<span class="n">i2cstop</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+	
+<span class="k">def</span> <span class="nf">i2cread</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">addresse</span><span class="p">,</span> <span class="n">register</span><span class="p">):</span>
+	<span class="n">i2cstart</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+	
+	<span class="c"># Chip ansprechen und Write vorbereiten</span>
+	<span class="n">ersten8</span> <span class="o">=</span> <span class="n">addresse</span>
+	<span class="n">ersten8</span> <span class="o">=</span> <span class="n">ersten8</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="c"># read/write auf 0, zum schreiben</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">ersten8</span><span class="p">)</span> <span class="c"># erwarte danach 0 als ack</span>
+	
+	<span class="c"># Register anwaehlen</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">register</span><span class="p">)</span> <span class="c"># erwarte danach 0 als ack</span>
+	
+	<span class="n">i2cstart</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+	
+	<span class="c"># und jetzt lesen vorbereiten</span>
+	<span class="n">ersten8</span> <span class="o">=</span> <span class="n">addresse</span>
+	<span class="n">ersten8</span> <span class="o">=</span> <span class="n">ersten8</span> <span class="o">|</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="c"># read/write auf 1, zum lesen</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">ersten8</span><span class="p">)</span> <span class="c"># erwarte danach 0 als ack</span>
+	
+	<span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;[L: &quot;</span><span class="p">)</span>
+	<span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">PIN_I2C_SDA</span><span class="p">)</span> <span class="c"># als Eingang</span>
+		
+	<span class="n">wert</span> <span class="o">=</span> <span class="mi">0</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">8</span><span class="p">):</span> <span class="c"># eigl 8 - danach kommen die naechsten 8 des Wertes</span>
+		<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+		
+		<span class="n">wert</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span>
+		<span class="k">if</span><span class="p">(</span><span class="n">pin</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+			<span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+			<span class="n">wert</span> <span class="o">|=</span> <span class="mh">0x1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+				<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;0&quot;</span><span class="p">)</span>
+	
+		<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	
+	<span class="k">if</span> <span class="n">debug</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;]</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+	
+	<span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">|</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">PIN_I2C_SDA</span><span class="p">)</span> <span class="c"># wieder als Ausgang</span>
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SDA</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c"># ich muss acknowledgen...</span>
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="n">pout</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">PIN_I2C_SCL</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+	<span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">direction</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">PIN_I2C_SDA</span><span class="p">)</span> <span class="c"># als Eingang</span>
+	
+	<span class="c"># Abschliessen</span>
+	<span class="n">i2cstop</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+	
+	<span class="k">return</span> <span class="n">wert</span>
+
+<span class="c"># --- pca9685 - hier viel von Adafruit Bibliothek genommen ---</span>
+<span class="n">PCA9685_SUBADR1</span> <span class="o">=</span> <span class="mh">0x2</span>
+<span class="n">PCA9685_SUBADR2</span> <span class="o">=</span> <span class="mh">0x3</span>
+<span class="n">PCA9685_SUBADR3</span> <span class="o">=</span> <span class="mh">0x4</span>
+
+<span class="n">PCA9685_MODE1</span> <span class="o">=</span> <span class="mh">0x0</span>
+<span class="n">PCA9685_PRESCALE</span> <span class="o">=</span> <span class="mh">0xFE</span>
+
+<span class="n">LED0_ON_L</span> <span class="o">=</span> <span class="mh">0x6</span>
+<span class="n">LED0_ON_H</span> <span class="o">=</span> <span class="mh">0x7</span>
+<span class="n">LED0_OFF_L</span> <span class="o">=</span> <span class="mh">0x8</span>
+<span class="n">LED0_OFF_H</span> <span class="o">=</span> <span class="mh">0x9</span>
+
+<span class="n">ALLLED_ON_L</span> <span class="o">=</span> <span class="mh">0xFA</span>
+<span class="n">ALLLED_ON_H</span> <span class="o">=</span> <span class="mh">0xFB</span>
+<span class="n">ALLLED_OFF_L</span> <span class="o">=</span> <span class="mh">0xFC</span>
+<span class="n">ALLLED_OFF_H</span> <span class="o">=</span> <span class="mh">0xFD</span>
+
+<span class="c"># --- Code ---</span>
+
+<span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="n">chipAddresse</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+	<span class="n">bb</span> <span class="o">=</span> <span class="n">BitBangDevice</span><span class="p">()</span>
+	<span class="n">pinit</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+	
+	<span class="n">freq</span> <span class="o">*=</span> <span class="mf">0.9</span><span class="p">;</span> 
+	<span class="n">prescaleval</span> <span class="o">=</span> <span class="mi">25000000</span><span class="p">;</span>
+	<span class="n">prescaleval</span> <span class="o">/=</span> <span class="mi">4096</span><span class="p">;</span>
+	<span class="n">prescaleval</span> <span class="o">/=</span> <span class="n">freq</span><span class="p">;</span>
+	<span class="n">prescaleval</span> <span class="o">-=</span> <span class="mi">1</span><span class="p">;</span>
+	
+	<span class="n">prescale</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">prescaleval</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))</span>
+
+	<span class="n">i2cwrite</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">chipAddresse</span><span class="p">,</span> <span class="n">PCA9685_MODE1</span><span class="p">,</span> <span class="mh">0x10</span><span class="p">);</span>
+	<span class="n">i2cwrite</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">chipAddresse</span><span class="p">,</span> <span class="n">PCA9685_PRESCALE</span><span class="p">,</span> <span class="n">prescale</span><span class="p">);</span>
+	<span class="n">i2cwrite</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">chipAddresse</span><span class="p">,</span> <span class="n">PCA9685_MODE1</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">);</span>	
+
+	<span class="n">i2cwrite</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">chipAddresse</span><span class="p">,</span> <span class="n">PCA9685_MODE1</span><span class="p">,</span> <span class="mh">0xA1</span><span class="p">);</span>
+	
+	<span class="n">bb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="n">chipAddresse</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">duration</span><span class="p">):</span>
+	<span class="n">bb</span> <span class="o">=</span> <span class="n">BitBangDevice</span><span class="p">()</span>
+	<span class="n">pinit</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+	
+	<span class="c"># Startsequenz</span>
+	<span class="n">i2cstart</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+		
+	<span class="c"># Chip ansprechen und Write vorbereiten</span>
+	<span class="n">ersten8</span> <span class="o">=</span> <span class="n">chipAddresse</span>
+	<span class="n">ersten8</span> <span class="o">=</span> <span class="n">ersten8</span> <span class="o">&amp;</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="c"># read/write auf 0, zum schreiben</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">ersten8</span><span class="p">)</span> <span class="c"># erwarte danach 0 als ack</span>
+		
+	<span class="c"># Modus Register auswaehlen</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">LED0_ON_L</span><span class="o">+</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">port</span><span class="p">))</span> <span class="c"># erwarte danach 0 als ack</span>
+
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="mi">0</span><span class="n">b00000000</span><span class="p">)</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="mi">0</span><span class="n">b00000000</span><span class="p">)</span>
+
+	<span class="c"># und kontinuierliche Messung reinschreiben</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">duration</span><span class="p">)</span> <span class="c"># erwarte danach 0 als ack</span>
+	<span class="n">i2cwriteH</span><span class="p">(</span><span class="n">bb</span><span class="p">,</span> <span class="n">duration</span><span class="o">&gt;&gt;</span><span class="mi">8</span><span class="p">)</span>
+
+	<span class="c"># Abschliessen</span>
+	<span class="n">i2cstop</span><span class="p">(</span><span class="n">bb</span><span class="p">)</span>
+	
+	<span class="n">bb</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</td></tr></table>
+
+<!-- ============================================================================================================================== -->
+					
+				<a style="font-size:60%" href="#null" onclick="document.getElementById('code1expanded').style.display='none'; document.getElementById('code1short').style.display='block';">Hide</a>
+				</div>
+    
+				<p style="font-size:80%">
+				The code can easily be tested in the Python interactive shell by issuing "python" in the terminal/command prompt (Linux: may need root privilidges to access the USB device) and enter these commands:
+				</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6</pre></div></td><td class="code"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">servo</span>
+<span class="n">servo_chipAddresse</span> <span class="o">=</span> <span class="mi">0</span><span class="n">b10000000</span>
+<span class="n">servo_freq</span> <span class="o">=</span> <span class="mi">60</span>
+<span class="n">servo_port</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">servo</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">servo_chipAddresse</span><span class="p">,</span> <span class="n">servo_freq</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
+				<p style="font-size:80%">
+				This is also how I found out what values I need for my servos - by changing the duration and measuring the PWM signal on the oscilloscope to match the datasheet of the motors - but the values differ. Especially on the cheap SG-90 servos (these can even break themselves, if they attempt to rotate too far).
+				</p>
+
+<table class="highlighttable">
+<td class="code"><div class="highlight"><pre>
+<span class="n">servo</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">servo_chipAddresse</span><span class="p">,</span> <span class="n">servo_port</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span> <span class="c"># TowardPro MG996R min - 600us</span>
+<span class="n">servo</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">servo_chipAddresse</span><span class="p">,</span> <span class="n">servo_port</span><span class="p">,</span> <span class="mi">470</span><span class="p">)</span> <span class="c"># TowardPro MG996R max - 1800us</span>
+
+<span class="n">servo</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">servo_chipAddresse</span><span class="p">,</span> <span class="n">servo_port</span><span class="p">,</span> <span class="mi">130</span><span class="p">)</span> <span class="c"># TowerPro SG-90 min - 520us</span>
+<span class="n">servo</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">servo_chipAddresse</span><span class="p">,</span> <span class="n">servo_port</span><span class="p">,</span> <span class="mi">650</span><span class="p">)</span> <span class="c"># TowerPro SG-90 max - 2500us</span></pre></div>
+</td></tr></table>
+				<p style="font-size:80%">
+				<b>Web-Interface</b>
+				<br><br>
+				I stumbled across Python Flask the other day and found that it is an excellent way to quickly build user interfaces. It starts a small webserver and loads up HTML templates from a subdirectory, which are sent to the web browser, when it accesses the server. Inside these templates is code to communicate back with Python. So you can have a button on the website that runs Python code in the background once its clicked on - perfect for my needs.
+				<br><br>
+				This also gives me the ability to drop the code - as is - onto an embedded network-enabled computer and be able to control it from outside. And I don't need to write seperate client and server-side code. Plus I can open it from my smartphone.
+				<br><br>
+				Big-banging: No microcontroller code. Flask: No client/server code and no custom protocols. All in all: No nothing - just one short Python script (and one for the servos).
+				<br><br>
+				Python Flask requires a special folder structure:
+				
+				<table>
+				<tr><td>
+<pre>
+app
+app/main.py			#  code for Flask, loads the webserver 
+app/servo.py			#  code for controlling the servos
+				
+app/static
+app/static/jquery-ui-1.11.4	# JQuery library. This is what I use for user interface elementes such as a slider
+				
+app/templates
+app/templates/steuerung.html	# the template for the servo control webpage
+</pre>
+				</td></tr></table>
+				
+				The file servo.py is the code from above. 
+				This is main.py:
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></div></td><td class="code"><div class="highlight"><pre><span class="c"># D.Salzner 2015-04-05-So</span>
+
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">url_for</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">servo</span>
+<span class="n">servo_chipAddresse</span> <span class="o">=</span> <span class="mi">0</span><span class="n">b10000000</span>
+<span class="n">servo_freq</span> <span class="o">=</span> <span class="mi">60</span>
+<span class="n">servo_port</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">servo_max</span> <span class="o">=</span> <span class="mi">650</span>
+<span class="n">servo_min</span> <span class="o">=</span> <span class="mi">130</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">steuerung</span><span class="p">():</span>
+	<span class="n">servo</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">servo_chipAddresse</span><span class="p">,</span> <span class="n">servo_freq</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;steuerung.html&#39;</span><span class="p">)</span>
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&#39;/slider_changed&#39;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;POST&#39;</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">slider_changed</span><span class="p">():</span>
+	<span class="k">print</span> <span class="s">&quot;[] slider_changed&quot;</span>
+	<span class="n">wert</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&quot;wert&quot;</span><span class="p">)</span>
+	<span class="n">setzen</span> <span class="o">=</span> <span class="p">((((</span><span class="n">servo_max</span> <span class="o">-</span> <span class="n">servo_min</span><span class="p">)</span> <span class="o">/</span> <span class="mf">180.0</span><span class="p">)</span> <span class="o">*</span> <span class="nb">float</span><span class="p">(</span><span class="n">wert</span><span class="p">))</span> <span class="o">+</span> <span class="n">servo_min</span><span class="p">)</span>
+	<span class="n">servo</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">servo_chipAddresse</span><span class="p">,</span> <span class="n">servo_port</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">setzen</span><span class="p">))</span>
+	
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+	<span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</td></tr></table>
+				<p style="font-size:80%">
+				I won't go into too much detail on how it works (out of scope), but its fairly basic.
+				Once the web browser accesses the webpage Flask will initialize the servos and send the html template back.
+				Within this template is a slider, which automatically initiates an HTTP Post request to the server. This is caught in the "slider_changed" function. Then the servos are moved accordingly.
+				<br><br>
+				Now the slider goes from 0 to 180 degrees, so I need to adapt the range to that of the servos, but that's really all there is to it.
+				<br><br>
+				The template looks like this:
+				</p>
+		<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27</pre></div></td><td class="code"><div class="highlight"><pre><span class="nt">&lt;html&gt;</span>
+	<span class="nt">&lt;head&gt;</span>
+		<span class="nt">&lt;title&gt;</span>Steuerung<span class="nt">&lt;/title&gt;</span>
+		<span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href=</span><span class="s">&quot;static/jquery-ui-1.11.4/jquery-ui.css&quot;</span><span class="nt">&gt;</span>
+		<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;static/jquery-ui-1.11.4/external/jquery/jquery.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+		<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;static/jquery-ui-1.11.4/jquery-ui.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+		<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">text/javascript</span><span class="nt">&gt;</span>
+			<span class="nx">$</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+				<span class="nx">$</span><span class="p">(</span> <span class="s2">&quot;#slider&quot;</span> <span class="p">).</span><span class="nx">slider</span><span class="p">({</span>
+					<span class="nx">min</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span>
+					<span class="nx">max</span><span class="o">:</span> <span class="mi">180</span><span class="p">,</span>
+					<span class="nx">step</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+					<span class="nx">change</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">ui</span><span class="p">)</span> <span class="p">{</span>
+					<span class="c1">//slide: function(event, ui) {</span>
+						<span class="c1">//alert(&quot;slider triggered&quot;);</span>
+						<span class="nx">$</span><span class="p">(</span><span class="s2">&quot;#textfield&quot;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">ui</span><span class="p">.</span><span class="nx">value</span><span class="p">);</span>
+						<span class="nx">$</span><span class="p">.</span><span class="nx">post</span><span class="p">(</span><span class="s2">&quot;/slider_changed&quot;</span><span class="p">,</span> <span class="p">{</span><span class="nx">wert</span><span class="o">:</span> <span class="nx">ui</span><span class="p">.</span><span class="nx">value</span><span class="p">}</span> <span class="p">);</span>
+					<span class="p">}</span>
+				<span class="p">});</span>
+			<span class="p">});</span>
+		<span class="nt">&lt;/script&gt;</span>
+	<span class="nt">&lt;/head&gt;</span>
+	<span class="nt">&lt;body&gt;</span>
+		<span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;slider&quot;</span><span class="nt">&gt;&lt;/div&gt;</span>
+		<span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">&quot;textfield&quot;</span> <span class="na">type=</span><span class="s">&quot;text&quot;</span> <span class="na">value=</span><span class="s">&quot;0&quot;</span><span class="nt">&gt;&lt;/input&gt;</span>
+	<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</pre></div>
+</td></tr></table>
+				<p style="font-size:80%">
+				<i>(I just syntax highlighted html in html...)</i>
+				<br><br>
+				And then I can run this by issuing:
+				</p>
+<pre>
+python main.py
+</pre>
+				<p style="font-size:80%">
+				It will open a webserver on port 5000, which I can access from my browser under the url http://127.0.0.1:5000/. Moving the slider on that page moves the servo.
+				</p>
+
+			</p>
+			<!-- Fortschritt -->
+			<p align="right" style="font-size:60%">Progress?</p>
+			<p style="font-size:80%">
+				All is up and running (see Video).
+			</p>
+
+		</td>
+
+	</tr>
+</table>
+
+<!-- -------------------------------------------------------------------------------------- -->
+<script type="text/javascript" language="JavaScript">
+// Centered Pop-Up Window (v1.0)
+// (C) 2002-2005 www.smileycat.com
+// Free for all users, but leave in this header</code><br>
+
+var win = null;
+function newWindow(mypage,myname,w,h,features) {
+  var winl = (screen.width-w)/2;
+  var wint = (screen.height-h)/2;
+  if (winl = 0) winl = 0;
+  if (wint = 0) wint = 0;
+  var settings = 'height=' + h + ',';
+  settings += 'width=' + w + ',';
+  settings += 'top=' + wint + ',';
+  settings += 'left=' + winl + ',';
+  settings += features;
+  win = window.open(mypage,myname,settings);
+  win.window.focus();
+}
+</script>
+
+</body>
+</html>

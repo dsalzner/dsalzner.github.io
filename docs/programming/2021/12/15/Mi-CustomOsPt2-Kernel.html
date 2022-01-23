@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/site/programming/2021/12/15/Mi-CustomOsPt2-Kernel.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.2 - BuildAndBootAKernel - Dennis Salzner" />
+  <meta property="og:description" content="Last time around we build the cross-compiler. With it we can now compile the barebones tutorial from the osdev-Forums. We can then boot this custom kernel sa..." />
+  <meta property="og:url" content="/site/programming/2021/12/15/Mi-CustomOsPt2-Kernel.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2021-12-15 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2021-12-15 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2021-12-15 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Last time around we build the cross-compiler. With it we can now compile the barebones tutorial from the osdev-Forums. We can then boot this custom kernel sa..." />
+  <meta name="twitter:title" content="CustomOS - Pt.2 - BuildAndBootAKernel - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+   
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/site/css/main.css">
+  <link rel="stylesheet" href="/site/css/style.css">
+
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/site/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/site/js/lightbox.js"></script>
+  <link href="/site/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/site/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - 2021-12-15-Mi-CustomOs-Pt2-BuildAndBootAKernel</h1>
+<p align="right" style="font-size:80%"><a href="/site/"><< Back Home</a></p>
+<div class="page-title">CustomOS - Pt.2 - BuildAndBootAKernel</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS) - How hard could that be?</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<h2>What we are trying to achieve</h2>
+
+<p>Last time around we build the cross-compiler. With it we can compile our own Kernel code in a way that is compatible to be booted on an x86 CPU.
+We then boot this custom kernel safely in QEmu, a hypervisor, that emulates a computer CPU.</p>
+
+<h2>What to expect</h2>
+
+<p>If all works well we will be able to boot our custom OS from a generated ISO CD-Image and see a message on the screen.</p>
+
+<p><a href="../../../../images/2021-12-15-Mi-CustomOsPt2-Kernel/grub-bootloader.png" data-lightbox="image" data-title=""><img src="../../../../images/2021-12-15-Mi-CustomOsPt2-Kernel/grub-bootloader-t.png" alt="" class="" style="max-width:80%;" /></a>
+<a href="../../../../images/2021-12-15-Mi-CustomOsPt2-Kernel/customos-helloworld.png" data-lightbox="image" data-title=""><img src="../../../../images/2021-12-15-Mi-CustomOsPt2-Kernel/customos-helloworld-t.png" alt="" class="" style="max-width:80%;" /></a></p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2>Stages during boot of an x86 computer</h2>
+
+<p>As seen in my previous post, after a computer boots it eventually loads the bootloader. We will be using GRUB, a very common bootloader for Linux OSes to load our bootcode that will then load oder Kernel written in C-Code.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h2>Required steps to build a custom Kernel</h2>
+
+<p>In order to achieve this we will use the cross-compiler from the previous part of the series to compile for i686-elf architectures.
+With it, we can:</p>
+
+<ol>
+  <li>Compile the boot code written in assembly</li>
+  <li>Compile the kernel C-Code</li>
+  <li>Link the two together</li>
+  <li>Create a bootable ISO CD-Image with Grub</li>
+  <li>Boot that CD-Image in the QEmu Hypervisor</li>
+</ol>
+
+<p>An important note regarding our Kernel C-Code: The code will be run in ring 1 or <b>“Privileged Mode”</b>. Grub itself runs mostly in Ring 0 or <b>“Real Mode”</b>. The difference is that some machine operations, most notable the famous “INT 13” BIOS-Interrupt for reading the disk, is not permitted in “Privileged Mode”.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2>Sources of Code and Documentation</h2>
+
+<p>Much of code to initialize this bootloader is magic code that is specifically for the boot process of an x86-compatible computer.</p>
+
+<p>A basic understanding of computers, as everyone will tell you, is beneficial. You can of course read the computer science literature. But there are also numerous sources of code Online. The osdev-Forums provide code examples in their barebones tutorial [1]. Searching for distinct keywords from that tutorial in GitHub yields numerous other Custom OSes that were based on the same barebones tutorial, als the boot code here.</p>
+
+<p>As always in software development the question is merely at what stage do you move from your code to other people’s code. It’s important to keep in mind that the CPU itself has software running within it. The bootcode is the way it is, because it need to be compatible with the original Intel-Processors. Every major CPU since is made to be backward compatible. And we are also writing our boot code to be compatible with it.</p>
+
+<p>At the same time the boot code is required to be compatible with the Multiboot-Specificaiton [2]. Otherwise the Grub-Bootloader would not be able to execute the code.</p>
+
+<p>Much of the code in OS development is not written by a single person, but passed on and it is very specific to the target architecture. Be sure to check the references below.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2>Setting up the Boot-Code</h2>
+
+<p>In the following we will get to know the minimum required files (<b>linker.ld</b>, <b>boot.asm</b>, <b>kernel.cpp</b> and <b>grub.cfg</b>) that are required to get a PC to boot and print text on the screen.</p>
+
+<p>The <b>linker.ld</b> is configuration file for gcc’s linker that is required to create a bootable kernel image:</p>
+
+<p><b>linker.ld</b></p>
+
+<figure class="highlight"><pre><code class="language-none" data-lang="none">ENTRY(_start)
+
+SECTIONS
+{
+	/* 1 MB sections */
+	. = 1M; 
+
+	/* Multiboot Header */
+	.text BLOCK(4K) : ALIGN(4K) 
+	{
+		*(.multiboot)
+		*(.text)
+	}
+
+	/* Read-only data. */
+	.rodata BLOCK(4K) : ALIGN(4K)
+	{
+		*(.rodata)
+	}
+
+	/* Read-write data (initialized) */
+	.data BLOCK(4K) : ALIGN(4K)
+	{
+		*(.data)
+	}
+
+	/* Read-write data (uninitialized) and stack */
+	.bss BLOCK(4K) : ALIGN(4K)
+	{
+		*(COMMON)
+		*(.bss)
+	}
+}</code></pre></figure>
+
+<p>The boot assembly code, <b>boot.asm</b> is what will call our “kernel_main” C-Code function for the kernel.</p>
+
+<p><b>boot.asm</b></p>
+
+<figure class="highlight"><pre><code class="language-nasm" data-lang="nasm"><span class="no">MBALIGN</span><span class="kd">  equ</span>  <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
+<span class="no">MEMINFO</span><span class="kd">  equ</span>  <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+<span class="no">FLAGS</span><span class="kd">    equ</span>  <span class="nv">MBALIGN</span> <span class="o">|</span> <span class="nv">MEMINFO</span>
+<span class="no">MAGIC</span><span class="kd">    equ</span>  <span class="mh">0x1BADB002</span>
+<span class="no">CHECKSUM</span><span class="kd"> equ</span> <span class="o">-</span><span class="p">(</span><span class="nv">MAGIC</span> <span class="o">+</span> <span class="nv">FLAGS</span><span class="p">)</span>
+
+<span class="nf">section</span> <span class="nv">.multiboot</span>
+<span class="nf">align</span> <span class="mi">4</span>
+	<span class="kd">dd</span> <span class="nv">MAGIC</span>
+	<span class="kd">dd</span> <span class="nv">FLAGS</span>
+	<span class="kd">dd</span> <span class="nb">CH</span><span class="nv">ECKSUM</span>
+
+<span class="nf">section</span> <span class="nv">.bss</span>
+<span class="nf">align</span> <span class="mi">16</span>
+<span class="nl">stack_bottom:</span>
+<span class="kd">resb</span> <span class="mi">16384</span> <span class="c1">; 16 KiB</span>
+<span class="nl">stack_top:</span>
+
+<span class="nf">section</span> <span class="nv">.text</span>
+<span class="nf">global</span> <span class="nv">_start</span><span class="p">:</span><span class="nv">function</span> <span class="p">(</span><span class="nv">_start.end</span> <span class="o">-</span> <span class="nv">_start</span><span class="p">)</span>
+<span class="nl">_start:</span>
+	<span class="nf">mov</span> <span class="nb">esp</span><span class="p">,</span> <span class="nv">stack_top</span>
+	<span class="nf">extern</span> <span class="nv">kernel_main</span>
+	<span class="nf">call</span> <span class="nv">kernel_main</span>
+	<span class="nf">cli</span>
+<span class="nl">.hang:</span>	<span class="nf">hlt</span>
+	<span class="nf">jmp</span> <span class="nv">.hang</span>
+<span class="nl">.end:</span></code></pre></figure>
+
+<h2>Setting the Grub-Bootloader</h2>
+
+<p>For booting our Custom OS we use the Grub-Bootloader. For this a small configuration for the Grub-Boot-Menu, <b>grub.cfg</b>, is provided:</p>
+
+<p><b>grub.cfg</b></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">menuentry <span class="s2">"myos"</span> <span class="o">{</span>
+  multiboot /boot/myos.bin
+<span class="o">}</span></code></pre></figure>
+
+<h2>Finally our Kernel-Code</h2>
+
+<p>And the first <b>kernel.cpp</b> is where things get interesting for us. For now it contains the code to print a simple “Hello World” onto the screen. This code is taken straight from the BareBones Tutorial [1].</p>
+
+<p>It contains the code for writting on the screen. This is achieved by writing to a specific memory location, the Terminal Buffer at address 0xB8000.</p>
+
+<p><b>kernel.cpp</b></p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include &lt;stdbool.h&gt;
+#include &lt;stddef.h&gt;
+#include &lt;stdint.h&gt;
+</span>
+<span class="c1">// === Terminal Code for writting on the screen ===</span>
+<span class="k">enum</span> <span class="n">vga_color</span> <span class="p">{</span>
+	<span class="n">VGA_COLOR_BLACK</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_BLUE</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_GREEN</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_CYAN</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_RED</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_MAGENTA</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_BROWN</span> <span class="o">=</span> <span class="mi">6</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_LIGHT_GREY</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_DARK_GREY</span> <span class="o">=</span> <span class="mi">8</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_LIGHT_BLUE</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_LIGHT_GREEN</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_LIGHT_CYAN</span> <span class="o">=</span> <span class="mi">11</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_LIGHT_RED</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_LIGHT_MAGENTA</span> <span class="o">=</span> <span class="mi">13</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_LIGHT_BROWN</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span>
+	<span class="n">VGA_COLOR_WHITE</span> <span class="o">=</span> <span class="mi">15</span><span class="p">,</span>
+<span class="p">};</span>
+
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">uint8_t</span> <span class="nf">vga_entry_color</span><span class="p">(</span><span class="k">enum</span> <span class="n">vga_color</span> <span class="n">fg</span><span class="p">,</span> <span class="k">enum</span> <span class="n">vga_color</span> <span class="n">bg</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="n">fg</span> <span class="o">|</span> <span class="n">bg</span> <span class="o">&lt;&lt;</span> <span class="mi">4</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">uint16_t</span> <span class="nf">vga_entry</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">uc</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">color</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="p">(</span><span class="kt">uint16_t</span><span class="p">)</span> <span class="n">uc</span> <span class="o">|</span> <span class="p">(</span><span class="kt">uint16_t</span><span class="p">)</span> <span class="n">color</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">size_t</span> <span class="nf">strlen</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">str</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">size_t</span> <span class="n">len</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">while</span> <span class="p">(</span><span class="n">str</span><span class="p">[</span><span class="n">len</span><span class="p">])</span>
+    <span class="n">len</span><span class="o">++</span><span class="p">;</span>
+  <span class="k">return</span> <span class="n">len</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span> <span class="k">const</span> <span class="kt">size_t</span> <span class="n">VGA_WIDTH</span> <span class="o">=</span> <span class="mi">80</span><span class="p">;</span>
+<span class="k">static</span> <span class="k">const</span> <span class="kt">size_t</span> <span class="n">VGA_HEIGHT</span> <span class="o">=</span> <span class="mi">25</span><span class="p">;</span>
+
+<span class="kt">size_t</span> <span class="n">terminal_row</span><span class="p">;</span>
+<span class="kt">size_t</span> <span class="n">terminal_column</span><span class="p">;</span>
+<span class="kt">uint8_t</span> <span class="n">terminal_color</span><span class="p">;</span>
+<span class="kt">uint16_t</span><span class="o">*</span> <span class="n">terminal_buffer</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">terminal_initialize</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">terminal_row</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">terminal_column</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="n">terminal_color</span> <span class="o">=</span> <span class="n">vga_entry_color</span><span class="p">(</span><span class="n">VGA_COLOR_LIGHT_GREY</span><span class="p">,</span> <span class="n">VGA_COLOR_BLACK</span><span class="p">);</span>
+  <span class="n">terminal_buffer</span> <span class="o">=</span> <span class="p">(</span><span class="kt">uint16_t</span><span class="o">*</span><span class="p">)</span> <span class="mh">0xB8000</span><span class="p">;</span> <span class="c1">// terminal buffer memory location</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">VGA_HEIGHT</span><span class="p">;</span> <span class="n">y</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">VGA_WIDTH</span><span class="p">;</span> <span class="n">x</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">const</span> <span class="kt">size_t</span> <span class="n">index</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">VGA_WIDTH</span> <span class="o">+</span> <span class="n">x</span><span class="p">;</span>
+      <span class="n">terminal_buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">vga_entry</span><span class="p">(</span><span class="sc">' '</span><span class="p">,</span> <span class="n">terminal_color</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">terminal_setcolor</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">color</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">terminal_color</span> <span class="o">=</span> <span class="n">color</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">terminal_putentryat</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">color</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">x</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">y</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">const</span> <span class="kt">size_t</span> <span class="n">index</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">VGA_WIDTH</span> <span class="o">+</span> <span class="n">x</span><span class="p">;</span>
+  <span class="n">terminal_buffer</span><span class="p">[</span><span class="n">index</span><span class="p">]</span> <span class="o">=</span> <span class="n">vga_entry</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">color</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">terminal_putchar</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">terminal_putentryat</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">terminal_color</span><span class="p">,</span> <span class="n">terminal_column</span><span class="p">,</span> <span class="n">terminal_row</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">++</span><span class="n">terminal_column</span> <span class="o">==</span> <span class="n">VGA_WIDTH</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">terminal_column</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">++</span><span class="n">terminal_row</span> <span class="o">==</span> <span class="n">VGA_HEIGHT</span><span class="p">)</span>
+      <span class="n">terminal_row</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">terminal_write</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">data</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+    <span class="n">terminal_putchar</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">terminal_writestring</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">data</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">terminal_write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">data</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">extern</span> <span class="s">"C"</span> <span class="p">{</span>
+  <span class="kt">void</span> <span class="n">kernel_main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">terminal_initialize</span><span class="p">();</span>
+    <span class="n">terminal_writestring</span><span class="p">(</span><span class="s">"Hello, kernel World!"</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span></code></pre></figure>
+
+<h2>...and a script for compiling</h2>
+
+<p>In order to build our kernel image, create a bootable ISO-CD-Image with Grub and to test boot the contraption in QEmu, I’ve built a custom Bash-Script. As your code grows it might make sense to translate this into a Makefile or even move to CMake.</p>
+
+<p><b>build-and-boot.sh</b></p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
+<span class="nb">set</span> <span class="nt">-e</span>
+<span class="nv">BASEDIR</span><span class="o">=</span><span class="si">$(</span><span class="nb">cd</span> <span class="sb">`</span><span class="nb">dirname</span> <span class="nv">$0</span><span class="sb">`</span> <span class="o">&amp;&amp;</span> <span class="nb">pwd</span><span class="si">)</span>
+<span class="nv">CC</span><span class="o">=</span><span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/path/bin/i686-elf-g++ <span class="c"># path to our cross-compiler build from my last blog post</span>
+<span class="nv">AS</span><span class="o">=</span><span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/out/path/bin/i686-elf-as
+
+<span class="nb">echo</span> <span class="s2">"[ ] Install dependencies"</span>
+<span class="nb">sudo </span>apt <span class="nt">-y</span> <span class="nb">install </span>nasm xorriso qemu-system-i386
+
+<span class="nb">mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/build
+<span class="nb">cd</span> <span class="k">${</span><span class="nv">BASEDIR</span><span class="k">}</span>/build
+
+<span class="nb">echo</span> <span class="s2">"[ ] Build boot code"</span>
+<span class="k">${</span><span class="nv">AS</span><span class="k">}</span> <span class="nt">-felf32</span> ../boot.asm <span class="nt">-o</span> boot.o
+
+<span class="nb">echo</span> <span class="s2">"[ ] Compile Kernel"</span>
+<span class="k">${</span><span class="nv">CC</span><span class="k">}</span> <span class="nt">-c</span> ../kernel.cpp <span class="nt">-o</span> kernel.o <span class="nt">-ffreestanding</span> <span class="nt">-O2</span> <span class="nt">-Wall</span> <span class="nt">-Wextra</span> <span class="nt">-fno-exceptions</span> <span class="nt">-fno-rtti</span>
+
+<span class="nb">echo</span> <span class="s2">"[ ] Link"</span>
+<span class="k">${</span><span class="nv">CC</span><span class="k">}</span> <span class="nt">-T</span> ../linker.ld <span class="nt">-o</span> myos.bin <span class="nt">-ffreestanding</span> <span class="nt">-O2</span> <span class="nt">-nostdlib</span> boot.o kernel.o <span class="nt">-lgcc</span>
+
+<span class="nb">echo</span> <span class="s2">"[ ] Check is x86"</span>
+grub-file <span class="nt">--is-x86-multiboot</span> myos.bin
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> <span class="nt">-eq</span> 0 <span class="o">]</span><span class="p">;</span> <span class="k">then
+    </span><span class="nb">echo</span> <span class="s2">"[ ] Output is x86 bootable"</span>
+<span class="k">else
+    </span><span class="nb">echo</span> <span class="s2">"[W] Output is not x86 bootable"</span>
+<span class="k">fi
+
+</span><span class="nb">echo</span> <span class="s2">"[ ] Creating bootable CD-Image with Grub-Bootloader"</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> isodir/boot/grub
+<span class="nb">cp </span>myos.bin isodir/boot/myos.bin
+<span class="nb">cp</span> ../grub.cfg isodir/boot/grub/grub.cfg
+grub-mkrescue <span class="nt">-o</span> myos.iso isodir
+
+<span class="nb">echo</span> <span class="s2">"[ ] Booting in QEmu"</span>
+qemu-system-i386 <span class="nt">-cdrom</span> myos.iso</code></pre></figure>
+
+<p>After running the script the code will be compiled, linked. Grub will generate a bootable ISO and this ISO is then booted with QEmu.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2>Result</h2>
+
+<p>You should new be seeing QEmu with the message “Hello, kernel World!” from the above screenshot.</p>
+
+<p>So far we’ve built a cross-compiler and have used it to compile example code for a kernel. We’ve created a bootable ISO-Image and booted it in QEmu to verify it works.</p>
+
+<p>Our custom OS now has the ability to write text onto the screen. Next time we’ll add keyboard input in order to build a simple dialog system.</p>
+
+<h2>Annex: Syntax differences in Bootcode for different Assemblers</h2>
+
+<p>You might come across assembly boot code that looks differently. This is because there are numerous assemblers with a slightly different syntax. You could be using a Microsoft Assembler with Intel-Syntax, a Linux Assembler with AT&amp;T-Syntax and it could be either in either the GCC assembler or NASM style. The code is mostly functionally identical.</p>
+
+<table>
+  <tr>
+    <td>
+    <b>NASM (Netwide Assembler)</b>
+    </td>
+    <td>
+    <b>i686-elf-as (GNU Assembler or "GAS" in Intel Syntax)</b>
+    </td>
+  </tr>
+  <tr>
+    <td>
+
+<figure class="highlight"><pre><code class="language-nasm" data-lang="nasm"><span class="no">MBALIGN</span><span class="kd">  equ</span>  <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">0</span>
+<span class="no">MEMINFO</span><span class="kd">  equ</span>  <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span>
+<span class="no">FLAGS</span><span class="kd">    equ</span>  <span class="nv">MBALIGN</span> <span class="o">|</span> <span class="nv">MEMINFO</span>
+<span class="no">MAGIC</span><span class="kd">    equ</span>  <span class="mh">0x1BADB002</span>
+<span class="no">CHECKSUM</span><span class="kd"> equ</span> <span class="o">-</span><span class="p">(</span><span class="nv">MAGIC</span> <span class="o">+</span> <span class="nv">FLAGS</span><span class="p">)</span>
+
+<span class="nf">section</span> <span class="nv">.multiboot</span>
+<span class="nf">align</span> <span class="mi">4</span>
+	<span class="kd">dd</span> <span class="nv">MAGIC</span>
+	<span class="kd">dd</span> <span class="nv">FLAGS</span>
+	<span class="kd">dd</span> <span class="nb">CH</span><span class="nv">ECKSUM</span>
+
+<span class="nf">section</span> <span class="nv">.text</span>
+<span class="nf">global</span> <span class="nv">_start</span><span class="p">:</span><span class="nv">function</span> <span class="p">(</span><span class="nv">_start.end</span> <span class="o">-</span> <span class="nv">_start</span><span class="p">)</span>
+<span class="nl">_start:</span>
+	<span class="nf">mov</span> <span class="nb">esp</span><span class="p">,</span> <span class="nv">stack_top</span>
+	<span class="nf">extern</span> <span class="nv">kernel_main</span>
+	<span class="nf">call</span> <span class="nv">kernel_main</span>
+	<span class="nf">cli</span>
+<span class="nl">.hang:</span>	<span class="nf">hlt</span>
+	<span class="nf">jmp</span> <span class="nv">.hang</span>
+<span class="nl">.end:</span>
+
+<span class="nf">section</span> <span class="nv">.bss</span>
+<span class="nf">align</span> <span class="mi">16</span>
+<span class="nl">stack_bottom:</span>
+<span class="kd">resb</span> <span class="mi">16384</span> <span class="c1">; 16 KiB</span>
+<span class="nl">stack_top:</span>
+    </code></pre></figure>
+
+    </td>
+    <td>
+    
+<figure class="highlight"><pre><code class="language-nasm" data-lang="nasm"><span class="nf">.set</span> <span class="nb">AL</span><span class="nv">IGN</span><span class="p">,</span>	<span class="mi">1</span><span class="o">&lt;&lt;</span><span class="mi">0</span>
+<span class="nf">.set</span> <span class="nv">MEMINFO</span><span class="p">,</span>	<span class="mi">1</span><span class="o">&lt;&lt;</span><span class="mi">1</span>
+<span class="nf">.set</span> <span class="nv">FLAGS</span><span class="p">,</span>	<span class="nb">AL</span><span class="nv">IGN</span> <span class="o">|</span> <span class="nv">MEMINFO</span>
+<span class="nf">.set</span> <span class="nv">MAGIC</span><span class="p">,</span>	<span class="mh">0x1BADB002</span>
+<span class="nf">.set</span> <span class="nb">CH</span><span class="nv">ECKSUM</span><span class="p">,</span>	<span class="o">-</span><span class="p">(</span><span class="nv">MAGIC</span> <span class="o">+</span> <span class="nv">FLAGS</span><span class="p">)</span>
+
+<span class="nf">.section</span> <span class="nv">.multiboot</span>
+<span class="nf">.align</span> <span class="mi">4</span>
+<span class="nf">.long</span> <span class="nv">MAGIC</span>
+<span class="nf">.long</span> <span class="nv">FLAGS</span>
+<span class="nf">.long</span> <span class="nb">CH</span><span class="nv">ECKSUM</span>
+
+<span class="nf">.section</span> <span class="nv">.text</span>
+<span class="nf">.global</span> <span class="nv">_start</span>
+<span class="nf">.type</span> <span class="nv">_start</span><span class="p">,</span> <span class="err">@</span><span class="nv">function</span>
+<span class="nl">_start:</span>
+	<span class="nf">sti</span>
+	<span class="nf">movl</span> <span class="kc">$</span><span class="nv">stack_top</span><span class="p">,</span> <span class="o">%</span><span class="nb">esp</span>
+	<span class="nf">call</span> <span class="nv">kernel_main</span>
+	<span class="nf">cli</span>
+	<span class="nf">hlt</span>
+<span class="nl">.Lhang:</span>
+	<span class="nf">jmp</span> <span class="nv">.Lhang</span>
+<span class="nf">.size</span> <span class="nv">_start</span><span class="p">,</span> <span class="nv">.</span> <span class="o">-</span> <span class="nv">_start</span>
+	
+<span class="nf">.section</span> <span class="nv">.bootstrap_stack</span>
+<span class="nl">stack_bottom:</span>
+<span class="nf">.skip</span> <span class="mi">16384</span>
+<span class="nl">stack_top:</span>
+    </code></pre></figure>
+
+    </td>
+  </tr>
+</table>
+
+<p>Pro-Tip: If you’ve got Assembler-Code in either NASM or GAS and you want to translate to the other, compile it with the repective assembler and then use objdump on the object file. This will output to NASM/Intel-Syntax:</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">objdump <span class="nt">-M</span> intel-mnemonic <span class="nt">-d</span> boot.o</code></pre></figure>
+
+<hr />
+
+<pre>
+1] https://wiki.osdev.org/Bare_Bones
+2] https://www.gnu.org/software/grub/manual/multiboot/multiboot.html
+</pre>
+
+
+</div>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>
