@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Particle-Simulation for Disease Spread - Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/programming/2022/02/13/Sa-ParticleSimulationWebAssemblyDiseaseSpread.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Particle-Simulation for Disease Spread - Dennis Salzner" />
+  <meta property="og:description" content="Particle Simulation is an interesting field with numerous applications. In the following we'll look at a very basic particle simulation that can be used as a..." />
+  <meta property="og:url" content="/programming/2022/02/13/Sa-ParticleSimulationWebAssemblyDiseaseSpread.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2022-02-13 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2022-02-13 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2022-02-13 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Particle Simulation is an interesting field with numerous applications. In the following we'll lo..." />
+  <meta name="twitter:title" content="Particle-Simulation for Disease Spread - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/js/lightbox.js"></script>
+  <link href="/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+<h1>Dennis Salzner - Particle Simulations for Disease Spread in WebAssembly</h1>
+<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+<div class="page-title">Particle-Simulation for Disease Spread</div>
+<div class="page-subtitle">Investigating Particle Simulations for Disease Spread with WebAssembly</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>With particle simulations we can simulate the behaviour of particles in an environment. Such simulations can be used across many fields of science and engineering. The following demonstrates how a basic particle simulatons can be used for disease spread simulations.</p>
+
+<p>Technically it’s C-Code, compiled to WebAssembly, that draws onto a pixel buffer that is displayed in an HTML canvas. This is more about demonstrating very basic particle simulation than about an accurate disease model.</p>
+
+<div class="spinner" id="spinner"></div>
+<div class="emscripten" id="status">Downloading...</div>
+<progress hidden="" id="progress" max="100" value="0"></progress>
+<canvas id="canvas" oncontextmenu="event.preventDefault()" width="800px" height="480px" tabindex="-1" style="border:1px solid #000000;"></canvas>
+<textarea id="output" rows="8" cols="40" style="display:none;"></textarea>
+
+<script>
+var statusElement=document.getElementById("status"),progressElement=document.getElementById("progress"),spinnerElement=document.getElementById("spinner"),Module={preRun:[],postRun:[],print:function(){var e=document.getElementById("output");return e&&(e.value=""),function(t){arguments.length>1&&(t=Array.prototype.slice.call(arguments).join(" ")),console.log(t),e&&(e.value+=t+"\n",e.scrollTop=e.scrollHeight)}}(),canvas:function(){var e=document.getElementById("canvas");return e.addEventListener("webglcontextlost",(function(e){alert("WebGL context lost. You will need to reload the page."),e.preventDefault()}),!1),e}(),setStatus:function(e){if(Module.setStatus.last||(Module.setStatus.last={time:Date.now(),text:""}),e!==Module.setStatus.last.text){var t=e.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/),n=Date.now();t&&n-Module.setStatus.last.time<30||(Module.setStatus.last.time=n,Module.setStatus.last.text=e,t?(e=t[1],progressElement.value=100*parseInt(t[2]),progressElement.max=100*parseInt(t[4]),progressElement.hidden=!1,spinnerElement.hidden=!1):(progressElement.value=null,progressElement.max=null,progressElement.hidden=!0,e||(spinnerElement.style.display="none")),statusElement.innerHTML=e)}},totalDependencies:0,monitorRunDependencies:function(e){this.totalDependencies=Math.max(this.totalDependencies,e),Module.setStatus(e?"Preparing... ("+(this.totalDependencies-e)+"/"+this.totalDependencies+")":"All downloads complete.")}};Module.setStatus("Downloading..."),window.onerror=function(e){Module.setStatus("Exception thrown, see JavaScript console"),spinnerElement.style.display="none",Module.setStatus=function(e){e&&Module.printErr("[post-exception status] "+e)}}</script>
+<script async="" src="../../../../../images/2022-02-13-Sa-ParticleSimulationWebAssemblyDiseaseSpread/main.js"></script>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>I’ve been using such simulations in the past for location estimations of objects. There are many applications of particle simulations such as locaiton estimation for robots, congestion simulation, water flow simulation, etc.</p>
+
+<p>As an intermediate to test the framework I’m building we can run a simulation of disease spread.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>Particle Simulations can also be used for position estimation. For this the particles are thought of as positional estimates with a probability weighting assigned to each of them. Over time, with a modell of the robots motion and sensory input from distance sensors, we can adjust the probability weighting assigned to each particle to improve our “guess” of where the robot is.</p>
+
+<p>For a disease spread modell we can use the probability weighting of each particle as the probability that it carries an infectious desease. A simulated coughing preson infects the particles around him with every time he coughs and the motion modell corresponds to the wind/air movements in the room.
+Other people in the room get infected when they come in contact to a high enough quantity of infected particles.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>With the current pandemic came a number of measures to contain the disease. We currently have masks, minimal distances, vaccinations, but also requirements for ventilation in public buildings such as schools. The health ministry has set a certain amount of time - x minutes - in which a not infected person can be in close proximity to an infected person before being categorized as a “contact person” that is then mandated to enter quarantine.</p>
+
+<p>The question arises how this x amount of minutes was derived.</p>
+
+<p>Two options that come to mind are:</p>
+
+<ul>
+  <li>from questionaries when an infection of a person was traced back to another person that was previously infected and, from memory, the approximate time they were close was specified.</li>
+  <li>or by running particle simulations</li>
+</ul>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<p>As with the Smartphone Apps for infection tracing where bluetooth beacons are considered to propagte similarly to infectious particles in the air, the particle simulations are also just a highly inaccurate estimation - yet they are something.</p>
+
+<p>The inaccuracies in particles simulations for disease spread stem from the high number of required parameters.</p>
+
+<ul>
+  <li>if outdoors, the exact wind direction. If indoors the exact floorplan and the air movements in the building. Opened/closed doors/windows, ventilation systems, people moving around, contact duration, activities, etc</li>
+  <li>the location and number of people that are spreading the disease</li>
+  <li>the location of people that could be infected</li>
+  <li>and many more</li>
+</ul>
+
+<p>For a very basic simulation and to only demo particle simulations I’ve come up with three basic variables:</p>
+
+<ul>
+  <li>spreadFactor - assuming the contagious person is continiously coughing and infects particles around him with a probability of 100%, how many particles does he infect.</li>
+  <li>reductionFactor - how does the travel distance of infectious particles reduce their likely-hood of being able to affect a person. The reasoning is that in a normal environment some particles be absorbed by the environment or arent even infectious to begin with.</li>
+  <li>contagionFactor - how many contagious particles does a person have to come in contact with to get infected, i.e. how infectious is this disease</li>
+</ul>
+
+<p>I’ll be simulating only a single contagious person at a specific position, with a specific floor plan and a number of people at fixed locations around the floor plan.</p>
+
+<p>For the simulation we need equations on how the particles behave. For this I’m using the following basic equations:</p>
+
+<p><b>spreadFactor</b></p>
+
+<p>The spreadFactor controls how much infectious particles are emited by the infected person. For this, in each iteration, we want to increase the probability that a particle carries the infectious diseaese. For this I’m using the normalized distance times the spread factor times an arbitrary 10 to increase the impact.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++">  <span class="k">for</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">PARTICLES_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">float</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">distance</span><span class="p">(</span><span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">rect</span><span class="p">,</span> <span class="n">infectiousPerson</span><span class="p">);</span>
+    <span class="kt">float</span> <span class="n">factor</span> <span class="o">=</span> <span class="n">cfgSpreadFactor</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dist</span><span class="p">));</span>
+    <span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">probability</span> <span class="o">+=</span> <span class="n">factor</span><span class="p">;</span>
+  <span class="p">}</span></code></pre></figure>
+
+<p><b>reductionFactor</b></p>
+
+<p>The reductionFactor controls how much infectious particles loose their “infectiousness”. So in each iteration we reduce the probability of all factors by a a factor. The factor controls how harsch the environment is to the infected particles. It is reduced by 1000 to reduce it’s effect and give the simulation a somewhat realistic feel.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++">  <span class="k">for</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">PARTICLES_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">probability</span> <span class="o">-=</span> <span class="n">cfgReductionFactor</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">probability</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">probability</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span></code></pre></figure>
+
+<p><b>contagionFactor</b></p>
+
+<p>How fast a not infected person becomes infected upon contact with infected particles is controlled by the contagionFactor. 
+Here I’m computing the distance between a particle and the a person. If it is below 1.3, then the particle is considered close enough to have an impact. In that case the particles probability to be infected times the contagionFactor is added to the probability of infection. Afterwards I’m dividing by five to give use a controllable range of 0 and 1 for the factor.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">personId</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">personId</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="p">;</span> <span class="n">personId</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">float</span> <span class="n">probability</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">particleId</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">particleId</span> <span class="o">&lt;</span> <span class="n">PARTICLES_COUNT</span><span class="p">;</span> <span class="n">particleId</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">float</span> <span class="n">dist</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">distance</span><span class="p">(</span><span class="n">particles</span><span class="p">[</span><span class="n">particleId</span><span class="p">].</span><span class="n">rect</span><span class="p">,</span> <span class="n">m_modelPeople</span><span class="p">[</span><span class="n">personId</span><span class="p">].</span><span class="n">rect</span><span class="p">));</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">dist</span> <span class="o">&lt;</span> <span class="mf">1.3</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">probability</span> <span class="o">+=</span> <span class="n">particles</span><span class="p">[</span><span class="n">particleId</span><span class="p">].</span><span class="n">probability</span> <span class="o">*</span> <span class="n">cfgContagiousFactor</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">m_modelPeople</span><span class="p">[</span><span class="n">personId</span><span class="p">].</span><span class="n">probability</span> <span class="o">+=</span> <span class="n">probability</span> <span class="o">/</span> <span class="mi">5</span><span class="p">;</span>
+<span class="p">}</span></code></pre></figure>
+
+<p><b>Limitations</b></p>
+
+<p>Of course this is a very limited simulation with arbitrary factors. In a more scientific approach one would justify each of the factors by empirical experimentation. One would likely simulate hundreds of common floorplans, use more factors and derive those factors from empircal studies.
+But this here is just basic experimentation to demonstrate the basics of particle simulation.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<p>The particle simulation framework I’ve written for my robot localization experiments was adapted for this basic disease spread simulation. I’m using my C-Code UI-Library to draw the floor plan and user interface. The code was then dropped in WebAssembly to get the interactive demo application that you can see above.</p>
+
+<p>We can play with the three factors and see how it effects the simulation.</p>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Particle-Simulation for Disease Spread"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>
