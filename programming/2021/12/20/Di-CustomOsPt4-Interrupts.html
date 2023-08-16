@@ -65,7 +65,7 @@
 
 <h2>What to expect</h2>
 
-<p>At the end of this part of the series we will have keyboard interrupts set up. With interrupts the CPU does not continiously check the keyboard anymore and is free to do other tasks.
+<p>At the end of this part of the series we will have keyboard interrupts set up. With interrupts the CPU does not continuously check the keyboard anymore and is free to do other tasks.
 This can be seen by repeatidly printing a character on the screen within a loop, while still reacting to keyboard input.</p>
 
 <p><img src="../../../../images/2021-12-21-Di-CustomOsPt4-Interrupts/keyboard-with-interrupts.gif" /></p>
@@ -648,7 +648,7 @@ Die to the similarities in structure we could use NASM macros to automatically g
 <p><b>gdt.h</b> (new file)</p>
 
 <figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#pragma once
-#include "common.h"
+#include</span> <span class="cpf">"common.h"</span><span class="cp">
 </span>
 <span class="k">struct</span> <span class="nc">gdt_entry</span> <span class="p">{</span>
   <span class="kt">uint16_t</span> <span class="n">limit_low</span><span class="p">;</span>
@@ -699,7 +699,7 @@ Die to the similarities in structure we could use NASM macros to automatically g
 <p><b>idt.h</b> (new file)</p>
 
 <figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#pragma once
-#include "common.h"
+#include</span> <span class="cpf">"common.h"</span><span class="cp">
 </span>
 <span class="k">struct</span> <span class="nc">idt_entry</span> <span class="p">{</span>
   <span class="kt">uint16_t</span> <span class="n">base_low</span><span class="p">;</span>
@@ -932,9 +932,9 @@ Die to the similarities in structure we could use NASM macros to automatically g
 <p><b>common.h</b> (new)</p>
 
 <figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#pragma once
-#include &lt;stdbool.h&gt;
-#include &lt;stddef.h&gt;
-#include &lt;stdint.h&gt;
+#include</span> <span class="cpf">&lt;stdbool.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stddef.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdint.h&gt;</span><span class="cp">
 </span>
 <span class="kt">uint8_t</span> <span class="o">*</span><span class="nf">memset</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">,</span> <span class="kt">size_t</span> <span class="n">size</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
@@ -966,10 +966,10 @@ Die to the similarities in structure we could use NASM macros to automatically g
 
 <p><b>kernel.c</b> (modify)</p>
 
-<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include "common.h"
-#include "gdt.h"
-#include "idt.h"
-#include "isrs.h"</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include</span> <span class="cpf">"common.h"</span><span class="cp">
+#include</span> <span class="cpf">"gdt.h"</span><span class="cp">
+#include</span> <span class="cpf">"idt.h"</span><span class="cp">
+#include</span> <span class="cpf">"isrs.h"</span></code></pre></figure>
 
 <p>Modify the line for the assembler of our build script to include the parent directory by adding “-i ../” for the “%include” statements.</p>
 

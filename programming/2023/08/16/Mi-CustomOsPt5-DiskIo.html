@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>CustomOS - Pt.5 - Basic Disk Input/Output - Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/programming/2023/08/16/Mi-CustomOsPt5-DiskIo.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.5 - Basic Disk Input/Output - Dennis Salzner" />
+  <meta property="og:description" content="Reading and writing to a disk for data persistency is a prerequisite for most applications. I'll be working on basic functionality to store data by reading a..." />
+  <meta property="og:url" content="/programming/2023/08/16/Mi-CustomOsPt5-DiskIo.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2023-08-16 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2023-08-16 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2023-08-16 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Reading and writing to a disk for data persistency is a prerequisite for most applications. I'll ..." />
+  <meta name="twitter:title" content="CustomOS - Pt.5 - Basic Disk Input/Output - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/js/lightbox.js"></script>
+  <link href="/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/js/mermaid.min.js"></script>
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - CustomOs - Pt.5 - Disk I/O</h1>
+<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+
+<div class="page-title">CustomOS - Pt.5 - Basic Disk Input/Output</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS)</div>
+<div class="page-seperator"></div>
+
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<h2>What we are trying to achieve</h2>
+
+<p>In the previous posts we compiled a i686-elf cross-compiler, built a simple bootloader and kernel, wrote text on screen and received input from the keyboard.
+Now I’d like to implement persistent storage. That will enable us to read and write data to the hard disk.</p>
+
+<h2>What to expect</h2>
+
+<p>At the end of this part of the series we will be able to read and write data to and from a hard disk image.</p>
+
+<p>To demonstrate this I’ve implemented a simple counter that reads a value from the hard disk, increments it and writes it back to the hard disk.</p>
+
+<p>You can see the “counter value” being incremented every time the CustomOS has booted.</p>
+
+<p><img src="../../../../images/2023-08-16-Mi-CustomOsPt5-DiskIo/diskio-persistent-counter.gif" width="30%" /></p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>Hard Disk is the fourth point on this projects roadmap. This part of the series is a bit more involved. Instead of mentioning all required code here, I’ll be sharing the code on GitHub.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>Combined with the features we already have we will have all prerequisites to be able to write a useful application like a simple text editor.
+This is also required for writing/reading, compiling and executing source code from within our OS.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>Traditionally, in early computers, data storage was no more than a tape. This tape could be forwarded and rewound to any position by an address. Then a block of data that was currently under the reading/writing head could be read or written.</p>
+
+<p>Accessing a hard disk is not much different than accessing such a tape. We provide the address of the block of data we want to read and then retrieve that block of data.</p>
+
+<p><b>File Systems</b></p>
+
+<p>Now computer filesystems have directory structures and files. This is achieved by keeping a table of contents, much like in a book, that points to addresses where the data resides.</p>
+
+<p>How this table of contents is set up depends on a the file system that is used. One simple file system that dates back to ‘77 is FAT (File Allocation Table), the successor FAT32 (supports 32-bit addressing for larger volumes) is still supported on most modern systems.</p>
+
+<p>File systems have improved a lot since the early days. Modern file systems such as EXT2, EXT3 or EXT4, NTFS and ZFS have added numerous advanced features to prevent data corruption.
+As we’re not aiming for a perfect or even production ready OS, we will throw most of the advanced features overboard and go with a simple FAT file system.</p>
+
+<p><b>Implementation Options</b></p>
+
+<p>Starting out I thought I’d use the BIOS-Interrupt 0x13 to keep things simple. It tells the BIOS to load a sector of data from the hard disk. Unfortunately that BIOS-Interrupt is not well supported and doesn’t work in protected mode.</p>
+
+<p>Instead I chose to start off with a ramdisk loaded by GRUB and then transition to hard disk thereby implementing a basic control code for the “Peripheral Component Interconnect” (PCI) controller and the “Integrated Drive Electronics” (IDE) controller, as seen below.</p>
+
+<p><b>Addressing</b></p>
+
+<p>In order to tell the reading/writing head where to seek to we need an addressing mode. For Floppy Disk drives CHS (Cylinder, Head, Sector) is used - essentially a 3-digit number - that is sufficient for very small file systems. “Logical Block Array” (LBA) that we will use below can be used to address blocks on much larger hard disks.</p>
+
+<p><b>Steps</b></p>
+
+<p>Enabling hard disk I/O can become complicated very fast. I’ve simplified the code to the bare minimum.</p>
+
+<p>To start out it makes sense to implement simple read-only ramdisk support.</p>
+
+<p>For the ramdisk to work we will need:</p>
+
+<ul>
+  <li>a fat32 formated disk image</li>
+  <li>modifications to the Grub configuration to load the file into memory on boot</li>
+  <li>modifications to the kernel.ld linker script to remap the kernel to free space for the ramdisk</li>
+  <li>code to compute the address offset to read and write data</li>
+  <li>the FatFS library and implementations against its interface to allow reading and writing to files</li>
+  <li>some additional common functions and a printf/sprintf implementation to easily manipulate strings</li>
+</ul>
+
+<p>We can then move on to real hard disk support. For this we will need:</p>
+
+<ul>
+  <li>the same fat32 formated disk image</li>
+  <li>altered QEMU parameters to mount the disk image as a hard disk</li>
+  <li>query code for the “Peripheral Component Interconnect” (PCI) bus to find the first “Integrated Drive Electronics” (IDE) controller</li>
+  <li>query code for the IDE controller to find the first IDE hard drive.</li>
+  <li>more complex interface implementations for the FatFS library to seek and read and write from/to the IDE hard disk</li>
+</ul>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<p><b>Ramdisk</b></p>
+
+<p>By modifying the boot assembly code to support multiboot we can load a ramdisk. For this I was lucky to find some working code on GitHub [1] for inspiration.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">menuentry <span class="s2">"MyOS"</span> <span class="o">{</span>
+  multiboot /boot/myos.bin
+  module /boot/disk.fat
+  <span class="nb">set </span><span class="nv">gfxpayload</span><span class="o">=</span>text
+<span class="o">}</span></code></pre></figure>
+
+<p>Additionally we need to modify the linked.ld to offset by 0xC0000000.</p>
+
+<p>In the code we need to offset by this value to load the ramdisk.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="kt">void</span> <span class="nf">ramdiskInit</span><span class="p">(</span><span class="k">struct</span> <span class="nc">multiboot_info</span><span class="o">*</span> <span class="n">info</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">uint32_t</span> <span class="n">mod_count</span> <span class="o">=</span> <span class="n">info</span><span class="o">-&gt;</span><span class="n">mods_count</span><span class="p">;</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">mod_count</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"RamDisk Module not loaded</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="kt">uint32_t</span> <span class="n">mod0</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">info</span><span class="o">-&gt;</span><span class="n">mods_addr</span><span class="p">);</span>
+  <span class="kt">uint32_t</span> <span class="n">mod1</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="kt">uint32_t</span><span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">info</span><span class="o">-&gt;</span><span class="n">mods_addr</span> <span class="o">+</span> <span class="mi">4</span><span class="p">);</span>
+  <span class="kt">uint32_t</span> <span class="n">size</span> <span class="o">=</span> <span class="n">mod1</span> <span class="o">-</span> <span class="n">mod0</span><span class="p">;</span>
+  <span class="n">_loadRamdisk</span><span class="p">(</span><span class="n">mod0</span> <span class="o">+</span> <span class="mh">0xC0000000</span><span class="p">,</span> <span class="n">size</span><span class="p">);</span>
+<span class="p">}</span></code></pre></figure>
+
+<p>If the disk.fat disk image is created to be Fat32 we can use the “fatfs” library that is also very commonly used on Arduinos to read and write to SD-cards.</p>
+
+<p>For this we need to implement the FatFS functions</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="n">DSTATUS</span> <span class="n">disk_initialize</span><span class="p">(</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">unused</span><span class="p">))</span> <span class="n">BYTE</span> <span class="n">pdrv</span><span class="p">)</span>
+<span class="n">DSTATUS</span> <span class="n">disk_status</span><span class="p">(</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">unused</span><span class="p">))</span> <span class="n">BYTE</span> <span class="n">pdrv</span><span class="p">)</span>
+<span class="n">DRESULT</span> <span class="n">disk_read</span><span class="p">(</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">unused</span><span class="p">))</span> <span class="n">BYTE</span> <span class="n">pdrv</span><span class="p">,</span> <span class="n">BYTE</span><span class="o">*</span> <span class="n">buffer</span><span class="p">,</span> <span class="n">DWORD</span> <span class="n">sector</span><span class="p">,</span> <span class="n">UINT</span> <span class="n">count</span><span class="p">)</span>
+<span class="n">DRESULT</span> <span class="n">disk_ioctl</span><span class="p">(</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">unused</span><span class="p">))</span> <span class="n">BYTE</span> <span class="n">pdrv</span><span class="p">,</span> <span class="n">BYTE</span> <span class="n">cmd</span><span class="p">,</span> <span class="kt">void</span><span class="o">*</span> <span class="n">buff</span><span class="p">)</span></code></pre></figure>
+
+<p>Within the disk_read function is merely a memcpy to retrieve the data at a given address offset, because the Grub bootloader has already copied the ramdisk into memory for us to use.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="n">memcpy</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint8_t</span><span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">ramdisk</span><span class="p">.</span><span class="n">location</span> <span class="o">+</span> <span class="n">offset</span><span class="p">),</span> <span class="n">size</span><span class="p">);</span></code></pre></figure>
+
+<p>FatFS implements the common C file reading and writing functions.
+From here on we can use f_open and f_read to read files from the ramdisk.</p>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="n">res</span> <span class="o">=</span> <span class="n">f_open</span><span class="p">(</span><span class="o">&amp;</span><span class="n">file</span><span class="p">,</span> <span class="n">fileName</span><span class="p">,</span> <span class="n">FA_READ</span><span class="p">);</span></code></pre></figure>
+
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="n">res</span> <span class="o">=</span> <span class="n">f_read</span><span class="p">(</span><span class="o">&amp;</span><span class="n">file</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">buffer</span><span class="p">,</span> <span class="n">fileSize</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">br</span><span class="p">);</span></code></pre></figure>
+
+<p><b>Hard Disk</b></p>
+
+<p>At this point we know we can create a compatible hard disk image and read from it with FatFS library.</p>
+
+<p>In order to mount that same disk image as a hard disk we need to modify our start up script for the QEMU-Emulator.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash">qemu-system-i386 <span class="se">\</span>
+  <span class="nt">-drive</span> <span class="nv">file</span><span class="o">=</span>disk.fat,format<span class="o">=</span>raw <span class="se">\</span>
+  <span class="nt">-drive</span> <span class="nv">file</span><span class="o">=</span>myos.iso,index<span class="o">=</span>2,media<span class="o">=</span>cdrom <span class="nt">-boot</span> d</code></pre></figure>
+
+<p>This will mount the disk.fat image as an IDE hard drive.</p>
+
+<p>At this point the programming gets involved. We need to write an ATA/ATAPI driver.</p>
+
+<p>The code I’ve written in ata.h follows the following steps:</p>
+
+<div class="mermaid" style="width: 800px">
+graph TD;
+    A["<b>diskPciReadWord()</b><br />read a data word from the Peripheral Component Interconnect (PCI) Interface"] --&gt; B["<b>getFirstIdeControllerBaseAddress()</b><br />use diskPciReadWord() to iterate over all connected PCI devices.<br />Get the BaseAddress of the first Integrated Drive Electronics (IDE) controller found"]
+    B --&gt; C["<b>getFirstHardDiskBaseAddress(ideControllerBaseAddress)</b><br />with the IDE controller base address, iterate over all connected IDE devices,<br />get the drive information to distinguish drive types and find the first hard disk."]
+    C --&gt; D["<b>FatFS functions</b><br />Similarly to the ramdisk implementation we can implement the FatFs functions disk_initialize, disk_status, seek, disk_read, disk_write"]
+    D --&gt; E["<b>idePortWrite() &amp; read </b><br />these functions in turn use 'outportb' and 'inportb' to send and receive bytes to/from the IDE controller control registers.<br />We seek (=move the read/write head of the hard disk to a position) by Logical Block Addressing (LBA).<br />We read words by the assembly 'insw' command and write words using the assembly 'outsw' command"]
+</div>
+
+<p>Note: I’ve tried to keep the code compact, but for more efficient hard disk I/O you would want to control and fine-tune “Direct Memory Access” (DMA) to offload work from the CPU.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<p>At this point we can write text on the screen, read input from the keyboard and load and store data from the hard disk.
+With this we can write useful applications like basic text editors.</p>
+
+<p>In future we could:</p>
+
+<ul>
+  <li>add dynamic memory allocation (malloc)</li>
+  <li>enable executing program code/scripts in the CustomOS</li>
+  <li>by interpretation or compilation (e.g. using the Tiny-C-Compiler (TinyCC))</li>
+  <li>implement a text editor</li>
+  <li>and use it to extend functionality by programming from within the CustomOS</li>
+  <li>add graphics e.g by BIOS Mode 12h for 16 color 640x480 VGA graphics</li>
+</ul>
+
+<hr />
+
+<pre>
+1] https://github.com/sk-io/os
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="CustomOS - Pt.5 - Basic Disk Input/Output"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

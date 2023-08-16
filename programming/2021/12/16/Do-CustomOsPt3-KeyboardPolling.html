@@ -271,8 +271,8 @@ But if we want to convert what was typed to readable text we need to convert to 
 
 <p>We can now include both headers at the top of our <b>kernel.cpp</b>.</p>
 
-<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include "keyboard/keyboardActivePolling.h"
-#include "keyboard/keyboardScancodeToAscii.h"</span></code></pre></figure>
+<figure class="highlight"><pre><code class="language-c--" data-lang="c++"><span class="cp">#include</span> <span class="cpf">"keyboard/keyboardActivePolling.h"</span><span class="cp">
+#include</span> <span class="cpf">"keyboard/keyboardScancodeToAscii.h"</span></code></pre></figure>
 
 <p>and adapt our kernel_main-function:</p>
 
