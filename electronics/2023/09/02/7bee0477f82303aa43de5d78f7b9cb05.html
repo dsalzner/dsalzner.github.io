@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Photovoltaic System - Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/electronics/2023/09/02/7bee0477f82303aa43de5d78f7b9cb05.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Photovoltaic System - Dennis Salzner" />
+  <meta property="og:description" content="The initial setup of my solar power system is about 2 years ago. It’s an island system with a battery that does not feed into the grid and is completly off-g..." />
+  <meta property="og:url" content="/electronics/2023/09/02/7bee0477f82303aa43de5d78f7b9cb05.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2023-09-02 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2023-09-02 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2023-09-02 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="The initial setup of my solar power system is about 2 years ago. It’s an island system with a bat..." />
+  <meta name="twitter:title" content="Photovoltaic System - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/js/lightbox.js"></script>
+  <link href="/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Solar Power System</h1>
+<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+
+<div class="page-title">Photovoltaic System</div>
+<div class="page-subtitle">Setting up a custom photovoltaic system</div>
+<div class="page-seperator"></div>
+
+
+<div class="post-content" itemprop="articleBody">
+    <style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+
+<!--- ------------------------------------------------------------------------ --->
+
+<p style="font-size: 60%;" align="right">What</p>
+
+<h2 id="introduction">Introduction</h2>
+
+<p>With the increasing electricity costs, price reductions of components and overall trend to sustainable energy I’ve also joined in with the party of photovoltaic enthusiasts.</p>
+
+<p>The initial setup of my solar power system is about 2 years ago. It’s an island system with a battery that does not feed into the grid and is completely off grid capable.</p>
+
+<p>Note that in the meantime fully integrated systems (charge controller, inverter and battery) have become more affordable and plugin photovoltaic systems that feed into the power grid without a battery have become legal in many countries. These options are a lot easier to set up and may be better for most.</p>
+
+<p>Currently the system powers our computers, television and refrigerator almost throughout the entire year with the exception of a month or two in the winter. We disconnect the appliances and connect them to the grid during this time. Currently I don’t have it set up to automatically switch to the grid, when the batteries are empty. The system is not large enough to handle peak power of the washing machine, electric stove or kettle and so these appliances are not connected.</p>
+
+<p>As for producing enough energy to bring in buying costs of the components I’ll let you come to your own conclusions.
+The system likely will pay for itself some time in the future, but it’s hard to estimate the cost of critical components breaking down, the depreciation of the battery, chances and risks such as damage from storms, the insurance cost tradeoffs as well as the cost of personal time as well as moments of excitement, but also of utter frustrations when building such a system.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211023-Mount1.jpg" height="240px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211023-Mount2.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/IMG_20230513_125949.jpg" height="160px" /></p>
+
+<!--- ------------------------------------------------------------------------ --->
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#introduction" id="markdown-toc-introduction">Introduction</a>    <ul>
+      <li><a href="#i2-how-i-got-started" id="markdown-toc-i2-how-i-got-started">I2. How I got started</a></li>
+      <li><a href="#i2-why-do-this" id="markdown-toc-i2-why-do-this">I2. Why do this</a></li>
+      <li><a href="#i3-components-overview" id="markdown-toc-i3-components-overview">I3. Components Overview</a></li>
+      <li><a href="#i4-wiring-overview" id="markdown-toc-i4-wiring-overview">I4. Wiring Overview</a></li>
+    </ul>
+  </li>
+  <li><a href="#acquiring-components" id="markdown-toc-acquiring-components">Acquiring Components</a>    <ul>
+      <li><a href="#a1-core-components" id="markdown-toc-a1-core-components">A1. Core Components</a></li>
+      <li><a href="#a2-controller" id="markdown-toc-a2-controller">A2. Controller</a></li>
+      <li><a href="#a3-data-connections" id="markdown-toc-a3-data-connections">A3. Data Connections</a></li>
+      <li><a href="#a4-power-distribution" id="markdown-toc-a4-power-distribution">A4. Power Distribution</a></li>
+      <li><a href="#a5-roof-mount" id="markdown-toc-a5-roof-mount">A5. Roof Mount</a></li>
+      <li><a href="#a6-total-cost" id="markdown-toc-a6-total-cost">A6. Total Cost</a></li>
+      <li><a href="#a7-optional-additional-battery" id="markdown-toc-a7-optional-additional-battery">A7. Optional Additional Battery</a></li>
+      <li><a href="#a8-optional-automatic-switching" id="markdown-toc-a8-optional-automatic-switching">A8. Optional Automatic Switching</a></li>
+    </ul>
+  </li>
+  <li><a href="#installation" id="markdown-toc-installation">Installation</a>    <ul>
+      <li><a href="#m1-mounting-the-panels" id="markdown-toc-m1-mounting-the-panels">M1. Mounting the panels</a></li>
+    </ul>
+  </li>
+  <li><a href="#electronics-data-cables" id="markdown-toc-electronics-data-cables">Electronics, Data Cables</a>    <ul>
+      <li><a href="#d1-controller-power-cable" id="markdown-toc-d1-controller-power-cable">D1. Controller Power Cable</a></li>
+      <li><a href="#d2-can-hat-and-ttl-converter-on-the-raspberry-pi" id="markdown-toc-d2-can-hat-and-ttl-converter-on-the-raspberry-pi">D2. CAN Hat and TTL-Converter on the Raspberry Pi</a></li>
+      <li><a href="#d3-vecan-cable-to-battery" id="markdown-toc-d3-vecan-cable-to-battery">D3. VE.CAN Cable to Battery</a></li>
+      <li><a href="#d4-vedirect-cable-to-charger-and-inverter" id="markdown-toc-d4-vedirect-cable-to-charger-and-inverter">D4. VE.Direct Cable to Charger and Inverter</a></li>
+    </ul>
+  </li>
+  <li><a href="#software" id="markdown-toc-software">Software</a>    <ul>
+      <li><a href="#s1-download-venus-os-image" id="markdown-toc-s1-download-venus-os-image">S1. Download Venus OS Image</a></li>
+      <li><a href="#s2-write-image-to-sd-card" id="markdown-toc-s2-write-image-to-sd-card">S2. Write Image to SD-Card</a></li>
+      <li><a href="#s3-boot-up-and-connect" id="markdown-toc-s3-boot-up-and-connect">S3. Boot Up and Connect</a></li>
+      <li><a href="#s4-activate-ssh-access-and-connect" id="markdown-toc-s4-activate-ssh-access-and-connect">S4. Activate SSH Access and Connect</a></li>
+      <li><a href="#s5-configure-can-bus" id="markdown-toc-s5-configure-can-bus">S5. Configure CAN-Bus</a></li>
+      <li><a href="#s6-result" id="markdown-toc-s6-result">S6. Result</a></li>
+    </ul>
+  </li>
+  <li><a href="#electronics-power-cables" id="markdown-toc-electronics-power-cables">Electronics, Power Cables</a>    <ul>
+      <li><a href="#p1-build-the-bus-bar" id="markdown-toc-p1-build-the-bus-bar">P1. Build the Bus Bar</a></li>
+      <li><a href="#p2-solar-disconnect-switch" id="markdown-toc-p2-solar-disconnect-switch">P2. Solar Disconnect Switch</a></li>
+      <li><a href="#p3-grounding" id="markdown-toc-p3-grounding">P3. Grounding</a></li>
+      <li><a href="#p4-result" id="markdown-toc-p4-result">P4. Result</a></li>
+    </ul>
+  </li>
+  <li><a href="#debugging---battery-can-bus" id="markdown-toc-debugging---battery-can-bus">Debugging - Battery CAN-Bus</a></li>
+  <li><a href="#finalize" id="markdown-toc-finalize">Finalize</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<!--- ------------------------------------------------------------------------ --->
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h3 id="i2-how-i-got-started">I2. How I got started</h3>
+
+<p>Around October 2021 I’ve installed by photovoltaic system. It has been running since with some hiccups since June 2023.</p>
+
+<p>Prices for components had rapidly declined. I was seeing projects popping up on the internet. At the same time professional installations at a small scale are hardly affordable.</p>
+
+<p>In the meantime even super markets and discounters are offering plug and play “balcony photovoltaic sets”. At that time these sets were more expensive and the legal aspects of producing electricity and feeding it into the grid weren’t clarified.</p>
+
+<p>In the past months I had some technical troubles that led me reevaluate the system. In the process I’ll share my experience as a reference for myself, interested friends and family.</p>
+
+<!--- ------------------------------------------------------------------------ --->
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h3 id="i2-why-do-this">I2. Why do this</h3>
+
+<p>Why go through all the trouble, expenses and risks associated with this project? I don’t know. It could save some money in the long run, it does mean maintenance effort, but why do anything - I just wanted to have this.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h3 id="i3-components-overview">I3. Components Overview</h3>
+
+<p>In order to build this I had to source, acquire and transport a number of components. I settled for quality components.</p>
+
+<p>The core components of any island photovoltaic system are</p>
+
+<ul>
+  <li>Solar Panels</li>
+  <li>Battery</li>
+  <li>Charger</li>
+  <li>Inverter</li>
+</ul>
+
+<p>The <b>solar panels</b> convert the energy of the sun into electricity. The <b>charger</b> (MPPT, Maximum Power Point Tracker) controls and normalizes the flow of electricity from the panels. The power is then fed into the <b>batteries</b> for storage and into the <b>inverter</b> for direct current to alternating current conversion so you can use the electricity for household electronics.
+When the sun is up, theoretically, electricity can travel from the panels to the controller to the inverter without flowing through the battery. When the sun is down that energy is taken from the battery.</p>
+
+<h3 id="i4-wiring-overview">I4. Wiring Overview</h3>
+
+<p>Thus, in a simplified image, we need the following connections:</p>
+
+<div class="mermaid" style="width: 800px">
+graph TD;
+A["Solar Panels"]
+A --&gt; B["Charger"]
+B --&gt; C["Power Distribution"]
+C --&gt; D["Battery"]
+D --&gt; C
+C --&gt; E["Inverter"]
+E --&gt; F["Household Appliances"]
+</div>
+
+<p>Notice how excess electricity from the charge controller, that isn’t consumed by the inverter, is fed into the battery.
+As soon as the charge controller stops providing electricity the battery can feed in its stored energy.</p>
+
+<h2 id="acquiring-components">Acquiring Components</h2>
+
+<p>Whats important to note is that all components need to be in balance with one another. A larger inverter would mean a higher power draw and hence more batteries. More solar panels would mean higher output voltage and hence a larger charger.</p>
+
+<p>There is a sweet spot that a well balanced system can meet. I’ve decided to not power high power appliances such as the dish washer, washing machine and electric stove, because that would have meant scaling every component up to the point where space consumption, operational safety and cost, to me, don’t outweigh the benefits.</p>
+
+<p>The components I’ve acquired, shops and prices are as below.</p>
+
+<h3 id="a1-core-components">A1. Core Components</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Part</th>
+      <th>Model</th>
+      <th>Price</th>
+      <th>Ordered From</th>
+      <th>Order Date</th>
+      <th>Received Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Solar Panels</td>
+      <td>4x PV-Modul 385 Wp JA Solar</td>
+      <td>716,00 Eur</td>
+      <td>Alpha Solar- und Heizungstechnik GmbH</td>
+      <td>13.09.21</td>
+      <td>03.10.21 (Pick-Up by Car)</td>
+    </tr>
+    <tr>
+      <td>Battery</td>
+      <td>Pylontech US2000 LiFePO4 + Batteriekabel</td>
+      <td>944,00 Eur</td>
+      <td>GreenAkku.de/Bosswerk GmbH</td>
+      <td>13.09.21</td>
+      <td>17.09.21</td>
+    </tr>
+    <tr>
+      <td>Charger</td>
+      <td>Victron BlueSolar 150/35</td>
+      <td>280,85 Eur</td>
+      <td>Amazon/OffgridtecGmbH</td>
+      <td>23.09.21</td>
+      <td>24.09.21</td>
+    </tr>
+    <tr>
+      <td>Inverter</td>
+      <td>Victron Phoenix Wechselrichter 48/1200 230V VE.Direct 1000W 48V</td>
+      <td>449,96 Eur</td>
+      <td>Offgridtec GmbH</td>
+      <td>03.10.21</td>
+      <td>05.10.21 (at Postal Office), 09.10.21 (Pick-Up)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Note:</strong> I bought 4 panels, but am using only 2 of them due to space issues.</p>
+
+<h3 id="a2-controller">A2. Controller</h3>
+
+<p>Apart from the charge controller, you need some sort of computer to control the entire system, collect statistics, display errors, etc.</p>
+
+<p>Here the “Victron CerboGX” is probably the safe bet, but I decided to use the open-source variant of the operating system “VenusOS” that runs on the CerboGX and run it on a Raspberry Pi 4 instead.
+I’ve had no problems with this approach for the past 2 years.</p>
+
+<p>Note: the PylonTech batteries require a CAN-Interface, so we need an additional CAN-Hat for the Raspberry PI.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Part</th>
+      <th>Model</th>
+      <th>Price</th>
+      <th>Ordered From</th>
+      <th>Order Date</th>
+      <th>Received Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Controller</td>
+      <td>Raspberry Pi 3B+</td>
+      <td>48,00 Eur</td>
+      <td>Amazon/Rasppishop</td>
+      <td>15.09.21</td>
+      <td>16.09.21</td>
+    </tr>
+    <tr>
+      <td>Controller - Power</td>
+      <td>DSLRKIT PoE Splitter 48V to 5V</td>
+      <td>9,50 Eur</td>
+      <td>Amazon/DSLRKIT</td>
+      <td>15.09.21</td>
+      <td>16.09.21</td>
+    </tr>
+    <tr>
+      <td>Controller - SD-Card</td>
+      <td>SanDisk Ultra 32 GB microSDHC</td>
+      <td>6,99 Eur</td>
+      <td>Amazon</td>
+      <td>15.09.21</td>
+      <td>16.09.21</td>
+    </tr>
+    <tr>
+      <td>Controller - Battery Interface</td>
+      <td>WaveShare MCP2515 Isolated Expansion HAT</td>
+      <td>24,95 Eur</td>
+      <td>Amazon</td>
+      <td>17.09.21</td>
+      <td>24.09.21</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>In order to power the Raspberry Pi from the 48V Battery I’m using a simple Power-of-Ethernet (PoE)-Splitter. The internal transformer can convert 48V to 5V.
+You could use a standard smartphone power adapter, but then you would loose offgrid capability as your system would shut off, if there is a power outage from the grid.</p>
+
+<h3 id="a3-data-connections">A3. Data Connections</h3>
+
+<p>The RaspberryPi + VenusOS combination is cheaper, but requires some soldering for custom data cables.
+We need data cables from the controller to the Charge Controller, Inverter and battery.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Part</th>
+      <th>Model</th>
+      <th>Price</th>
+      <th>Ordered From</th>
+      <th>Order Date</th>
+      <th>Received Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Controller to Charger/Inverter Interface</td>
+      <td>3x (2x are sufficient) JST PH 2.0mm Stecker26AWG 30cm Connector 4 Pin</td>
+      <td>4,59 Eur</td>
+      <td>eBay</td>
+      <td>16.09.21</td>
+      <td>18-20.09.21</td>
+    </tr>
+    <tr>
+      <td>Controller to USB-TTL Adapter (VE.Direct Cables)</td>
+      <td>2x FTDI FT232R</td>
+      <td>&lt;2 Eur</td>
+      <td>eBay</td>
+      <td>leftovers</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Controller to Pylontech Battery (VE.Can Cable)</td>
+      <td>Ethernet Cable</td>
+      <td>&lt;2 Eur</td>
+      <td>?</td>
+      <td>leftovers</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="a4-power-distribution">A4. Power Distribution</h3>
+
+<p>The high direct current (DC) voltage (&gt;70 volts) from the solar system are a critical safety risk as a spark with direct current can produce a continuous arc. That can burn you and your surroundings. Alternating Current (AC) at 50 Hz interrupts continuous sparks 50 times per second, but can electrocute you as the 50 Hz causes muscles, including of the heart, to contract and release until they break down.</p>
+
+<p>For high direct current voltages we need high cable cross sections and a fast quality disconnect switch. Otherwise we wouldn’t be able to disconnect the panels from the rest of the system in case of emergency due to the risk of an electric arc.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Part</th>
+      <th>Model</th>
+      <th>Price</th>
+      <th>Ordered From</th>
+      <th>Order Date</th>
+      <th>Received Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Solar Disconnect Switch</td>
+      <td>APV: 2P-63A</td>
+      <td>29,70  Eur</td>
+      <td>eBay/elektriese_eu</td>
+      <td>03.10.21</td>
+      <td>07.10.21</td>
+    </tr>
+    <tr>
+      <td>Solar Disconnect Switch Case</td>
+      <td>Kleinverteiler IP30 1-reihig 2 Module</td>
+      <td>6,29 Eur</td>
+      <td>eBay/asvendo</td>
+      <td>08.10.21</td>
+      <td>09.10.21</td>
+    </tr>
+    <tr>
+      <td>Solar Cable (Charge Controller to Disconnect Switch to Solar Panels)</td>
+      <td>10m 6mm2 with MC4 plugs, red and black</td>
+      <td>28,90 Eur</td>
+      <td>eBay/elektriese_eu</td>
+      <td>03.10.21</td>
+      <td>07.10.21</td>
+    </tr>
+    <tr>
+      <td>Battery Cable (Charge Controller to Battery and Battery to Inverter)</td>
+      <td>2x 50cm Battery-Cable with soldering rings (Lötkabelschuh)</td>
+      <td>18,98 Eur</td>
+      <td>eBay/mkcopter</td>
+      <td>03.10.21</td>
+      <td>08.10.21</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="a5-roof-mount">A5. Roof Mount</h3>
+
+<p>There are different types of mounts for “root seams” or “metal folds” (in german: “Stehfalz”, “Blechfalz”, “Doppelfalz”, not “RundFalz” or “Rib Clamp”).
+Some solutions require a beam underneath the panels. This adds additional complexity, parts that can loosen, etc.
+I was looking for simple certified clamps. The manufacturer “Aerocompact”, “K2 Systems” and “Schletter” produce such clamps, the later sells directly to customers.</p>
+
+<p>I got these clamps in black for better looks. For mounting 4 modules in a 2x2 configuration I bought:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Part</th>
+      <th>Model</th>
+      <th>Price</th>
+      <th>Ordered From</th>
+      <th>Order Date</th>
+      <th>Received Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Roof Attachment</td>
+      <td>12x Schletter Falzklemme 503 Rapid für Stehfalzdach</td>
+      <td>12x 3,84 Eur = 46,08 Eur</td>
+      <td>photovoltaik4all.de</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Panel Inbetween</td>
+      <td>12x Schletter Mittelklemme Rapid 16 schwarz eloxiert 30 - 40 mm</td>
+      <td>12x 2,59 Eur = 31,08 Eur</td>
+      <td>photovoltaik4all.de</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Ladder</td>
+      <td>Krause Corda Sprossen-Mehrzweckleiter</td>
+      <td>59  Eur</td>
+      <td>Bauhaus</td>
+      <td>23.10.2021</td>
+      <td>23.10.2021 (Pick-Up)</td>
+    </tr>
+    <tr>
+      <td>Cable Binders</td>
+      <td>-</td>
+      <td>-</td>
+      <td>leftovers</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Mounting material total cost: 77,16 Eur (83,06 Eur with shipping)</p>
+
+<p>note: I’m using many more clamps than the vendor suggests for extra safety.</p>
+
+<h3 id="a6-total-cost">A6. Total Cost</h3>
+
+<p>The total component cost is approx. 2708 Eur. At the time that was a good price for a 1540 WP system with a 2,4 kWh battery.</p>
+
+<h3 id="a7-optional-additional-battery">A7. Optional Additional Battery</h3>
+
+<p>Two years later I added a second battery, primarily to debug an issue. It helps the overall efficiency by buffering more energy during the days of the year with less sun light. The second battery also helps maintain a higher overall state of charge. That means less fully charging and fully discharging, which reduces battery wear.</p>
+
+<p>The second battery cost a lot less due to price coming down and the tax reductions on photovoltaic equipment.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Part</th>
+      <th>Model</th>
+      <th>Price</th>
+      <th>Ordered From</th>
+      <th>Order Date</th>
+      <th>Received Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Battery</td>
+      <td>Pylontech US2000C LiFePO4</td>
+      <td>699,00 Eur</td>
+      <td>Offgridtec GmbH</td>
+      <td>25.08.23</td>
+      <td>02.09.23</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="a8-optional-automatic-switching">A8. Optional Automatic Switching</h3>
+
+<p>As we’ve connected the refrigerator with the photovoltaic system it can make sense to install an automatic switch that will switch to the grid when the battery is empty. I haven’t bought such a switch, but at the time I had planed to get one.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Part</th>
+      <th>Model</th>
+      <th>Price</th>
+      <th>Ordered From</th>
+      <th>Order Date</th>
+      <th>Received Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Power Transfer Switch</td>
+      <td>H-Tronic 1114530 MPC1000 (relay could stick?)</td>
+      <td>39,40 €</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="installation">Installation</h2>
+
+<p>After acquiring components and tools, sorting out delivery and pickup of the 120cm by 60cm solar panels and other equipment I was finally ready to build the system.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/panel.jpg" height="160px" /></p>
+
+<h3 id="m1-mounting-the-panels">M1. Mounting the panels</h3>
+
+<p>I then realized I needed a large ladder and picked one up at the local hardware store. That ladder barely fit into our car.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211023-Ladder2.jpg" height="160px" /></p>
+
+<p>From there it was “just” a matter of mounting the panels onto the roof of the five story building.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211023-Mount1.jpg" height="160px" /></p>
+
+<p>Fortunately there is a balcony right under the dormer of the roof that I set out to mount the panels onto. The walls of the dormer have metal folds and there are special, storm approved, mounting brackets for solar panels.
+I’ve used twice as many brackets than suggested by the manufacturer, because I wanted to make absolute sure that these panels will stay on the roof.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/falzklammer1.jpg" width="80px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/falzklammer2.jpg" width="80px" /></p>
+
+<p>Essentially you mount the bracket onto the metal fold. Then place the solar panel onto it. Then take the second type of bracket and tighten the module down as seen here:</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211025-Mount3.jpg" height="320px" /></p>
+
+<h2 id="electronics-data-cables">Electronics, Data Cables</h2>
+
+<p>With the panels on the roof we can deal with the electronics.</p>
+
+<p>The data cables for Victron equipement are expensive. As usual the wiring that was choosen is not standardized and that forces customers to buy the custom cables.
+While searching for DIY alternatives I’ve found many instruction manuals on how to wire custom cables that I’ve loosely followed (most notably [1]).</p>
+
+<pre>
+1] https://obenschlaefer.com/low-budget-energiemonitor-victron-venus-os-mit-raspberry-pi-obenschlaefer/
+</pre>
+
+<h3 id="d1-controller-power-cable">D1. Controller Power Cable</h3>
+
+<p>For the power cable from the 48V Battery to the Rasberry Pi, we’ll be using a PoE Splitter.
+For this a Custom LAN Cable that exposes the Power carrying wires is required.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/IMG_20210916_121915.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/IMG_20210921_190638.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/poe-power.png" height="160px" /></p>
+
+<ul>
+  <li>brown/brown-white is DC+</li>
+  <li>blue/blue-white is DC-</li>
+</ul>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-09-21-Poe48Vpinout.png" height="160px" /></p>
+
+<ul>
+  <li>PoE Splitter connected</li>
+</ul>
+
+<p>The end result looks like this:</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-ControllerPower.jpg" height="160px" /></p>
+
+<h3 id="d2-can-hat-and-ttl-converter-on-the-raspberry-pi">D2. CAN Hat and TTL-Converter on the Raspberry Pi</h3>
+
+<p>Next we connect the CAN-HAT and the USB-TTL-Converters</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/IMG_20210921_160842.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/IMG_20210921_161425.jpg" height="160px" /></p>
+
+<h3 id="d3-vecan-cable-to-battery">D3. VE.CAN Cable to Battery</h3>
+
+<ul>
+  <li>Standard CAT-LAN-Cable</li>
+  <li>Cable pin-outs see [1]</li>
+  <li>Pylontech US2000 requires a “type B” cable</li>
+</ul>
+
+<p>Type B</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Function</th>
+      <th>Victron VE.Can side</th>
+      <th>Battery side</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>GND</td>
+      <td>~Pin 3~</td>
+      <td>Pin 2</td>
+    </tr>
+    <tr>
+      <td>CAN-L</td>
+      <td>~Pin 8~</td>
+      <td>Pin 5</td>
+    </tr>
+    <tr>
+      <td>CAN-H</td>
+      <td>~Pin 7~</td>
+      <td>Pin 4</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/RJ45-Pinout-T568B.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/IMG_20210921_190709.jpg" height="160px" /></p>
+
+<p>CAN-Bus pin-out from PylonTech battery instruction manual</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/IMG_20210921_203043.jpg" height="160px" /></p>
+
+<pre>
+1] https://www.victronenergy.com/live/battery_compatibility:can-bus_bms-cable#introduction
+</pre>
+
+<h3 id="d4-vedirect-cable-to-charger-and-inverter">D4. VE.Direct Cable to Charger and Inverter</h3>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211008-vedirect-1-parts.jpg" height="160px" /></p>
+
+<p>To create cables we need to measure the pin-outs of the Charge Controller. The bulk light blinks approx. once every second.
+Connect the adapter, connect a Lab-Power-Suppy, set it to 12 V, measure the pins of the cable.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211008-vedirect-2-power.jpg" height="160px" /></p>
+
+<p>The outer ones should be 5V and GND. The Pins inbetween are the TXD and RXD Pins.</p>
+
+<p>On TTY Adapter side solder according to this image:</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/vedirect-pins.png" height="160px" /></p>
+
+<p>We can diagnose errornously swapped TXD/RXD connection on a computer.
+To test connect the USB-Adapter to a Desktop computer. Run picocom (or Putty in TTY-Mode on Windows) with a baud rate of 19200.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211008-vedirect-3-device.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211008-vedirect-4-ttl.jpg" height="160px" /></p>
+
+<p>You should see date coming in from the charge controller.</p>
+
+<figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">sudo </span>apt-get <span class="nb">install </span>picocom
+picocom <span class="nt">-b</span> 19200 <span class="nt">-r</span> <span class="nt">-l</span> /dev/ttyUSB0</code></pre></figure>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-10-08-ChargeControllerPicoterm.png" height="160px" /></p>
+
+<p>note: always test. The second USB-TTL adapter I had was broken. Maybe I had broken it by reflashing before.</p>
+
+<p>I didn’t have second Prolific PL2303, so I used an FTDI for the second cable. This works fine as well.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-vedirect-5-ttlftdi.jpg" height="160px" /></p>
+
+<p>The second cable was annoying. The first PL2303 worked fine, it is labelled “USB TO TTL D-SUN”.</p>
+
+<p>The second PL2303 was different. It is labelled “USB-TTL USB-STC-ISP” and didn’t work.
+It would show up fine on Linux, but doesn’t receive anything from the Victron Device.
+You can connect RXD and TXD together and it does properly echo signals back.
+I assume it’s a conterfeit chip that doesn’t apply the baudrate correctly.</p>
+
+<p>Then I tried the FTDI FT232 adapter I had around. But at first that didn’t work either.</p>
+
+<p>So I ordered two more PL2303. They cost approx. 2 Eur each only to find they had the same labels and also did not work.</p>
+
+<p>On Windows they show up as “Prolific PL2303 Phased out since 2012” in the device manager.
+The “PL2303 Chip Checker tool” [2] shows “Fake Chip”.
+With a driver from a dubious source the device seems to be detected on Windows and the chip checker then claims it’s a “PL-2303 XA/HXA”. Prolific has also discontinued the drivers for many chips.
+But the real requirement is for the TTL adapter to work on Venus OS under Linux which it already didn’t.</p>
+
+<p>I saw that [1] is using a CP2102 adapter and ordered one of those.</p>
+
+<p>Before it arrived I tried the FTDI again and saw errors in the Linux <code class="language-plaintext highlighter-rouge">dmesg</code> log. So I switched the cable for another.
+After rebooting the RaspberryPi it suddenly worked and I had both devices showing up.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-vedirect-5-ttlftdi.jpg" height="160px" /></p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211014-vedirect-6-ttlftdi.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211014-vedirect-7-ttlftdi.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211014-vedirect-8-ttlftdi.jpg" height="160px" /></p>
+
+<p>So it seems there are lots of conterfeit or defunct PL2303 in circulation.
+And apparantly it is also important to reboot Venus OS when testing.</p>
+
+<p>In the end I built both cables out of FTDI FT232R to free up the one golden working PL2303 for another project, where it is required for compatibility with an old Linux Kernel.</p>
+
+<p>Also the original cables from Victron Energy seem to be FTDI-based (seen here [3]) making it a good choice.</p>
+
+<p>see also:</p>
+
+<pre>
+1] https://obenschlaefer.com/low-budget-energiemonitor-victron-venus-os-mit-raspberry-pi-obenschlaefer/#USB_8211_VEDirect_Adapter_bauennbsp
+https://www.tarthorst.net/victron-ve-direct/
+https://www.victronenergy.com/live/vedirect_protocol:faq
+https://www.sv-zanshin.com/r/manuals/victron-ve-direct-protocol.pdf
+2] http://www.prolific.com.tw/US/ShowProduct.aspx?p_id=225&amp;pcid=41
+3] https://github.com/victronenergy/venus/issues/129
+</pre>
+
+<h2 id="software">Software</h2>
+
+<h3 id="s1-download-venus-os-image">S1. Download Venus OS Image</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd /mnt/volume/4-os/solar-venusos
+wget https://updates.victronenergy.com/feeds/venus/release/images/raspberrypi2/venus-image-raspberrypi2-20210830185719-v2.73.rootfs.wic.gz
+</code></pre></div></div>
+<pre>
+https://github.com/victronenergy/venus/wiki/raspberrypi-install-venus-image
+https://docs.updatefactory.io/devices/linux/writing-images/
+</pre>
+
+<h3 id="s2-write-image-to-sd-card">S2. Write Image to SD-Card</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt install bmap-tools
+sudo bmaptool copy --nobmap /mnt/volume/4-os/solar-venusos/venus-image-raspberrypi2-20210830185719-v2.73.rootfs.wic.gz /dev/sdX
+</code></pre></div></div>
+
+<h3 id="s3-boot-up-and-connect">S3. Boot Up and Connect</h3>
+
+<ul>
+  <li>insert SD-Card</li>
+  <li>connect a LAN Cable</li>
+  <li>connect a smartphone charger with micro-USB</li>
+  <li>check IP at the Router</li>
+  <li>connects as “venus”, IP: 169.254.7.15</li>
+</ul>
+
+<p>http://169.254.7.15</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-09-21-RemoteConsole.png" height="160px" /></p>
+
+<ul>
+  <li>Space bar opens menu</li>
+  <li>navigate to Wifi and configure</li>
+  <li>disconnect LAN cable, disconnect and reconnect power</li>
+  <li>shows up as “rasberrypi2” “192.168.2.142” on WiFi</li>
+</ul>
+
+<p>http://192.168.2.142</p>
+
+<h3 id="s4-activate-ssh-access-and-connect">S4. Activate SSH Access and Connect</h3>
+
+<ul>
+  <li>enable superuser, see [1]:</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>To set the root password, first set the access level to Superuser:
+- Go to Settings, General
+- Set the Access Level to User and installer, the password is ZZZ
+- Highlight Access Level (don't open the select page, ie. make sure you are in the General Page, not the Access Level page)
+- Press and hold the right button of the center pad until you see the Access Level change to Superuser. Note: when working from the Remote Console, you need to use the right key on your keyboard. Pressing and holding the right button with your mouse won't work.
+</code></pre></div></div>
+
+<ul>
+  <li>set a root password</li>
+  <li>enable “ssh on lan”</li>
+  <li>connect with <code class="language-plaintext highlighter-rouge">ssh root@192.168.2.142</code></li>
+</ul>
+
+<p>see:</p>
+
+<ul>
+  <li>1] https://www.victronenergy.com/live/ccgx:root_access</li>
+</ul>
+
+<h3 id="s5-configure-can-bus">S5. Configure CAN-Bus</h3>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2chIsolatedCanHat.png" height="160px" /></p>
+
+<ul>
+  <li>Connect CAN-Bus Cable to Battery</li>
+</ul>
+
+<p>Hardware Configuration:</p>
+
+<ul>
+  <li>leave all DIP Switches on 0 on battery</li>
+  <li>enable 120 Ohm Resistor on WaveShare 2 CH Pi Hat</li>
+  <li>set to 3,3 V (not 5V !)</li>
+</ul>
+
+<p>CAN Parameters:</p>
+
+<ul>
+  <li>the Pylontech Battery communicates at 500 kbit/s</li>
+  <li>the WaveShare 2CH Isolated Can Hat uses a 16 MHz Crystal (not visible on the board?)</li>
+</ul>
+
+<p>Notes:</p>
+
+<ul>
+  <li>the <code class="language-plaintext highlighter-rouge">vup</code> diagnostic application only works for victron devices and not the Pylontech Battery</li>
+  <li>the original Color GX (?) seems to support either 500 kbit/s (Pylontech Batteries) OR 250 kbit/s (Victron VE.CAN Devices) apparantly only the Venus GX could do both - so we’re better off with the Raspberry Pi approach</li>
+  <li><code class="language-plaintext highlighter-rouge">ip -s -d link show can0</code> shows “can state ERROR-ACTIVE”, but this is not an error. It is the idle state of the MCP-Chip in normal operation.</li>
+</ul>
+
+<p>Software Configuration:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ln -s /opt/victronenergy/can-bus-bms/service /service/can-bus-bms.can0
+ln -s /opt/victronenergy/dbus-motordrive/service /service/dbus-motordrive.can0
+ln -s /opt/victronenergy/dbus-valence/service /service/dbus-valence.can0
+ln -s /opt/victronenergy/vecan-dbus/service /service/vecan-dbus.can0
+ln -s /opt/victronenergy/mqtt-n2k/service /service/mqtt-n2k.can0
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>echo "can0" &gt;&gt; /etc/venus/canbus_ports
+</code></pre></div></div>
+
+<ul>
+  <li>replace <code class="language-plaintext highlighter-rouge">DEV</code> with <code class="language-plaintext highlighter-rouge">can0</code> in all of</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /opt/victronenergy/can-bus-bms/service/run 
+vi /service/dbus-valence.can0/run
+vi /service/can-bus-bms.can0/run
+vi /service/mqtt-n2k.can0/run
+vi /service/vecan-dbus.can0/run
+vi /service/dbus-motordrive.can0/run
+</code></pre></div></div>
+
+<ul>
+  <li>Set Oscillator and Interrupt according to [1]</li>
+  <li>(other CAN Hats require different configurations and also adding can1 seems to break the boot process)</li>
+</ul>
+
+<p><code class="language-plaintext highlighter-rouge">vi /u-boot/config.txt</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dtparam=spi=on
+dtoverlay=mcp2515-can0,oscillator=16000000,interrupt=23
+</code></pre></div></div>
+
+<p>Note: in read_me-canbusdebug.md - oscillator=8000000</p>
+
+<p><code class="language-plaintext highlighter-rouge">vi /data/rcS.local</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip link set can0 up type can bitrate 500000
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">vi /etc/network/interfaces</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>auto can0
+iface can0 inet manual
+   pre-up /sbin/ip link set can0 type can bitrate 500000
+   up /sbin/ifconfig can0 up
+   down /sbin/ifconfig can0 down
+</code></pre></div></div>
+
+<p>reboot</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>reboot
+</code></pre></div></div>
+
+<ul>
+  <li>under Settings -&gt; Services -&gt; CAN-Profile set “CAN-Bus BMS (500kbit/s)” in the VenusOS UI</li>
+</ul>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-09-22-RemoteConsole-BatterySettings.png" height="160px" /></p>
+
+<pre>
+1] https://www.waveshare.com/wiki/2-CH_CAN_HAT
+</pre>
+
+<p>The Battery should now be detected:</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-09-22-RemoteConsole-Battery.png" height="120px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-09-22-RemoteConsole-Battery2.png" height="120px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-09-22-RemoteConsole-Battery3.png" height="120px" /></p>
+
+<h3 id="s6-result">S6. Result</h3>
+
+<p>With that we can see all devices in VenusOS.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-10-14-RemoteConsoleAllDevices.png" height="160px" /></p>
+
+<h2 id="electronics-power-cables">Electronics, Power Cables</h2>
+
+<p>Time to connect the power cables. I’ve chosen to build a simple bus bar myself. Here it’s crutial to use a non conductive sturdy base plate and keep the two wires far from one another to avoid sparks.</p>
+
+<h3 id="p1-build-the-bus-bar">P1. Build the Bus Bar</h3>
+
+<p>The bus bar connects the battery, charge controller and inverter to eachother.</p>
+
+<p>The Power-Suppy of the Raspberry Pi (the PoE Splitter) also connects to this same bus bar.</p>
+
+<p>Since most of the DC Current travels through the Bus Bar we need to use thick cables and large screws.</p>
+
+<p>For the bus bar I’m using square piece of wood in a junction box.</p>
+
+<p>Wood doesn’t conduct electricity and keeps the wires apart. The junction box isolates the electricity.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-busbar1.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-busbar2.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-busbar3.jpg" height="160px" /></p>
+
+<h3 id="p2-solar-disconnect-switch">P2. Solar Disconnect Switch</h3>
+
+<p>Since the Solar Panels produce a lot of power and are situated on the roof, we need a method to disconnect them from the rest of the system, in case we need to do maintanance.
+A solar disconnect switch can disconnect the panels and contain the sparks when disconnecting.
+I did not want to go cheap here and bought a quality switch and enclosure.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-solardisconnect1.jpg" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-solardisconnect2.jpg" height="160px" /></p>
+
+<h3 id="p3-grounding">P3. Grounding</h3>
+
+<p>All devices need to be grounded to one another and perhaps to the building ground. My roof is also grounded for the panels.
+I’m using standard grounding cable from a standard power cord.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-grounding.jpg" height="160px" /></p>
+
+<h3 id="p4-result">P4. Result</h3>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211009-final.jpg" height="320px" /></p>
+
+<h2 id="debugging---battery-can-bus">Debugging - Battery CAN-Bus</h2>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-09-22-RemoteConsole-Battery.png" height="160px" /></p>
+
+<p>If the Battery doesn’t show up in Venus OS, you can try the following:</p>
+
+<p><strong>at the battery</strong></p>
+
+<ul>
+  <li>1) check connections</li>
+  <li>2) switch off/on, press and hold red “sw” button for a few seconds</li>
+</ul>
+
+<p><strong>in VenusOS</strong></p>
+
+<ul>
+  <li>1) verify that “Settings -&gt; “Services -&gt; CAN-bus (1) -&gt; CAN-bus profile” is set to “CAN-bus BMS (500 kbit/s)” (Pylontech Batteries use 500 kbit/s).</li>
+  <li>2) verify that “NMEA2000-out” is on</li>
+  <li>3) check state, it should say “state says “error-active”
+“Error-Active” is not an error: “state is the actual MCP2515 state, so ERROR-ACTIVE is correct operation”
+“ERROR-PASSIVE or BUS-OFF are signs something is wrong.”</li>
+  <li>4) Check “Settings -&gt; DVCC” is enabled and all else is disabled</li>
+</ul>
+
+<p><strong>via SSH</strong></p>
+
+<ul>
+  <li>1) Check Interface correctly configured</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip -s -d link show can0
+bitrate 500000
+clock 8000000 
+</code></pre></div></div>
+
+<ul>
+  <li>2) check that “can0” is shown and that “RX bytes”/”TX bytes” are increasing</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/sbin/ifconfig can0
+</code></pre></div></div>
+<ul>
+  <li>3) Try to CAN Dump Messages</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ifdown can0
+ip link set can0 up type can bitrate 500000
+ifup can0
+candump can0
+</code></pre></div></div>
+
+<ul>
+  <li>4) try to send CAN messages</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cansend can0 000#01.01
+cansend can0 135#02080426A10D112A
+</code></pre></div></div>
+
+<ul>
+  <li>5) check DBus</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dbus-spy
+
+bitrate 500000 sample-point 0.750 
+tq 250 prop-seg 2 phase-seg1 3 phase-seg2 2 sjw 1
+mcp251x: tseg1 3..16 tseg2 2..8 sjw 1..4 brp 1..64 brp-inc 1
+clock 4000000
+</code></pre></div></div>
+
+<ul>
+  <li>6) try to set queue length</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo ifconfig can0 txqueuelen 65536
+sudo ifconfig can1 txqueuelen 65536
+</code></pre></div></div>
+
+<ul>
+  <li>7) try venus os tools</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/opt/victronenergy/can-bus-bms/can-bus-bms -c socketcan:can0 --banner --log-before 25 --log-after 25 -vv
+vup
+/opt/victronenergy/vecan-dbus/vecan-dbus -c socketcan:can0 --banner --log-before 25 --log-after 25 -vv
+</code></pre></div></div>
+
+<p><strong>linux configuration</strong></p>
+
+<ul>
+  <li>1) check system logs</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dmesg | grep -i '\(can\|spi\)'
+</code></pre></div></div>
+
+<ul>
+  <li>2) check boot configuration matches CAN board</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi /u-boot/config.txt
+</code></pre></div></div>
+
+<ul>
+  <li>3) bring interface up manually</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ip link set can0 up type can bitrate 500000"
+</code></pre></div></div>
+
+<ul>
+  <li>4) configure autostart</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>echo "ip link set can0 up type can bitrate 500000" &gt; /data/rcS.local
+</code></pre></div></div>
+<p>or better in “ /etc/network/interfaces” (see above)</p>
+
+<ul>
+  <li>5) check modules loaded</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsmod | grep mcp251
+mcp251x                20480  0
+can_dev                28672  1 mcp251x
+</code></pre></div></div>
+<p>used is 0 for mcp251x</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lsmod | grep can
+can_raw                20480  1
+can                    28672  1 can_raw
+can_dev                28672  1 mcp251x
+</code></pre></div></div>
+
+<ul>
+  <li>6) or load modules manually</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>modprobe mcp251x
+modprobe can_bcm
+</code></pre></div></div>
+
+<ul>
+  <li>7) write symlinks (see above)</li>
+  <li>8) write can port configuration (see above)</li>
+  <li>9) set DEV to CAN0 in configuration files (see above)</li>
+</ul>
+
+<p><strong>at the electronics bench</strong></p>
+
+<ul>
+  <li>1) make sure 120 ohm resistor is switched on at the CAN hat</li>
+  <li>2) connect one of the CAN-Interfaces of the Pi-Hat to the other, “cansend” from one and “candump” on the other</li>
+  <li>3) check tha battery is sending CAN signals via an Oscilloscope, when switching “on” and pressing the red “sw” button</li>
+</ul>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/battery-can1.png" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/battery-can2.png" height="160px" /></p>
+
+<ul>
+  <li>4) verify voltage range around 2,5V and approx 100 kHz frequency with the oscilloscope</li>
+</ul>
+
+<h2 id="finalize">Finalize</h2>
+
+<p>I’ve clean-up the installation and mounted the electronics into a 4U Rackserver since. Since the system is in standard computer rack cases we can apply the “Ikea Lack Budget Server Rack” approach.</p>
+
+<p>Just note that these components need proper airflow and are designed to be mounted vertically. I’ve added fans to support air flow.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/IMG_20230513_125949.jpg" height="320px" /></p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The Victron VRM Portal has been tracking performance of the system since installation. This is what I’ve been getting out of the system with two of the four panels installed.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2023-09-04-solaryield.png" height="320px" /></p>
+
+<p><strong>26.10.2021</strong></p>
+
+<p>First test run of the entire system. The weather was poor.</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/20211026-weather.jpg" height="320px" /></p>
+
+<p>I was producing some energy (inverter was switched off):</p>
+
+<p><img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-10-26-Console1.png" height="160px" />
+<img src="../../../../images/7bee0477f82303aa43de5d78f7b9cb05/2021-10-26-Console2.png" height="160px" /></p>
+
+<p>If I can produce 57 W for an hour, that would be 0,057 kWh. That means it will take 42 hours to charge my 2,4 kWh battery in this weather condition.</p>
+
+<p>We use approximately 7 kWh/day in our home. I can’t power all devices off of solar just yet due to the inverter size and cabling, but I should be able to offload some 2 kWh/day. I can’t go much further, because the battery can’t be fully discharged.</p>
+
+<p>With two more of the 385 Wp solar panels it would probably make sense to add another battery.</p>
+
+<p><strong>19.06.2023</strong></p>
+
+<p>Ran until now. Battery issues with the PylonTech US2000. Back and forth with vendor.</p>
+
+<p><strong>01.09.2023</strong></p>
+
+<p>Installed new battery and system is running again.</p>
+
+<p>As of 02.09.2023 the charger shows a total yield of 846.61 kWh.</p>
+
+<p>Without accounting for system losses that would correspond to 391 Eur at 0.4627 Eur/kWh after 2 years of operation. That means about 195,5 Eur/Year savings.
+Total system cost was 2708 - 358 (minus two panels I’m not using) = 2350 Eur so it would take approx. 12 years in total to pay for itself, but by that time some components will likely have failed.</p>
+
+<hr />
+
+<pre>
+https://github.com/victronenergy/venus/wiki/RaspberryPi-CAN-Interfaces
+https://powerforum.co.za/topic/4307-venus-pi-pylontech-integration/
+https://www.photovoltaikforum.com/thread/155662-pylontech-us2000c-mit-raspberrypi-und-venusos/
+https://groups.google.com/g/victron-dev-venus/c/C4-3JhHpbcY
+https://en.racelogic.support/VBOX_Automotive/01General_Information/Knowledge_Base/How_do_I_know_if_terminating_resistors_are_required%3F
+- "CAN High and CAN Low for it to work correctly. For maximum range over long distances, the ideal termination is one 120 Ohm resistor"
+https://www.victronenergy.com/live/battery_compatibility:pylontech_phantom
+- CAN-bus BMS (500 kbit/s) 
+- turn 120 Ohm Resistor on on Shield
+https://www.beyondlogic.org/adding-can-controller-area-network-to-the-raspberry-pi/
+https://forum.peak-system.com/viewtopic.php?t=3198
+https://github.com/linux-can/can-utils/issues/128
+https://e2e.ti.com/support/processors-group/processors/f/processors-forum/970090/am6548-linux-kernel-freeze-easily-after-sending-message-by-can-bus
+https://stackoverflow.com/questions/40424433/write-no-buffer-space-available-socket-can-linux-can
+https://www.photovoltaikforum.com/thread/155662-pylontech-us2000c-mit-raspberrypi-und-venusos/?postID=2290241#post2290241
+https://community.victronenergy.com/articles/38710/victron-raspi-hat.html
+https://www.primesolar.eu/wp-content/uploads/PylonTech-mit-EasySolar_Einrichtung.pdf
+https://powerforum.co.za/topic/4307-venus-pi-pylontech-integration/
+https://www.holzheizer-forum.de/forum/user-post-list/119-solarengel/?pageNo=2
+https://groups.google.com/g/victron-dev-venus/c/C4-3JhHpbcY
+https://groups.google.com/g/victron-dev-venus/c/C4-3JhHpbcY
+"Then selected CAN-bus profile ve.can &amp; canbus bms 250kbits/s"
+https://www.setfirelabs.com/building-automation/pylontech-us2000-us3000-nodemcu-can-reader
+- connecting the pylontech to NodeMCU Wifi Chips
+https://www.waveshare.com/wiki/2-CH_CAN_HAT
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Photovoltaic System"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Positions of Stars - Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/astronomy/2023/09/03/So-StarPositions.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Positions of Stars - Dennis Salzner" />
+  <meta property="og:description" content="When looking up at the sky we see that the stars move. If we want to point a telecope at a star we find that it not only moves out of the field of view, but ..." />
+  <meta property="og:url" content="/astronomy/2023/09/03/So-StarPositions.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="astronomy" />
+  <meta property="article:published_time" content="2023-09-03 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2023-09-03 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2023-09-03 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="When looking up at the sky we see that the stars move. If we want to point a telecope at a star w..." />
+  <meta name="twitter:title" content="Positions of Stars - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/js/lightbox.js"></script>
+  <link href="/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - StarPositions</h1>
+<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+
+<div class="page-title">Positions of Stars</div>
+<div class="page-subtitle">Calculating the position of stars</div>
+<div class="page-seperator"></div>
+
+
+<div class="post-content" itemprop="articleBody">
+    <style>
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+
+<p style="font-size: 60%;" align="right">What</p>
+
+<h2 id="calculating-positions-of-stars">Calculating positions of stars</h2>
+
+<p>When looking up at the sky we see that the stars move. If we want to point a telecope at a star we find that it not only moves out of the field of view, but is in a different location every night.</p>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/nightsky.gif" width="320px" /></p>
+
+<p>With star cards or software or astronomy software we can get the current azimuth (angle from North) and altitude/elevation (angle from ground) at a given location and time.</p>
+
+<p>But how does the math behind this work?</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#calculating-positions-of-stars" id="markdown-toc-calculating-positions-of-stars">Calculating positions of stars</a></li>
+  <li><a href="#telescope-mounts" id="markdown-toc-telescope-mounts">Telescope Mounts</a></li>
+  <li><a href="#solar-system" id="markdown-toc-solar-system">Solar System</a></li>
+  <li><a href="#representations-of-location" id="markdown-toc-representations-of-location">Representations of location</a>    <ul>
+      <li><a href="#coordinate-systems" id="markdown-toc-coordinate-systems">Coordinate Systems</a></li>
+      <li><a href="#time-angles-and-position" id="markdown-toc-time-angles-and-position">Time, Angles and Position</a></li>
+      <li><a href="#center-point-of-the-equatorial-coorindate-system" id="markdown-toc-center-point-of-the-equatorial-coorindate-system">Center point of the equatorial coorindate system</a></li>
+      <li><a href="#your-location-on-earth" id="markdown-toc-your-location-on-earth">Your location on earth</a></li>
+    </ul>
+  </li>
+  <li><a href="#representations-of-time" id="markdown-toc-representations-of-time">Representations of time</a>    <ul>
+      <li><a href="#univeral-time" id="markdown-toc-univeral-time">Univeral Time</a></li>
+      <li><a href="#julian-date" id="markdown-toc-julian-date">Julian Date</a></li>
+      <li><a href="#sidereal-time" id="markdown-toc-sidereal-time">Sidereal Time</a></li>
+    </ul>
+  </li>
+  <li><a href="#testing-data" id="markdown-toc-testing-data">Testing Data</a></li>
+  <li><a href="#implementation" id="markdown-toc-implementation">Implementation</a>    <ul>
+      <li><a href="#overview" id="markdown-toc-overview">Overview</a></li>
+      <li><a href="#code" id="markdown-toc-code">Code</a>        <ul>
+          <li><a href="#input-parameters" id="markdown-toc-input-parameters">Input Parameters</a></li>
+          <li><a href="#computing-sidereal-time" id="markdown-toc-computing-sidereal-time">Computing Sidereal Time</a>            <ul>
+              <li><a href="#lon_dms---lon_deg-lat_dms---lat_deg" id="markdown-toc-lon_dms---lon_deg-lat_dms---lat_deg">lon_dms -&gt; lon_deg, lat_dms -&gt; lat_deg</a></li>
+              <li><a href="#date_dmy-time_hms---datetime_dt" id="markdown-toc-date_dmy-time_hms---datetime_dt">date_dmy, time_hms -&gt; dateTime_dt</a></li>
+              <li><a href="#lat_deg-lon_deg-datetime_dt---offsetutc_dt" id="markdown-toc-lat_deg-lon_deg-datetime_dt---offsetutc_dt">lat_deg, lon_deg, dateTime_dt -&gt; offsetUtc_dt</a></li>
+              <li><a href="#datetime_dt-offsetutc_dt---datetimeutc_dt" id="markdown-toc-datetime_dt-offsetutc_dt---datetimeutc_dt">dateTime_dt, offsetUtc_dt -&gt; dateTimeUtc_dt</a></li>
+              <li><a href="#datetimeutc_dt---datetimeutc0h_dt" id="markdown-toc-datetimeutc_dt---datetimeutc0h_dt">dateTimeUtc_dt -&gt; dateTimeUtc0h_dt</a></li>
+              <li><a href="#datetimeutc0h_dt---juliandateat0h_h" id="markdown-toc-datetimeutc0h_dt---juliandateat0h_h">dateTimeUtc0h_dt -&gt; julianDateAt0h_h</a></li>
+              <li><a href="#juliandateat0h_h---siderealgreenwich0h_h" id="markdown-toc-juliandateat0h_h---siderealgreenwich0h_h">julianDateAt0h_h -&gt; siderealGreenwich0h_h</a></li>
+              <li><a href="#siderealgreenwich0h_h---siderealgreenwichnow_h" id="markdown-toc-siderealgreenwich0h_h---siderealgreenwichnow_h">siderealGreenwich0h_h -&gt; siderealGreenwichNow_h</a></li>
+              <li><a href="#siderealgreenwichnow_h---sidereallocationnow_h" id="markdown-toc-siderealgreenwichnow_h---sidereallocationnow_h">siderealGreenwichNow_h -&gt; siderealLocationNow_h</a></li>
+            </ul>
+          </li>
+          <li><a href="#compute-position-of-star" id="markdown-toc-compute-position-of-star">Compute Position of Star</a>            <ul>
+              <li><a href="#convert-to-radians-to-get-sidereallocationnow_rad-starra_rad-stardec_rad" id="markdown-toc-convert-to-radians-to-get-sidereallocationnow_rad-starra_rad-stardec_rad">Convert to radians to get siderealLocationNow_rad, starRa_rad, starDec_rad</a></li>
+            </ul>
+          </li>
+          <li><a href="#apply-the-trigonometry" id="markdown-toc-apply-the-trigonometry">Apply the trigonometry</a></li>
+          <li><a href="#display-result" id="markdown-toc-display-result">Display result</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="telescope-mounts">Telescope Mounts</h2>
+
+<p>There are different telecope mounts with the most basic being the “dobsonian mount” or “alt-azimuth mount”.</p>
+
+<p>With this kind of mount we need to set the azimuth and altitude and adjust them as we are viewing.</p>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/telescope.gif" width="180px" /></p>
+
+<p>There are also equatorial mounts. With an equatorial mount the same degrees of freedom are set, but the entire mount is tilted against the axis of the earth. A motor that turns against the rotation of the earth works against the stars moving out of the field of view.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>But no mater the mount, unless it is fully motorized and “GoTo”-capable, we need to know where to point our telescope. We can look for star constellations and manually point the telescope in that direction, but it would be a lot easier, if we knew the exact angle from north (azimuth) and the angle from the ground (elevation) of the object we want to view.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="solar-system">Solar System</h2>
+
+<p>So how does this motion of the stars come about?</p>
+
+<p>As it turns out, this was some 2,5 thousand years ago, astronomers, by viewing the night sky and recording positions of stars, found that it’s not the stars that move, but it’s our planet earth that moves around the sun while rotating around its own axis.</p>
+
+<p>The earth (in blue in the image) moves around a star, the sun. The stars, in the grand scheme of things, hardly move at all in relation to one another.</p>
+
+<p>In order to calculate the position of a star on the night sky when viewing from earth, we need to take the observers location on earth, viewing direction and time into account.</p>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/solarsystem.gif" width="480px" />
+<small>(generated by code based on [1])</small></p>
+
+<h2 id="representations-of-location">Representations of location</h2>
+
+<p>The first thing we need to think about is how we represent positions of stars. For this we need to look into coordinate systems that are used to locate them.</p>
+
+<h3 id="coordinate-systems">Coordinate Systems</h3>
+
+<p>Since it’s us moving and not the stars it makes sense to define a better coordinate system to locate stars.
+With that better coordinate system we can then, for a given time and place, convert it into our azimuth (angle from North) and altitude/elevation (angle from ground) system. With that information we know where to point our telescope.</p>
+
+<p>That better coordinate system should have a center point that is stationary with respect to the stars. Ideally the coordinate of a given star in that coordinate system should always be the same.</p>
+
+<p>A good overview of coordinate systems is given on Wikipedia [2].</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Coordinate System</th>
+      <th>Coordinate</th>
+      <th>Center Point (Origin)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>alt-az</td>
+      <td>angle from north (azimuth) <br />angle from ground (elevation)</td>
+      <td>Observer</td>
+    </tr>
+    <tr>
+      <td>equatorial</td>
+      <td>right ascension or hour angle <br /> declination</td>
+      <td>Center of the Earth (at vernal equinox) or Sun</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The equatorial coordinate system fullfills this requirement. The location of a given star is given as right ascension (RA) and declination (DEC) and these values remain constant.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Star</th>
+      <th>Right Ascension</th>
+      <th>Declination</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Rigel A</td>
+      <td>5h 14m 32,3s</td>
+      <td>−8° 12’ 5.9”</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>in Decimal Degrees:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Star</th>
+      <th>Right Ascension</th>
+      <th>Declination</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Rigel A</td>
+      <td>78.63°</td>
+      <td>8.2°</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="time-angles-and-position">Time, Angles and Position</h3>
+
+<p>It’s important to understand that in astronomy, time and position, are interchangably represented by angles.</p>
+
+<ul>
+  <li>the earth rotates around it’s own access roughly every 24 Hours (= 1 day)</li>
+  <li>the earth rotates around the sun in roughly 365 days (= 1 year)</li>
+</ul>
+
+<p>and</p>
+<ul>
+  <li>24 Hours corresponds to a 360 degree rotation around the earths axis.</li>
+  <li>And 356 days corresponds to a 360 degree roation around the sun.</li>
+</ul>
+
+<p>A point</p>
+<ul>
+  <li>in a cartesian coorindate system is given by (x, y, z).</li>
+  <li>the same point can be given by vector (angle around Y axis (=azimuth), angle around Z axis (=elevation) and length)</li>
+</ul>
+
+<h3 id="center-point-of-the-equatorial-coorindate-system">Center point of the equatorial coorindate system</h3>
+
+<p>To use the equatorial coordinate system, and in order to convert from Azimuth/Elevation to it, we need to understand where it’s center of origin is.</p>
+
+<p>For this astronomers use the “solar equinox” (german: “Äquinoktium”, from Latin “Night” and “Equal” or “Tagundnachtgleiche”). It is a time of the year when the night and day have the same duration.</p>
+
+<p>In astronomy this “solar equinox is the moment in time when the Sun crosses the Earth’s equator”.
+Or in other words when the location of the earth is where the ecliptic plane (=orbital plane of the earth around the sun) crosses the equator plane of the earth.</p>
+
+<p>This occurs twice a year on around the 20st of March and around the 23rd of September as you can see in this image from 12 years ago.</p>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/vernox2.png" width="280px" /></p>
+
+<h3 id="your-location-on-earth">Your location on earth</h3>
+
+<p>Additionally, to compute the azimuth and declination of a star from your viewing point, we need to take into account your location.
+After all a star would be in a different location, if you are on the other side of the planet (and not visible, because the earth is inbetween you and the star).</p>
+
+<p>For this we use Longitude and Latitude.</p>
+
+<p>Examples in the common Degrees, Minutes, Seconds (DMS) notation are:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>DMS Latitude</th>
+      <th>DMS Longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Berlin</td>
+      <td>52° 31’ 12.0288” N</td>
+      <td>13° 24’ 17.8344” E</td>
+    </tr>
+    <tr>
+      <td>Paris</td>
+      <td>48° 51’ 52.9776” N</td>
+      <td>2° 20’ 56.4504” E</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>But for calculations we use the decimal representation:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Berlin</td>
+      <td>52.520008</td>
+      <td>13.404954</td>
+    </tr>
+    <tr>
+      <td>Paris</td>
+      <td>48.864716</td>
+      <td>2.349014</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="representations-of-time">Representations of time</h2>
+
+<p>Our day to day system for communicating time is more than inconvenient for calculations.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Range</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Seconds</td>
+      <td>0-60</td>
+    </tr>
+    <tr>
+      <td>Minutes</td>
+      <td>0-60</td>
+    </tr>
+    <tr>
+      <td>Hours</td>
+      <td>0-24 or even 0-12am and 0-12pm and time zones</td>
+    </tr>
+    <tr>
+      <td>Days</td>
+      <td>1-29, 30, 31 depending on the Month of the year and leap years</td>
+    </tr>
+    <tr>
+      <td>Month</td>
+      <td>1 - 12</td>
+    </tr>
+    <tr>
+      <td>Year</td>
+      <td>positive of negative number depending on BC or AC</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Most values have a different range depending on conditions on other values. There are leap years and leap seconds.
+The set of (h:m:s d:M:Y) does not increment evenly.</p>
+
+<p>Additionally we have to deal with time zones. They were arbitrarly decided upon and so time zone boundaries run unevenly.</p>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/timezones.png" width="480px" />
+<small>(image source [8])</small></p>
+
+<p>Some countries use daylight savings time, while other do not. Even the day and time on which countries choose to switch is arbitrary.</p>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/daylightsavingstime.png" width="320px" />
+<small>(image source [4])</small></p>
+
+<p>So the first step has to be to convert date and time into something more usable. For this Universal Time and the Julian Date is commonly used.</p>
+
+<h3 id="univeral-time">Univeral Time</h3>
+
+<p>First we need to get rid of time zones and daylight savings time.. For this we take the local time and offset it by the Univeral Time Offset.
+For Berlin it is 3 hours.</p>
+
+<p>Notice how, with the same universal time, the local time in Paris on the 1st January is differnt to the local time on the 1st of August. This is due to daylight savings time.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Local Time</th>
+      <th>Local Date</th>
+      <th>Location</th>
+      <th>Universal Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>11:30</td>
+      <td>1. Aug 2023</td>
+      <td>Berlin</td>
+      <td>9:30</td>
+    </tr>
+    <tr>
+      <td>10:30</td>
+      <td>1. Jan 2023</td>
+      <td>Paris</td>
+      <td>9:30</td>
+    </tr>
+    <tr>
+      <td>11:30</td>
+      <td>1. Aug 2023</td>
+      <td>Paris</td>
+      <td>9:30</td>
+    </tr>
+    <tr>
+      <td>10:30</td>
+      <td>1. Aug 2023</td>
+      <td>London</td>
+      <td>9:30</td>
+    </tr>
+    <tr>
+      <td>11:30</td>
+      <td>1. Aug 2023</td>
+      <td>Madrid</td>
+      <td>9:30</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="julian-date">Julian Date</h3>
+
+<p>With the universal time, that is invariant of the time zones and the daylight savings time, we can calculate the Julian Date.
+The Julian Date is a single evenly incrementing decimal number and gets us away from leap years and seconds.</p>
+
+<p>The Julian Date is the number of days since the January 1st 4713 BC at 12:00 Uhr Universal Time.
+It is a decimal number. The values after the dot repesent fractions of a day.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Date (Universal Time)</th>
+      <th>Time (Universal Time)</th>
+      <th>Julian Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>A.D. 2023 August 1</td>
+      <td>09:30:00.0</td>
+      <td>2460157.895833</td>
+    </tr>
+    <tr>
+      <td>A.D. 2023 August 2</td>
+      <td>09:30:00.0</td>
+      <td>2460158.895833</td>
+    </tr>
+    <tr>
+      <td>A.D. 2023 August 12</td>
+      <td>09:30:00.0</td>
+      <td>2460168.895833</td>
+    </tr>
+    <tr>
+      <td>A.D. 2023 August 1</td>
+      <td>12:30:00.0</td>
+      <td>2460158.020833</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="sidereal-time">Sidereal Time</h3>
+
+<p>Sidereal Time is the angle in hours from the vernal equinox. We can convert from the Julian Date to the sidereal time and then use the sidereal time to calculate the actual position of the star.</p>
+
+<p>It accounts for all the motion and rotation of the earth. In other words: for a specific location and sidereal time the night sky will look the same.</p>
+
+<p>Note that the equations to convert from JulianDate to Sidereal work for the date, but not for time. We calculate the JulianDate at 0:00 and use that to compute the sidereal time at greenwich obsevatory at 0:00. We can then add local time and local location longitudinal offset.</p>
+
+<p>Then we add our time offset and longitude offset to get local sidereal time.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>DateTime UTC</th>
+      <th>DMS Latitude</th>
+      <th>DMS Longitude</th>
+      <th>Greenwich 0h Sidereal Time</th>
+      <th>Local Sidereal Time</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1. Aug 2023 9:30</td>
+      <td>52° 31’ 12.0288” N</td>
+      <td>13° 24’ 17.8344” E</td>
+      <td>20:37:22.39818407072562</td>
+      <td>7:2:33.22359767072271</td>
+    </tr>
+    <tr>
+      <td>1. Aug 2023 10:30</td>
+      <td>52° 31’ 12.0288” N</td>
+      <td>13° 24’ 17.8344” E</td>
+      <td>20:37:22.39818407072562</td>
+      <td>8:2:43.08006647072375</td>
+    </tr>
+    <tr>
+      <td>1. Aug 2023 20:30</td>
+      <td>52° 31’ 12.0288” N</td>
+      <td>13° 24’ 17.8344” E</td>
+      <td>20:37:22.39818407072562</td>
+      <td>18:4:21.644754470734142</td>
+    </tr>
+  </tbody>
+</table>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="testing-data">Testing Data</h2>
+
+<p>In order to properly test the calculation it makes sense to gather some data points.
+In the ancient times we would have to watch the night sky for years and minutely measure and document the positions of the stars relativ to the viewing point. Luckily there is software that already has the equations implemented. I’m using the free astronomy software “Stellarium” to create data for verification.</p>
+
+<p>For this we pause the simulation and set the following date and time</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Local Time</th>
+      <th>Local Date</th>
+      <th>Location</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>11:30</td>
+      <td>1. Aug 2023</td>
+      <td>Berlin</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/stellarium1.png" width="240px" /></p>
+
+<p>In the other tab see that also Stellarium computes the Julian Date to 2460157.895833.</p>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/stellarium2.png" width="240px" /></p>
+
+<p>We set the location to</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Location</th>
+      <th>DMS Latitude</th>
+      <th>DMS Longitude</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Berlin</td>
+      <td>52° 31’ 12.0288” N</td>
+      <td>13° 24’ 17.8344” E</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Stellarium rounds a bit</p>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/stellarium3.png" width="240px" /></p>
+
+<p>By entering the star into the search field we can display the information from the computation performed by Stellarium.</p>
+
+<p><img src="../../../../images/2023-09-03-So-StarPositions/stellarium4.png" width="240px" />
+<img src="../../../../images/2023-09-03-So-StarPositions/stellarium5.png" width="240px" /></p>
+
+<p>Notice that Stellarium performs more exact calculations. Amongst other things it takes variances of the angle of the ecliptic plane to the equatorial plane into account.</p>
+
+<p>Stellarium computes the mean sidereal time to:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Mean Sidereal Time</td>
+      <td>7:02:34.5</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>and the star positions to:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Star</th>
+      <th>Right Ascension (J2000.0)</th>
+      <th>Declination (J2000.0)</th>
+      <th>Apparant Azimuth</th>
+      <th>Apparant Elevation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Rigel</td>
+      <td>05h 14m 32,3s</td>
+      <td>−8° 12’ 05.9”</td>
+      <td>+209° 27’ 32.8”</td>
+      <td>+25° 11’ 38.4”</td>
+    </tr>
+    <tr>
+      <td>Deneb</td>
+      <td>20h 41m 26s</td>
+      <td>+45° 16’ 49”</td>
+      <td>+342° 29’ 53.6”</td>
+      <td>+10° 16’ 45.0”</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>We expect our computation to output similar values.</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>With the above background information and values for testing we can now move to the implementation.</p>
+
+<h3 id="overview">Overview</h3>
+
+<div class="mermaid" style="width: 800px">
+graph TD;
+
+style inDate_dms fill:#c0c0c0
+style inTime_hms fill:#c0c0c0
+style inLon_dms fill:#c0c0c0
+style inLat_dms fill:#c0c0c0
+style inStarRa_hms fill:#c0c0c0
+style inStarDec_dms fill:#c0c0c0
+
+inDate_dms["<b>Input Date</b><br />Days, Months, Years"]
+inTime_hms["<b>Input Time</b><br />Hours, Minutes, Seconds"]
+inLon_dms["<b>Input Longitude</b><br />Degrees, Minutes, Seconds"]
+inLat_dms["<b>Input Latitude</b><br />Degrees, Minutes, Seconds"]
+
+inStarRa_hms["<b>Input Star Right Ascension</b><br />Hours, Minutes, Seconds"]
+inStarDec_dms["<b>Input Star Declination</b><br />Degrees, Minutes, Seconds"]
+
+inLon_dms --&gt; lon_deg
+inLat_dms --&gt; lat_deg
+
+lon_deg --&gt; offsetUtc_h
+lat_deg --&gt; offsetUtc_h
+
+inDate_dms --&gt; dateTimeUtc_dmshms
+inTime_hms --&gt; dateTimeUtc_dmshms
+offsetUtc_h --&gt; dateTimeUtc_dmshms
+
+dateTimeUtc_dmshms --&gt; julianDateAt0h_h
+
+julianDateAt0h_h --&gt; siderealTimeGreenwich0h_h
+
+siderealTimeGreenwich0h_h --&gt; siderealTimeGreenwichNow_h
+
+dateTimeUtc_dmshms --&gt; timeSince0h_h
+timeSince0h_h --&gt; siderealTimeGreenwichNow_h
+
+lon_deg --&gt; lon_h
+
+siderealTimeGreenwichNow_h --&gt; siderealTimeLocationNow_h
+lon_h --&gt; siderealTimeLocationNow_h
+
+
+inStarRa_hms --&gt; starRa_deg
+starRa_deg --&gt; starRa_rad
+
+inStarDec_dms --&gt; starDec_deg
+starDec_deg --&gt; starDec_rad
+
+siderealTimeLocationNow_h --&gt; siderealTimeLocationNow_rad
+
+lat_deg --&gt; lat_rad
+
+starRa_rad --&gt; compute
+starDec_rad --&gt; compute
+siderealTimeLocationNow_rad --&gt; compute
+lat_rad --&gt; compute
+
+compute --&gt; current_az_rad
+compute --&gt; current_el_rad
+
+style current_az_dms fill:#c0c0c0
+style current_el_dms fill:#c0c0c0
+
+current_az_rad --&gt; current_az_deg
+current_az_deg --&gt; current_az_dms
+
+current_el_rad --&gt; current_el_deg
+current_el_deg --&gt; current_el_dms
+ 
+
+</div>
+
+<h3 id="code">Code</h3>
+
+<p>It took me some time to get this right and I found that we need to be rigorous with our math. Here are some learnings:</p>
+
+<ul>
+  <li>for testing input and output values have to be correct to the decimal</li>
+  <li>there are many conversions and we need to watch out for corner cases like negative degrees, arcminutes, arcseconds</li>
+  <li>it pays off to calculate primarily in decimal hour angles for time, as these can be easily converted to degrees</li>
+  <li>for trigonometry we need radians</li>
+  <li>choosing the wrong unit to represent the numbers will introduce rounding errors and break numerical stability</li>
+  <li>even seemlingly simple tasks such as computing the ellapsed time between two dates can go horribly wrong, so always use the libraries the programming language provides. They take care of value ranges (e.g. number of days in a month), leap years and also leap seconds.</li>
+  <li>use online calculators to verify every step and, during development, assert the intermediate results in your code</li>
+  <li>we’re dealing with a lot of variables, so use consistant naming and add units to not mix them up</li>
+  <li>keep it simple and stupid</li>
+  <li>do the calculations step-by-step, effectively dividing and conquering the problem</li>
+</ul>
+
+<h4 id="input-parameters">Input Parameters</h4>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">date_dmy</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">2023</span><span class="p">)</span>
+<span class="n">time_hms</span><span class="o">=</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">lat_dms</span><span class="o">=</span><span class="p">(</span><span class="mi">52</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mf">12.0288</span><span class="p">)</span>
+<span class="n">lon_dms</span><span class="o">=</span><span class="p">(</span><span class="mi">13</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mf">17.8344</span><span class="p">)</span>
+
+<span class="n">starRa_hms</span> <span class="o">=</span> <span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">starDec_dms</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mf">5.9</span><span class="p">)</span></code></pre></figure>
+
+<h4 id="computing-sidereal-time">Computing Sidereal Time</h4>
+
+<h5 id="lon_dms---lon_deg-lat_dms---lat_deg">lon_dms -&gt; lon_deg, lat_dms -&gt; lat_deg</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">dmsToDeg</span><span class="p">(</span><span class="n">dms</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">dms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">dms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span>
+    <span class="k">return</span> <span class="n">res</span> <span class="k">if</span> <span class="n">dms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="n">res</span>
+<span class="n">lon_deg</span> <span class="o">=</span> <span class="n">dmsToDeg</span><span class="p">(</span><span class="n">lon_dms</span><span class="p">)</span>
+<span class="n">lat_deg</span> <span class="o">=</span> <span class="n">dmsToDeg</span><span class="p">(</span><span class="n">lat_dms</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="mf">13.404954</span> <span class="o">==</span> <span class="n">lon_deg</span>
+<span class="k">assert</span> <span class="mf">52.520008</span> <span class="o">==</span> <span class="n">lat_deg</span></code></pre></figure>
+
+<h5 id="date_dmy-time_hms---datetime_dt">date_dmy, time_hms -&gt; dateTime_dt</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">datetime</span>
+<span class="n">dateTime_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">(</span>
+    <span class="n">date_dmy</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">date_dmy</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">date_dmy</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
+    <span class="n">time_hms</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_hms</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">time_hms</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></code></pre></figure>
+
+<h5 id="lat_deg-lon_deg-datetime_dt---offsetutc_dt">lat_deg, lon_deg, dateTime_dt -&gt; offsetUtc_dt</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pytz</span>
+<span class="kn">from</span> <span class="nn">tzwhere</span> <span class="kn">import</span> <span class="n">tzwhere</span>
+
+<span class="n">tzwhere</span> <span class="o">=</span> <span class="n">tzwhere</span><span class="p">.</span><span class="n">tzwhere</span><span class="p">()</span>
+<span class="n">timezone_str</span> <span class="o">=</span> <span class="n">tzwhere</span><span class="p">.</span><span class="n">tzNameAt</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">,</span> <span class="n">lon_deg</span><span class="p">)</span>
+<span class="n">timezone</span> <span class="o">=</span> <span class="n">pytz</span><span class="p">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">timezone_str</span><span class="p">)</span>
+<span class="n">offsetUtc_dt</span> <span class="o">=</span> <span class="n">timezone</span><span class="p">.</span><span class="n">utcoffset</span><span class="p">(</span><span class="n">dateTime_dt</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="s">"Europe/Berlin"</span> <span class="o">==</span> <span class="n">timezone_str</span>
+<span class="k">assert</span> <span class="s">"2:00:00"</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">offsetUtc_dt</span><span class="p">)</span></code></pre></figure>
+
+<h5 id="datetime_dt-offsetutc_dt---datetimeutc_dt">dateTime_dt, offsetUtc_dt -&gt; dateTimeUtc_dt</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">dateTimeUtc_dt</span> <span class="o">=</span> <span class="n">dateTime_dt</span> <span class="o">-</span> <span class="n">offsetUtc_dt</span>
+
+<span class="k">assert</span> <span class="s">"2023-08-01 09:30:00"</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">dateTimeUtc_dt</span><span class="p">)</span></code></pre></figure>
+
+<h5 id="datetimeutc_dt---datetimeutc0h_dt">dateTimeUtc_dt -&gt; dateTimeUtc0h_dt</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">dateTimeUtc0h_dt</span> <span class="o">=</span> <span class="n">dateTimeUtc_dt</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">dateTimeUtc0h_dt</span></code></pre></figure>
+
+<h5 id="datetimeutc0h_dt---juliandateat0h_h">dateTimeUtc0h_dt -&gt; julianDateAt0h_h</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">at_2000_1_1_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">julianDateAt0h_h</span> <span class="o">=</span> <span class="mf">2451544.5</span> <span class="o">+</span> <span class="p">((</span><span class="n">dateTimeUtc0h_dt</span> <span class="o">-</span> <span class="n">at_2000_1_1_dt</span><span class="p">).</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">));</span>
+
+<span class="k">assert</span> <span class="mf">2460157.5</span> <span class="o">==</span> <span class="n">julianDateAt0h_h</span></code></pre></figure>
+
+<h5 id="juliandateat0h_h---siderealgreenwich0h_h">julianDateAt0h_h -&gt; siderealGreenwich0h_h</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">hoursToHms</span><span class="p">(</span><span class="n">hour</span><span class="p">):</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">hour</span> <span class="o">*</span> <span class="mi">3600</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="n">T</span> <span class="o">=</span> <span class="p">(</span><span class="n">julianDateAt0h_h</span> <span class="o">-</span> <span class="mf">2415020.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">36525.0</span><span class="p">;</span>
+<span class="n">SS</span> <span class="o">=</span> <span class="mf">6.6460656</span> <span class="o">+</span> <span class="mf">2400.051</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.00002581</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="p">;</span>
+<span class="n">siderealGreenwich0h_h</span> <span class="o">=</span> <span class="p">(</span><span class="n">SS</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">-</span> <span class="n">math</span><span class="p">.</span><span class="n">floor</span><span class="p">(</span><span class="n">SS</span> <span class="o">/</span> <span class="mi">24</span><span class="p">))</span> <span class="o">*</span> <span class="mi">24</span><span class="p">;</span>
+
+<span class="k">assert</span> <span class="p">(</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">37.0</span><span class="p">,</span> <span class="mf">22.39818407072744</span><span class="p">)</span> <span class="o">==</span> <span class="n">hoursToHms</span><span class="p">(</span><span class="n">siderealGreenwich0h_h</span><span class="p">)</span></code></pre></figure>
+
+<h5 id="siderealgreenwich0h_h---siderealgreenwichnow_h">siderealGreenwich0h_h -&gt; siderealGreenwichNow_h</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">timeSince0h_h</span> <span class="o">=</span> <span class="n">dateTimeUtc_dt</span><span class="p">.</span><span class="n">hour</span> <span class="o">+</span> <span class="n">dateTimeUtc_dt</span><span class="p">.</span><span class="n">minute</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">dateTimeUtc_dt</span><span class="p">.</span><span class="n">second</span> <span class="o">/</span> <span class="mi">3600</span>
+
+<span class="k">assert</span> <span class="mf">9.5</span> <span class="o">==</span> <span class="n">timeSince0h_h</span>
+
+<span class="n">siderealGreenwichNow_h</span> <span class="o">=</span> <span class="n">siderealGreenwich0h_h</span> <span class="o">+</span> <span class="n">timeSince0h_h</span></code></pre></figure>
+
+<h5 id="siderealgreenwichnow_h---sidereallocationnow_h">siderealGreenwichNow_h -&gt; siderealLocationNow_h</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">lon_h</span> <span class="o">=</span> <span class="n">lon_deg</span> <span class="o">/</span> <span class="mi">15</span>
+<span class="k">assert</span> <span class="mf">0.8936636</span> <span class="o">==</span> <span class="n">lon_h</span>
+
+<span class="n">siderealLocationNow_h</span> <span class="o">=</span> <span class="p">(</span><span class="n">siderealGreenwichNow_h</span> <span class="o">+</span> <span class="n">lon_h</span><span class="p">)</span> <span class="o">%</span> <span class="mi">24</span>
+
+<span class="k">assert</span> <span class="mf">7.0165519844640905</span> <span class="o">==</span> <span class="n">siderealLocationNow_h</span>
+
+<span class="c1"># more accurate result would be (7.0, 2.0, 33.22359767072271)
+</span><span class="k">assert</span> <span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">59.587144070726936</span><span class="p">)</span> <span class="o">==</span> <span class="n">hoursToHms</span><span class="p">(</span><span class="n">siderealLocationNow_h</span><span class="p">)</span> </code></pre></figure>
+
+<h4 id="compute-position-of-star">Compute Position of Star</h4>
+
+<p>With the sidereal time we can then compute the current location of the star.</p>
+
+<h5 id="convert-to-radians-to-get-sidereallocationnow_rad-starra_rad-stardec_rad">Convert to radians to get siderealLocationNow_rad, starRa_rad, starDec_rad</h5>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">degToRad</span><span class="p">(</span><span class="n">deg</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">deg</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">360</span><span class="p">)</span>
+
+<span class="n">siderealLocationNow_deg</span> <span class="o">=</span> <span class="n">siderealLocationNow_h</span> <span class="o">*</span> <span class="mi">15</span>
+<span class="n">siderealLocationNow_rad</span> <span class="o">=</span> <span class="n">degToRad</span><span class="p">(</span><span class="n">siderealLocationNow_deg</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">hmsToDeg</span><span class="p">(</span><span class="n">hms</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">hms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">hms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">hms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">)</span> <span class="o">*</span> <span class="mi">15</span>
+
+<span class="n">starRa_deg</span> <span class="o">=</span> <span class="n">hmsToDeg</span><span class="p">(</span><span class="n">starRa_hms</span><span class="p">)</span>
+<span class="k">assert</span> <span class="mf">78.63333333333333</span> <span class="o">==</span> <span class="n">starRa_deg</span>
+
+<span class="n">starDec_deg</span> <span class="o">=</span> <span class="n">dmsToDeg</span><span class="p">(</span><span class="n">starDec_dms</span><span class="p">)</span>
+<span class="k">assert</span> <span class="o">-</span><span class="mf">8.201638888888889</span> <span class="o">==</span> <span class="n">starDec_deg</span>
+
+<span class="n">starRa_rad</span> <span class="o">=</span> <span class="n">degToRad</span><span class="p">(</span><span class="n">starRa_deg</span><span class="p">)</span>
+<span class="n">starDec_rad</span> <span class="o">=</span> <span class="n">degToRad</span><span class="p">(</span><span class="n">starDec_deg</span><span class="p">)</span></code></pre></figure>
+
+<h4 id="apply-the-trigonometry">Apply the trigonometry</h4>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">current_ra_rad</span> <span class="o">=</span> <span class="n">siderealLocationNow_rad</span> <span class="o">-</span> <span class="n">starRa_rad</span> 
+
+<span class="n">M</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="n">tan</span><span class="p">(</span><span class="n">starDec_rad</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">current_ra_rad</span><span class="p">))</span>
+
+<span class="n">lat_rad</span> <span class="o">=</span> <span class="n">degToRad</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">)</span>
+
+<span class="n">current_az_rad</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">tan</span><span class="p">(</span><span class="n">current_ra_rad</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat_rad</span> <span class="o">-</span> <span class="n">M</span><span class="p">))</span>
+<span class="n">current_el_rad</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">asin</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">starDec_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">starDec_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">current_ra_rad</span><span class="p">))</span>
+<span class="n">current_az_rad</span> <span class="o">+=</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span> <span class="c1"># translate from north to south</span></code></pre></figure>
+
+<h4 id="display-result">Display result</h4>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">radToDeg</span><span class="p">(</span><span class="n">rad</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">rad</span> <span class="o">*</span> <span class="p">(</span><span class="mi">360</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span><span class="p">))</span>
+<span class="n">current_az_deg</span> <span class="o">=</span> <span class="n">radToDeg</span><span class="p">(</span><span class="n">current_az_rad</span><span class="p">)</span>
+<span class="n">current_el_deg</span> <span class="o">=</span> <span class="n">radToDeg</span><span class="p">(</span><span class="n">current_el_rad</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">degToDms</span><span class="p">(</span><span class="n">deg</span><span class="p">):</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">deg</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+
+<span class="n">current_az_dms</span> <span class="o">=</span> <span class="n">degToDms</span><span class="p">(</span><span class="n">current_az_deg</span><span class="p">)</span>
+<span class="c1"># more accurate result would be +209° 27' 32.8''
+</span><span class="k">assert</span> <span class="p">(</span><span class="mf">209.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">5.142262798392494</span><span class="p">)</span> <span class="o">==</span> <span class="n">current_az_dms</span>
+
+<span class="n">current_el_dms</span> <span class="o">=</span> <span class="n">degToDms</span><span class="p">(</span><span class="n">current_el_deg</span><span class="p">)</span>
+<span class="c1"># more accurate result would be +25° 11' 38.4''
+</span><span class="k">assert</span> <span class="p">(</span><span class="mf">25.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">56.126346981354516</span><span class="p">)</span> <span class="o">==</span> <span class="n">current_el_dms</span>
+
+<span class="k">print</span><span class="p">(</span><span class="s">"result | "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_az_dms</span><span class="p">)</span> <span class="o">+</span> <span class="s">" | "</span> <span class="o">+</span>  <span class="nb">str</span><span class="p">(</span><span class="n">current_el_dms</span><span class="p">))</span>
+<span class="k">print</span><span class="p">(</span><span class="s">"stellarium | +209° 27' 32.8'' | +25° 11' 38.4'' |"</span><span class="p">)</span></code></pre></figure>
+
+<p>We get</p>
+
+<pre>
+result | (209.0, 20.0, 5.142262798392494) | (25.0, 9.0, 56.126346981354516)
+stellarium | +209° 27' 32.8'' | +25° 11' 38.4'' |
+</pre>
+
+<p>Which is off by a bit in part due to correctional factors, e.g. for light refraction compared to Stellarium and other calculators.</p>
+
+<p>But also because our siderealLocationNow time is</p>
+
+<pre>
+ (7.0, 0.0, 59.587144070726936)
+</pre>
+
+<p>instead of</p>
+
+<pre>
+(7.0, 2.0, 33.22359767072271).
+</pre>
+
+<p>The calculation is close enough to show the calculation method is correct.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>We can calculate the current azimuth and elevation of a star at the time and location of an observer.
+The similified calculation above is only an approximation, but close enough to explain the calculation steps.</p>
+
+<p>We could use the “HYG Stellar Database” (comes as a *.csv file) and use matplotlib to plot all stars above a certain brightness (apparant magnitude). We could use that brightness as the size of the point in the plot. That would give us a representation of the night sky similar to what other astronomy software shows.</p>
+
+<hr />
+
+<pre>
+1] https://github.com/cfinke/Solar-System/blob/master/Solar%20System.scad
+2] https://en.wikipedia.org/wiki/Astronomical_coordinate_systems#Coordinate_systems
+3] https://de.wikipedia.org/wiki/%C3%84quinoktium
+4] https://en.wikipedia.org/wiki/Daylight_saving_time
+5] https://aa.usno.navy.mil/data/JulianDate
+6] http://www.csgnetwork.com/siderealjuliantimecalc.html
+7] https://de.wikipedia.org/wiki/Ekliptik
+8] https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Timezones2008G_UTC%2B1245.png/1920px-Timezones2008G_UTC%2B1245.png
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Positions of Stars"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>
