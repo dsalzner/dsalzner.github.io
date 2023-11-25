@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Useful A.I. Tricks - Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/programming/2023/11/24/Fr-UsefulAITechniques.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Useful A.I. Tricks - Dennis Salzner" />
+  <meta property="og:description" content="I've been using Stable Diffusion a lot lately for image generation and inspiration. It can generate images by textural description and generates images that ..." />
+  <meta property="og:url" content="/programming/2023/11/24/Fr-UsefulAITechniques.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2023-11-24 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2023-11-24 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2023-11-24 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="I've been using Stable Diffusion a lot lately for image generation and inspiration. It can genera..." />
+  <meta name="twitter:title" content="Useful A.I. Tricks - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/js/lightbox.js"></script>
+  <link href="/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - UsefulAITricks</h1>
+<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+
+<div class="page-title">Useful A.I. Tricks</div>
+<div class="page-subtitle">Some useful tricks and implementations from field of A.I.</div>
+<div class="page-seperator"></div>
+
+
+<div class="post-content" itemprop="articleBody">
+    <p>I’ve been using Stable Diffusion a lot lately for image generation and inspiration as it can generate images by textural description.</p>
+
+<p>Stable Diffusion creates images based on user prompts. A common example prompt is <strong><em>“an astronaut riding a horse”</em></strong>. That image is impossible to photograph and highly unlikely to have been previously seen by stable diffusion during training, so with high certainty it’s completly generated.</p>
+
+<p>This is an image I’ve genererated with the prompt <strong><em>“Star Trek Enterprise landing on castle Neuschwannstein”</em></strong></p>
+
+<p><a href="../../../../images/2023-11-24-Fr-UsefulAITricks/stable-diffusion-generated.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/stable-diffusion-generated.jpg" alt="" class="" style="width:20%;" /></a></p>
+
+<p>Naturally you wonder how that works. This has led me down a path of recapitulating tricks from the A.I field that I’ve come across over the years.</p>
+
+<p>Below are some of tricks I find useful. Some of which I’ve implemented in short handy code snippets.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h1 id="contents">Contents</h1>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a>    <ul>
+      <li><a href="#history" id="markdown-toc-history">History</a>        <ul>
+          <li><a href="#artificial-general-intelligence" id="markdown-toc-artificial-general-intelligence">Artificial General Intelligence</a></li>
+          <li><a href="#what-even-is-artificial-intelligence" id="markdown-toc-what-even-is-artificial-intelligence">What even is Artificial Intelligence</a></li>
+          <li><a href="#moving-past-the-hype" id="markdown-toc-moving-past-the-hype">Moving past the hype</a></li>
+          <li><a href="#in-academia" id="markdown-toc-in-academia">In Academia</a></li>
+          <li><a href="#classic-approaches" id="markdown-toc-classic-approaches">Classic Approaches</a></li>
+        </ul>
+      </li>
+      <li><a href="#foundations" id="markdown-toc-foundations">Foundations</a>        <ul>
+          <li><a href="#artificial-neural-networks" id="markdown-toc-artificial-neural-networks">Artificial Neural Networks</a>            <ul>
+              <li><a href="#classification" id="markdown-toc-classification">Classification</a>                <ul>
+                  <li><a href="#supervised-and-unsupervised" id="markdown-toc-supervised-and-unsupervised">Supervised and Unsupervised</a></li>
+                  <li><a href="#finding-a-separating-line" id="markdown-toc-finding-a-separating-line">Finding a separating line</a></li>
+                  <li><a href="#principle-component-analysis" id="markdown-toc-principle-component-analysis">Principle Component Analysis</a></li>
+                  <li><a href="#calculating-eigenvectors-and-eigenvalues" id="markdown-toc-calculating-eigenvectors-and-eigenvalues">Calculating Eigenvectors and Eigenvalues</a></li>
+                  <li><a href="#other-approaches" id="markdown-toc-other-approaches">Other Approaches</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#tricks" id="markdown-toc-tricks">Tricks</a>        <ul>
+          <li><a href="#auto-encoder" id="markdown-toc-auto-encoder">Auto-Encoder</a>            <ul>
+              <li><a href="#problem-statement" id="markdown-toc-problem-statement">Problem Statement</a></li>
+              <li><a href="#input" id="markdown-toc-input">Input</a></li>
+              <li><a href="#pca-implementation" id="markdown-toc-pca-implementation">PCA Implementation</a>                <ul>
+                  <li><a href="#training" id="markdown-toc-training">Training</a></li>
+                  <li><a href="#classification-1" id="markdown-toc-classification-1">Classification</a></li>
+                  <li><a href="#evaluation" id="markdown-toc-evaluation">Evaluation</a></li>
+                </ul>
+              </li>
+              <li><a href="#auto-encoder-implementation" id="markdown-toc-auto-encoder-implementation">Auto-Encoder Implementation</a>                <ul>
+                  <li><a href="#training-1" id="markdown-toc-training-1">Training</a></li>
+                  <li><a href="#classification-2" id="markdown-toc-classification-2">Classification</a></li>
+                  <li><a href="#evaluation-1" id="markdown-toc-evaluation-1">Evaluation</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li><a href="#recurrent-neural-networks" id="markdown-toc-recurrent-neural-networks">Recurrent Neural Networks</a>            <ul>
+              <li><a href="#problem-statement-1" id="markdown-toc-problem-statement-1">Problem Statement</a></li>
+              <li><a href="#input-1" id="markdown-toc-input-1">Input</a></li>
+              <li><a href="#neural-network-implementation" id="markdown-toc-neural-network-implementation">Neural Network Implementation</a></li>
+              <li><a href="#training-2" id="markdown-toc-training-2">Training</a></li>
+              <li><a href="#text-generation" id="markdown-toc-text-generation">Text Generation</a></li>
+              <li><a href="#evaluation-2" id="markdown-toc-evaluation-2">Evaluation</a></li>
+            </ul>
+          </li>
+          <li><a href="#positional-encoding" id="markdown-toc-positional-encoding">Positional Encoding</a></li>
+          <li><a href="#self-attention-layer" id="markdown-toc-self-attention-layer">Self-Attention Layer</a></li>
+          <li><a href="#transformer" id="markdown-toc-transformer">Transformer</a></li>
+          <li><a href="#word2vec" id="markdown-toc-word2vec">Word2Vec</a>            <ul>
+              <li><a href="#algebraic-calculations-with-words" id="markdown-toc-algebraic-calculations-with-words">Algebraic Calculations with Words</a></li>
+              <li><a href="#input-2" id="markdown-toc-input-2">Input</a></li>
+              <li><a href="#training-3" id="markdown-toc-training-3">Training</a></li>
+              <li><a href="#implementation" id="markdown-toc-implementation">Implementation</a></li>
+              <li><a href="#evaluation-3" id="markdown-toc-evaluation-3">Evaluation</a></li>
+            </ul>
+          </li>
+          <li><a href="#convolutional-neural-networks" id="markdown-toc-convolutional-neural-networks">Convolutional Neural Networks</a></li>
+          <li><a href="#image-segmentation-with-u-net" id="markdown-toc-image-segmentation-with-u-net">Image Segmentation with U-Net</a></li>
+          <li><a href="#diffusion" id="markdown-toc-diffusion">Diffusion</a></li>
+        </ul>
+      </li>
+      <li><a href="#how-does-stable-diffusion-work" id="markdown-toc-how-does-stable-diffusion-work">How does Stable Diffusion work</a></li>
+      <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+    </ul>
+  </li>
+</ul>
+
+</nav>
+
+<h2 id="history">History</h2>
+
+<p>Not long ago we have been arguining if computers could create art, just as we argued over whether computers could play chess or could win a game show called <strong><em>“Jeopardy”</em></strong> - ironically the best current human at Jeopardy, that has been beaten by a computer, is a computer scientist by trait.</p>
+
+<p>The <strong><em>“Turing Test”</em></strong> was a test proposed in the ’50s. If a human talks to a machine, for example a chat bot and doesn’t realise he is talking to a machine, then that machine ought to be intelligent. That challenge was also beaten some years ago.</p>
+
+<h3 id="artificial-general-intelligence">Artificial General Intelligence</h3>
+
+<p>With the fast advancements came fears of the <strong><em>“Artificial General Intelligence”</em></strong> (AGI) and that we could be replaced and overrun by machines.</p>
+
+<p>Looking at how the technology works I don’t believe we are anywhere near this. 
+But the fear of an AGI has led to hype and to funding more research in A.I.</p>
+
+<p>One non-profit company even had the goal of making their research publically available, but have then founded a profit-oriented subsidary and have now likely gone bust.</p>
+
+<h3 id="what-even-is-artificial-intelligence">What even is Artificial Intelligence</h3>
+
+<p>A lot of the missconceptions and hype seem to come from the uninformed. It’s ironic that there isn’t even a proper concrete definition of what intelligence even is.</p>
+
+<p>So how would we be able to say what artificial intelligence is and what constitutes achieving it? Is the goal to do “everything” better than humans? If so then better than humans that are expert in their field or the average person? And isn’t it enough for an A.I to be unmatche in one field? The latter we have already achieved in many fields for example computers can solve math problems many times faster than any human.</p>
+
+<p>We test intelligence with <strong><em>“intelligence quotient”</em></strong> (IQ) tests, but these test aim to remove all culteral and social context in order to be comparable between cultures.
+Ironically this leaves us with simple pattern completion tasks like completing number sequences, ordering images or finding relations between words - all tasks where computers today excel. Does that make a computer intelligent? Or are we seeing the intelligence of the developer in the software?</p>
+
+<p>And can a simple smart home thermostat be considered intelligent?</p>
+
+<h3 id="moving-past-the-hype">Moving past the hype</h3>
+
+<p>We currently have</p>
+
+<ul>
+  <li>
+    <p><strong>ChatGPT</strong> produces text based on user prompts. It delivers surprising results, but without any real understanding or objective in what it writes. It has no opinion, gives different answers when asked about the same movie and doesn’t give reliably correct answers. It is a sophisticates text generator that mixes input text it has seen into convincing output.</p>
+  </li>
+  <li>
+    <p><strong>Google DeepDream</strong> produces “dreamy” images based on the data it was trained on. When trained with dogs and shown an image of clouds it interprets images of dogs into the clouds. The results are astonishing and some are arguably art.</p>
+  </li>
+  <li>
+    <p><strong>Stable Diffussion</strong> takes text prompts and creates images out of them. It comes up with mixtures of images that are appear totally unique. We will see below that this works by combining a row of techniques in A.I. research.</p>
+  </li>
+</ul>
+
+<p>all of which apply decades of reasearch and make heavy use of artificial neural networks.</p>
+
+<h3 id="in-academia">In Academia</h3>
+
+<p>It’s interesting that in academia the word <strong><em>“Artificial Intelligence”</em></strong> isn’t commonly used due to it’s ambiguity.</p>
+
+<p>There the terms <strong><em>“Pattern Recognition”</em></strong>, <strong><em>“Machine Learning”</em></strong> or <strong><em>“Medical Image Processing”</em></strong> are used. Depending on if you’re talking to an Electrical Engineer, to a Computer Scientist or a Medical Technician.</p>
+
+<p>While the above three well known break-throughs apply Neural Networks, academia goes well beyond.</p>
+
+<p>Artificial neural networks were first discovered in the 40’s. As with most technologies also neural networks followed the hype cycle.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/hype-cycle.png" height="180px" />
+<br /><small>(Image taken from [3])</small></p>
+
+<p>There was a brief period of large interest, because it was mathimatically proven that they can, in theory, solve all computable problems, but the interest quickly died off due to the lack of compute power at the time to use them for anything useful.</p>
+
+<p>With the advent of Bitcoin and blockchain it was possible to make an adequate return-on-invest when buying powerful graphics cards to mine cryptocurrencies. Those days are mostly over, but the jump in compute power helped artificial neural networks come along.</p>
+
+<h3 id="classic-approaches">Classic Approaches</h3>
+
+<p>There are a whole row of techniques that are taught at universities for solving tough computational problems in the above fields that don’t necessarily rely on neural networks.</p>
+
+<ul>
+  <li>Dimensionality Reduction</li>
+  <li>Bayes Classifier</li>
+  <li>Markow Chains</li>
+  <li>Regression and Polynom-Fitting</li>
+  <li>Gaussian Mixture Models</li>
+  <li>Adaboost</li>
+  <li>Fourier Transforms</li>
+</ul>
+
+<p>for</p>
+
+<ul>
+  <li>Image Denoising, Classification, Segmentation, Alignment</li>
+  <li>Localisation and Mapping</li>
+  <li>Natural Language Processing, Spellchecking</li>
+  <li>Text-to-Speech, Speech-to-Text, Text-Recognition</li>
+  <li>and many more</li>
+</ul>
+
+<h2 id="foundations">Foundations</h2>
+
+<p>As with most technologies also the new <strong><em>“ChatGPT”</em></strong> from OpenAI, <strong><em>“DeepDream”</em></strong> from Google and <strong><em>“StableDiffusion”</em></strong> from a research group at LMU Munich are built on a foundation of this reasearch from the decades before.</p>
+
+<h3 id="artificial-neural-networks">Artificial Neural Networks</h3>
+
+<p>Artificial Neural Networks, first researched in the 40’s, are inspired by the brain of mammals.</p>
+
+<p>In short an Artifical Neural Network consists of a network of neurons. They have an input layer where data is fed into it. And an output layer from which data can be retrieved. Inbetween can be any number of hidden layers. The connections between the neurons can be varied according to use-case.</p>
+
+<p>We can push text, images or any other forms of data through a neural net.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/neural-net.png" width="320px" /></p>
+
+<p>Each circle in the image holds the sum of it’s inputs. The lines apply weighting.</p>
+
+<p>The power comes from sophisticated algorithms (“back propagation”) that can minimize the loss (=difference) between input and output during training (usually a least-squares loss-function is minimized) by adjusting these weights.</p>
+
+<p>We can intuitively see that if we were to apply numbers, say 3 and 5 as inputs and train the network long enough, thereby adjusting the weights, it will output an 8.</p>
+
+<p>If we do that for more numbers it may eventually “generalize” to be able to solve unseen combinations of higher digit numbers much like a human learns addition by repetition.</p>
+
+<p>This approach can be applied to many problems. For any relation f(x) = y the neural network finds the function “f” for us.</p>
+
+<p>This holds true for the above example as addition can be represented as f_addition([3,5]) = [8].</p>
+
+<h4 id="classification">Classification</h4>
+
+<p>A classic problem is classification. You are given a data set, for instance “red” or “blue” flowers, and you want the computer to sort the images into bins according to “red” or “blue”.
+This was surprisingly difficult for a computer to do for a very long time.</p>
+
+<h5 id="supervised-and-unsupervised">Supervised and Unsupervised</h5>
+
+<p>For the above problem we can train a model on labeled training data - a large set of images that have been manually labelled “red” or “blue” beforehand. This is called supervised learning.</p>
+
+<p>The problem becomes harder when we remove the supervision and the system has to learn to group the data into categories without knowing what the categories are before hand.</p>
+
+<h5 id="finding-a-separating-line">Finding a separating line</h5>
+
+<p>Mathematically speaking we have points in a space and we want to draw a line to separate the points.</p>
+
+<p>Then, for future incoming data, we can compute the corresponding point in the space and check if it is above or below that line. That yields the result of the classification.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/classification.png" height="240px" /></p>
+
+<p>The task is thus to map incoming data into a high-dimensional space (it can have 300 dimensions or more, not just 2 as in the image) and then cleverly reduce the dimensions to 2D or 3D. In essence finding a rotation, a viewing angle on the points, so we can properly draw a dividing line.</p>
+
+<p>As you can see the distance of the new point to the average location of all “blue” points” is lower than to the average location of all “red” points.</p>
+
+<p>We can then use the euclidean distance.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">distance_red</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">x_red_mean</span> <span class="o">-</span> <span class="n">x_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_red_mean</span> <span class="o">-</span> <span class="n">y_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="p">)</span>
+<span class="n">distance_blue</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">x_blue_mean</span> <span class="o">-</span> <span class="n">x_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_blue_mean</span> <span class="o">-</span> <span class="n">y_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="p">)</span>
+</code></pre></div></div>
+
+<p>It relies on squaring to sure we don’t run into issues mixing positive and negative values. The square root reverses this on the result and can be removed in our use-case as we only care which value is relatively lower.</p>
+
+<p>The classification result is then given by:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">distance_blue</span> <span class="o">&lt;</span> <span class="n">distance_red</span><span class="p">:</span>
+  <span class="k">return</span> <span class="s">"blue"</span>
+<span class="k">else</span>
+  <span class="k">return</span> <span class="s">"red"</span>
+</code></pre></div></div>
+
+<h5 id="principle-component-analysis">Principle Component Analysis</h5>
+
+<p>We’ve established that we need some “transform” to convert an image into a coordinate space</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="p">...)</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>and then need to rotate that space so that we can draw a clean dividing line between our groups.</p>
+
+<p>One way to do this is by looking at the eigenvectors and eigenvalues.</p>
+
+<p>Intuitively we’re trying to find the direction of a point cloud in space. Or put differently the direction of its highest spread.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/eigenvectors.png" height="240px" />
+<br /><small>(Image taken from [4])</small></p>
+
+<p>Eigenvectors solve this problem for us. They point in the direction of spread. The Eigenvalues are the respective magnitues.
+So sorting the Eigenvectors by Eigenvalue gives us the first and second largest (or any more for that matter) direction of spread.</p>
+
+<p>The “transform” is just rotationg to the direction of the Eigenvector.</p>
+
+<p>The approach is also known as the “Eigenfaces-Approach”, because we can apply it to images of Human faces and realize that we only need the first 3-5 Eigenvectors to represent almost all faces appart from asymmetric details.
+This is used for charcter builders in video games and creating mugshots.</p>
+
+<h5 id="calculating-eigenvectors-and-eigenvalues">Calculating Eigenvectors and Eigenvalues</h5>
+
+<p>We need to calculate the Eigenvectors and Eigenvalues. This can be achieved with the “Singular Value Decomposition” (SVD). In essense the input values are copied into matrices, some of which are transposed that we multiply with one another and then read the result from.</p>
+
+<p>Most math software packages have an algorithm for this built-in that we can use.</p>
+
+<p>For instance with Python Numpy</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>numpy.linalg.svd
+</code></pre></div></div>
+
+<h5 id="other-approaches">Other Approaches</h5>
+
+<p>Another approach is the “Support Vector Machine”. It tries to widden the dividing line as far as possible inbetween points.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/support-vector-machine.png" height="240px" />
+<br /><small>(Image taken from [5])</small></p>
+
+<p>Therea are of course many more approaches to solve this problem. Depending on the problem some outperform others.</p>
+
+<h2 id="tricks">Tricks</h2>
+
+<p>Some of the previously toughest problems of computer science can now be elegantly solved with neural networks.</p>
+
+<p>It is useful to have these solutions at hand and to be able to quickly recombine them to be able to apply them to new problems.</p>
+
+<p>The following sections are structured as description, problem statment, input data, implementation and evaluation.</p>
+
+<h3 id="auto-encoder">Auto-Encoder</h3>
+
+<p>By applying artificial neural networks we can achieve similar results to the  “Principle Component Analysis” (PCA) mentioned above. It can also be used to find a viewing angle onto a high-dimensional space such that the spread of the points are maximized which in turn allows us to draw a separating line that enables us to do classification.</p>
+
+<h4 id="problem-statement">Problem Statement</h4>
+
+<p>There’s a browser Flash game from ‘99 from Neopets “Zeichen der Magie” in German (something with Sorcerer in Englisch). The objective is to click on numbers on a playing field in an increasing sequence.
+Automating that game and trying out different algorithms on it has been a a pet project for a long time.</p>
+
+<p>In order to automate the game I’ve already built an algorithm based on Depth-First-Search, essentially by translating the playing field into a directed graph and then traversing it to find the deepest path.
+But in order for this to actually automatically play I need to recognize the digits on the field.</p>
+
+<h4 id="input">Input</h4>
+
+<p>For this I have a large set of digits that I’ve extracted nad need to classify into 0..9.</p>
+
+<p><a href="../../../../images/2023-11-24-Fr-UsefulAITricks/digits.png" data-lightbox="image" data-title=""><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/digits.png" alt="" class="" style="max-width:40%;" /></a></p>
+
+<p>In the training set I’ve done this by hand. The challenge is when a new unseen image is needs to be classified.</p>
+
+<p>The Images need to be loaded into one big Matrix. The columns are the pixels one after the other. We treat the input images as a row of numbers. The rows are for an image each.</p>
+
+<p>Also the images are converted to black and white by deviation from brown (r:100, g:50, b:0). I’ve set this specifically for the Neopets game.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">IMAGE_DIR</span><span class="o">=</span><span class="s">"&lt;image directory&gt;"</span>
+
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="n">threshold</span> <span class="o">=</span> <span class="mi">65</span> <span class="c1"># deviation from brown
+</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="n">IMAGE_DIR</span> <span class="o">+</span> <span class="s">"*.png"</span><span class="p">)</span>
+<span class="n">width</span><span class="p">,</span><span class="n">height</span> <span class="o">=</span> <span class="n">Image</span><span class="p">.</span><span class="nb">open</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="n">size</span>
+
+<span class="k">def</span> <span class="nf">load_image_into_matrix</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span><span class="n">image_number</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_filename</span><span class="p">).</span><span class="n">convert</span><span class="p">(</span><span class="s">'RGB'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="p">.</span><span class="n">width</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="p">.</span><span class="n">width</span><span class="p">):</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">getpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="o">-</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">threshold</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">g</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="o">-</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">g</span> <span class="o">&lt;</span> <span class="mi">50</span> <span class="o">+</span><span class="n">threshold</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">+</span> <span class="n">threshold</span><span class="p">:</span>
+                        <span class="n">A</span><span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">image_number</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="k">continue</span>
+            <span class="n">A</span><span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">image_number</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">A</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">width</span><span class="o">*</span><span class="n">height</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">image_number</span><span class="p">,</span> <span class="n">image_filename</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+    <span class="n">load_image_into_matrix</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">image_number</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+    
+<span class="k">print</span><span class="p">(</span><span class="s">"Done"</span><span class="p">)</span>
+
+</code></pre></div></div>
+
+<h4 id="pca-implementation">PCA Implementation</h4>
+
+<p>For PCA we needed to compute large Matrices and then calculate Eigenvalues and Eigenvectors by “Singular Value Decomposition”.</p>
+
+<h5 id="training">Training</h5>
+
+<p>First we compute the average image or mean_face:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="n">rows</span><span class="p">,</span><span class="n">cols</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">shape</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">mean_face</span> <span class="o">=</span> <span class="n">A</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Then we subtract the average image from each image individually</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">-</span> <span class="n">mean_face</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>We then move on to computing the Singular Value Decomposition using the Pythons Numpy package:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">L</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">.</span><span class="n">transpose</span><span class="p">())</span>
+<span class="n">u</span><span class="p">,</span> <span class="n">eig_val</span><span class="p">,</span> <span class="n">vt</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="n">svd</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">eig_vec</span> <span class="o">=</span> <span class="n">vt</span><span class="p">.</span><span class="n">transpose</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>And sort the Eigenvectors by the Eigenvalues</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ind</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">s</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="p">[:,</span> <span class="n">ind</span><span class="p">]</span>
+<span class="n">eig_val</span> <span class="o">=</span> <span class="n">eig_val</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+<span class="n">eig_vec</span> <span class="o">=</span> <span class="n">eig_vec</span><span class="p">[:,</span> <span class="n">ind</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h5 id="classification-1">Classification</h5>
+
+<p>The dot-Product of a new image with the largest two eigenvectors are our weights.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def getCoordinateOfImage(image_filename):
+    B = numpy.zeros((image_length, 1))
+    load_image_into_matrix(image_filename, 0, B)
+
+    weight_a = numpy.dot(eig_vec[:,0], B)
+    weight_b = numpy.dot(eig_vec[:,1], B)
+    
+    return (weight_a, weight_b)
+</code></pre></div></div>
+
+<h5 id="evaluation">Evaluation</h5>
+
+<p>Plotting that out we can see that it worked well.</p>
+
+<p>All 0’s, 1’s, 5’s are in one location. The image for classification, marked with an ‘x’, that is infact a 4, is in the right location.</p>
+
+<p>However the 4’s and 3’s can’t be distinguished well as the two groups are interleaved.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/classification-pca.png" height="240px" /></p>
+
+<h4 id="auto-encoder-implementation">Auto-Encoder Implementation</h4>
+
+<p>The approach to solving this with Neural Networks is the so-called “Auto-Encoder”.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/auto-encoder.png" height="160px" />
+<br /><small>Image taken from [6])</small></p>
+
+<p>The idea is to feed the input images into the input layer, send them through a much smaller hidden layer (the “latent space”) and then back to an output layer of the same size as the input layer.
+The input and output layers have the same number of Neurons as the Images have pixels. The hidden layer has only two Neurons for two Dimensions.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">tensorflow.compat.v1</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="n">tf</span><span class="p">.</span><span class="n">disable_v2_behavior</span><span class="p">()</span>
+<span class="kn">from</span> <span class="nn">tf_slim.layers</span> <span class="kn">import</span> <span class="n">layers</span> <span class="k">as</span> <span class="n">_layers</span><span class="p">;</span>
+
+<span class="n">num_input</span> <span class="o">=</span> <span class="n">image_length</span>
+<span class="n">num_hidden</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># -- for two dimensions
+</span><span class="n">num_output</span> <span class="o">=</span> <span class="n">image_length</span>
+
+<span class="n">input_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="n">num_input</span><span class="p">])</span>
+<span class="n">hidden_layer</span> <span class="o">=</span> <span class="n">_layers</span><span class="p">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">input_layer</span><span class="p">,</span> <span class="n">num_hidden</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="n">output_layer</span> <span class="o">=</span> <span class="n">_layers</span><span class="p">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">hidden_layer</span><span class="p">,</span> <span class="n">num_output</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h5 id="training-1">Training</h5>
+
+<p>Now all we have to do is set up a mean loss function between input and output and train the network.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>loss = tf.reduce_mean(tf.square(output_layer - input_layer))
+optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate).minimize(loss)
+</code></pre></div></div>
+
+<p>and running it, for example, for 5000 iterations</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>num_steps = 5000
+
+with tf.Session() as sess:
+    sess.run(tf.global_variables_initializer())
+        for i in range(num_steps):
+        sess.run(optimizer, feed_dict={input_layer: A.transpose()})
+</code></pre></div></div>
+
+<h5 id="classification-2">Classification</h5>
+
+<p>In order to classify a new image, I’ve defined a similiar function as above.</p>
+
+<p>It pushes the image into the Neural Net the same as during training, but ignores the output layer and reads the data from hidden Layer.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>def getAutoEncoderCoordinateOfImage(image_filename):
+    B = numpy.zeros((image_length, 1))
+    load_image_into_matrix(image_filename, 0, B)
+    output_ = hidden_layer.eval(feed_dict={input_layer: B.transpose()})
+    return (output_[0][0], output_[0][1])
+</code></pre></div></div>
+
+<h5 id="evaluation-1">Evaluation</h5>
+
+<p>Plotting that out we see we get a slightly better result - we have a better chance of distinguishing 3’s from 4’s.</p>
+
+<p>It also took a lot less though work on my side, but with 5000 iterations we’re trading in computational effort.</p>
+
+<p>
+<img src="../../../../images/2023-11-24-Fr-UsefulAITricks/classification-autoencoder.png" height="240px" />
+<img src="../../../../images/2023-11-24-Fr-UsefulAITricks/classification-pca.png" height="160px" />
+</p>
+
+<h3 id="recurrent-neural-networks">Recurrent Neural Networks</h3>
+
+<p>Recurrent Neural Networks can be used for text generation.</p>
+
+<p>For training a portion of text is used as input. The expected output is that same input, but shifted by a character forward.</p>
+
+<p>The idea is that the Neural Network will learn the underlying patterns of text and that after some training it can continue a passage of text by extending it in a grammatically correct manner.</p>
+
+<h4 id="problem-statement-1">Problem Statement</h4>
+
+<p>We want to enter a text prompt and the Neural Net should continue that text in a grammatically correct manner.</p>
+
+<h4 id="input-1">Input</h4>
+
+<p>For input we need a bunch of text files. I’m using my Markdown notes.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">glob</span>
+<span class="n">NOTES_DIR</span> <span class="o">=</span> <span class="s">"&lt;notes directory&gt;"</span>
+<span class="n">note_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="n">NOTES_DIR</span> <span class="o">+</span> <span class="s">"**/*.md"</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">text</span> <span class="o">=</span> <span class="s">""</span>
+<span class="k">for</span> <span class="n">note_file</span> <span class="ow">in</span> <span class="n">note_files</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">note_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">'utf-8'</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s">'ignore'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">chars</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
+<span class="n">char_indices</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chars</span><span class="p">))</span>
+<span class="n">indices_char</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chars</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>We split that into sections of 40 chars and make and create X and Y the way we expect the output to be.</p>
+
+<p>Once trained the Neural Network will act as a function f_neuralNetwork(X_currentText) = Y_textContinuation.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">maxlen</span> <span class="o">=</span> <span class="mi">40</span>
+<span class="n">step</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">sentences</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">next_chars</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">maxlen</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+    <span class="n">sentences</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">])</span>
+    <span class="n">next_chars</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">])</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">),</span> <span class="n">maxlen</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sentences</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">char_indices</span><span class="p">[</span><span class="n">char</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">char_indices</span><span class="p">[</span><span class="n">next_chars</span><span class="p">[</span><span class="n">i</span><span class="p">]]]</span> <span class="o">=</span> <span class="mi">1</span>
+</code></pre></div></div>
+<p><br /><small>(this code is not written by myself. I’ve found it on numerous pages, I don’t know who to credit for it)</small></p>
+
+<h4 id="neural-network-implementation">Neural Network Implementation</h4>
+
+<p>We then setup the Neural Net. There are different ways of doing this.</p>
+
+<p>I’m using a “Long Short-Term Memory” (LTSM) layer as that seems to be the most promising.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">layers</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">models</span><span class="p">.</span><span class="n">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">LSTM</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">maxlen</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">))))</span>
+<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Dense</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">"softmax"</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s">"categorical_crossentropy"</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s">"adam"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="training-2">Training</h4>
+
+<p>Next we train the net. This takes forever without GPU acceleration.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">):</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="text-generation">Text Generation</h4>
+
+<p>Once done we can generate some text by entering in random passages of the input text.</p>
+
+<p>With this helper function</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">generate_text</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">diversity</span><span class="p">):</span>
+    <span class="n">start_index</span> <span class="o">=</span> <span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">maxlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">generated</span> <span class="o">=</span> <span class="s">''</span>
+    <span class="n">sentence</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">start_index</span><span class="p">:</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">]</span>
+    <span class="n">generated</span> <span class="o">+=</span> <span class="n">sentence</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+            <span class="n">x_pred</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">maxlen</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+                <span class="n">x_pred</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">char_indices</span><span class="p">[</span><span class="n">char</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.</span>
+
+            <span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_pred</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">next_index</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">diversity</span><span class="p">)</span>
+            <span class="n">next_char</span> <span class="o">=</span> <span class="n">indices_char</span><span class="p">[</span><span class="n">next_index</span><span class="p">]</span>
+
+            <span class="n">generated</span> <span class="o">+=</span> <span class="n">next_char</span>
+            <span class="n">sentence</span> <span class="o">=</span> <span class="n">sentence</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="n">next_char</span>
+    <span class="k">return</span> <span class="n">generated</span>
+</code></pre></div></div>
+<p><br /><small>(again this code is not written by myself. I’ve found it on numerous pages, I don’t know who to credit for it)</small></p>
+
+<p>and running</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>print(generate_text(500, 0.2))
+</code></pre></div></div>
+
+<p>The “fun” of chatting with a Text Generator and getting random text stems from the fact that the Neural Network is in fact too small for the task.</p>
+
+<p>If we were to increase the neural network to a large enough size to encorporate the entire knowledge from the input text, it would output an exact 1:1 representation. The neural net would then degrade to a storage device.</p>
+
+<h4 id="evaluation-2">Evaluation</h4>
+
+<p>After 10 epochs on my notes (written in German) I got</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dass schon einen wirder die weiter das nicht so kann das an der mich das an der
+</code></pre></div></div>
+
+<p>After 20 epochs I got</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>alle daten geht nicht mehr das eine Mann das auf den geht das mit dem sein
+</code></pre></div></div>
+
+<p>You can see it’s gibberish, but it gets better with each epoch. What doesn’t get better are my typos it’s also trained on.</p>
+
+<p>If I ran it for days it would output more and more sensible text.</p>
+
+<h3 id="positional-encoding">Positional Encoding</h3>
+
+<p>Recurrent Neural Networks get inefficient very fast. This is due to the fact that we have to insert all the text and shifted text. This is inefficient, but was the best approach to teaching the neural network the order of one word on another in stream of text.</p>
+
+<p>There are better approaches like the <strong><em>“Transformer”</em></strong> that <strong><em>ChatGPT</em></strong> is  based on.</p>
+
+<p>There we don’t train with text and shifted text, but with the Input Text and added <strong><em>“Positional Encoding”</em></strong>. We’ll see later that a similar approach is also used for <strong><em>“Stable Diffusion”</em></strong>.</p>
+
+<p>Positional Encoding works by overlaying multiple Sin-Curves at different frequencies. For a given x-Value we can read out the different y-Values of each Sin-Curve to get a Position Vector.</p>
+
+<p>The periodic nature of the sine curves fullfill what we need to make the  neural network also learn positions of words relative to each another in human text.</p>
+
+<p>We make the neural net learn the text in assoiation with the position vector. That way it has a sence for the order of words.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/positional-encoding.png" height="160px" />
+<br /><small>(Image taken from [8])</small></p>
+
+<h3 id="self-attention-layer">Self-Attention Layer</h3>
+
+<p>In a typical sentence there are words of more or less informational value.</p>
+
+<p>You might say “Could you please put the food in the fridge”, but if the sentence would be reduced to “food in fridge” it would still be understandable.</p>
+
+<p>If “Please don’t put the food in the fridge” means the opposite. That can be reduced to “Don’t food in fridge”.</p>
+
+<p>A Self-Attention Layer helps a neural network focus on only the words of the highest informational value and removes the neccessary noise from human communcation.</p>
+
+<h3 id="transformer">Transformer</h3>
+
+<p>With the above we have a rough intuition of how the “Transformer” neural network works.</p>
+
+<p>It forms the Basis of ChatGPT (Generative Pre-trained Transformer) and is much more efficient at generating text than the “Recurrent Neural Network”.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/transformer-architecture.png" height="320px" /></p>
+
+<p>It combines the self-attention layer and positional encoding. That makes it much faster to train, the resulting model is smaller and the results at generating human-like text are improved.</p>
+
+<h3 id="word2vec">Word2Vec</h3>
+
+<p>Words in a stream of text occur at relative positions to one another with a certain probability. The sentence “I am driving a …” will, with a high probability continue with “car”. The sentence could also continue with “boat”, but that’s less likely.
+Hence it’s always been subject to research to analyse the distances of words to one another.</p>
+
+<p>In <strong><em>“force-field-analysis”</em></strong> the “forces” between the entities are used to position them in a high-dimenensional space. Combined with word distances we can position the words in a high-dimensional space. Intuitively this is equivalent to writing words on Post-It Notes and spreading them around the house - while putting similar words e.g. the weekdays, mode of transporation, etc… - in similar places.</p>
+
+<p>The dimensions can then be reduced using <strong><em>“Principle Component Analysis”</em></strong> or the <strong><em>“Auto-Encoder”</em></strong> approach.</p>
+
+<p>It turns out that if you do this with the words of a large collections of texts you can do <strong><em>algebraic calculations on text</em></strong> using the resulting positions.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/word2vec.png" width="420px" /></p>
+
+<p>The most common example of uses are:</p>
+
+<ul>
+  <li>“King - Man + Woman” yields “queen”</li>
+</ul>
+
+<p>or</p>
+
+<ul>
+  <li>“London - England + Italy” yields “Rome”</li>
+</ul>
+
+<h4 id="algebraic-calculations-with-words">Algebraic Calculations with Words</h4>
+
+<p>I’ve simulated in 2D what the output of Word2Vec is capable of.</p>
+
+<p>for this I manually set the values in 2D as they would come from a properly trained Word2Vec model</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">arr</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s">"man"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="s">"woman"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"king"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s">"queen"</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
+<span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>then I can do the calculation</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code># queen = king - man  + woman
+queen_x = x[2] - x[0] + x[1] 
+queen_y = y[2] - y[0] + y[1]
+</code></pre></div></div>
+
+<p>and plotting that</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>%matplotlib inline
+import matplotlib.pyplot as plt
+plt.style.use('seaborn-whitegrid')
+import numpy as np
+plt.scatter(x, y, color='black');
+for i, txt in enumerate(l):
+    plt.annotate(txt, (x[i]+0.1, y[i]+0.1))
+plt.scatter(queen_x, queen_y, marker='X', color='black', s=300.0);
+</code></pre></div></div>
+
+<p>you wind up at “queen” (marked with an ‘X’) in the plot</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/word2vec-calculation.png" width="320px" /></p>
+
+<h4 id="input-2">Input</h4>
+
+<p>As input I’ll use by notes. The gensim Word2Vec Python Library requires a special array structure. Aa list of sentences, with each sentence containing a list of words.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">sent_tokenize</span><span class="p">,</span> <span class="n">word_tokenize</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="n">warnings</span><span class="p">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span> <span class="o">=</span> <span class="s">'ignore'</span><span class="p">)</span> 
+<span class="kn">import</span> <span class="nn">gensim</span>
+<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">Word2Vec</span>
+<span class="kn">import</span> <span class="nn">nltk</span>
+<span class="n">nltk</span><span class="p">.</span><span class="n">download</span><span class="p">(</span><span class="s">'punkt'</span><span class="p">)</span>
+
+<span class="n">NOTES_DIR</span> <span class="o">=</span> <span class="s">"&lt;Notes Directory&gt;"</span>
+<span class="n">note_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="n">NOTES_DIR</span> <span class="o">+</span> <span class="s">"**/*.md"</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">note_file</span> <span class="ow">in</span> <span class="n">note_files</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">note_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">'utf-8'</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s">'ignore'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sent_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+            <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+                <span class="n">temp</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">.</span><span class="n">lower</span><span class="p">())</span>
+            <span class="n">data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="training-3">Training</h4>
+
+<p>We can then create the model.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="o">=</span> <span class="n">gensim</span><span class="p">.</span><span class="n">models</span><span class="p">.</span><span class="n">Word2Vec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">min_count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">vector_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">window</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">words</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">wv</span><span class="p">.</span><span class="n">key_to_index</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="implementation">Implementation</h4>
+
+<p>The model can then be used to lookup word associations.</p>
+
+<p>For example querying for the game “Anno 1800”</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">wv</span><span class="p">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s">'anno1800'</span><span class="p">],</span> <span class="n">topn</span><span class="o">=</span><span class="mi">40</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>yields</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>assasins creed, doom, donkey kong, videospiele, minecraft, chicken nuggets, westworld, nudeln
+</code></pre></div></div>
+
+<h4 id="evaluation-3">Evaluation</h4>
+
+<p>It lists other games, mixed with foods - probably because I had some lists with video games I wanted to play and shopping lists.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">wv</span><span class="p">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s">'frau'</span><span class="p">,</span> <span class="s">'könig'</span><span class="p">],</span> <span class="n">negative</span><span class="o">=</span><span class="p">[</span><span class="s">'mann'</span><span class="p">]))</span>
+</code></pre></div></div>
+
+<p>The above example does not work well on my notes - I don’t have many mentions of the word “king” or “queen” in my texts.</p>
+
+<p>It’s already impressive what Word2Vec can to with a limited amount of text.</p>
+
+<h3 id="convolutional-neural-networks">Convolutional Neural Networks</h3>
+
+<p>Switching to image processing - there commonly kernels - a usually 3x3 matrix of values - that is shifted over an image is used. Each cell under the kernel from the source image is multiplied with the cell in the kernel and added to the cell of the output image.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/convolution.png" height="240px" />
+<br /><small>(Image taken from [10])</small></p>
+
+<p>The approach makes sense for images as neighbouring pixels often have a strong relation to one another.</p>
+
+<p>Applications of Kernels in practice have been to do Edge detection:</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/edge-detection.png" height="120px" /></p>
+
+<p>You can see how it reduces the amount of data, but still keeps the important informational value - that it is the digit 4 in this case.</p>
+
+<p>It’s useful to use such convolutions in Neural Networks for image processing and this is done by adding “Convolutional Layers” where the Neurons are set-up in a way to mimic the application of a kernel to the input data.</p>
+
+<h3 id="image-segmentation-with-u-net">Image Segmentation with U-Net</h3>
+
+<p>The U-Net is another Neural Net. It was developed for Image Segmentation. That is detecting the outlines of Objects in Images.</p>
+
+<p>It was designed for biomedical images - as mentioned above “Medical Image Processing” is a big field in reasearch - , but generalized well to other images and outperformed all other known approaches.</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/image-segmenter-unet.png" height="240px" />
+<br /><small>(Image taken from [11])</small></p>
+
+<p>It uses multiple convolutions in sequence to first scale an image down and scale it back up. This is done to capture varying amounts of context from the image with a small convolution kernel.</p>
+
+<p>The researches behind the approach show how well this works in a video on their homepage [11].</p>
+
+<p><img src="../../../../images/2023-11-24-Fr-UsefulAITricks/image-segmenter-unet-2.png" height="240px" />
+<br /><small>(Image taken from [11])</small></p>
+
+<h3 id="diffusion">Diffusion</h3>
+
+<p>U-Net has also been employed to denoise images. During training the level of noise is added to the input images as a <strong><em>“Positional Encoding”</em></strong> (see above).
+The Network can then step by step remove the noise.
+With <strong><em>Diffusion</em></strong> new images that weren’t part of the training set can be generated.</p>
+
+<h2 id="how-does-stable-diffusion-work">How does Stable Diffusion work</h2>
+
+<p>All of the above vaguely explains how Stable Diffusion works.</p>
+
+<ul>
+  <li>with Word2Vec we get a mapping of words into a high-dimensional space.</li>
+  <li>with the Auto-Encoder we get the same for images.</li>
+  <li>“Positional Embedding” helps correlate images and words from a labeled dataset.</li>
+  <li>A self-attention layer make sure that we do this only on the most important words.</li>
+  <li>The U-Net image segmentation denoising trick allows creating mixtures of images from noise that are guided into the direction of the text prompt.</li>
+</ul>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>There are really interesting tricks in the A.I. field that are useful to know about.</p>
+
+<p>Every technique is a valuable tool in the toolbox for solving problems. I can see how the Image Segmentation with U-Net could improve SLAM Mapping. Word2Vec is already useful by itself for finding synonyms. Stable Diffusion has also become a valuable tool I use for inspiration for example when I’m designing icons for a smartphone app.</p>
+
+<p>The best part is that all the code I’ve shown above runs on a reasonable powerful computer and can be run at home without access to high performance servers.</p>
+
+<hr />
+
+<pre>
+1] https://towardsdatascience.com/designing-your-neural-networks-a5e4617027ed
+2] https://en.wikipedia.org/wiki/DeepDream
+3] https://en.wikipedia.org/wiki/Gartner_hype_cycle
+4] http://www.joyofdata.de/public/pca-3d/
+5] https://en.wikipedia.org/wiki/Support_vector_machine
+6] https://de.wikipedia.org/wiki/Autoencoder#/media/Datei:Autoencoder_schema.png
+7] https://machinelearningmastery.com/a-gentle-introduction-to-positional-encoding-in-transformer-models-part-1/
+8] https://paperswithcode.com/method/absolute-position-encodings
+9] https://arxiv.org/abs/1706.03762
+10] https://en.wikipedia.org/wiki/Kernel_(image_processing)
+11] https://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/
+12] https://www.youtube.com/watch?v=sFztPP9qPRc
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Useful A.I. Tricks"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>
