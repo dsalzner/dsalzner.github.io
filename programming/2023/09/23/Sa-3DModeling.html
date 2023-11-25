@@ -3,16 +3,16 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>3D Modelling - Dennis Salzner</title>
+  <title>3D Modeling - Dennis Salzner</title>
 
   <!-- search engine -->
   <meta name="description" content="Dennis Salzner"/>
-  <link rel="canonical" href="/programming/2023/09/23/Sa-3DModelling.html">
+  <link rel="canonical" href="/programming/2023/09/23/Sa-3DModeling.html">
   <meta property="og:locale" content="en_EN" />
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="3D Modelling - Dennis Salzner" />
+  <meta property="og:title" content="3D Modeling - Dennis Salzner" />
   <meta property="og:description" content="The creation of 3D models purely with Open-Source-Software is challenging. In the following I'll decribe my workflow for creating meshes (in OpenScad), creat..." />
-  <meta property="og:url" content="/programming/2023/09/23/Sa-3DModelling.html" />
+  <meta property="og:url" content="/programming/2023/09/23/Sa-3DModeling.html" />
   <meta property="og:site_name" content="Dennis Salzner" />
   <meta property="article:section" content="programming" />
   <meta property="article:published_time" content="2023-09-23 00:00:00 +0200" />
@@ -21,7 +21,7 @@
   <meta property="og:image" content="" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:description" content="The creation of 3D models purely with Open-Source-Software is challenging. In the following I'll ..." />
-  <meta name="twitter:title" content="3D Modelling - Dennis Salzner" />
+  <meta name="twitter:title" content="3D Modeling - Dennis Salzner" />
   <meta name="twitter:image" content="" />
 
   <!-- syntax highlighting in code snippets -->
@@ -55,10 +55,10 @@
     <div style="margin: 32px;">
     
 
-<h1>Dennis Salzner - 3D Modelling</h1>
+<h1>Dennis Salzner - 3D Modeling</h1>
 <p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
 
-<div class="page-title">3D Modelling</div>
+<div class="page-title">3D Modeling</div>
 <div class="page-subtitle">Creating 3D Meshes, creating textures, applying, viewing and using them</div>
 <div class="page-seperator"></div>
 
@@ -68,7 +68,7 @@
 
 <p>The creation of 3D models purely with Open-Source-Software is challenging.</p>
 
-<p>3D Modelling in general has quite a learning curve. I’m sure this is the case for many “casual” 3D modellers like myself. I’ve often created a model and continued working on it a year later - in the meantime forgetting all the details of the process.</p>
+<p>3D Modeling in general has quite a learning curve. I’m sure this is the case for many “casual” 3D modelers like myself. I’ve often created a model and continued working on it a year later - in the meantime forgetting all the details of the process.</p>
 
 <p>But over the years I’ve found an approach that works well for me. In the following I’ll decribe my workflow for</p>
 
@@ -86,7 +86,7 @@
 
 <p>Following the steps of this guide we will be able to create a textured, rotating sphere of the earth.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/earth.gif" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/earth.gif" height="240px" /></p>
 
 <h1 id="contents">Contents</h1>
 
@@ -157,7 +157,7 @@ Over the years I’ve found an approach and a set of tools to create 3D models, 
 
 <h2 id="tool-selection">Tool Selection</h2>
 
-<p>The first time I tried 3D modelling I had seen custom content on the internet that could be downloaded for Electronic Arts Racing game “Need For Speed III”. Naturally I wanted to build my own custom cars.</p>
+<p>The first time I tried 3D modeling I had seen custom content on the internet that could be downloaded for Electronic Arts Racing game “Need For Speed III”. Naturally I wanted to build my own custom cars.</p>
 
 <p>Little did I know, at that time, that you need a whole host of software applications.</p>
 
@@ -175,20 +175,20 @@ Over the years I’ve found an approach and a set of tools to create 3D models, 
 
 <h3 id="creating-3d-meshes">Creating 3D meshes</h3>
 
-<p>For the mesh creation I’ve tried a number of applications, but have settled for the simple to use OpenSCAD for almost all my 3D modelling needs.</p>
+<p>For the mesh creation I’ve tried a number of applications, but have settled for the simple to use OpenSCAD for almost all my 3D modeling needs.</p>
 
 <h4 id="carcad">CarCad</h4>
 
 <p>During my first attempts to create 3D models for games there was a freeware application “CarCad” [1] that I tried to use. With it you could move vertices of wireframes. The best I achieved was a box on skies.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/nfs3.png" height="120px" />
-<img src="../../../../images/2023-09-23-Sa-3DModelling/carcad.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/nfs3.png" height="120px" />
+<img src="../../../../images/2023-09-23-Sa-3DModeling/carcad.png" height="120px" /></p>
 
 <h4 id="milkshape">Milkshape</h4>
 
 <p>From there I tried Milkshape3D [2]. That application was worlds apart in terms of capabilities and features. I was able to model a car, but never got it to work in the game.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/milkshape.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/milkshape.png" height="120px" /></p>
 
 <h4 id="autocad">AutoCAD</h4>
 
@@ -200,14 +200,14 @@ Over the years I’ve found an approach and a set of tools to create 3D models, 
 It was effectivly a true 3D “What you see, is what you get” application. For texturing you only had to drag and drop a texture onto a plane. That application was perfect apart from being difficult to set accurate measurements.
 Then Google bought it. The freeware vanished and it’s only available for free in a limited online version.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/sketchup.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/sketchup.png" height="120px" /></p>
 
 <h4 id="openscad">OpenSCAD</h4>
 
-<p>With the advent of affordable 3D printing in the 2010s I came into contact with OpenSCAD. This is so far the best 3D modelling application I’ve used. 
-It’s a free and open-source, free of BS application that lets you describe your object. If you’re a programmer this is a highly effective and simple way of 3D modelling. It is unbelievable how simple things could have been all along.</p>
+<p>With the advent of affordable 3D printing in the 2010s I came into contact with OpenSCAD. This is so far the best 3D modeling application I’ve used. 
+It’s a free and open-source, free of BS application that lets you describe your object. If you’re a programmer this is a highly effective and simple way of 3D modeling. It is unbelievable how simple things could have been all along.</p>
 
-<p>It’s extremly fast and intuitive to 3D modell, when you can simply describe what you want and the software follows the description.</p>
+<p>It’s extremly fast and intuitive to 3D model, when you can simply describe what you want and the software follows the description.</p>
 
 <p>In OpenScad you can even use variables, functions and modules like in any computer program to make code reusablere. The textural descriptions are easy and efficient to store in Git-Code-Repos.</p>
 
@@ -218,23 +218,23 @@ It’s a free and open-source, free of BS application that lets you describe you
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cube([10,10,10]);
 </code></pre></div></div>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/openscad1.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/openscad1.png" height="120px" /></p>
 
 <p>You want to move that cube? Write “translate” and specify the direction</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/openscad2.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/openscad2.png" height="120px" /></p>
 
 <p>You want to rotate? You write “rotate” and the angles.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/openscad3.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/openscad3.png" height="120px" /></p>
 
 <p>With the use of variables you can reuse the code.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/openscad4.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/openscad4.png" height="120px" /></p>
 
 <p>I’ve made entire 3D models of multi story buildings by drawing *.svg Vector graphics, loading it into OpenSCAD and extruding it.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/floorplan.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/floorplan.png" height="120px" /></p>
 
 <p>You can even use the <code class="language-plaintext highlighter-rouge">$t</code> variable that changes over time to make animations (see <a href="https://www.dennissalzner.de/astronomy/2023/09/03/So-StarPositions.html#solar-system">solar system animation</a>)</p>
 
@@ -244,7 +244,7 @@ It’s a free and open-source, free of BS application that lets you describe you
 
 <p>In order to “colour” (=texture) a 3D model you need to create texture graphics.</p>
 
-<p>The process goes hand in hand with applying the textures. As you need to visualize your edits to the texture images on the 3D modell as you are creating the texture image</p>
+<p>The process goes hand in hand with applying the textures. As you need to visualize your edits to the texture images on the 3D model as you are creating the texture image</p>
 
 <h4 id="gimp">Gimp</h4>
 
@@ -262,14 +262,14 @@ It is still one of the best 3D applications and it’s incredible what professio
 <p>Game changing for me was when I found out that it could be scripted in Python. Finally I was able to tell the application what to do in a reproducable way. This is important as in Blender even menus appear, don’t appear or dissappear forever depending in what order you carry out actions. You need to take notes of the order of every button press you make to be able to reproduce anything.
 There are buttons on the user interface that you wouldn’t even visually identify as buttons. Who would have thought that you can set an image file under “base colour”? There are hidden menues everywhere and some vital details pop up in different corners of the screen every time you use it. If you had a small screen you’d likely see it, but then the interface probably wouldn’t display properly either. By the time you learn it they release a new version (2.8 to 3.5) and you have to relearn everything.</p>
 
-<p>However, with much practice, I was able to texture a 3D Modell of the Earth and properly align the texture. For simple meshes such as spheres it may be faster to create them in Blender directly instead of using OpenScad as I’ll show below.
+<p>However, with much practice, I was able to texture a 3D model of the Earth and properly align the texture. For simple meshes such as spheres it may be faster to create them in Blender directly instead of using OpenScad as I’ll show below.
 However for more complicated meshes it is much easier to create the mesh in OpenSCAD and import the finished mesh to blender for texturing.</p>
 
 <p>Scripting makes the application much more usable. My notes are code that I can run and I can rely on it working every time.</p>
 
 <p>I believe the scripting capabilities will improve Blender not only for users, but also for developers working on it, as it allows developers to write proper unit tests and reproducde errors.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender00.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender00.png" height="120px" /></p>
 
 <h3 id="viewing-3d-models">Viewing 3D Models</h3>
 
@@ -284,7 +284,7 @@ However for more complicated meshes it is much easier to create the mesh in Open
 
 <h3 id="using-3d-models">Using 3D Models</h3>
 
-<p>We then have a 3D model, but what do we do with it? This is where game engines come into play. There we can  can move and rotate the modell programmatically and implement meaningful software.</p>
+<p>We then have a 3D model, but what do we do with it? This is where game engines come into play. There we can  can move and rotate the model programmatically and implement meaningful software.</p>
 
 <h5 id="unity-game-engine">Unity Game Engine</h5>
 
@@ -293,7 +293,7 @@ However for simple simulations and small games the Unity Game Engine also has a 
 
 <div class="row" style=" display: flex;">
   <div style="font-size: 8pt; padding: 15px">
-  <a href="../../../../images/2023-09-23-Sa-3DModelling/unity01.png" data-lightbox="image" data-title=""><img src="../../../../images/2023-09-23-Sa-3DModelling/unity01.png" alt="" class="" style="height:192px;" /></a>
+  <a href="../../../../images/2023-09-23-Sa-3DModeling/unity01.png" data-lightbox="image" data-title=""><img src="../../../../images/2023-09-23-Sa-3DModeling/unity01.png" alt="" class="" style="height:192px;" /></a>
    <br />
     A 3D world of custom 3D objects I've made in Unity
   </div>
@@ -323,7 +323,7 @@ However for simple simulations and small games the Unity Game Engine also has a 
 <span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
 </code></pre></div></div>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/ursina-cube.gif" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/ursina-cube.gif" height="240px" /></p>
 
 <h1 id="how">How</h1>
 
@@ -341,7 +341,7 @@ However for simple simulations and small games the Unity Game Engine also has a 
 sphere(r=100);
 </code></pre></div></div>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/openscad-sphere.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/openscad-sphere.png" height="240px" /></p>
 
 <h3 id="212-in-blender-by-user-interface">2.1.2. in Blender by User Interface</h3>
 
@@ -351,14 +351,14 @@ sphere(r=100);
   <li><strong>Step 1</strong> Load the application. I’m using Blender 3.6.3.</li>
 </ul>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender01.png" height="120px" />
-<img src="../../../../images/2023-09-23-Sa-3DModelling/blender02.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender01.png" height="120px" />
+<img src="../../../../images/2023-09-23-Sa-3DModeling/blender02.png" height="120px" /></p>
 
 <ul>
   <li><strong>Step 2</strong> [Tab] to switch to “Edit Mode”</li>
 </ul>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender03.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender03.png" height="120px" /></p>
 
 <p>Note:</p>
 <ul>
@@ -382,13 +382,13 @@ sphere(r=100);
   </li>
 </ul>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender04.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender04.png" height="120px" /></p>
 
 <ul>
   <li><strong>Step 5</strong> Don’t click anything. Notice the menu on the bottom left of the screen</li>
 </ul>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender05.png" height="45px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender05.png" height="45px" /></p>
 
 <ul>
   <li><strong>Step 6</strong> Open that menu by clicking on the arrow</li>
@@ -399,7 +399,7 @@ sphere(r=100);
 <p>The default values are low and this causes the sphere to have a very unround appearance.
 Set them to 64 each.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender06b.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender06b.png" height="120px" /></p>
 
 <p>Note:</p>
 
@@ -409,7 +409,7 @@ Set them to 64 each.</p>
   <li>if you create the UV Sphere in “Object Mode”, then the menu will appear, but the fields will be greyed out. It’s up to the user to guess why.</li>
 </ul>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender06a.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender06a.png" height="120px" /></p>
 
 <h3 id="213-in-blender-by-script">2.1.3. in Blender by Script</h3>
 
@@ -463,7 +463,7 @@ Set them to 64 each.</p>
 
 <p><strong>Step 1</strong> Back in Blender we UV unwrap the sphere by deselecting (!) the sphere (click somewhere else) and doing [u] and selecting “unwrap”</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender07.png" height="120px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender07.png" height="120px" /></p>
 
 <p><strong>Step 2</strong> Click on “UV Editing”</p>
 
@@ -479,27 +479,27 @@ I usually redo this a couple of times until the texture map looks as below.</p>
 
 <p>You want it to look like this.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender08-good1.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender08-good1.png" height="240px" /></p>
 
 <p>Other results - that we don’t want - can be:</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender08-bad1.png" height="200px" />
-<img src="../../../../images/2023-09-23-Sa-3DModelling/blender08-bad2.png" height="200px" />
-<img src="../../../../images/2023-09-23-Sa-3DModelling/blender08-bad3.png" height="200px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender08-bad1.png" height="200px" />
+<img src="../../../../images/2023-09-23-Sa-3DModeling/blender08-bad2.png" height="200px" />
+<img src="../../../../images/2023-09-23-Sa-3DModeling/blender08-bad3.png" height="200px" /></p>
 
 <p>If that happens start over and try doing things slightly differently.</p>
 
 <p><strong>Step 3</strong> We can now load the texture image by menu - as you’d expect</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender09.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender09.png" height="240px" /></p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender10.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender10.png" height="240px" /></p>
 
 <p>However this doesn’t apply the texture to the UV sphere.</p>
 
 <p><strong>Step 4</strong> On the far right click on the symbol for “Material”</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender11.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender11.png" height="240px" /></p>
 
 <p>note:</p>
 
@@ -511,27 +511,27 @@ I usually redo this a couple of times until the texture map looks as below.</p>
 
 <p>This opens a menu I call the “hidden menu”. It has an entry for “image texture”</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender12.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender12.png" height="240px" /></p>
 
 <p><strong>Step 6</strong> Click on “image texture”</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender13.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender13.png" height="240px" /></p>
 
 <p><strong>Step 7</strong> Click “open”</p>
 
 <p>This doesn’t open a file browser, but secretly changes the right-hand menu to contain an “Open” button</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender14.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender14.png" height="240px" /></p>
 
 <p>Click on that and you get a file browser. Set the texture again.</p>
 
 <p><strong>Step 8</strong> To finally  show the object with the texture switch to the “Texture Paint” tab</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender15.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender15.png" height="240px" /></p>
 
 <p><strong>Step 9</strong> Open Export Dialog to Wavefront *.obj</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender16.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender16.png" height="240px" /></p>
 
 <p><strong>Step 10</strong> Set to actually export the object with the texture</p>
 
@@ -539,7 +539,7 @@ I usually redo this a couple of times until the texture map looks as below.</p>
 
 <p>You need to select “triangulated mesh” under “Geometry” and “Export” under “Materials”.</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender17.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender17.png" height="240px" /></p>
 
 <p><strong>Step 11</strong> Verify in another tool</p>
 
@@ -569,7 +569,7 @@ map_Kd untitled.png
 
 <p>Open3D can be used to verify the object is properly stored with the texture</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/blender18.png" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/blender18.png" height="240px" /></p>
 
 <h3 id="222-in-blender-by-script">2.2.2. in Blender by Script</h3>
 
@@ -623,7 +623,7 @@ material.node_tree.links.new<span class="o">(</span>bsdf.inputs[<span class="s1"
 
 <p>This yields</p>
 
-<p><img src="../../../../images/2023-09-23-Sa-3DModelling/earth.gif" height="240px" /></p>
+<p><img src="../../../../images/2023-09-23-Sa-3DModeling/earth.gif" height="240px" /></p>
 
 <h1 id="progress">Progress</h1>
 
@@ -634,7 +634,7 @@ material.node_tree.links.new<span class="o">(</span>bsdf.inputs[<span class="s1"
 
 <script src="https://utteranc.es/client.js"
   repo="dsalzner/dsalzner.github.io"
-	issue-term="3D Modelling"
+	issue-term="3D Modeling"
 	theme="boxy-light"
 	crossorigin="anonymous"
 	async>
