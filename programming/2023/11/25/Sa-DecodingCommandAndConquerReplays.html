@@ -11,7 +11,7 @@
   <meta property="og:locale" content="en_EN" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Decoding Command and Conquer replays - Dennis Salzner" />
-  <meta property="og:description" content="As with other strategic games that invole building a base, also in C&C Generals ZH, the order the player builds objects is vital to succeed in the game. In o..." />
+  <meta property="og:description" content="As with other strategy games that invole building a base, also in C&C Generals ZH, the order the player builds objects is vital to succeed in the game. In or..." />
   <meta property="og:url" content="/programming/2023/11/25/Sa-DecodingCommandAndConquerReplays.html" />
   <meta property="og:site_name" content="Dennis Salzner" />
   <meta property="article:section" content="programming" />
@@ -20,7 +20,7 @@
   <meta property="og:updated_time" content="2023-11-25 00:00:00 +0100" />
   <meta property="og:image" content="" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:description" content="As with other strategic games that invole building a base, also in C&C Generals ZH, the order the..." />
+  <meta name="twitter:description" content="As with other strategy games that invole building a base, also in C&C Generals ZH, the order the ..." />
   <meta name="twitter:title" content="Decoding Command and Conquer replays - Dennis Salzner" />
   <meta name="twitter:image" content="" />
 
@@ -66,7 +66,7 @@
 <div class="post-content" itemprop="articleBody">
     <p style="font-size: 60%;" align="right">What</p>
 
-<p>As with other strategic games that invole building a base, also in C&amp;C Generals ZH, the order the player builds objects is vital to succeed in the game. In order to analyse build sequences we need to parse the replay file format of the game.</p>
+<p>As with other strategy games that involve building a base, also in C&amp;C Generals ZH, the order the player builds objects is vital to succeed in the game. In order to analyse build sequences we need to parse the replay file format of the game.</p>
 
 <p>
 <img src="../../../../images/2023-11-25-Sa-DecodingCommandAndConquerReplays/plot-buildings-and-move-orders-1.png" height="280px" />
@@ -152,7 +152,7 @@ Value;Value;Value;
 
 <p>To view such a file commonly hex-representation is used (8 bytes are two hex values). This is what it looks like using ‘:%xdd’ in the vim text editor.</p>
 
-<p><img src="../../../../images/2023-11-25-Sa-DecodingCommandAndConquerReplays/replay-hex-view.png" height="320px" />
+<p><img src="../../../../images/2023-11-25-Sa-DecodingCommandAndConquerReplays/replay-hex-view.png" height="420px" />
 <br /><small>(hex view of a C&amp;C Generals ZH Replay-file)</small></p>
 
 <h2 id="parsing-binary-in-python">Parsing Binary in Python</h2>
@@ -167,14 +167,14 @@ Value;Value;Value;
 
 <p>Where ‘I’ in upper-case indicates “unsigned integer”. The ‘4’ indicates to read 4 bytes.</p>
 
-<p>A sequence of bytes can be represent numeric values of various lengths (short, int, long, long long), positive values only (unsigned) or positive and negative values (signed).</p>
+<p>A sequence of bytes can represent numeric values of various lengths (short, int, long, long long), positive values only (unsigned) or positive and negative values (signed).</p>
 
 <p>Decimal values are usually stored in IEEE-754 format to allow larger value ranges. There powers of 10 are used.
 For example 2,230,000 is stored as 2.23 x 10^6.</p>
 
 <p>There can also be text as seen the hex-view. Text is just multiple charcaters that together form a ‘string’. They are commonly null-terminated (‘\0’) to indicate the end.</p>
 
-<p><img src="../../../../images/2023-11-25-Sa-DecodingCommandAndConquerReplays/python-struct-format.png" height="320px" />
+<p><img src="../../../../images/2023-11-25-Sa-DecodingCommandAndConquerReplays/python-struct-format.png" height="420px" />
 <br /><small>(Python struct format options)</small></p>
 
 <h2 id="assumptions">Assumptions</h2>
@@ -301,15 +301,7 @@ These will likely not be of the same length as they can carry different amounts 
   <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
   <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
 
-  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-
-  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
 <span class="p">]</span>
 </code></pre></div></div>
 
@@ -321,46 +313,31 @@ These will likely not be of the same length as they can carry different amounts 
 
 <p>With some of the type fields values known we can make a reasonable guess about the length of the header. Just read until we read an unsigned integer somewhere in the same range as 1092. The header also contains printable characters.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>19, ('game', 'c', 6) = GENREP_e_eT
-20, ('unknown', 'B', 1) = 0
-21, ('unknown', 'B', 1) = 0
-22, ('unknown', 'B', 1) = 0
-23, ('unknown', 'B', 1) = 0
-24, ('unknown', 'B', 1) = 0
-25, ('unknown', 'B', 1) = 0
-26, ('unknown', 'B', 1) = 0
-28, ('numTimecodes', 'h', 2) = 0
-52, ('name', 'c', 0) = Last Replay
-92, ('buildVersion', 'c', 0) = 5(Version 1.0
-134, ('buildDate', 'c', 0) = Aug 30 2003 20:55:29
-135, ('unknown_0', 'B', 1) = 0
-136, ('unknown_0', 'B', 1) = 0
-137, ('version_major', 'B', 1) = 1
-138, ('unknown_0', 'B', 1) = 0
-139, ('version_minor', 'B', 1) = 7
-140, ('unknown_varies', 'B', 1) = 240
-141, ('unknown_varies', 'B', 1) = 13
-142, ('unknown_varies', 'B', 1) = 199
-143, ('unknown_varies', 'B', 1) = 133
-144, ('unknown_varies', 'B', 1) = 70
-145, ('unknown_varies', 'B', 1) = 243
-146, ('unknown_varies', 'B', 1) = 48
-147, ('unknown_varies', 'B', 1) = 85
-294, ('configuration', 'c', 0) = S=1;M=03maps/alpine assault;MC=DEA9E8E4;MS=275491;SD=30062703;C=100;SR=0;SC=50000;O=N;S=HC0D3R3D,0,0,TT,1,4,1,0,1:CH,-1,6,-1,1:X:X:X:X:X:X:;0
-295, ('unknown_2', 'B', 1) = 2
-296, ('unknown', 'B', 1) = 0
-297, ('unknown', 'B', 1) = 0
-298, ('unknown', 'B', 1) = 0
-299, ('unknown', 'B', 1) = 0
-300, ('unknown', 'B', 1) = 0
-301, ('unknown', 'B', 1) = 0
-302, ('unknown', 'B', 1) = 0
-303, ('unknown_30', 'B', 1) = 30
-304, ('unknown', 'B', 1) = 0
-305, ('unknown', 'B', 1) = 0
-306, ('unknown', 'B', 1) = 0
-310, ('packetTime', 'I', 4) = 0
-314, ('packetType', 'I', 4) = 1097
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>formatHeader = [
+  ("game", "c", 6),   # GENREP
+
+  ("unknown", "HEX", 7),
+
+  ("numTimecodes", "h", 2),
+  ("name", "c", 0),             # Last Replay
+  ("buildVersion", "c", 0),     # Version 1.7
+  ("buildDate", "c", 0),
+
+  ("unknown", "HEX", 2),
+
+  ("version_major", "B", 1),
+  ("unknown_0", "B", 1),
+  ("version_minor", "B", 1),
+
+  ("unknown", "HEX", 8),
+  ("configuration", "c", 0),
+  ("unknown", "HEX", 8),
+  ("is_30", "B", 1),
+  ("unknown", "HEX", 3),
+
+  ("nextPacketTime", "I", 4),
+  ("nextPacketType", "I", 4), # e.g. 1092 (see below)
+]
 </code></pre></div></div>
 
 <p>We can see a start tag, the replay name, a date that is likely the date the game was built (it came out in 2003) and some details on the map.</p>
@@ -440,20 +417,20 @@ Let’s count how many float values we find near them.</p>
 
 <p><img src="../../../../images/2023-11-25-Sa-DecodingCommandAndConquerReplays/building-construct-2.png" height="160px" /></p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>53149, ('packetTime', 'I', 4) = 912 
-53153, ('packetType', 'I', 4) = 1049 
-53154, ('unknown_1', 'B', 1) = 2 
-53156, ('unknown_2', 'H', 2) = 0 
-53158, ('unknown_3', 'H', 2) = 768 
-53160, ('unknown_4', 'H', 2) = 256 
-53162, ('unknown_5', 'H', 2) = 262 
-53164, ('unknown_6', 'H', 2) = 257 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>53149, ('packetTime', 'I', 4) = 912
+53153, ('packetType', 'I', 4) = 1049
+53154, ('unknown_1', 'B', 1) = 2
+53156, ('unknown_2', 'H', 2) = 0
+53158, ('unknown_3', 'H', 2) = 768
+53160, ('unknown_4', 'H', 2) = 256
+53162, ('unknown_5', 'H', 2) = 262
+53164, ('unknown_6', 'H', 2) = 257
 53166, ('buildingType', 'H', 2) = 1261 -- Gla Barracks
-53167, ('unknown_', 'B', 1) = 0 
-53168, ('unknown_', 'B', 1) = 0 
-53172, ('x', 'f', 4) = 1279.33740234375 
-53176, ('y', 'f', 4) = 473.4322814941406 
-53180, ('z', 'f', 4) = 18.75 
+53167, ('unknown_', 'B', 1) = 0
+53168, ('unknown_', 'B', 1) = 0
+53172, ('x', 'f', 4) = 1279.33740234375
+53176, ('y', 'f', 4) = 473.4322814941406
+53180, ('z', 'f', 4) = 18.75
 53184, ('unknown', 'I', 4) = 3222719460
 15192, ('nextPacketTime', 'I', 4) = 1290
 15196, ('nextPacketType', 'I', 4) = 1049
@@ -496,21 +473,21 @@ videotime_diff = 138s - 69s = 31s
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>164236, ('packetTime', 'I', 4) = 2812 
 164240, ('packetType', 'I', 4) = 1047 
-164241, ('is_2', 'B', 1) = 2 
-164242, ('is_0', 'B', 1) = 0 
-164243, ('is_0', 'B', 1) = 0 
-164244, ('is_0', 'B', 1) = 0 
-164245, ('is_1', 'B', 1) = 1 
-164246, ('is_0', 'B', 1) = 0 
-164247, ('is_2', 'B', 1) = 2 
+164241, ('is_2', 'B', 1) = 2
+164242, ('is_0', 'B', 1) = 0
+164243, ('is_0', 'B', 1) = 0
+164244, ('is_0', 'B', 1) = 0
+164245, ('is_1', 'B', 1) = 1
+164246, ('is_0', 'B', 1) = 0
+164247, ('is_2', 'B', 1) = 2
 164248, ('unitType', 'B', 1) = 123 -- Gla Rebel
 164249, ('buildingIdUnitWasCreated', 'B', 1) = 5 
-164250, ('is_0', 'B', 1) = 0 
-164251, ('is_0', 'B', 1) = 0 
+164250, ('is_0', 'B', 1) = 0
+164251, ('is_0', 'B', 1) = 0
 164252, ('incrementingUnitNumber', 'B', 1) = 1 
-164253, ('is_0', 'B', 1) = 0 
-164254, ('is_0', 'B', 1) = 0 
-164255, ('is_0', 'B', 1) = 0 
+164253, ('is_0', 'B', 1) = 0
+164254, ('is_0', 'B', 1) = 0
+164255, ('is_0', 'B', 1) = 0
 164259, ('nextPacketTime', 'I', 4) = 2812 
 164263, ('nextPackageType', 'I', 4) = 1092 
 </code></pre></div></div>
@@ -519,20 +496,20 @@ videotime_diff = 138s - 69s = 31s
 
 <p>Using the same approach, building two known buildings and doing something inbetween, we can get the move order packets. Observing the number of occurrences of those packets and plotting the result also helps here.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>385085, ('packetTime', 'I', 4) = 6702 
-385089, ('packetType', 'I', 4) = 1068 
-385090, ('is_2', 'B', 1) = 2 
-385091, ('is_0', 'B', 1) = 0 
-385092, ('is_0', 'B', 1) = 0 
-385093, ('is_0', 'B', 1) = 0 
-385094, ('is_1', 'B', 1) = 1 
-385095, ('is_6', 'B', 1) = 6 
-385096, ('is_1', 'B', 1) = 1 
-385100, ('x', 'f', 4) = 1174.520751953125 
-385104, ('y', 'f', 4) = 412.6291809082031 
-385108, ('z', 'f', 4) = 18.75 
-385112, ('nextPacketTime', 'I', 4) = 6703 
-385116, ('nextPacketType', 'I', 4) = 1092 
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>385085, ('packetTime', 'I', 4) = 6702
+385089, ('packetType', 'I', 4) = 1068
+385090, ('is_2', 'B', 1) = 2
+385091, ('is_0', 'B', 1) = 0
+385092, ('is_0', 'B', 1) = 0
+385093, ('is_0', 'B', 1) = 0
+385094, ('is_1', 'B', 1) = 1
+385095, ('is_6', 'B', 1) = 6
+385096, ('is_1', 'B', 1) = 1
+385100, ('x', 'f', 4) = 1174.520751953125
+385104, ('y', 'f', 4) = 412.6291809082031
+385108, ('z', 'f', 4) = 18.75
+385112, ('nextPacketTime', 'I', 4) = 6703
+385116, ('nextPacketType', 'I', 4) = 1092
 </code></pre></div></div>
 
 <p>Plotting the coordinates from these packages shows an ‘8’ shape. As I was moving the bulldozer around two bunkers that makes sense.</p>
@@ -543,7 +520,7 @@ videotime_diff = 138s - 69s = 31s
 
 <p>With that information we can try to parse a full-replay file.</p>
 
-<p>We’ve established some type fields:</p>
+<p>We’ve established some type fields</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>the header
 1092 - unknown occur very frequently
@@ -552,11 +529,11 @@ videotime_diff = 138s - 69s = 31s
 1068 - move order
 </code></pre></div></div>
 
-<p>These seem to comprise most of the replay file.</p>
+<p>and they seem to comprise most of the replay file.</p>
 
 <p>It’s neccessary to skip packets of unknown content. As we haven’t found a packetLength field we’ll have to do this manualy by trying to detect integers in packetTypes range.</p>
 
-<p>By doing this manually I’ve found there 7 packetTypes in a replay where I was only creating buildings and the construction dozer around.</p>
+<p>By doing this I’ve found additional packetTypes:</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>formats = {
     "1097" : (format1097, "unknown"),
@@ -564,24 +541,67 @@ videotime_diff = 138s - 69s = 31s
     "1095" : (format1095, "unknown"),
     "1003" : (format1003, "unknown"),
     "1001" : (format1001, "unknown"),
-    "1049" : (format1049, "construct_building"),
-    "1068" : (format1068, "move_order"),
+    "1049" : (format1049_createBuilding, "create_building"),
+    "1068" : (format1068_moveOrder, "move_order"),
+    "1047" : (format1047_createUnit, "create_unit"),
 }
 </code></pre></div></div>
 
-<p>Creating units adds</p>
+<p>The “buildingType” field in “create_building” corresponds to</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"1047" : (format1047, "create_unit"),
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>buildingTypeMap = defaultdict(lambda: "unknown", {
+  # China Tank General
+  "1994" : "Nuclear Reactor",
+  "1996" : "Barracks",
+  "1999" : "Bunker",
+  "2001" : "Gattling Gun",
+  "1995" : "Supply Center",
+  "1998" : "War Factory",
+  "2002" : "Internet Center",
+  "2000" : "Propaghanda Center",
+  "2003" : "Command Center",
+  "1997" : "Air Field",
+  "1992" : "Nuclear Missile",
+  
+  # Usa Laser General
+  "1562" : "Laser Turret",
+  "1550" : "Cold Fusion Reactor",
+  "1556" : "Barracks",
+  "1558" : "Supply Center",
+  "1557" : "Fire Base",
+  "1549" : "War Factory",
+  "1553" : "Air Field",
+  "1552" : "Strategy Center",
+  "1551" : "Particle Canon",
+  "1555" : "Supply Drop Zone", 
+  
+  # Gla
+  "1261" : "Gla Barracks"
+})
 </code></pre></div></div>
 
-<p>The unknown ones are:</p>
+<p>The “unitType” field in “create_unit” corresponds to</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unitTypeMap = defaultdict(lambda: "unknown", {
+  "183" : "China Tank Red Guard",
+  "251" : "Usa Laser General Ranger",
+  "197" : "China Construction Dozer",
+  "185" : "China Missile Launcher",
+  "125" : "Gla Rpg Trooper",
+  "123" : "Gla Rebel",
+  "136" : "Gla Worker",
+  "127" : "Gla Terrorist",
+})
+</code></pre></div></div>
+
+<p>The formats are:</p>
 
 <style>
 .card {
    float: left;
    background: #eef;
-   margin: 5px;
-   height: 35em;
+   margin: 1em;
+   height: 15em;
 }
 .clearfix::after {
   content: "";
@@ -591,66 +611,59 @@ videotime_diff = 138s - 69s = 31s
 </style>
 
 <div class="clearfix">
+  <div class="card" style="height: 32em;">
+    <pre>
+formatHeader = [
+  ("game", "c", 6),   # GENREP
+
+  ("unknown", "HEX", 7),
+
+  ("numTimecodes", "h", 2),
+  ("name", "c", 0),             # Last Replay
+  ("buildVersion", "c", 0),     # Version 1.7
+  ("buildDate", "c", 0),
+
+  ("unknown", "HEX", 2),
+
+  ("version_major", "B", 1),
+  ("unknown_0", "B", 1),
+  ("version_minor", "B", 1),
+
+  ("unknown", "HEX", 8),
+  ("configuration", "c", 0),
+  ("unknown", "HEX", 8),
+  ("is_30", "B", 1),
+  ("unknown", "HEX", 3),
+
+  ("nextPacketTime", "I", 4),
+  ("nextPacketType", "I", 4), # e.g. 1092 (see below)
+]
+    </pre> 
+  </div>
   <div class="card">
     <pre>
 format1097 = [
   ("packetTime", "I", 4),
   ("packetType", "I", 4),
-
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
     
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
+  ("unknown", "HEX", 14),
 
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-
-  ("nextPacketTime", "I", 4),
+  ("nextPacketTime", "I", 4), # 1097
   ("nextPacketType", "I", 4),
 ]
     </pre> 
   </div>
   <div class="card">
     <pre>
-    format1092 = [
-      ("packetTime", "I", 4),
-      ("packetType", "I", 4),
+format1092 = [
+  ("packetTime", "I", 4),
+  ("packetType", "I", 4),
 
-      ("is_0", "I", 4),
-        
-      ("unknown", "h", 2),
-      ("unknown", "h", 2),
-      ("unknown", "h", 2),
-      ("unknown", "h", 2),
-        
-      ("is_1", "I", 4),
-      ("is_0", "I", 4),
-      ("is_0", "I", 4),
-      ("is_0", "I", 4),
-        
-      ("unknown", "I", 4),
-      ("unknown", "I", 4),
-
-      ("is_0", "I", 4),
-      ("is_0", "I", 4),
-        
-      ("is_0", "I", 4),
-
-      ("is_0", "B", 1),
-        
-      ("nextPacketTime", "I", 4), 
-      ("nextPacketType", "I", 4),
-    ]
+  ("unknown", "HEX", 49),
+    
+  ("nextPacketTime", "I", 4), 
+  ("nextPacketType", "I", 4), # 1095 or 1092
+]
     </pre>
   </div>
   <div class="card">
@@ -659,26 +672,23 @@ format1095 = [
   ("packetTime", "I", 4),
   ("packetType", "I", 4),
 
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-    
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
+  ("unknown", "HEX", 14),
 
   ("nextPacketTime", "I", 4),
-  ("nextPacketType", "I", 4),
+  ("nextPacketType", "I", 4), # 1097
+]
+    </pre>
+  </div>
+  <div class="card">
+    <pre>
+format1097 = [
+  ("packetTime", "I", 4),
+  ("packetType", "I", 4),
+
+  ("unknown", "HEX", 14),
+
+  ("nextPacketTime", "I", 4),
+  ("nextPacketType", "I", 4), # 1092
 ]
     </pre>
   </div>
@@ -688,12 +698,8 @@ format1003 = [
   ("packetTime", "I", 4),
   ("packetType", "I", 4),
 
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
+  ("unknown", "HEX", 8),
 
-  ("unknown", "I", 4),
   ("nextPacketTime", "I", 4),
   ("nextPacketType", "I", 4),
 ]
@@ -705,15 +711,52 @@ format1001 = [
   ("packetTime", "I", 4),
   ("packetType", "I", 4),
 
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
+  ("unknown", "HEX", 14),
+    
+  ("nextPacketTime", "I", 4),
+  ("nextPacketType", "I", 4),
+]
+    </pre>
+  </div>
+  <div class="card" style="height: 24em;">
+    <pre>
+format1047_createUnit = [
+  ("packetTime", "I", 4),
+  ("packetType", "I", 4), # 1047
+    
+  ("unknown", "HEX", 7),
 
-  ("unknown", "B", 1),
-  ("unknown", "B", 1),
-  ("unknown", "I", 4),
-  ("unknown", "I", 4),
+  ("unitType", "B", 1),
+  ("buildingIdUnitWasCreated", "B", 1),
+
+  ("unknown", "HEX", 2),
+
+  ("incrementingUnitNumber", "B", 1),
+  
+  ("unknown", "HEX", 3),
+
+  ("nextPacketTime", "I", 4),
+  ("nextPackageType", "I", 4), # 1092
+]
+    </pre>
+  </div>
+  <div class="card" style="height: 24em;">
+    <pre>
+format1049_createBuilding = [
+  ("packetTime", "I", 4),
+  ("packetType", "I", 4), # 1049
+
+  ("unknown", "HEX", 11),
+ 
+  ("buildingType", "H", 2),
+  
+  ("unknown", "HEX", 2),
+    
+  ("x", "f", 4),
+  ("y", "f", 4),
+  ("z", "f", 4),
+
+  ("unknown", "HEX", 4),
     
   ("nextPacketTime", "I", 4),
   ("nextPacketType", "I", 4),
@@ -722,22 +765,15 @@ format1001 = [
   </div>
   <div class="card">
     <pre>
-format1068 = [
+format1068_moveOrder = [
   ("packetTime", "I", 4),
-  ("packetType", "I", 4),
+  ("packetType", "I", 4), # 1049
 
-  ("unknown_1", "B", 1),
-  ("unknown_2", "H", 2),
-  ("unknown_3", "H", 2),
-  ("unknown_4", "H", 2),
-  ("unknown_5", "H", 2),
-  ("unknown_6", "H", 2),
-  ("unknown_7", "H", 2),
-
-  ("unknown_8", "B", 1),
-  ("unknown_9", "B", 1),
-  ("unknown_10", "H", 2),
-  ("unknown_11", "H", 2),
+  ("unknown", "HEX", 7),
+  
+  ("x", "f", 4),
+  ("y", "f", 4),
+  ("z", "f", 4),
 
   ("nextPacketTime", "I", 4),
   ("nextPacketType", "I", 4)
@@ -748,270 +784,958 @@ format1068 = [
 
 <p>but there are likely more.</p>
 
-<p>A full length replay files reads as follows:</p>
+<p>A full length replay file reads as follows:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>=== ../../data/2023-11-23 21-38-27-china-moving-around.rep ===
+<details>
+<summary>
+Show full log
+
+
+<figure class="highlight"><pre><code class="language-csv" data-lang="csv">=== ../../data/2023-11-23 21-38-27-china-moving-around.rep ===
 &gt; header
-303, ('nextPacketType', 'I', 4) = 1097
+0; 303; nextPacketType; I; 4; 1097; 
+0; 299; packetTime; I; 4; 0; 
+0; 303; packetType; I; 4; 1097; unknown
+0; 317; unknown; HEX; 14; 0000000002000102010000000001; 
+0; 321; nextPacketTime; I; 4; 0; 
+0; 325; nextPacketType; I; 4; 1092; 
 &gt; repetitions of 1092: 1
-382, ('nextPacketType', 'I', 4) = 1095 -- unknown
-404, ('nextPacketType', 'I', 4) = 1097 -- unknown
+1; 378; packetTime; I; 4; 1; 
+1; 382; packetType; I; 4; 1095; unknown
+1; 396; unknown; HEX; 14; 02000000020001020157c7b03600; 
+1; 400; nextPacketTime; I; 4; 1; 
+1; 404; nextPacketType; I; 4; 1097; 
+1; 400; packetTime; I; 4; 1; 
+1; 404; packetType; I; 4; 1097; unknown
+1; 418; unknown; HEX; 14; 0200000002000102010200000001; 
+1; 422; nextPacketTime; I; 4; 1; 
+1; 426; nextPacketType; I; 4; 1092; 
 &gt; repetitions of 1092: 100
-6126, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 73
-10309, ('nextPacketType', 'I', 4) = 1003 -- unknown
-10325, ('nextPacketType', 'I', 4) = 1001 -- unknown
-&gt; repetitions of 1092: 27
-11886, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 57
-15157, ('nextPacketType', 'I', 4) = 1049 -- construct_building
-&gt; repetitions of 1092: 43
-17647, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-23369, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-29091, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-34813, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-40535, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-46257, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-51979, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-57701, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-63423, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 35
-65440, ('nextPacketType', 'I', 4) = 1049 -- construct_building
-&gt; repetitions of 1092: 65
-69184, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-74906, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-80628, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-86350, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-92072, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-97794, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 56
-101008, ('nextPacketType', 'I', 4) = 1049 -- construct_building
-&gt; repetitions of 1092: 44
-103555, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-109277, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-114999, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-120721, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-126443, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-132165, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 39
-134410, ('nextPacketType', 'I', 4) = 1049 -- construct_building
-&gt; repetitions of 1092: 61
-137926, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-143648, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-149370, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-155092, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-160814, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 30
-162546, ('nextPacketType', 'I', 4) = 1049 -- construct_building
-&gt; repetitions of 1092: 70
-166575, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-172297, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-178019, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-183741, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-189463, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 19
-190568, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 81
-195212, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 20
-196374, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 44
-198909, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 36
-200988, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 27
-202549, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 73
-206737, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 12
-207443, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 88
-212486, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 6
-212850, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 94
-218235, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 48
-220993, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 52
-223984, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-229706, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 22
-230982, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 78
-235455, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 31
-237244, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 69
-241204, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 35
-243221, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 65
-246953, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 29
-248628, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 71
-252702, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 72
-256828, ('nextPacketType', 'I', 4) = 1049 -- construct_building
-&gt; repetitions of 1092: 28
-258463, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-264185, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-269907, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 28
-271525, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 72
-275656, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 36
-277730, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 64
-281405, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 16
-282339, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 71
-286413, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 13
-287181, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 91
-292390, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 9
-292930, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 97
-298481, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 3
-298679, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-304401, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 13
-305164, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 69
-309124, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 18
-310177, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 48
-312935, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 52
-315926, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 31
-317715, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 69
-321675, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 16
-322609, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 84
-327424, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 19
-328529, ('nextPacketType', 'I', 4) = 1049 -- construct_building
-&gt; repetitions of 1092: 81
-333185, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-338907, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 67
-342748, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 33
-344656, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 67
-348497, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 33
-350405, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 99
-356070, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 1
-356154, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 52
-359140, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 45
-361732, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 3
-361930, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 60
-365372, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 40
-367679, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 29
-369354, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 71
-373428, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 26
-374932, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 74
-379177, ('nextPacketType', 'I', 4) = 1068 -- move_order
-379204, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 52
-382190, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 48
-384953, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 2
-385089, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 57
-388365, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 41
-390729, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 13
-391492, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 39
-393742, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 46
-396391, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 2
-396532, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-402254, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 57
-405525, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 43
-408003, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 32
-409849, ('nextPacketType', 'I', 4) = 1068 -- move_order
-&gt; repetitions of 1092: 68
-413752, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 5
-414059, ('nextPacketType', 'I', 4) = 1049 -- construct_building
-&gt; repetitions of 1092: 95
-419513, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-425235, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-430957, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-436679, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 100
-442401, ('nextPacketType', 'I', 4) = 1095 -- unknown
-&gt; repetitions of 1092: 150
-450973, ('nextPacketType', 'I', 4) = 27 -- end
+101; 6122; packetTime; I; 4; 101; 
+101; 6126; packetType; I; 4; 1095; unknown
+101; 6140; unknown; HEX; 14; 020000000200010201f67f5bf300; 
+101; 6144; nextPacketTime; I; 4; 101; 
+101; 6148; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 73</code></pre></figure>
 
+</summary>
+
+<figure class="highlight"><pre><code class="language-csv" data-lang="csv">174; 10305; packetTime; I; 4; 174; 
+174; 10309; packetType; I; 4; 1003; unknown
+174; 10317; unknown; HEX; 8; 0200000001020101; 
+174; 10321; nextPacketTime; I; 4; 174; 
+174; 10325; nextPacketType; I; 4; 1001; 
+174; 10321; packetTime; I; 4; 174; 
+174; 10325; packetType; I; 4; 1001; unknown
+174; 10339; unknown; HEX; 14; 02000000020201030101d1000000; 
+174; 10343; nextPacketTime; I; 4; 174; 
+174; 10347; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 27
+201; 11882; packetTime; I; 4; 201; 
+201; 11886; packetType; I; 4; 1095; unknown
+201; 11900; unknown; HEX; 14; 0200000002000102011eb2544b00; 
+201; 11904; nextPacketTime; I; 4; 201; 
+201; 11908; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 57
+258; 15153; packetTime; I; 4; 258; 
+258; 15157; packetType; I; 4; 1049; create_building
+258; 15168; unknown; HEX; 11; 0200000003000106010101; 
+258; 15170; buildingType; H; 2; 1994; 
+258; 15172; unknown; HEX; 2; 0000; 
+258; 15176; x; f; 4; 879.3244018554688; 
+258; 15180; y; f; 4; 434.00408935546875; 
+258; 15184; z; f; 4; 18.75; 
+258; 15188; unknown; HEX; 4; db0f49bf; 
+258; 15192; nextPacketTime; I; 4; 258; 
+258; 15196; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 43
+301; 17643; packetTime; I; 4; 301; 
+301; 17647; packetType; I; 4; 1095; unknown
+301; 17661; unknown; HEX; 14; 020000000200010201b66d21c000; 
+301; 17665; nextPacketTime; I; 4; 301; 
+301; 17669; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+401; 23365; packetTime; I; 4; 401; 
+401; 23369; packetType; I; 4; 1095; unknown
+401; 23383; unknown; HEX; 14; 0200000002000102015420cf7500; 
+401; 23387; nextPacketTime; I; 4; 401; 
+401; 23391; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+501; 29087; packetTime; I; 4; 501; 
+501; 29091; packetType; I; 4; 1095; unknown
+501; 29105; unknown; HEX; 14; 02000000020001020175fec37500; 
+501; 29109; nextPacketTime; I; 4; 501; 
+501; 29113; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+601; 34809; packetTime; I; 4; 601; 
+601; 34813; packetType; I; 4; 1095; unknown
+601; 34827; unknown; HEX; 14; 0200000002000102019a81c66400; 
+601; 34831; nextPacketTime; I; 4; 601; 
+601; 34835; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+701; 40531; packetTime; I; 4; 701; 
+701; 40535; packetType; I; 4; 1095; unknown
+701; 40549; unknown; HEX; 14; 0200000002000102015d296f2e00; 
+701; 40553; nextPacketTime; I; 4; 701; 
+701; 40557; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+801; 46253; packetTime; I; 4; 801; 
+801; 46257; packetType; I; 4; 1095; unknown
+801; 46271; unknown; HEX; 14; 02000000020001020158f301db00; 
+801; 46275; nextPacketTime; I; 4; 801; 
+801; 46279; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+901; 51975; packetTime; I; 4; 901; 
+901; 51979; packetType; I; 4; 1095; unknown
+901; 51993; unknown; HEX; 14; 02000000020001020178efd33500; 
+901; 51997; nextPacketTime; I; 4; 901; 
+901; 52001; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+1001; 57697; packetTime; I; 4; 1001; 
+1001; 57701; packetType; I; 4; 1095; unknown
+1001; 57715; unknown; HEX; 14; 020000000200010201daed59ce00; 
+1001; 57719; nextPacketTime; I; 4; 1001; 
+1001; 57723; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+1101; 63419; packetTime; I; 4; 1101; 
+1101; 63423; packetType; I; 4; 1095; unknown
+1101; 63437; unknown; HEX; 14; 020000000200010201dbc287b700; 
+1101; 63441; nextPacketTime; I; 4; 1101; 
+1101; 63445; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 35
+1136; 65436; packetTime; I; 4; 1136; 
+1136; 65440; packetType; I; 4; 1049; create_building
+1136; 65451; unknown; HEX; 11; 0200000003000106010101; 
+1136; 65453; buildingType; H; 2; 1994; 
+1136; 65455; unknown; HEX; 2; 0000; 
+1136; 65459; x; f; 4; 827.8157958984375; 
+1136; 65463; y; f; 4; 503.10394287109375; 
+1136; 65467; z; f; 4; 18.75; 
+1136; 65471; unknown; HEX; 4; db0f49bf; 
+1136; 65475; nextPacketTime; I; 4; 1136; 
+1136; 65479; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 65
+1201; 69180; packetTime; I; 4; 1201; 
+1201; 69184; packetType; I; 4; 1095; unknown
+1201; 69198; unknown; HEX; 14; 020000000200010201e040546000; 
+1201; 69202; nextPacketTime; I; 4; 1201; 
+1201; 69206; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+1301; 74902; packetTime; I; 4; 1301; 
+1301; 74906; packetType; I; 4; 1095; unknown
+1301; 74920; unknown; HEX; 14; 020000000200010201658ae35a00; 
+1301; 74924; nextPacketTime; I; 4; 1301; 
+1301; 74928; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+1401; 80624; packetTime; I; 4; 1401; 
+1401; 80628; packetType; I; 4; 1095; unknown
+1401; 80642; unknown; HEX; 14; 020000000200010201d9670fa100; 
+1401; 80646; nextPacketTime; I; 4; 1401; 
+1401; 80650; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+1501; 86346; packetTime; I; 4; 1501; 
+1501; 86350; packetType; I; 4; 1095; unknown
+1501; 86364; unknown; HEX; 14; 0200000002000102013f37eca400; 
+1501; 86368; nextPacketTime; I; 4; 1501; 
+1501; 86372; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+1601; 92068; packetTime; I; 4; 1601; 
+1601; 92072; packetType; I; 4; 1095; unknown
+1601; 92086; unknown; HEX; 14; 020000000200010201c44f9c2500; 
+1601; 92090; nextPacketTime; I; 4; 1601; 
+1601; 92094; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+1701; 97790; packetTime; I; 4; 1701; 
+1701; 97794; packetType; I; 4; 1095; unknown
+1701; 97808; unknown; HEX; 14; 02000000020001020152b963d900; 
+1701; 97812; nextPacketTime; I; 4; 1701; 
+1701; 97816; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 56
+1757; 101004; packetTime; I; 4; 1757; 
+1757; 101008; packetType; I; 4; 1049; create_building
+1757; 101019; unknown; HEX; 11; 0200000003000106010101; 
+1757; 101021; buildingType; H; 2; 1994; 
+1757; 101023; unknown; HEX; 2; 0000; 
+1757; 101027; x; f; 4; 881.4688720703125; 
+1757; 101031; y; f; 4; 563.9083251953125; 
+1757; 101035; z; f; 4; 18.75; 
+1757; 101039; unknown; HEX; 4; db0f49bf; 
+1757; 101043; nextPacketTime; I; 4; 1757; 
+1757; 101047; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 44
+1801; 103551; packetTime; I; 4; 1801; 
+1801; 103555; packetType; I; 4; 1095; unknown
+1801; 103569; unknown; HEX; 14; 02000000020001020156d3bba000; 
+1801; 103573; nextPacketTime; I; 4; 1801; 
+1801; 103577; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+1901; 109273; packetTime; I; 4; 1901; 
+1901; 109277; packetType; I; 4; 1095; unknown
+1901; 109291; unknown; HEX; 14; 020000000200010201843ca6e600; 
+1901; 109295; nextPacketTime; I; 4; 1901; 
+1901; 109299; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+2001; 114995; packetTime; I; 4; 2001; 
+2001; 114999; packetType; I; 4; 1095; unknown
+2001; 115013; unknown; HEX; 14; 0200000002000102014e5fa71800; 
+2001; 115017; nextPacketTime; I; 4; 2001; 
+2001; 115021; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+2101; 120717; packetTime; I; 4; 2101; 
+2101; 120721; packetType; I; 4; 1095; unknown
+2101; 120735; unknown; HEX; 14; 02000000020001020116fedcdd00; 
+2101; 120739; nextPacketTime; I; 4; 2101; 
+2101; 120743; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+2201; 126439; packetTime; I; 4; 2201; 
+2201; 126443; packetType; I; 4; 1095; unknown
+2201; 126457; unknown; HEX; 14; 020000000200010201eaa1bd6f00; 
+2201; 126461; nextPacketTime; I; 4; 2201; 
+2201; 126465; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+2301; 132161; packetTime; I; 4; 2301; 
+2301; 132165; packetType; I; 4; 1095; unknown
+2301; 132179; unknown; HEX; 14; 020000000200010201e4a4647600; 
+2301; 132183; nextPacketTime; I; 4; 2301; 
+2301; 132187; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 39
+2340; 134406; packetTime; I; 4; 2340; 
+2340; 134410; packetType; I; 4; 1049; create_building
+2340; 134421; unknown; HEX; 11; 0200000003000106010101; 
+2340; 134423; buildingType; H; 2; 1994; 
+2340; 134425; unknown; HEX; 2; 0000; 
+2340; 134429; x; f; 4; 936.6387329101562; 
+2340; 134433; y; f; 4; 496.9786682128906; 
+2340; 134437; z; f; 4; 18.750030517578125; 
+2340; 134441; unknown; HEX; 4; db0f49bf; 
+2340; 134445; nextPacketTime; I; 4; 2340; 
+2340; 134449; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 61
+2401; 137922; packetTime; I; 4; 2401; 
+2401; 137926; packetType; I; 4; 1095; unknown
+2401; 137940; unknown; HEX; 14; 020000000200010201e5ef0ce200; 
+2401; 137944; nextPacketTime; I; 4; 2401; 
+2401; 137948; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+2501; 143644; packetTime; I; 4; 2501; 
+2501; 143648; packetType; I; 4; 1095; unknown
+2501; 143662; unknown; HEX; 14; 020000000200010201d728b2ba00; 
+2501; 143666; nextPacketTime; I; 4; 2501; 
+2501; 143670; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+2601; 149366; packetTime; I; 4; 2601; 
+2601; 149370; packetType; I; 4; 1095; unknown
+2601; 149384; unknown; HEX; 14; 0200000002000102013621aafb00; 
+2601; 149388; nextPacketTime; I; 4; 2601; 
+2601; 149392; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+2701; 155088; packetTime; I; 4; 2701; 
+2701; 155092; packetType; I; 4; 1095; unknown
+2701; 155106; unknown; HEX; 14; 0200000002000102014ae85e3200; 
+2701; 155110; nextPacketTime; I; 4; 2701; 
+2701; 155114; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+2801; 160810; packetTime; I; 4; 2801; 
+2801; 160814; packetType; I; 4; 1095; unknown
+2801; 160828; unknown; HEX; 14; 020000000200010201b5599a6300; 
+2801; 160832; nextPacketTime; I; 4; 2801; 
+2801; 160836; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 30
+2831; 162542; packetTime; I; 4; 2831; 
+2831; 162546; packetType; I; 4; 1049; create_building
+2831; 162557; unknown; HEX; 11; 0200000003000106010101; 
+2831; 162559; buildingType; H; 2; 1996; 
+2831; 162561; unknown; HEX; 2; 0000; 
+2831; 162565; x; f; 4; 985.654541015625; 
+2831; 162569; y; f; 4; 611.353271484375; 
+2831; 162573; z; f; 4; 18.75; 
+2831; 162577; unknown; HEX; 4; e4cb16c0; 
+2831; 162581; nextPacketTime; I; 4; 2831; 
+2831; 162585; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 70
+2901; 166571; packetTime; I; 4; 2901; 
+2901; 166575; packetType; I; 4; 1095; unknown
+2901; 166589; unknown; HEX; 14; 0200000002000102016a98b70800; 
+2901; 166593; nextPacketTime; I; 4; 2901; 
+2901; 166597; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+3001; 172293; packetTime; I; 4; 3001; 
+3001; 172297; packetType; I; 4; 1095; unknown
+3001; 172311; unknown; HEX; 14; 0200000002000102013819f9bd00; 
+3001; 172315; nextPacketTime; I; 4; 3001; 
+3001; 172319; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+3101; 178015; packetTime; I; 4; 3101; 
+3101; 178019; packetType; I; 4; 1095; unknown
+3101; 178033; unknown; HEX; 14; 0200000002000102016322b26400; 
+3101; 178037; nextPacketTime; I; 4; 3101; 
+3101; 178041; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+3201; 183737; packetTime; I; 4; 3201; 
+3201; 183741; packetType; I; 4; 1095; unknown
+3201; 183755; unknown; HEX; 14; 020000000200010201c6fc1b2300; 
+3201; 183759; nextPacketTime; I; 4; 3201; 
+3201; 183763; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+3301; 189459; packetTime; I; 4; 3301; 
+3301; 189463; packetType; I; 4; 1095; unknown
+3301; 189477; unknown; HEX; 14; 020000000200010201170480f200; 
+3301; 189481; nextPacketTime; I; 4; 3301; 
+3301; 189485; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 19
+3319; 190564; packetTime; I; 4; 3319; 
+3319; 190568; packetType; I; 4; 1068; move_order
+3319; 190575; unknown; HEX; 7; 02000000010601; 
+3319; 190579; x; f; 4; 1058.4107666015625; 
+3319; 190583; y; f; 4; 566.7073974609375; 
+3319; 190587; z; f; 4; 18.75; 
+3319; 190591; nextPacketTime; I; 4; 3320; 
+3319; 190595; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 81
+3401; 195208; packetTime; I; 4; 3401; 
+3401; 195212; packetType; I; 4; 1095; unknown
+3401; 195226; unknown; HEX; 14; 0200000002000102018cf2401000; 
+3401; 195230; nextPacketTime; I; 4; 3401; 
+3401; 195234; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 20
+3420; 196370; packetTime; I; 4; 3420; 
+3420; 196374; packetType; I; 4; 1068; move_order
+3420; 196381; unknown; HEX; 7; 02000000010601; 
+3420; 196385; x; f; 4; 1077.4031982421875; 
+3420; 196389; y; f; 4; 589.8775634765625; 
+3420; 196393; z; f; 4; 18.75; 
+3420; 196397; nextPacketTime; I; 4; 3421; 
+3420; 196401; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 44
+3464; 198905; packetTime; I; 4; 3464; 
+3464; 198909; packetType; I; 4; 1068; move_order
+3464; 198916; unknown; HEX; 7; 02000000010601; 
+3464; 198920; x; f; 4; 1081.6837158203125; 
+3464; 198924; y; f; 4; 538.4765625; 
+3464; 198928; z; f; 4; 18.750030517578125; 
+3464; 198932; nextPacketTime; I; 4; 3465; 
+3464; 198936; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 36
+3501; 200984; packetTime; I; 4; 3501; 
+3501; 200988; packetType; I; 4; 1095; unknown
+3501; 201002; unknown; HEX; 14; 0200000002000102010321c24000; 
+3501; 201006; nextPacketTime; I; 4; 3501; 
+3501; 201010; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 27
+3527; 202545; packetTime; I; 4; 3527; 
+3527; 202549; packetType; I; 4; 1068; move_order
+3527; 202556; unknown; HEX; 7; 02000000010601; 
+3527; 202560; x; f; 4; 1100.65673828125; 
+3527; 202564; y; f; 4; 603.249755859375; 
+3527; 202568; z; f; 4; 18.75; 
+3527; 202572; nextPacketTime; I; 4; 3528; 
+3527; 202576; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 73
+3601; 206733; packetTime; I; 4; 3601; 
+3601; 206737; packetType; I; 4; 1095; unknown
+3601; 206751; unknown; HEX; 14; 02000000020001020173a127cf00; 
+3601; 206755; nextPacketTime; I; 4; 3601; 
+3601; 206759; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 12
+3612; 207439; packetTime; I; 4; 3612; 
+3612; 207443; packetType; I; 4; 1068; move_order
+3612; 207450; unknown; HEX; 7; 02000000010601; 
+3612; 207454; x; f; 4; 1100.667724609375; 
+3612; 207458; y; f; 4; 522.099365234375; 
+3612; 207462; z; f; 4; 18.75; 
+3612; 207466; nextPacketTime; I; 4; 3613; 
+3612; 207470; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 88
+3701; 212482; packetTime; I; 4; 3701; 
+3701; 212486; packetType; I; 4; 1095; unknown
+3701; 212500; unknown; HEX; 14; 020000000200010201711d2c3500; 
+3701; 212504; nextPacketTime; I; 4; 3701; 
+3701; 212508; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 6
+3706; 212846; packetTime; I; 4; 3706; 
+3706; 212850; packetType; I; 4; 1068; move_order
+3706; 212857; unknown; HEX; 7; 02000000010601; 
+3706; 212861; x; f; 4; 1133.1949462890625; 
+3706; 212865; y; f; 4; 604.4608154296875; 
+3706; 212869; z; f; 4; 18.75; 
+3706; 212873; nextPacketTime; I; 4; 3707; 
+3706; 212877; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 94
+3801; 218231; packetTime; I; 4; 3801; 
+3801; 218235; packetType; I; 4; 1095; unknown
+3801; 218249; unknown; HEX; 14; 020000000200010201195f2afd00; 
+3801; 218253; nextPacketTime; I; 4; 3801; 
+3801; 218257; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 48
+3848; 220989; packetTime; I; 4; 3848; 
+3848; 220993; packetType; I; 4; 1068; move_order
+3848; 221000; unknown; HEX; 7; 02000000010601; 
+3848; 221004; x; f; 4; 1114.20458984375; 
+3848; 221008; y; f; 4; 506.9040222167969; 
+3848; 221012; z; f; 4; 18.75; 
+3848; 221016; nextPacketTime; I; 4; 3849; 
+3848; 221020; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 52
+3901; 223980; packetTime; I; 4; 3901; 
+3901; 223984; packetType; I; 4; 1095; unknown
+3901; 223998; unknown; HEX; 14; 020000000200010201c752c18700; 
+3901; 224002; nextPacketTime; I; 4; 3901; 
+3901; 224006; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+4001; 229702; packetTime; I; 4; 4001; 
+4001; 229706; packetType; I; 4; 1095; unknown
+4001; 229720; unknown; HEX; 14; 02000000020001020189d0075600; 
+4001; 229724; nextPacketTime; I; 4; 4001; 
+4001; 229728; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 22
+4022; 230978; packetTime; I; 4; 4022; 
+4022; 230982; packetType; I; 4; 1068; move_order
+4022; 230989; unknown; HEX; 7; 02000000010601; 
+4022; 230993; x; f; 4; 1140.5; 
+4022; 230997; y; f; 4; 539.5341796875; 
+4022; 231001; z; f; 4; 18.75; 
+4022; 231005; nextPacketTime; I; 4; 4023; 
+4022; 231009; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 78
+4101; 235451; packetTime; I; 4; 4101; 
+4101; 235455; packetType; I; 4; 1095; unknown
+4101; 235469; unknown; HEX; 14; 020000000200010201f47a721a00; 
+4101; 235473; nextPacketTime; I; 4; 4101; 
+4101; 235477; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 31
+4131; 237240; packetTime; I; 4; 4131; 
+4131; 237244; packetType; I; 4; 1068; move_order
+4131; 237251; unknown; HEX; 7; 02000000010601; 
+4131; 237255; x; f; 4; 1136.5455322265625; 
+4131; 237259; y; f; 4; 479.217529296875; 
+4131; 237263; z; f; 4; 18.75; 
+4131; 237267; nextPacketTime; I; 4; 4132; 
+4131; 237271; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 69
+4201; 241200; packetTime; I; 4; 4201; 
+4201; 241204; packetType; I; 4; 1095; unknown
+4201; 241218; unknown; HEX; 14; 020000000200010201a7367cef00; 
+4201; 241222; nextPacketTime; I; 4; 4201; 
+4201; 241226; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 35
+4235; 243217; packetTime; I; 4; 4235; 
+4235; 243221; packetType; I; 4; 1068; move_order
+4235; 243228; unknown; HEX; 7; 02000000010601; 
+4235; 243232; x; f; 4; 1172.026123046875; 
+4235; 243236; y; f; 4; 501.6689147949219; 
+4235; 243240; z; f; 4; 18.750030517578125; 
+4235; 243244; nextPacketTime; I; 4; 4236; 
+4235; 243248; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 65
+4301; 246949; packetTime; I; 4; 4301; 
+4301; 246953; packetType; I; 4; 1095; unknown
+4301; 246967; unknown; HEX; 14; 02000000020001020178eb69f900; 
+4301; 246971; nextPacketTime; I; 4; 4301; 
+4301; 246975; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 29
+4329; 248624; packetTime; I; 4; 4329; 
+4329; 248628; packetType; I; 4; 1068; move_order
+4329; 248635; unknown; HEX; 7; 02000000010601; 
+4329; 248639; x; f; 4; 1171.5723876953125; 
+4329; 248643; y; f; 4; 452.74993896484375; 
+4329; 248647; z; f; 4; 18.750030517578125; 
+4329; 248651; nextPacketTime; I; 4; 4330; 
+4329; 248655; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 71
+4401; 252698; packetTime; I; 4; 4401; 
+4401; 252702; packetType; I; 4; 1095; unknown
+4401; 252716; unknown; HEX; 14; 0200000002000102016a410c6300; 
+4401; 252720; nextPacketTime; I; 4; 4401; 
+4401; 252724; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 72
+4473; 256824; packetTime; I; 4; 4473; 
+4473; 256828; packetType; I; 4; 1049; create_building
+4473; 256839; unknown; HEX; 11; 0200000003000106010101; 
+4473; 256841; buildingType; H; 2; 1999; 
+4473; 256843; unknown; HEX; 2; 0000; 
+4473; 256847; x; f; 4; 1204.402099609375; 
+4473; 256851; y; f; 4; 444.2294921875; 
+4473; 256855; z; f; 4; 18.750030517578125; 
+4473; 256859; unknown; HEX; 4; e4cb16c0; 
+4473; 256863; nextPacketTime; I; 4; 4473; 
+4473; 256867; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 28
+4501; 258459; packetTime; I; 4; 4501; 
+4501; 258463; packetType; I; 4; 1095; unknown
+4501; 258477; unknown; HEX; 14; 020000000200010201dcb4eec400; 
+4501; 258481; nextPacketTime; I; 4; 4501; 
+4501; 258485; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+4601; 264181; packetTime; I; 4; 4601; 
+4601; 264185; packetType; I; 4; 1095; unknown
+4601; 264199; unknown; HEX; 14; 02000000020001020153d6b52000; 
+4601; 264203; nextPacketTime; I; 4; 4601; 
+4601; 264207; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+4701; 269903; packetTime; I; 4; 4701; 
+4701; 269907; packetType; I; 4; 1095; unknown
+4701; 269921; unknown; HEX; 14; 020000000200010201046b1dab00; 
+4701; 269925; nextPacketTime; I; 4; 4701; 
+4701; 269929; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 28
+4728; 271521; packetTime; I; 4; 4728; 
+4728; 271525; packetType; I; 4; 1068; move_order
+4728; 271532; unknown; HEX; 7; 02000000010601; 
+4728; 271536; x; f; 4; 1179.9105224609375; 
+4728; 271540; y; f; 4; 408.66510009765625; 
+4728; 271544; z; f; 4; 18.750030517578125; 
+4728; 271548; nextPacketTime; I; 4; 4729; 
+4728; 271552; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 72
+4801; 275652; packetTime; I; 4; 4801; 
+4801; 275656; packetType; I; 4; 1095; unknown
+4801; 275670; unknown; HEX; 14; 02000000020001020108c5e81e00; 
+4801; 275674; nextPacketTime; I; 4; 4801; 
+4801; 275678; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 36
+4836; 277726; packetTime; I; 4; 4836; 
+4836; 277730; packetType; I; 4; 1068; move_order
+4836; 277737; unknown; HEX; 7; 02000000010601; 
+4836; 277741; x; f; 4; 1210.1002197265625; 
+4836; 277745; y; f; 4; 405.0931396484375; 
+4836; 277749; z; f; 4; 18.75; 
+4836; 277753; nextPacketTime; I; 4; 4837; 
+4836; 277757; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 64
+4901; 281401; packetTime; I; 4; 4901; 
+4901; 281405; packetType; I; 4; 1095; unknown
+4901; 281419; unknown; HEX; 14; 020000000200010201b62d7c6900; 
+4901; 281423; nextPacketTime; I; 4; 4901; 
+4901; 281427; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 16
+4916; 282335; packetTime; I; 4; 4916; 
+4916; 282339; packetType; I; 4; 1068; move_order
+4916; 282346; unknown; HEX; 7; 02000000010601; 
+4916; 282350; x; f; 4; 1235.2591552734375; 
+4916; 282354; y; f; 4; 455.221923828125; 
+4916; 282358; z; f; 4; 18.75; 
+4916; 282362; nextPacketTime; I; 4; 4917; 
+4916; 282366; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 71
+4987; 286409; packetTime; I; 4; 4987; 
+4987; 286413; packetType; I; 4; 1068; move_order
+4987; 286420; unknown; HEX; 7; 02000000010601; 
+4987; 286424; x; f; 4; 1206.6641845703125; 
+4987; 286428; y; f; 4; 492.7896423339844; 
+4987; 286432; z; f; 4; 18.75; 
+4987; 286436; nextPacketTime; I; 4; 4988; 
+4987; 286440; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 13
+5001; 287177; packetTime; I; 4; 5001; 
+5001; 287181; packetType; I; 4; 1095; unknown
+5001; 287195; unknown; HEX; 14; 02000000020001020118c4b29d00; 
+5001; 287199; nextPacketTime; I; 4; 5001; 
+5001; 287203; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 91
+5091; 292386; packetTime; I; 4; 5091; 
+5091; 292390; packetType; I; 4; 1068; move_order
+5091; 292397; unknown; HEX; 7; 02000000010601; 
+5091; 292401; x; f; 4; 1166.9615478515625; 
+5091; 292405; y; f; 4; 468.2948303222656; 
+5091; 292409; z; f; 4; 18.750030517578125; 
+5091; 292413; nextPacketTime; I; 4; 5092; 
+5091; 292417; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 9
+5101; 292926; packetTime; I; 4; 5101; 
+5101; 292930; packetType; I; 4; 1095; unknown
+5101; 292944; unknown; HEX; 14; 0200000002000102019e60479e00; 
+5101; 292948; nextPacketTime; I; 4; 5101; 
+5101; 292952; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 97
+5197; 298477; packetTime; I; 4; 5197; 
+5197; 298481; packetType; I; 4; 1068; move_order
+5197; 298488; unknown; HEX; 7; 02000000010601; 
+5197; 298492; x; f; 4; 1171.6199951171875; 
+5197; 298496; y; f; 4; 414.0716247558594; 
+5197; 298500; z; f; 4; 18.75; 
+5197; 298504; nextPacketTime; I; 4; 5198; 
+5197; 298508; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 3
+5201; 298675; packetTime; I; 4; 5201; 
+5201; 298679; packetType; I; 4; 1095; unknown
+5201; 298693; unknown; HEX; 14; 020000000200010201add77f2000; 
+5201; 298697; nextPacketTime; I; 4; 5201; 
+5201; 298701; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+5301; 304397; packetTime; I; 4; 5301; 
+5301; 304401; packetType; I; 4; 1095; unknown
+5301; 304415; unknown; HEX; 14; 020000000200010201f20559b200; 
+5301; 304419; nextPacketTime; I; 4; 5301; 
+5301; 304423; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 13
+5313; 305160; packetTime; I; 4; 5313; 
+5313; 305164; packetType; I; 4; 1068; move_order
+5313; 305171; unknown; HEX; 7; 02000000010601; 
+5313; 305175; x; f; 4; 1221.3785400390625; 
+5313; 305179; y; f; 4; 414.43890380859375; 
+5313; 305183; z; f; 4; 18.75; 
+5313; 305187; nextPacketTime; I; 4; 5314; 
+5313; 305191; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 69
+5382; 309120; packetTime; I; 4; 5382; 
+5382; 309124; packetType; I; 4; 1068; move_order
+5382; 309131; unknown; HEX; 7; 02000000010601; 
+5382; 309135; x; f; 4; 1243.1805419921875; 
+5382; 309139; y; f; 4; 458.0826721191406; 
+5382; 309143; z; f; 4; 18.75; 
+5382; 309147; nextPacketTime; I; 4; 5383; 
+5382; 309151; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 18
+5401; 310173; packetTime; I; 4; 5401; 
+5401; 310177; packetType; I; 4; 1095; unknown
+5401; 310191; unknown; HEX; 14; 020000000200010201a2af65ce00; 
+5401; 310195; nextPacketTime; I; 4; 5401; 
+5401; 310199; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 48
+5448; 312931; packetTime; I; 4; 5448; 
+5448; 312935; packetType; I; 4; 1068; move_order
+5448; 312942; unknown; HEX; 7; 02000000010601; 
+5448; 312946; x; f; 4; 1213.29150390625; 
+5448; 312950; y; f; 4; 490.86627197265625; 
+5448; 312954; z; f; 4; 18.750030517578125; 
+5448; 312958; nextPacketTime; I; 4; 5449; 
+5448; 312962; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 52
+5501; 315922; packetTime; I; 4; 5501; 
+5501; 315926; packetType; I; 4; 1095; unknown
+5501; 315940; unknown; HEX; 14; 0200000002000102011063351100; 
+5501; 315944; nextPacketTime; I; 4; 5501; 
+5501; 315948; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 31
+5531; 317711; packetTime; I; 4; 5531; 
+5531; 317715; packetType; I; 4; 1068; move_order
+5531; 317722; unknown; HEX; 7; 02000000010601; 
+5531; 317726; x; f; 4; 1175.124755859375; 
+5531; 317730; y; f; 4; 466.09600830078125; 
+5531; 317734; z; f; 4; 18.75; 
+5531; 317738; nextPacketTime; I; 4; 5532; 
+5531; 317742; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 69
+5601; 321671; packetTime; I; 4; 5601; 
+5601; 321675; packetType; I; 4; 1095; unknown
+5601; 321689; unknown; HEX; 14; 020000000200010201f2b336a700; 
+5601; 321693; nextPacketTime; I; 4; 5601; 
+5601; 321697; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 16
+5616; 322605; packetTime; I; 4; 5616; 
+5616; 322609; packetType; I; 4; 1068; move_order
+5616; 322616; unknown; HEX; 7; 02000000010601; 
+5616; 322620; x; f; 4; 1175.591796875; 
+5616; 322624; y; f; 4; 416.2645568847656; 
+5616; 322628; z; f; 4; 18.75; 
+5616; 322632; nextPacketTime; I; 4; 5617; 
+5616; 322636; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 84
+5701; 327420; packetTime; I; 4; 5701; 
+5701; 327424; packetType; I; 4; 1095; unknown
+5701; 327438; unknown; HEX; 14; 02000000020001020173622a0600; 
+5701; 327442; nextPacketTime; I; 4; 5701; 
+5701; 327446; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 19
+5720; 328525; packetTime; I; 4; 5720; 
+5720; 328529; packetType; I; 4; 1049; create_building
+5720; 328540; unknown; HEX; 11; 0200000003000106010101; 
+5720; 328542; buildingType; H; 2; 1999; 
+5720; 328544; unknown; HEX; 2; 0000; 
+5720; 328548; x; f; 4; 1140.25244140625; 
+5720; 328552; y; f; 4; 351.80487060546875; 
+5720; 328556; z; f; 4; 18.750030517578125; 
+5720; 328560; unknown; HEX; 4; e4cb16c0; 
+5720; 328564; nextPacketTime; I; 4; 5720; 
+5720; 328568; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 81
+5801; 333181; packetTime; I; 4; 5801; 
+5801; 333185; packetType; I; 4; 1095; unknown
+5801; 333199; unknown; HEX; 14; 020000000200010201c2c4037600; 
+5801; 333203; nextPacketTime; I; 4; 5801; 
+5801; 333207; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+5901; 338903; packetTime; I; 4; 5901; 
+5901; 338907; packetType; I; 4; 1095; unknown
+5901; 338921; unknown; HEX; 14; 020000000200010201cae6ce4400; 
+5901; 338925; nextPacketTime; I; 4; 5901; 
+5901; 338929; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 67
+5967; 342744; packetTime; I; 4; 5967; 
+5967; 342748; packetType; I; 4; 1068; move_order
+5967; 342755; unknown; HEX; 7; 02000000010601; 
+5967; 342759; x; f; 4; 1115.7027587890625; 
+5967; 342763; y; f; 4; 379.3682861328125; 
+5967; 342767; z; f; 4; 18.75; 
+5967; 342771; nextPacketTime; I; 4; 5968; 
+5967; 342775; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 33
+6001; 344652; packetTime; I; 4; 6001; 
+6001; 344656; packetType; I; 4; 1095; unknown
+6001; 344670; unknown; HEX; 14; 0200000002000102016602d79800; 
+6001; 344674; nextPacketTime; I; 4; 6001; 
+6001; 344678; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 67
+6067; 348493; packetTime; I; 4; 6067; 
+6067; 348497; packetType; I; 4; 1068; move_order
+6067; 348504; unknown; HEX; 7; 02000000010601; 
+6067; 348508; x; f; 4; 1109.6578369140625; 
+6067; 348512; y; f; 4; 357.1688232421875; 
+6067; 348516; z; f; 4; 18.75; 
+6067; 348520; nextPacketTime; I; 4; 6068; 
+6067; 348524; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 33
+6101; 350401; packetTime; I; 4; 6101; 
+6101; 350405; packetType; I; 4; 1095; unknown
+6101; 350419; unknown; HEX; 14; 020000000200010201ba9ed9f200; 
+6101; 350423; nextPacketTime; I; 4; 6101; 
+6101; 350427; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 99
+6199; 356066; packetTime; I; 4; 6199; 
+6199; 356070; packetType; I; 4; 1068; move_order
+6199; 356077; unknown; HEX; 7; 02000000010601; 
+6199; 356081; x; f; 4; 1110.8883056640625; 
+6199; 356085; y; f; 4; 320.04876708984375; 
+6199; 356089; z; f; 4; 18.75; 
+6199; 356093; nextPacketTime; I; 4; 6200; 
+6199; 356097; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 1
+6201; 356150; packetTime; I; 4; 6201; 
+6201; 356154; packetType; I; 4; 1095; unknown
+6201; 356168; unknown; HEX; 14; 020000000200010201cd13826b00; 
+6201; 356172; nextPacketTime; I; 4; 6201; 
+6201; 356176; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 52
+6252; 359136; packetTime; I; 4; 6252; 
+6252; 359140; packetType; I; 4; 1068; move_order
+6252; 359147; unknown; HEX; 7; 02000000010601; 
+6252; 359151; x; f; 4; 1150.348876953125; 
+6252; 359155; y; f; 4; 315.34521484375; 
+6252; 359159; z; f; 4; 18.75; 
+6252; 359163; nextPacketTime; I; 4; 6253; 
+6252; 359167; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 45
+6297; 361728; packetTime; I; 4; 6297; 
+6297; 361732; packetType; I; 4; 1068; move_order
+6297; 361739; unknown; HEX; 7; 02000000010601; 
+6297; 361743; x; f; 4; 1171.896728515625; 
+6297; 361747; y; f; 4; 362.6346435546875; 
+6297; 361751; z; f; 4; 18.75; 
+6297; 361755; nextPacketTime; I; 4; 6298; 
+6297; 361759; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 3
+6301; 361926; packetTime; I; 4; 6301; 
+6301; 361930; packetType; I; 4; 1095; unknown
+6301; 361944; unknown; HEX; 14; 0200000002000102017b863c4a00; 
+6301; 361948; nextPacketTime; I; 4; 6301; 
+6301; 361952; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 60
+6360; 365368; packetTime; I; 4; 6360; 
+6360; 365372; packetType; I; 4; 1068; move_order
+6360; 365379; unknown; HEX; 7; 02000000010601; 
+6360; 365383; x; f; 4; 1148.9449462890625; 
+6360; 365387; y; f; 4; 391.63104248046875; 
+6360; 365391; z; f; 4; 18.750030517578125; 
+6360; 365395; nextPacketTime; I; 4; 6361; 
+6360; 365399; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 40
+6401; 367675; packetTime; I; 4; 6401; 
+6401; 367679; packetType; I; 4; 1095; unknown
+6401; 367693; unknown; HEX; 14; 0200000002000102018ae2769600; 
+6401; 367697; nextPacketTime; I; 4; 6401; 
+6401; 367701; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 29
+6429; 369350; packetTime; I; 4; 6429; 
+6429; 369354; packetType; I; 4; 1068; move_order
+6429; 369361; unknown; HEX; 7; 02000000010601; 
+6429; 369365; x; f; 4; 1114.32421875; 
+6429; 369369; y; f; 4; 368.2062072753906; 
+6429; 369373; z; f; 4; 18.75; 
+6429; 369377; nextPacketTime; I; 4; 6430; 
+6429; 369381; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 71
+6501; 373424; packetTime; I; 4; 6501; 
+6501; 373428; packetType; I; 4; 1095; unknown
+6501; 373442; unknown; HEX; 14; 02000000020001020128d61d9400; 
+6501; 373446; nextPacketTime; I; 4; 6501; 
+6501; 373450; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 26
+6526; 374928; packetTime; I; 4; 6526; 
+6526; 374932; packetType; I; 4; 1068; move_order
+6526; 374939; unknown; HEX; 7; 02000000010601; 
+6526; 374943; x; f; 4; 1113.5240478515625; 
+6526; 374947; y; f; 4; 319.5191345214844; 
+6526; 374951; z; f; 4; 18.75; 
+6526; 374955; nextPacketTime; I; 4; 6527; 
+6526; 374959; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 74
+6600; 379173; packetTime; I; 4; 6600; 
+6600; 379177; packetType; I; 4; 1068; move_order
+6600; 379184; unknown; HEX; 7; 02000000010601; 
+6600; 379188; x; f; 4; 1155.16357421875; 
+6600; 379192; y; f; 4; 313.2953796386719; 
+6600; 379196; z; f; 4; 18.75; 
+6600; 379200; nextPacketTime; I; 4; 6601; 
+6600; 379204; nextPacketType; I; 4; 1095; 
+6601; 379200; packetTime; I; 4; 6601; 
+6601; 379204; packetType; I; 4; 1095; unknown
+6601; 379218; unknown; HEX; 14; 020000000200010201e0de92d200; 
+6601; 379222; nextPacketTime; I; 4; 6601; 
+6601; 379226; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 52
+6652; 382186; packetTime; I; 4; 6652; 
+6652; 382190; packetType; I; 4; 1068; move_order
+6652; 382197; unknown; HEX; 7; 02000000010601; 
+6652; 382201; x; f; 4; 1167.3843994140625; 
+6652; 382205; y; f; 4; 358.6735534667969; 
+6652; 382209; z; f; 4; 18.75; 
+6652; 382213; nextPacketTime; I; 4; 6653; 
+6652; 382217; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 48
+6701; 384949; packetTime; I; 4; 6701; 
+6701; 384953; packetType; I; 4; 1095; unknown
+6701; 384967; unknown; HEX; 14; 020000000200010201666ba7b200; 
+6701; 384971; nextPacketTime; I; 4; 6701; 
+6701; 384975; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 2
+6702; 385085; packetTime; I; 4; 6702; 
+6702; 385089; packetType; I; 4; 1068; move_order
+6702; 385096; unknown; HEX; 7; 02000000010601; 
+6702; 385100; x; f; 4; 1174.520751953125; 
+6702; 385104; y; f; 4; 412.6291809082031; 
+6702; 385108; z; f; 4; 18.75; 
+6702; 385112; nextPacketTime; I; 4; 6703; 
+6702; 385116; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 57
+6759; 388361; packetTime; I; 4; 6759; 
+6759; 388365; packetType; I; 4; 1068; move_order
+6759; 388372; unknown; HEX; 7; 02000000010601; 
+6759; 388376; x; f; 4; 1177.7589111328125; 
+6759; 388380; y; f; 4; 456.8465270996094; 
+6759; 388384; z; f; 4; 18.75; 
+6759; 388388; nextPacketTime; I; 4; 6760; 
+6759; 388392; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 41
+6801; 390725; packetTime; I; 4; 6801; 
+6801; 390729; packetType; I; 4; 1095; unknown
+6801; 390743; unknown; HEX; 14; 02000000020001020166efb02000; 
+6801; 390747; nextPacketTime; I; 4; 6801; 
+6801; 390751; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 13
+6813; 391488; packetTime; I; 4; 6813; 
+6813; 391492; packetType; I; 4; 1068; move_order
+6813; 391499; unknown; HEX; 7; 02000000010601; 
+6813; 391503; x; f; 4; 1201.8739013671875; 
+6813; 391507; y; f; 4; 483.1646423339844; 
+6813; 391511; z; f; 4; 18.750030517578125; 
+6813; 391515; nextPacketTime; I; 4; 6814; 
+6813; 391519; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 39
+6852; 393738; packetTime; I; 4; 6852; 
+6852; 393742; packetType; I; 4; 1068; move_order
+6852; 393749; unknown; HEX; 7; 02000000010601; 
+6852; 393753; x; f; 4; 1234.98583984375; 
+6852; 393757; y; f; 4; 463.9742431640625; 
+6852; 393761; z; f; 4; 18.750030517578125; 
+6852; 393765; nextPacketTime; I; 4; 6853; 
+6852; 393769; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 46
+6898; 396387; packetTime; I; 4; 6898; 
+6898; 396391; packetType; I; 4; 1068; move_order
+6898; 396398; unknown; HEX; 7; 02000000010601; 
+6898; 396402; x; f; 4; 1216.192138671875; 
+6898; 396406; y; f; 4; 412.9944152832031; 
+6898; 396410; z; f; 4; 18.75; 
+6898; 396414; nextPacketTime; I; 4; 6899; 
+6898; 396418; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 2
+6901; 396528; packetTime; I; 4; 6901; 
+6901; 396532; packetType; I; 4; 1095; unknown
+6901; 396546; unknown; HEX; 14; 020000000200010201b0ea63b400; 
+6901; 396550; nextPacketTime; I; 4; 6901; 
+6901; 396554; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+7001; 402250; packetTime; I; 4; 7001; 
+7001; 402254; packetType; I; 4; 1095; unknown
+7001; 402268; unknown; HEX; 14; 020000000200010201c517c17d00; 
+7001; 402272; nextPacketTime; I; 4; 7001; 
+7001; 402276; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 57
+7057; 405521; packetTime; I; 4; 7057; 
+7057; 405525; packetType; I; 4; 1068; move_order
+7057; 405532; unknown; HEX; 7; 02000000010601; 
+7057; 405536; x; f; 4; 1178.870849609375; 
+7057; 405540; y; f; 4; 411.89923095703125; 
+7057; 405544; z; f; 4; 18.750030517578125; 
+7057; 405548; nextPacketTime; I; 4; 7058; 
+7057; 405552; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 43
+7101; 407999; packetTime; I; 4; 7101; 
+7101; 408003; packetType; I; 4; 1095; unknown
+7101; 408017; unknown; HEX; 14; 020000000200010201bb40d94300; 
+7101; 408021; nextPacketTime; I; 4; 7101; 
+7101; 408025; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 32
+7132; 409845; packetTime; I; 4; 7132; 
+7132; 409849; packetType; I; 4; 1068; move_order
+7132; 409856; unknown; HEX; 7; 02000000010601; 
+7132; 409860; x; f; 4; 1169.398193359375; 
+7132; 409864; y; f; 4; 463.97430419921875; 
+7132; 409868; z; f; 4; 18.75; 
+7132; 409872; nextPacketTime; I; 4; 7133; 
+7132; 409876; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 68
+7201; 413748; packetTime; I; 4; 7201; 
+7201; 413752; packetType; I; 4; 1095; unknown
+7201; 413766; unknown; HEX; 14; 0200000002000102013b0bfde500; 
+7201; 413770; nextPacketTime; I; 4; 7201; 
+7201; 413774; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 5
+7206; 414055; packetTime; I; 4; 7206; 
+7206; 414059; packetType; I; 4; 1049; create_building
+7206; 414070; unknown; HEX; 11; 0200000003000106010101; 
+7206; 414072; buildingType; H; 2; 1996; 
+7206; 414074; unknown; HEX; 2; 0000; 
+7206; 414078; x; f; 4; 1163.6678466796875; 
+7206; 414082; y; f; 4; 557.0765380859375; 
+7206; 414086; z; f; 4; 18.75; 
+7206; 414090; unknown; HEX; 4; e4cb16c0; 
+7206; 414094; nextPacketTime; I; 4; 7206; 
+7206; 414098; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 95
+7301; 419509; packetTime; I; 4; 7301; 
+7301; 419513; packetType; I; 4; 1095; unknown
+7301; 419527; unknown; HEX; 14; 0200000002000102017f48b17600; 
+7301; 419531; nextPacketTime; I; 4; 7301; 
+7301; 419535; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+7401; 425231; packetTime; I; 4; 7401; 
+7401; 425235; packetType; I; 4; 1095; unknown
+7401; 425249; unknown; HEX; 14; 020000000200010201699fbff800; 
+7401; 425253; nextPacketTime; I; 4; 7401; 
+7401; 425257; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+7501; 430953; packetTime; I; 4; 7501; 
+7501; 430957; packetType; I; 4; 1095; unknown
+7501; 430971; unknown; HEX; 14; 0200000002000102018d0dd39c00; 
+7501; 430975; nextPacketTime; I; 4; 7501; 
+7501; 430979; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+7601; 436675; packetTime; I; 4; 7601; 
+7601; 436679; packetType; I; 4; 1095; unknown
+7601; 436693; unknown; HEX; 14; 0200000002000102013783e5ec00; 
+7601; 436697; nextPacketTime; I; 4; 7601; 
+7601; 436701; nextPacketType; I; 4; 1092; 
+&gt; repetitions of 1092: 100
+7701; 442397; packetTime; I; 4; 7701; 
+7701; 442401; packetType; I; 4; 1095; unknown
+7701; 442415; unknown; HEX; 14; 0200000002000102014818075200; 
+7701; 442419; nextPacketTime; I; 4; 7701; 
+7701; 442423; nextPacketType; I; 4; 1092; 
 &gt; Made it to
-3607720 of 3607824 (100.00%)
-</code></pre></div></div>
+3607720 of 3607824 (100.00%)</code></pre></figure>
+
+</details>
 
 <p>We can create more replay files where we do additional things in the game and see which new packetTypes appear when parsing the replay files.</p>
 
@@ -1023,7 +1747,7 @@ format1068 = [
 
 <ul>
   <li>find the rest of the building type ids and unit type ids</li>
-  <li>try to understand the remaining 6 packet types. Putting the values in a table and checking how the values change across packets and replay files could help.</li>
+  <li>try to understand the remaining packet types. Putting the values in a table and checking how the values change across packets and replay files could help.</li>
   <li>the 1092 packet is likely the camera position or units entering or leaving the screen. They contain coordinates, so this can probably easily be verified.</li>
   <li>there are more actions in the game like triggering a super weapon that likely have their own packet types</li>
   <li>there are probably some system diagnostics/time keeping packets</li>
