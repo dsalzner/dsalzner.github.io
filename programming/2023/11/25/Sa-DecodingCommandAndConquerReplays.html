@@ -105,7 +105,10 @@
           <li><a href="#decode-move-order" id="markdown-toc-decode-move-order">Decode Move Order</a></li>
         </ul>
       </li>
-      <li><a href="#complete-decode" id="markdown-toc-complete-decode">Complete Decode</a></li>
+      <li><a href="#complete-decode" id="markdown-toc-complete-decode">Complete Decode</a>        <ul>
+          <li><a href="#implementation-in-opensage" id="markdown-toc-implementation-in-opensage">Implementation in OpenSAGE</a></li>
+        </ul>
+      </li>
       <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
     </ul>
   </li>
@@ -117,9 +120,11 @@
 
 <p>C&amp;C Generals ZH came out in 2003 and I still play it from time to time. I’ve recorded videos of my game play and exported replay files.  After playing around with the replay files and doing some statistics on them I could extract most of the information I was interested in.</p>
 
+<p><strong>Note</strong> Also have a look at the <a href="https://github.com/OpenSAGE/OpenSAGE/blob/master/src/OpenSage.Game/Data/Rep/ReplayChunk.cs">Replay Parsing Code in OpenSAGE</a> an open-source re-implementation of the game engine behind many Command &amp; Conquer games. The parser in OpenSAGE can parse much more than I’ve found here.</p>
+
 <p style="font-size: 60%;" align="right">Why</p>
 
-<p>I’ve also written some scripts to automatically take screenshots surrounding the mouse cursor and the use image similarity hashes to compare them against known images.</p>
+<p>I’ve written some scripts to automatically take screenshots surrounding the mouse cursor and the use image similarity hashes to compare them against known images.</p>
 
 <p>Doing this I can extract build orders, but some clicks are missed and it’s difficult to also get positions of the objects on the game map. It becomes particularly challenging when moving around in the game as the viewing field also changes during game play.</p>
 
@@ -535,66 +540,92 @@ videotime_diff = 138s - 69s = 31s
 
 <p>By doing this I’ve found additional packetTypes:</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>formats = {
-    "1097" : (format1097, "unknown"),
-    "1092" : (format1092, "unknown"),
-    "1095" : (format1095, "unknown"),
-    "1003" : (format1003, "unknown"),
-    "1001" : (format1001, "unknown"),
-    "1049" : (format1049_createBuilding, "create_building"),
-    "1068" : (format1068_moveOrder, "move_order"),
-    "1047" : (format1047_createUnit, "create_unit"),
-}
-</code></pre></div></div>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">formats</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">"1097"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1097</span><span class="p">,</span> <span class="s">"unknown"</span><span class="p">),</span>
+    <span class="s">"1092"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1092</span><span class="p">,</span> <span class="s">"camera_position"</span><span class="p">),</span>
+    <span class="s">"1095"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1095</span><span class="p">,</span> <span class="s">"repeating"</span><span class="p">),</span>
+    <span class="s">"1003"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1003</span><span class="p">,</span> <span class="s">"related_to_select?"</span><span class="p">),</span>
+    <span class="s">"1001"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1001</span><span class="p">,</span> <span class="s">"select_unit"</span><span class="p">),</span>
+    <span class="s">"1049"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1049</span><span class="p">,</span> <span class="s">"create_building"</span><span class="p">),</span>
+    <span class="s">"1068"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1068</span><span class="p">,</span> <span class="s">"move_order"</span><span class="p">),</span>
+    <span class="s">"1047"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1047</span><span class="p">,</span> <span class="s">"create_unit"</span><span class="p">),</span>
+    <span class="s">"1043"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1043</span><span class="p">,</span> <span class="s">"set_waypoint?"</span><span class="p">),</span>
+    <span class="s">"1066"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1066</span><span class="p">,</span> <span class="s">"unit_enter_structure"</span><span class="p">),</span>
+    <span class="s">"1054"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1054</span><span class="p">,</span> <span class="s">"all_unit_exit_structure"</span><span class="p">),</span>
+    <span class="s">"1060"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1060</span><span class="p">,</span> <span class="s">"attack_order"</span><span class="p">),</span>
+    <span class="s">"1002"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1002</span><span class="p">,</span> <span class="s">"multi_unit_enter?"</span><span class="p">),</span>
+    <span class="s">"1058"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1058</span><span class="p">,</span> <span class="s">"?"</span><span class="p">),</span>
+    <span class="s">"1051"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1051</span><span class="p">,</span> <span class="s">"stop_build"</span><span class="p">),</span>
+    <span class="s">"1052"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1052</span><span class="p">,</span> <span class="s">"sell_building"</span><span class="p">),</span>
+    <span class="s">"1044"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1044</span><span class="p">,</span> <span class="s">"use_experience_points"</span><span class="p">),</span>
+    <span class="s">"1045"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1045</span><span class="p">,</span> <span class="s">"building_upgrade"</span><span class="p">),</span>
+    <span class="s">"1078"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1078</span><span class="p">,</span> <span class="s">"building_feature"</span><span class="p">),</span>
+    <span class="s">"1067"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1067</span><span class="p">,</span> <span class="s">"gather_supplies"</span><span class="p">),</span>
+    <span class="s">"1065"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1065</span><span class="p">,</span> <span class="s">"continue_building"</span><span class="p">),</span>
+    <span class="s">"1053"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1065</span><span class="p">,</span> <span class="s">"single_unit_exit_structure?"</span><span class="p">),</span>
+    <span class="s">"1069"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1069</span><span class="p">,</span> <span class="s">"attack_move"</span><span class="p">),</span>
+    <span class="s">"1074"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1074</span><span class="p">,</span> <span class="s">"unit_stop"</span><span class="p">),</span>
+    <span class="s">"1038"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1038</span><span class="p">,</span> <span class="s">"vehicle_attack"</span><span class="p">),</span>
+    <span class="s">"1042"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1042</span><span class="p">,</span> <span class="s">"capture_building"</span><span class="p">),</span>
+    <span class="s">"1062"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1062</span><span class="p">,</span> <span class="s">"vehicle_to_repair?"</span><span class="p">),</span>
+    <span class="s">"1061"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1061</span><span class="p">,</span> <span class="s">"attack_nothing"</span><span class="p">),</span>
+    <span class="s">"1072"</span> <span class="p">:</span> <span class="p">(</span><span class="n">format1072</span><span class="p">,</span> <span class="s">"guard"</span><span class="p">),</span>
+<span class="p">}</span></code></pre></figure>
 
 <p>The “buildingType” field in “create_building” corresponds to</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>buildingTypeMap = defaultdict(lambda: "unknown", {
-  # China Tank General
-  "1994" : "Nuclear Reactor",
-  "1996" : "Barracks",
-  "1999" : "Bunker",
-  "2001" : "Gattling Gun",
-  "1995" : "Supply Center",
-  "1998" : "War Factory",
-  "2002" : "Internet Center",
-  "2000" : "Propaghanda Center",
-  "2003" : "Command Center",
-  "1997" : "Air Field",
-  "1992" : "Nuclear Missile",
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">buildingTypeMap</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s">"unknown"</span><span class="p">,</span> <span class="p">{</span>
+  <span class="c1"># China Tank General
+</span>  <span class="s">"1994"</span> <span class="p">:</span> <span class="s">"Nuclear Reactor"</span><span class="p">,</span>
+  <span class="s">"1996"</span> <span class="p">:</span> <span class="s">"Barracks"</span><span class="p">,</span>
+  <span class="s">"1999"</span> <span class="p">:</span> <span class="s">"Bunker"</span><span class="p">,</span>
+  <span class="s">"2001"</span> <span class="p">:</span> <span class="s">"Gattling Gun"</span><span class="p">,</span>
+  <span class="s">"1995"</span> <span class="p">:</span> <span class="s">"Supply Center"</span><span class="p">,</span>
+  <span class="s">"1998"</span> <span class="p">:</span> <span class="s">"War Factory"</span><span class="p">,</span>
+  <span class="s">"2002"</span> <span class="p">:</span> <span class="s">"Internet Center"</span><span class="p">,</span>
+  <span class="s">"2000"</span> <span class="p">:</span> <span class="s">"Propaghanda Center"</span><span class="p">,</span>
+  <span class="s">"2003"</span> <span class="p">:</span> <span class="s">"Command Center"</span><span class="p">,</span>
+  <span class="s">"1997"</span> <span class="p">:</span> <span class="s">"Air Field"</span><span class="p">,</span>
+  <span class="s">"1992"</span> <span class="p">:</span> <span class="s">"Nuclear Missile"</span><span class="p">,</span>
   
-  # Usa Laser General
-  "1562" : "Laser Turret",
-  "1550" : "Cold Fusion Reactor",
-  "1556" : "Barracks",
-  "1558" : "Supply Center",
-  "1557" : "Fire Base",
-  "1549" : "War Factory",
-  "1553" : "Air Field",
-  "1552" : "Strategy Center",
-  "1551" : "Particle Canon",
-  "1555" : "Supply Drop Zone", 
+  <span class="c1"># Usa Laser General
+</span>  <span class="s">"1562"</span> <span class="p">:</span> <span class="s">"Laser Turret"</span><span class="p">,</span>
+  <span class="s">"1550"</span> <span class="p">:</span> <span class="s">"Cold Fusion Reactor"</span><span class="p">,</span>
+  <span class="s">"1556"</span> <span class="p">:</span> <span class="s">"Barracks"</span><span class="p">,</span>
+  <span class="s">"1558"</span> <span class="p">:</span> <span class="s">"Supply Center"</span><span class="p">,</span>
+  <span class="s">"1557"</span> <span class="p">:</span> <span class="s">"Fire Base"</span><span class="p">,</span>
+  <span class="s">"1549"</span> <span class="p">:</span> <span class="s">"War Factory"</span><span class="p">,</span>
+  <span class="s">"1553"</span> <span class="p">:</span> <span class="s">"Air Field"</span><span class="p">,</span>
+  <span class="s">"1552"</span> <span class="p">:</span> <span class="s">"Strategy Center"</span><span class="p">,</span>
+  <span class="s">"1551"</span> <span class="p">:</span> <span class="s">"Particle Canon"</span><span class="p">,</span>
+  <span class="s">"1555"</span> <span class="p">:</span> <span class="s">"Supply Drop Zone"</span><span class="p">,</span> 
   
-  # Gla
-  "1261" : "Gla Barracks"
-})
-</code></pre></div></div>
+  <span class="c1"># Gla
+</span>  <span class="s">"1261"</span> <span class="p">:</span> <span class="s">"Gla Barracks"</span><span class="p">,</span>
+  <span class="s">"1256"</span> <span class="p">:</span> <span class="s">"Gla Supply Stash"</span>
+<span class="p">})</span></code></pre></figure>
 
 <p>The “unitType” field in “create_unit” corresponds to</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unitTypeMap = defaultdict(lambda: "unknown", {
-  "183" : "China Tank Red Guard",
-  "251" : "Usa Laser General Ranger",
-  "197" : "China Construction Dozer",
-  "185" : "China Missile Launcher",
-  "125" : "Gla Rpg Trooper",
-  "123" : "Gla Rebel",
-  "136" : "Gla Worker",
-  "127" : "Gla Terrorist",
-})
-</code></pre></div></div>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">unitTypeMap</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="s">"unknown"</span><span class="p">,</span> <span class="p">{</span>
+  <span class="s">"183"</span> <span class="p">:</span> <span class="s">"China Tank Red Guard"</span><span class="p">,</span>
+  <span class="s">"251"</span> <span class="p">:</span> <span class="s">"Usa Laser General Ranger"</span><span class="p">,</span>
+  <span class="s">"197"</span> <span class="p">:</span> <span class="s">"China Construction Dozer"</span><span class="p">,</span>
+  <span class="s">"185"</span> <span class="p">:</span> <span class="s">"China Tank Hunter"</span><span class="p">,</span>
+  <span class="s">"125"</span> <span class="p">:</span> <span class="s">"Gla Rpg Trooper"</span><span class="p">,</span>
+  <span class="s">"123"</span> <span class="p">:</span> <span class="s">"Gla Rebel"</span><span class="p">,</span>
+  <span class="s">"136"</span> <span class="p">:</span> <span class="s">"Gla Worker"</span><span class="p">,</span>
+  <span class="s">"127"</span> <span class="p">:</span> <span class="s">"Gla Terrorist"</span><span class="p">,</span>
+  <span class="s">"196"</span> <span class="p">:</span> <span class="s">"Supply Truck"</span><span class="p">,</span>
+  <span class="s">"188"</span> <span class="p">:</span> <span class="s">"Battlemaster Tank"</span><span class="p">,</span>
+  <span class="s">"194"</span> <span class="p">:</span> <span class="s">"Troop Crawler"</span><span class="p">,</span>
+  <span class="s">"195"</span> <span class="p">:</span> <span class="s">"Gattling Tank"</span><span class="p">,</span>
+  <span class="s">"193"</span> <span class="p">:</span> <span class="s">"Dragon Tank"</span><span class="p">,</span>
+  <span class="s">"199"</span> <span class="p">:</span> <span class="s">"Listening Outpost"</span><span class="p">,</span>
+  
+<span class="p">})</span></code></pre></figure>
 
-<p>The formats are:</p>
+<p>The complete list of formats is:</p>
 
 <style>
 .card {
@@ -610,177 +641,430 @@ videotime_diff = 138s - 69s = 31s
 }
 </style>
 
-<div class="clearfix">
-  <div class="card" style="height: 32em;">
-    <pre>
-formatHeader = [
-  ("game", "c", 6),   # GENREP
+<details>
+<summary>
+Show full list
 
-  ("unknown", "HEX", 7),
 
-  ("numTimecodes", "h", 2),
-  ("name", "c", 0),             # Last Replay
-  ("buildVersion", "c", 0),     # Version 1.7
-  ("buildDate", "c", 0),
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">formatHeader</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"game"</span><span class="p">,</span> <span class="s">"c"</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span>   <span class="c1"># GENREP
+</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
 
-  ("unknown", "HEX", 2),
+  <span class="p">(</span><span class="s">"numTimecodes"</span><span class="p">,</span> <span class="s">"h"</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"name"</span><span class="p">,</span> <span class="s">"c"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>             <span class="c1"># Last Replay
+</span>  <span class="p">(</span><span class="s">"buildVersion"</span><span class="p">,</span> <span class="s">"c"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>     <span class="c1"># Version 1.7
+</span>  <span class="p">(</span><span class="s">"buildDate"</span><span class="p">,</span> <span class="s">"c"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 
-  ("version_major", "B", 1),
-  ("unknown_0", "B", 1),
-  ("version_minor", "B", 1),
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
 
-  ("unknown", "HEX", 8),
-  ("configuration", "c", 0),
-  ("unknown", "HEX", 8),
-  ("is_30", "B", 1),
-  ("unknown", "HEX", 3),
+  <span class="p">(</span><span class="s">"version_major"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown_0"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"version_minor"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
 
-  ("nextPacketTime", "I", 4),
-  ("nextPacketType", "I", 4), # e.g. 1092 (see below)
-]
-    </pre> 
-  </div>
-  <div class="card">
-    <pre>
-format1097 = [
-  ("packetTime", "I", 4),
-  ("packetType", "I", 4),
-    
-  ("unknown", "HEX", 14),
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
 
-  ("nextPacketTime", "I", 4), # 1097
-  ("nextPacketType", "I", 4),
-]
-    </pre> 
-  </div>
-  <div class="card">
-    <pre>
-format1092 = [
-  ("packetTime", "I", 4),
-  ("packetType", "I", 4),
+  <span class="p">(</span><span class="s">"configuration"</span><span class="p">,</span> <span class="s">"c"</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
 
-  ("unknown", "HEX", 49),
-    
-  ("nextPacketTime", "I", 4), 
-  ("nextPacketType", "I", 4), # 1095 or 1092
-]
-    </pre>
-  </div>
-  <div class="card">
-    <pre>
-format1095 = [
-  ("packetTime", "I", 4),
-  ("packetType", "I", 4),
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
 
-  ("unknown", "HEX", 14),
-
-  ("nextPacketTime", "I", 4),
-  ("nextPacketType", "I", 4), # 1097
-]
-    </pre>
-  </div>
-  <div class="card">
-    <pre>
-format1097 = [
-  ("packetTime", "I", 4),
-  ("packetType", "I", 4),
-
-  ("unknown", "HEX", 14),
-
-  ("nextPacketTime", "I", 4),
-  ("nextPacketType", "I", 4), # 1092
-]
-    </pre>
-  </div>
-  <div class="card">
-    <pre>
-format1003 = [
-  ("packetTime", "I", 4),
-  ("packetType", "I", 4),
-
-  ("unknown", "HEX", 8),
-
-  ("nextPacketTime", "I", 4),
-  ("nextPacketType", "I", 4),
-]
-    </pre>
-  </div>
-  <div class="card">
-    <pre>
-format1001 = [
-  ("packetTime", "I", 4),
-  ("packetType", "I", 4),
-
-  ("unknown", "HEX", 14),
-    
-  ("nextPacketTime", "I", 4),
-  ("nextPacketType", "I", 4),
-]
-    </pre>
-  </div>
-  <div class="card" style="height: 24em;">
-    <pre>
-format1047_createUnit = [
-  ("packetTime", "I", 4),
-  ("packetType", "I", 4), # 1047
-    
-  ("unknown", "HEX", 7),
-
-  ("unitType", "B", 1),
-  ("buildingIdUnitWasCreated", "B", 1),
-
-  ("unknown", "HEX", 2),
-
-  ("incrementingUnitNumber", "B", 1),
+  <span class="p">(</span><span class="s">"is_30"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
   
-  ("unknown", "HEX", 3),
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
 
-  ("nextPacketTime", "I", 4),
-  ("nextPackageType", "I", 4), # 1092
-]
-    </pre>
-  </div>
-  <div class="card" style="height: 24em;">
-    <pre>
-format1049_createBuilding = [
-  ("packetTime", "I", 4),
-  ("packetType", "I", 4), # 1049
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># e.g. 1092 (see below)
+</span><span class="p">]</span>
 
-  ("unknown", "HEX", 11),
+<span class="n">format1097</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  </code></pre></figure>
+
+</summary>
+
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python">  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1097
+</span>  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1092</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"is_2"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"is_4"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"type1092_x"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"type1092_y"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"type1092_z"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">24</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> 
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1095 or 1092
+</span><span class="p">]</span>
+
+<span class="n">format1095</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1097
+</span><span class="p">]</span>
+
+<span class="n">format1097</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">14</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1092
+</span><span class="p">]</span>
+
+<span class="n">format1003</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1001</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unitCount"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"is_1"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"unitId"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+    
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1047</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1047
+</span>    
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unitType"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"buildingIdUnitWasCreated"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unitNoFromSameBuilding"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPackageType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1092
+</span><span class="p">]</span>
+
+<span class="n">format1049</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1049
+</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
  
-  ("buildingType", "H", 2),
+  <span class="p">(</span><span class="s">"buildingType"</span><span class="p">,</span> <span class="s">"H"</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
   
-  ("unknown", "HEX", 2),
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
     
-  ("x", "f", 4),
-  ("y", "f", 4),
-  ("z", "f", 4),
+  <span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"y"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"z"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
 
-  ("unknown", "HEX", 4),
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
     
-  ("nextPacketTime", "I", 4),
-  ("nextPacketType", "I", 4),
-]
-    </pre>
-  </div>
-  <div class="card">
-    <pre>
-format1068_moveOrder = [
-  ("packetTime", "I", 4),
-  ("packetType", "I", 4), # 1049
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
 
-  ("unknown", "HEX", 7),
+<span class="n">format1068</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1049
+</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span>
   
-  ("x", "f", 4),
-  ("y", "f", 4),
-  ("z", "f", 4),
+  <span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"y"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"z"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
 
-  ("nextPacketTime", "I", 4),
-  ("nextPacketType", "I", 4)
-]
-    </pre>
-  </div>
-</div>
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="p">]</span>
+
+<span class="n">format1043</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">25</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1092
+</span><span class="p">]</span>
+
+<span class="n">format1066</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span>
+ 
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="c1"># 1092
+</span><span class="p">]</span>
+
+<span class="n">format1054</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1060</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1002</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"type1002_length"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+   
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1058</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"type1058_length"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1051</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">62</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1052</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1044</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1045</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+ 
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">17</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1078</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+ 
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">60</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1067</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1065</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1053</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">11</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1069</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">19</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1074</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"HEX"</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1038</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+    
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"x"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"y"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"z"</span><span class="p">,</span> <span class="s">"f"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="n">format1042</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span> 
+
+<span class="n">format1062</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span> 
+
+<span class="n">format1061</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span> 
+
+<span class="n">format1072</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">(</span><span class="s">"packetTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"packetType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"B"</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"unknown"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  
+  <span class="p">(</span><span class="s">"nextPacketTime"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+  <span class="p">(</span><span class="s">"nextPacketType"</span><span class="p">,</span> <span class="s">"I"</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
+<span class="p">]</span> </code></pre></figure>
+
+</details>
 
 <p>but there are likely more.</p>
 
@@ -1739,32 +2023,67 @@ Show full log
 
 <p>We can create more replay files where we do additional things in the game and see which new packetTypes appear when parsing the replay files.</p>
 
+<h3 id="implementation-in-opensage">Implementation in OpenSAGE</h3>
+
+<p>Some time later I’ve discovered <a href="https://github.com/OpenSAGE/OpenSAGE/">OpenSAGE</a> and the Replay-Parser implementation there.</p>
+
+<p>In OpenSAGE the building type ids and unit ids appear to be derived directly from the INI-Configuration-Files.</p>
+
+<p>The bytes between the unitIds and the packetType have meaning. There the chunks have the same header I’ve discovered:</p>
+
+<ul>
+  <li>32-bit TimeCode</li>
+  <li>32-bit PacketType</li>
+</ul>
+
+<p>But followed by</p>
+
+<ul>
+  <li>a 32-bit Number</li>
+  <li>then a 8-bit indicating the number of arguments</li>
+  <li>followed by tuples of (8-bit type, 8-bit count) for each argument</li>
+  <li>and then the the actual data</li>
+</ul>
+
+<p>So looking at the unit creation packet, it can be parsed as:</p>
+
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="c1"># 32-bit "TimeCode" (in OpenSage/ReplayChunkHeader.cs)
+</span><span class="mi">164236</span><span class="p">,</span> <span class="p">(</span><span class="s">'packetTime'</span><span class="p">,</span> <span class="s">'I'</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">=</span> <span class="mi">2812</span>
+<span class="c1"># 32-bit "OrderType"
+</span><span class="mi">164240</span><span class="p">,</span> <span class="p">(</span><span class="s">'packetType'</span><span class="p">,</span> <span class="s">'I'</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1047</span>
+
+<span class="c1"># 32-bit "Number"
+</span><span class="mi">164241</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_2'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="mi">164242</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_0'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="mi">164243</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_0'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="mi">164244</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_0'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># 8-bit "numUniqueArgumentTypes" = 1 (in OpenSage/ReplayChunk.cs)
+</span><span class="mi">164245</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_1'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1"># 8-bit ArgumentType = 0, type is Integer
+</span><span class="mi">164246</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_0'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="c1"># 8-bit ArgumentCount = 2, so there are two Integers in the packet
+</span><span class="mi">164247</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_2'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1"># first Integer
+</span><span class="mi">164248</span><span class="p">,</span> <span class="p">(</span><span class="s">'unitType'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">123</span> <span class="o">--</span> <span class="n">Gla</span> <span class="n">Rebel</span>
+<span class="mi">164249</span><span class="p">,</span> <span class="p">(</span><span class="s">'buildingIdUnitWasCreated'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="mi">164250</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_0'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="mi">164251</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_0'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># second Integer
+</span><span class="mi">164252</span><span class="p">,</span> <span class="p">(</span><span class="s">'incrementingUnitNumber'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="mi">164253</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_0'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="mi">164254</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_0'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="mi">164255</span><span class="p">,</span> <span class="p">(</span><span class="s">'is_0'</span><span class="p">,</span> <span class="s">'B'</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="c1"># next packet TimeCode
+</span><span class="mi">164259</span><span class="p">,</span> <span class="p">(</span><span class="s">'nextPacketTime'</span><span class="p">,</span> <span class="s">'I'</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">=</span> <span class="mi">2812</span>
+<span class="mi">164263</span><span class="p">,</span> <span class="p">(</span><span class="s">'nextPackageType'</span><span class="p">,</span> <span class="s">'I'</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1092</span></code></pre></figure>
+
 <h2 id="conclusion">Conclusion</h2>
 
-<p>There is a lot more to uncover in the replay files.</p>
-
-<p>To further decode we could:</p>
-
-<ul>
-  <li>find the rest of the building type ids and unit type ids</li>
-  <li>try to understand the remaining packet types. Putting the values in a table and checking how the values change across packets and replay files could help.</li>
-  <li>the 1092 packet is likely the camera position or units entering or leaving the screen. They contain coordinates, so this can probably easily be verified.</li>
-  <li>there are more actions in the game like triggering a super weapon that likely have their own packet types</li>
-  <li>there are probably some system diagnostics/time keeping packets</li>
-  <li>find the packet length field. All packet types seem to start with a “10”. This is strange. Maybe the type field is infact short int, the length also and that would mean we might have missed some packets inbetween.</li>
-</ul>
-
-<p>we can now</p>
-
-<ul>
-  <li>analyse the build orders and compare</li>
-</ul>
-
-<p>we could also</p>
-
-<ul>
-  <li>write our own c&amp;c generals zh replay player - through that would essentially mean writing almost the entire game</li>
-</ul>
+<p>There is a lot more to uncover in the replay files than I’ve shown here. Definitely have a look at the replay parser in the <a href="https://github.com/OpenSAGE/OpenSAGE/">OpenSAGE</a> project as it is more advanced.</p>
 
 
 </div>
