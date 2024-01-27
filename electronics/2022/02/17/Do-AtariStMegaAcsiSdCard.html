@@ -97,7 +97,7 @@ It’s a nice solution, but Floppy disks - as some of you may remember - are lim
 
 <p><strong>Floppy Emulation</strong></p>
 
-<p>Instead of connceting to the hard drive port of the Atari one can connect to the floppy disk ports.</p>
+<p>Instead of connecting to the hard drive port of the Atari one can connect to the floppy disk ports.</p>
 
 <p>This solution is considerably easier, but as stated above, floppy disks - also emulated ones - are very limited in size and read/write speeds.</p>
 
@@ -110,7 +110,7 @@ It’s a nice solution, but Floppy disks - as some of you may remember - are lim
 <p><strong>UltraSatan</strong></p>
 
 <p>A method I’ve mentioned in the last post are using the <a href="http://joo.kie.sk/?page_id=192" target="_blank">UltraSatan adapters</a>. The design is open-source and the schematic reveals how it works.
-It consists of a small 8-bit AtMega microcontroller and a CPLD. CPLDs are cheaper precursors of FPGAs. They contain less gates and are cheaper. Xilinx CPLDs can be flashed with the same Xilinx ISE software that is also used for programming FPGAs.
+It consists of a small 8-bit AtMega micro controller and a CPLD. CPLDs are cheaper precursors of FPGAs. They contain less gates and are cheaper. Xilinx CPLDs can be flashed with the same Xilinx ISE software that is also used for programming FPGAs.
 The reason the CPLD was required is due to timing requirements of the ACSI connection. The CPLD can react to a changes in signal quicker, latch the data and let the Atmega retrieve it, when it is ready.</p>
 
 <p>I actually bought the same CPLD - the Atmega’s I have in my workshop - and was planing on hand soldering the design, but never got around to doing so. Due to the two devices, CPLD and Atmega, the design requires programming two devices and it requires a lot of soldering.</p>
@@ -129,8 +129,8 @@ The charm is that data can be uploaded to the Raspberry Pi via it’s network co
 <p><strong>Acsi2Stm</strong></p>
 
 <p>My current favorite solution is the <a href="https://github.com/retro16/acsi2stm" target="_blank">Acsi2Stm</a>. It’s a simple adapter for connecting SD-Cards to the ACSI port of Atari STs.
-It uses the STM32 microcontrollers (STM32F103C8T6 compatible boards) that are 3.3V and 5V tolerant, so we don’t need the buffer chips. It can be powered by a standard USB charger (but take note of the warning in the readme “Do NOT connect USB data lines on the STM32”). The STM32 can handle the timing so no additional CPLD oder FPGA is required. And as it’s only a microcontroller it’s instantly ready without a boot-up delay.
-The wiring effort for soldering this adapter is also minimal. The Atari ST ACSI Plug has 20 pins, so 20 x 2 solder joints plus 6x2 for the SD card are sufficent. With some soldering experience this adapter can be built in an evening.</p>
+It uses the STM32 microcontrollers (STM32F103C8T6 compatible boards) that are 3.3V and 5V tolerant, so we don’t need the buffer chips. It can be powered by a standard USB charger (but take note of the warning in the read-me “Do NOT connect USB data lines on the STM32”). The STM32 can handle the timing so no additional CPLD oder FPGA is required. And as it’s only a micro controller it’s instantly ready without a boot-up delay.
+The wiring effort for soldering this adapter is also minimal. The Atari ST ACSI Plug has 20 pins, so 20 x 2 solder joints plus 6x2 for the SD card are sufficient. With some soldering experience this adapter can be built in an evening.</p>
 
 <p style="font-size: 60%;" align="right">Progress</p>
 

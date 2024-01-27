@@ -133,7 +133,7 @@ To support this “XMLHttpRequest” was added with the intention of enabling we
 
 <p>After the XML Description (*.mpd) is parsed by the Java-Script DASH-library, the media segments are downloaded and passed back to the HTML5 HTMLMediaElement.</p>
 
-<p>From there they enter the media pipeline inside the browser. That data travels through multipe class instances, constructed by factory and proxy/adapter design patterns, in a heavily object-oriented design, until it reaches the renderer.</p>
+<p>From there they enter the media pipeline inside the browser. That data travels through multiple class instances, constructed by factory and proxy/adapter design patterns, in a heavily object-oriented design, until it reaches the renderer.</p>
 
 <p>A basic top-level overview of how this works on Linux:</p>
 
@@ -169,7 +169,7 @@ graph TD;
 
 <p>In order for the DASH.JS-Player and the Browser to be aware of the encryption and for them to be able to provide the decryption module with the required information, additional data has to be transported in the MP4 segments and the XML Description (*.mpd).</p>
 
-<p>The Dash-IF security guidelines, section 8.1 in particular, give details on this [7]. Multiple sections (called ‘boxes’) in the MP4 contain aditional information when using encryption. 
+<p>The Dash-IF security guidelines, section 8.1 in particular, give details on this [7]. Multiple sections (called ‘boxes’) in the MP4 contain additional information when using encryption. 
 Section 9 gives details on how the XML Description (*.mpd) is altered to support encrypted streams [9].
 The documentation states:</p>
 
@@ -178,10 +178,10 @@ The documentation states:</p>
 <ul>
   <li>a “ContentProtection” descriptor, that
     <ul>
-      <li>may contain pssh data, that can be alternatively signalles in the MP4</li>
+      <li>may contain pssh data, that can be alternatively signalled in the MP4</li>
       <li>key_ids for the key server to look-up the content key for the specific media to be decrypted</li>
-      <li>the protecteion scheme used</li>
-      <li>the url of the license server</li>
+      <li>the protection scheme used</li>
+      <li>the URL of the license server</li>
     </ul>
   </li>
 </ul>
@@ -232,7 +232,7 @@ With the current integration of the level 3 Widevine CDM module in Chromium, the
 <ul>
   <li>binary search &amp; replace the encrypted samples in the media segments with the corresponding decrypted ones.</li>
   <li>strip all encryption metadata from the MP4 boxes</li>
-  <li>concatinate and multiplex the stream, for instance with FFmpeg.</li>
+  <li>concatenate and multiplex the stream, for instance with FFmpeg.</li>
 </ul>
 
 <p>For an attacker there is no need to get his hands on the encryption keys. This could be done without even touching the content decryption module and simply using it as it was intended.</p>
@@ -246,13 +246,13 @@ With the current integration of the level 3 Widevine CDM module in Chromium, the
 
 <h2>How DRM adds aggravation and does little for content protection</h2>
 
-<p>Even if the above weren’t possible and the media would travel all the way to the computer screen in an encrypted maner, just like with regular television sets, one could strip the encryption off the HDMI-HDCP-signal and record that. Or even simply point a camera at the computer screen and record the stream that way.</p>
+<p>Even if the above weren’t possible and the media would travel all the way to the computer screen in an encrypted manner, just like with regular television sets, one could strip the encryption off the HDMI-HDCP-signal and record that. Or even simply point a camera at the computer screen and record the stream that way.</p>
 
-<p>If hardware to do this weren’t accessable, then hackers would modify the electronics in television sets.</p>
+<p>If hardware to do this weren’t accessible, then hackers would modify the electronics in television sets.</p>
 
 <p>So long as one person dumps and shares a particular stream, the whole content protection scheme for that particular content is useless.</p>
 
-<p>It really makes me wonder if all the headache for developers, media professionals and media consumers is worth it. It seems to be economically viable, because it deters simple attemps and probably the vendor lock-in is also profitable. The most complex attacks, especially in computing, can be easily accessable to anyone as soon as simple to use software is created that automates the attack [11].</p>
+<p>It really makes me wonder if all the headache for developers, media professionals and media consumers is worth it. It seems to be economically viable, because it deters simple attempts and probably the vendor lock-in is also profitable. The most complex attacks, especially in computing, can be easily accessible to anyone as soon as simple to use software is created that automates the attack [11].</p>
 
 <h2>Further Information</h2>
 

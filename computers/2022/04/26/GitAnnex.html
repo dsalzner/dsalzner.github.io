@@ -74,7 +74,7 @@
 
 <h2>Synchronizing files with mobile devices</h2>
 
-<p>Copying photos, screenshots, notes and downloads off of phone and onto the computer is a reoccuring task in order to free space ad synchronize date to and from on my phone.</p>
+<p>Copying photos, screenshots, notes and downloads off of phone and onto the computer is a reoccurring task in order to free space ad synchronize date to and from on my phone.</p>
 
 <p>Most people synchronize their phones with Google Drive, Apple iCloud or Dropbox. That’s a lot more convenient, but it also means giving up a lot of privacy.</p>
 
@@ -86,7 +86,7 @@
 
 <p>With git source code lives in “repositories”. Each developer can “clone” or “checkout” his own working copy. Files are added with “add” and then “commit”ed to the working copy, before they are “push”ed to the the remote repository on a server.</p>
 
-<p>This allows multiple developers to work on the same code simultaneousy without destroying each others work. Git keeps a history of all changes and can automatically solve most of the issues of bringing together the working copies.</p>
+<p>This allows multiple developers to work on the same code simultaneously without destroying each others work. Git keeps a history of all changes and can automatically solve most of the issues of bringing together the working copies.</p>
 
 <p>As git is designed for source code and is built to analyse line-by-line differences in text files, it’s inefficient on large binary files. Each change requires storing a new copy of the entire binary file, the size of working copies grows as every file is always downloaded when cloning. Checking for differences in binary files is slow and makes little sense.</p>
 
@@ -139,7 +139,7 @@ pkg <span class="nb">install </span>git wget proot <span class="c"># install git
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash">wget https://downloads.kitenet.net/git-annex/linux/current/git-annex-standalone-arm64.tar.gz
 <span class="nb">tar</span> <span class="nt">-xvf</span> git-annex-standalone-arm64.tar.gz</code></pre></figure>
 
-<p>Now we can confgure git-annex:</p>
+<p>Now we can configure git-annex:</p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="nb">cd </span>git-annex.linux/
 <span class="nb">unset </span>LD_PRELOAD <span class="c"># required for git-annex to find librarires</span>
@@ -186,7 +186,7 @@ git-annex init <span class="c"># initialize git-annex with the repository</span>
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash">git annex add <span class="nb">.</span> <span class="c"># stage all files in the directory</span>
 git commit <span class="nt">-am</span> <span class="s2">"phone photos"</span> <span class="c"># commit the files</span></code></pre></figure>
 
-<p>The Android device is now ready to be syned with git-annex from other devices.</p>
+<p>The Android device is now ready to be synced with git-annex from other devices.</p>
 
 <p>For convenience you may want to add a script “sync.sh” to /data/data/com.termux/files/home/.shortcuts.</p>
 
@@ -226,7 +226,7 @@ git-annex init <span class="c"># initialize git-annex with the repository</span>
 
 <p>I ran into some issues with git-annex marking a remote with “annex-ignore = true”. This happens when the remote is not correctly configured. When a remote is once labeled with “annex-ignore”, it won’t be synchronised.</p>
 
-<p>After fixing whatever the issue was, we can remove the flag by edting the config, for this</p>
+<p>After fixing whatever the issue was, we can remove the flag by editing the config, for this</p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash">vim .git/config</code></pre></figure>
 
@@ -286,9 +286,9 @@ git-annex init <span class="c"># initialize git-annex with the repository</span>
 
 <p>Git-Annex extends Git and as such we can use mixed repositories with source and binaries.</p>
 
-<p>Especially when used to standalone git one might acccidentally add a file with “git add” instread of “git annex add”.</p>
+<p>Especially when used to standalone git one might accidentally add a file with “git add” instead of “git annex add”.</p>
 
-<p>If the added file is also commited, then the usual painful approaches to get the file out of the git repository are required.
+<p>If the added file is also committed, then the usual painful approaches to get the file out of the git repository are required.
 One would have to “git revert” the commit and then clean the git tree to make sure the unused file doesn’t increase the git repository size.</p>
 
 <p style="font-size: 60%;" align="right">Progress</p>
@@ -310,7 +310,7 @@ At the stage I’m currently using it, it probably doesn’t beat simple “rsyn
 
 <p>Due to the heavy use of checksums with git and git-annex data corruption can also be detected.</p>
 
-<p>And as a software developer git-annex is a useful extenstion to git, that one should know about, for adding large binary files, for instance as test input files, to source-code repositories.</p>
+<p>And as a software developer git-annex is a useful extension to git, that one should know about, for adding large binary files, for instance as test input files, to source-code repositories.</p>
 
 <hr />
 

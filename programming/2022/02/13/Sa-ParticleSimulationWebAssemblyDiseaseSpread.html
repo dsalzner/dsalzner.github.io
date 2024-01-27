@@ -66,7 +66,7 @@
 <div class="post-content" itemprop="articleBody">
     <p style="font-size: 60%;" align="right">What</p>
 
-<p>With particle simulations we can simulate the behaviour of particles in an environment. Such simulations can be used across many fields of science and engineering. The following demonstrates how a basic particle simulatons can be used for disease spread simulations.</p>
+<p>With particle simulations we can simulate the behaviour of particles in an environment. Such simulations can be used across many fields of science and engineering. The following demonstrates how a basic particle simulations can be used for disease spread simulations.</p>
 
 <p>Technically it’s C-Code, compiled to WebAssembly, that draws onto a pixel buffer that is displayed in an HTML canvas. This is more about demonstrating very basic particle simulation than about an accurate disease model.</p>
 
@@ -90,9 +90,9 @@ var statusElement=document.getElementById("status"),progressElement=document.get
 
 <p style="font-size: 60%;" align="right">Why</p>
 
-<p>Particle Simulations can also be used for position estimation. For this the particles are thought of as positional estimates with a probability weighting assigned to each of them. Over time, with a modell of the robots motion and sensory input from distance sensors, we can adjust the probability weighting assigned to each particle to improve our “guess” of where the robot is.</p>
+<p>Particle Simulations can also be used for position estimation. For this the particles are thought of as positional estimates with a probability weighting assigned to each of them. Over time, with a model of the robots motion and sensory input from distance sensors, we can adjust the probability weighting assigned to each particle to improve our “guess” of where the robot is.</p>
 
-<p>For a disease spread modell we can use the probability weighting of each particle as the probability that it carries an infectious desease. A simulated coughing preson infects the particles around him with every time he coughs and the motion modell corresponds to the wind/air movements in the room.
+<p>For a disease spread model we can use the probability weighting of each particle as the probability that it carries an infectious disease. A simulated coughing person infects the particles around him with every time he coughs and the motion model corresponds to the wind/air movements in the room.
 Other people in the room get infected when they come in contact to a high enough quantity of infected particles.</p>
 
 <p style="font-size: 60%;" align="right">Background</p>
@@ -104,18 +104,18 @@ Other people in the room get infected when they come in contact to a high enough
 <p>Two options that come to mind are:</p>
 
 <ul>
-  <li>from questionaries when an infection of a person was traced back to another person that was previously infected and, from memory, the approximate time they were close was specified.</li>
+  <li>from questionnaires when an infection of a person was traced back to another person that was previously infected and, from memory, the approximate time they were close was specified.</li>
   <li>or by running particle simulations</li>
 </ul>
 
 <p style="font-size: 60%;" align="right">How</p>
 
-<p>As with the Smartphone Apps for infection tracing where bluetooth beacons are considered to propagte similarly to infectious particles in the air, the particle simulations are also just a highly inaccurate estimation - yet they are something.</p>
+<p>As with the Smartphone Apps for infection tracing where Bluetooth beacons are considered to propagate similarly to infectious particles in the air, the particle simulations are also just a highly inaccurate estimation - yet they are something.</p>
 
 <p>The inaccuracies in particles simulations for disease spread stem from the high number of required parameters.</p>
 
 <ul>
-  <li>if outdoors, the exact wind direction. If indoors the exact floorplan and the air movements in the building. Opened/closed doors/windows, ventilation systems, people moving around, contact duration, activities, etc</li>
+  <li>if outdoors, the exact wind direction. If indoors the exact floor plan and the air movements in the building. Opened/closed doors/windows, ventilation systems, people moving around, contact duration, activities, etc</li>
   <li>the location and number of people that are spreading the disease</li>
   <li>the location of people that could be infected</li>
   <li>and many more</li>
@@ -124,8 +124,8 @@ Other people in the room get infected when they come in contact to a high enough
 <p>For a very basic simulation and to only demo particle simulations I’ve come up with three basic variables:</p>
 
 <ul>
-  <li>spreadFactor - assuming the contagious person is continiously coughing and infects particles around him with a probability of 100%, how many particles does he infect.</li>
-  <li>reductionFactor - how does the travel distance of infectious particles reduce their likely-hood of being able to affect a person. The reasoning is that in a normal environment some particles be absorbed by the environment or arent even infectious to begin with.</li>
+  <li>spreadFactor - assuming the contagious person is continuously coughing and infects particles around him with a probability of 100%, how many particles does he infect.</li>
+  <li>reductionFactor - how does the travel distance of infectious particles reduce their likely-hood of being able to affect a person. The reasoning is that in a normal environment some particles be absorbed by the environment or aren’t even infectious to begin with.</li>
   <li>contagionFactor - how many contagious particles does a person have to come in contact with to get infected, i.e. how infectious is this disease</li>
 </ul>
 
@@ -135,7 +135,7 @@ Other people in the room get infected when they come in contact to a high enough
 
 <p><b>spreadFactor</b></p>
 
-<p>The spreadFactor controls how much infectious particles are emited by the infected person. For this, in each iteration, we want to increase the probability that a particle carries the infectious diseaese. For this I’m using the normalized distance times the spread factor times an arbitrary 10 to increase the impact.</p>
+<p>The spreadFactor controls how much infectious particles are emitted by the infected person. For this, in each iteration, we want to increase the probability that a particle carries the infectious disease. For this I’m using the normalized distance times the spread factor times an arbitrary 10 to increase the impact.</p>
 
 <figure class="highlight"><pre><code class="language-c--" data-lang="c++">  <span class="k">for</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">PARTICLES_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">float</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">distance</span><span class="p">(</span><span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">rect</span><span class="p">,</span> <span class="n">infectiousPerson</span><span class="p">);</span>
@@ -145,7 +145,7 @@ Other people in the room get infected when they come in contact to a high enough
 
 <p><b>reductionFactor</b></p>
 
-<p>The reductionFactor controls how much infectious particles loose their “infectiousness”. So in each iteration we reduce the probability of all factors by a a factor. The factor controls how harsch the environment is to the infected particles. It is reduced by 1000 to reduce it’s effect and give the simulation a somewhat realistic feel.</p>
+<p>The reductionFactor controls how much infectious particles loose their “infectiousness”. So in each iteration we reduce the probability of all factors by a a factor. The factor controls how harsh the environment is to the infected particles. It is reduced by 1000 to reduce it’s effect and give the simulation a somewhat realistic feel.</p>
 
 <figure class="highlight"><pre><code class="language-c--" data-lang="c++">  <span class="k">for</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">PARTICLES_COUNT</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">particles</span><span class="p">[</span><span class="n">i</span><span class="p">].</span><span class="n">probability</span> <span class="o">-=</span> <span class="n">cfgReductionFactor</span> <span class="o">/</span> <span class="mi">10</span><span class="p">;</span>
@@ -170,7 +170,7 @@ Here I’m computing the distance between a particle and the a person. If it is 
 
 <p><b>Limitations</b></p>
 
-<p>Of course this is a very limited simulation with arbitrary factors. In a more scientific approach one would justify each of the factors by empirical experimentation. One would likely simulate hundreds of common floorplans, use more factors and derive those factors from empircal studies.
+<p>Of course this is a very limited simulation with arbitrary factors. In a more scientific approach one would justify each of the factors by empirical experimentation. One would likely simulate hundreds of common floor plans, use more factors and derive those factors from empirical studies.
 But this here is just basic experimentation to demonstrate the basics of particle simulation.</p>
 
 <p style="font-size: 60%;" align="right">Progress</p>

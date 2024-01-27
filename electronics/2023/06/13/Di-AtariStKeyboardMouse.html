@@ -75,12 +75,12 @@ I found a project [1] on the internet to build an adapter in order to connect a 
 
 <p style="font-size: 60%;" align="right">When</p>
 
-<p>Even though this project is as basic as it gets for a microcontrollers electronics project it took a few attempts. The original project uses an Atmega328. Since this is the exact chip on the Arduino Nano I thought I’d throw one of them at it. Turns out the Arduino Nano I have is one of those cheap fakes with a CH340 instead of an FTDI and probably other issues.</p>
+<p>Even though this project is as basic as it gets for a micro controllers electronics project it took a few attempts. The original project uses an Atmega328. Since this is the exact chip on the Arduino Nano I thought I’d throw one of them at it. Turns out the Arduino Nano I have is one of those cheap fakes with a CH340 instead of an FTDI and probably other issues.</p>
 
 <p>So after the third or so attempt with the Nano I had three options: Give up, buy an expensive original Arduino Nano or build a custom circuit with one of my other Atmega328s in easier to solder DIP packaging I have.</p>
 
-<p>The stripes on the stripe board I have trends to leak solder to neighbouring stripes and my soldering iron is starting to show symptoms of old age with a short circuit in the wiring. Also RJ12 connectors are extremly annoying to solder. All of that adds to the frustration when you’re working on such a seemingly simple project and you want it to simply work.
-I had to try three diffrent Atmega328 chips until one worked. Could be bad soldering, could be more fake chips from eBay. The thrid one works very reliably. I need to stop ordering microcontrollers from eBay.</p>
+<p>The stripes on the stripe board I have trends to leak solder to neighbouring stripes and my soldering iron is starting to show symptoms of old age with a short circuit in the wiring. Also RJ12 connectors are extremely annoying to solder. All of that adds to the frustration when you’re working on such a seemingly simple project and you want it to simply work.
+I had to try three different Atmega328 chips until one worked. Could be bad soldering, could be more fake chips from eBay. The third one works very reliably. I need to stop ordering micro controllers from eBay.</p>
 
 <p>Either way I chose to go the long way and build a complete custom circuit and solder the Atmega328 to perfboard.</p>
 
@@ -109,7 +109,7 @@ I had to try three diffrent Atmega328 chips until one worked. Could be bad solde
 <p>The circuit is relatively standard. We need to wire an ISP socket for programming, a socket for the FTDI serial connection, the PS/2 sockets and the RJ12 Atari Connector.</p>
 
 <p>You could use an Arduino Nano, but original boards have long delivery times and I wouldn’t recommend the cheap knock-offs.
-The only disadvantage is you’ll need an ISP programmier to program bare Atmega chips. The Arduino Nanos come with a custom bootloader that allows programming via the integrated usb port.</p>
+The only disadvantage is you’ll need an ISP programmier to program bare Atmega chips. The Arduino Nanos come with a custom boot loader that allows programming via the integrated usb port.</p>
 
 <div class="row" style=" display: flex;">
   <div style="font-size: 8pt; padding: 15px">
@@ -121,7 +121,7 @@ The only disadvantage is you’ll need an ISP programmier to program bare Atmega
 
 <p><b>Programmer</b></p>
 
-<p>In order to programm an Atmega328 you need an ISP connector.</p>
+<p>In order to program an Atmega328 you need an ISP connector.</p>
 
 <div class="row" style=" display: flex;">
   <div style="font-size: 8pt; padding: 15px">
@@ -197,11 +197,11 @@ This is okay since we will be using either the FTDI during debugging or the Atar
   </div>
 </div>
 
-<p>I use an RJ12 socket, because solding directly to the fine RJ12 cables tends to break them very easily.</p>
+<p>I use an RJ12 socket, because soldering directly to the fine RJ12 cables tends to break them very easily.</p>
 
 <p><b>Joystick Connectors</b></p>
 
-<p>The orignal schematic has connectors for two Joysticks. I don’t need the joysticks so I’m ignoring them.</p>
+<p>The original schematic has connectors for two Joysticks. I don’t need the joysticks so I’m ignoring them.</p>
 
 <p><b>Software</b></p>
 
@@ -211,8 +211,8 @@ This is okay since we will be using either the FTDI during debugging or the Atar
 
 <p>As a first test to see if everything works we can send some text via the serial Port to the PC.</p>
 
-<p>Because I like to keep things reproducable I wrote a self-contained script and because I’m on Linux I can.
-The script grabs the Arduino command-line tool, “arduino-cli” and compiles and uploads a short example code that continiously sends “test” to the computer.</p>
+<p>Because I like to keep things reproducible I wrote a self-contained script and because I’m on Linux I can.
+The script grabs the Arduino command-line tool, “arduino-cli” and compiles and uploads a short example code that continuously sends “test” to the computer.</p>
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash"><span class="c">#!/bin/bash</span>
 
@@ -264,7 +264,7 @@ There are online fuse calculators that yield “0xE2” when you set the appropr
 
 <figure class="highlight"><pre><code class="language-bash" data-lang="bash">picocom /dev/ttyUSB0 <span class="nt">-b</span> 9600</code></pre></figure>
 
-<p>We should see it printing “test” on the screen continiously.</p>
+<p>We should see it printing “test” on the screen continuously.</p>
 
 <p><b>Actual Code</b></p>
 
@@ -306,7 +306,7 @@ wget https://oldcomputer.info/hacks/mega_key/MegaPS2_20180427.7z
 
 <p>It seems most issues are purely software related and I’ll probably do some fixes at some point.</p>
 
-<p><b>Edit 2023-07-24:</b> I’ve since rewritten most of the software. It’s more stable now, but unfortunately now only either the keyboard or the mouse works, but not both combined. With both combined the mouse stops functionioning on the first key press on the keyboard. It doesn’t seem to be an interrupt/serial communication issue, but possibly due to my incomplete Atari serial protocol implementation.</p>
+<p><b>Edit 2023-07-24:</b> I’ve since rewritten most of the software. It’s more stable now, but unfortunately now only either the keyboard or the mouse works, but not both combined. With both combined the mouse stops functioning on the first key press on the keyboard. It doesn’t seem to be an interrupt/serial communication issue, but possibly due to my incomplete Atari serial protocol implementation.</p>
 
 </div>
 

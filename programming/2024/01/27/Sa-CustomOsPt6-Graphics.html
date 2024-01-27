@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>CustomOS - Pt.6 - Adding a graphics - Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/programming/2024/01/27/Sa-CustomOsPt6-Graphics.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.6 - Adding a graphics - Dennis Salzner" />
+  <meta property="og:description" content="Pure text-based input/output gets boring fast. This time around we'll add graphics." />
+  <meta property="og:url" content="/programming/2024/01/27/Sa-CustomOsPt6-Graphics.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2024-01-27 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2024-01-27 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2024-01-27 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Pure text-based input/output gets boring fast. This time around we'll add graphics." />
+  <meta name="twitter:title" content="CustomOS - Pt.6 - Adding a graphics - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/js/lightbox.js"></script>
+  <link href="/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - CustomOs - Pt.6 - Graphics</h1>
+<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+
+<div class="page-title">CustomOS - Pt.6 - Adding a graphics</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS)</div>
+<div class="page-seperator"></div>
+
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<h2 id="what-we-are-trying-to-achieve">What we are trying to achieve</h2>
+
+<p>Up until now we’ve</p>
+
+<ul>
+  <li>compiled a i686-elf cross-compiler,</li>
+  <li>built a simple bootloader and kernel,</li>
+  <li>wrote text on screen and received input from the keyboard,</li>
+  <li>and implemented persistant storage to a FAT32 storage device by the IDE-Controller</li>
+</ul>
+
+<p>With that we we’re able to boot into our Custom OS, display text and get user input. We we’re also able to write files and increment a simple boot counter.</p>
+
+<h2>What to expect</h2>
+
+<p>This time I’d like to add graphics. That will gives us an area in memory that represents a two-dimensional array with the pixels of the screen. We can then easily write values to it in order to display graphics on the screen.</p>
+
+<p><img src="../../../../images/2024-01-27-Sa-CustomOsPt6-Graphics/customos-graphics.png" width="320px" />
+<img src="../../../../images/2024-01-27-Sa-CustomOsPt6-Graphics/customos-graphics-text.png" width="240px" /></p>
+
+<p>With that we can then set up a graphics library to display buttons and react to mouse input. I’ve done something very similar when writing to a raw graphics buffers in WebAssembly (see <a href="/programming/2022/02/13/Sa-ParticleSimulationWebAssemblyDiseaseSpread.html">WebAssembly Particle Simulation user interface </a>)</p>
+
+<p>Setting up that graphics buffer is actually surprisingly easy.</p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>How to go about setting up graphics was actually one of the first things I had researched when I started this project. It seemed like the most difficult part as I was under the assumption we’d need proprietary display drivers.</p>
+
+<p>As it turns out we don’t - at least for low-resolution graphics.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>With graphics we can write basic graphical user interfaces, we will be able to display images and also write coloured text.</p>
+
+<p>It does come at the expense of not being able to directly write text to a buffer, but having to render a text graphically by using a font. It isn’t particularly difficult to write a function that does this for us automatically.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2>BIOS Mode 13h</h2>
+
+<p>Simple graphics are easily achieved with a BIOS feature. Most BIOS today, next to pure text-based mode, also support “standard graphics modes” or “Mode 13h”.</p>
+
+<p>What Mode 13h does for us is to make a region of memory availble that represents a raw graphics buffer that we can write to.</p>
+
+<p>If you’ve ever noticed how, during boot of a Linux without UEFI, it first displays corse grained black and white text and the suddenly switches to colourful text on boot - that is the point where the system switches from pure text-based to low-resolution, usually 640x480 pixel Mode 13h. Later during boot Linux will load the real graphics driver and display higher quality graphics.</p>
+
+<p><img src="../../../../images/2024-01-27-Sa-CustomOsPt6-Graphics/bios-modes.png" width="320px" />
+<br /><small>(Screenshot taken from [1])</small></p>
+
+<p>There is an excellent description of the Bios Mode 13h and Set Mode 10h at [1].</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>Luckily I didn’t have to implement the BIOS Mode 13h code entirely myself. Instead I found some code, “graphics.asm”, on an Online Forum “Protected Mode BIOS Call Functionailty v2.0 - by Napalm” (see [2]). Due to its simplicity it is being used across many other Custom OSes.</p>
+
+<h3>Assembly Code</h3>
+
+<p>In order to use it we need to extend our Makefile:</p>
+
+<p>By extending the object we want to link</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>OBJ :<span class="o">=</span> boot.o printf.o kernel.o fatfs/fatfs_ff.o fatfs/fatfs_ffunicode.o graphics/graphics.o 
+</code></pre></div></div>
+
+<p>and adding a rule to compile “graphics.asm”</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>graphics/graphics.o: graphics/graphics.asm
+	<span class="k">${</span><span class="nv">AS</span><span class="k">}</span> <span class="nt">-felf32</span> <span class="nt">-i</span> graphics/ graphics/graphics.asm <span class="nt">-o</span> graphics/graphics.o
+</code></pre></div></div>
+
+<h3>C Code</h3>
+
+<p>To switch to 13h Mode and write data to the graphics buffer we write a simple C function:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#pragma once
+</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="nf">__attribute__</span> <span class="p">((</span><span class="n">packed</span><span class="p">))</span> <span class="p">{</span>
+  <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">di</span><span class="p">,</span> <span class="n">si</span><span class="p">,</span> <span class="n">bp</span><span class="p">,</span> <span class="n">sp</span><span class="p">,</span> <span class="n">bx</span><span class="p">,</span> <span class="n">dx</span><span class="p">,</span> <span class="n">cx</span><span class="p">,</span> <span class="n">ax</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">gs</span><span class="p">,</span> <span class="n">fs</span><span class="p">,</span> <span class="n">es</span><span class="p">,</span> <span class="n">ds</span><span class="p">,</span> <span class="n">eflags</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">regs16_t</span><span class="p">;</span>
+
+<span class="k">extern</span> <span class="kt">void</span> <span class="nf">int32</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">intnum</span><span class="p">,</span> <span class="n">regs16_t</span> <span class="o">*</span><span class="n">regs</span><span class="p">);</span>
+
+<span class="kt">void</span> <span class="nf">graphicsInit</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">y</span><span class="p">;</span>
+  <span class="n">regs16_t</span> <span class="n">regs</span><span class="p">;</span>
+
+  <span class="kt">uint16_t</span> <span class="n">screenWidth</span> <span class="o">=</span> <span class="mi">320</span><span class="p">;</span>
+  <span class="kt">uint16_t</span> <span class="n">screenHeight</span> <span class="o">=</span> <span class="mi">200</span><span class="p">;</span>
+
+  <span class="n">regs</span><span class="p">.</span><span class="n">ax</span> <span class="o">=</span> <span class="mh">0x0013</span><span class="p">;</span>
+  <span class="n">int32</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">regs</span><span class="p">);</span>
+
+  <span class="c1">// -- fill screen in black</span>
+  <span class="n">memset</span><span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="mh">0xA0000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">screenHeight</span><span class="o">*</span><span class="n">screenWidth</span><span class="p">));</span>
+  <span class="kt">char</span> <span class="o">*</span> <span class="n">VGA</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="mh">0xA0000</span><span class="p">;</span>
+
+  <span class="c1">// -- draw color bands</span>
+  <span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">screenHeight</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span> <span class="n">y</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">screenWidth</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span> <span class="n">x</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">pos</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">screenWidth</span> <span class="o">+</span> <span class="n">x</span><span class="p">;</span>
+      <span class="n">VGA</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span> <span class="o">%</span> <span class="mi">16</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">// -- wait for key</span>
+  <span class="n">regs</span><span class="p">.</span><span class="n">ax</span> <span class="o">=</span> <span class="mh">0x0000</span><span class="p">;</span>
+  <span class="n">int32</span><span class="p">(</span><span class="mh">0x16</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">regs</span><span class="p">);</span>
+
+  <span class="c1">// -- switch to 80x25x16 text mode</span>
+  <span class="n">regs</span><span class="p">.</span><span class="n">ax</span> <span class="o">=</span> <span class="mh">0x0003</span><span class="p">;</span>
+  <span class="n">int32</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">regs</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>include</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"graphics.h"</span><span class="cp">
+</span></code></pre></div></div>
+
+<p>and then call it from our kernel.c</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">graphicsInit</span><span class="p">();</span>
+</code></pre></div></div>
+
+<p>With that we can render the color bands shown in the image above.</p>
+
+<h3 id="rendering-text">Rendering Text</h3>
+
+<p>We can now enter graphics mode, but at the expense of not being able to write text to the screen as easily.
+As we’re now dealing with a graphics buffer we need to “render” text to it - that is take the text string and convert it to an image.</p>
+
+<p>In order to do this there are several options:</p>
+
+<ul>
+  <li>use the full-blown libfreetype to render using virtually any true type font (*.ttf) file</li>
+  <li>use the minimalist single header library “stb_truetype.h” to do the same albeit a little less compatible</li>
+  <li>or resort to evenly spaced (monospace) fonts, where each letter has the exact same with, pre-render it to an array and use that</li>
+</ul>
+
+<p>For my Custom OS I’ve chosen the latter approach.</p>
+
+<h4 id="preparing-a-font">Preparing a Font</h4>
+
+<p>For the particle simulation I had already written a Python script “font-generator.py” that</p>
+
+<ul>
+  <li>uses the evenly-spaced font “RobotoMono-Medium.ttf”</li>
+  <li>renders every single ASCII character between space and tilde (that includes A-Z, a-z and 0-9) to an 8 by 16 pixel, 10pt font size, *.xbm image</li>
+  <li>and then combines the images of the characters to a C-Header with each character as an array of the pixels</li>
+</ul>
+
+<p>It yields an 11,2 KB C-Header with the pre-rendered font that we can easily include and use to render fonts.</p>
+
+<h4 id="write-text">Write Text</h4>
+
+<p>With that we can write a simple function to go over each row/column of the character and colour the pixel, if it’s set in the array.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint16_t</span> <span class="nf">fontWidth</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">fontNo</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">charArrId</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">fontNo</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">fontRobotoMonoMedium10pt_width</span><span class="p">[</span><span class="n">charArrId</span><span class="p">];</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">uint16_t</span> <span class="nf">fontHeight</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">fontNo</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">charArrId</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">fontNo</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">fontRobotoMonoMedium10pt_height</span><span class="p">[</span><span class="n">charArrId</span><span class="p">];</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">char</span> <span class="o">*</span> <span class="nf">fontBuffer</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">fontNo</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">charArrId</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">fontNo</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">return</span> <span class="n">fontRobotoMonoMedium10pt_buffer</span><span class="p">[</span><span class="n">charArrId</span><span class="p">];</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">graphicsRenderChar</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span> <span class="n">graphicsBuffer</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">x</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">y</span><span class="p">,</span> <span class="kt">char</span> <span class="n">charToWrite</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">fontNo</span><span class="p">)</span>  <span class="p">{</span>
+  <span class="kt">uint16_t</span> <span class="n">curx</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+  <span class="kt">uint16_t</span> <span class="n">cury</span> <span class="o">=</span> <span class="n">y</span><span class="p">;</span>
+  
+  <span class="kt">uint16_t</span> <span class="n">charArrId</span> <span class="o">=</span> <span class="n">charToWrite</span> <span class="o">-</span> <span class="mi">33</span><span class="p">;</span>
+
+  <span class="kt">uint16_t</span> <span class="n">charPixelCount</span> <span class="o">=</span> <span class="n">fontWidth</span><span class="p">(</span><span class="n">fontNo</span><span class="p">,</span> <span class="n">charArrId</span><span class="p">)</span> <span class="o">*</span> <span class="n">fontHeight</span><span class="p">(</span><span class="n">fontNo</span><span class="p">,</span> <span class="n">charArrId</span><span class="p">);</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">byteNo</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">byteNo</span> <span class="o">&lt;</span> <span class="n">charPixelCount</span> <span class="o">/</span> <span class="mi">8</span><span class="p">;</span> <span class="n">byteNo</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  
+    <span class="kt">char</span> <span class="n">bits</span> <span class="o">=</span> <span class="n">fontBuffer</span><span class="p">(</span><span class="n">fontNo</span><span class="p">,</span> <span class="n">charArrId</span><span class="p">)[</span><span class="n">byteNo</span><span class="p">];</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">bit</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">bit</span> <span class="o">&lt;</span> <span class="mi">8</span><span class="p">;</span> <span class="n">bit</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    
+      <span class="c1">// -- start new row when width is reached</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">curx</span> <span class="o">-</span> <span class="n">x</span> <span class="o">==</span> <span class="n">fontWidth</span><span class="p">(</span><span class="n">fontNo</span><span class="p">,</span> <span class="n">charArrId</span><span class="p">))</span> <span class="p">{</span>
+        <span class="n">cury</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="n">curx</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="c1">// -- draw pixel if bit is set</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">bits</span> <span class="o">&amp;</span> <span class="mh">0x01</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kt">uint16_t</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">cury</span> <span class="o">*</span> <span class="n">screenWidth</span> <span class="o">+</span> <span class="n">curx</span><span class="p">;</span>
+        <span class="n">graphicsBuffer</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// 1=blue</span>
+      <span class="p">}</span>
+      
+      <span class="c1">// -- shift to next bit</span>
+      <span class="n">bits</span> <span class="o">=</span> <span class="n">bits</span> <span class="o">&gt;&gt;</span> <span class="mi">1</span><span class="p">;</span> 
+        
+      <span class="c1">// -- advance the row</span>
+      <span class="n">curx</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Notice we can also support variable width fonts by storing the width of a char in an array.</p>
+
+<p>to spell “Hello” we can simply:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">graphicsRenderChar</span><span class="p">(</span><span class="n">VGA</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="sc">'H'</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">graphicsRenderChar</span><span class="p">(</span><span class="n">VGA</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="sc">'e'</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">graphicsRenderChar</span><span class="p">(</span><span class="n">VGA</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="sc">'l'</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">graphicsRenderChar</span><span class="p">(</span><span class="n">VGA</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="sc">'l'</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">graphicsRenderChar</span><span class="p">(</span><span class="n">VGA</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="sc">'o'</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="result">Result</h2>
+
+<p>With that we’ve laid the groundwork for displaying images and text with colours in varying fonts.</p>
+
+<p>In the next parts we’ll be setting up a proper shell (directory browsing, reading/writing and executing files) and possibly something simple (like TinyCC) to be able to develop software and thereby extend the Custom OS from inside it.</p>
+
+<hr />
+
+<pre>
+1] https://atrevida.comprenica.com/atrtut07.html
+2] https://forum.osdev.org/viewtopic.php?f=1&amp;t=29805
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="CustomOS - Pt.6 - Adding a graphics"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>
