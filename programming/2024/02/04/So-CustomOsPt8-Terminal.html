@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>CustomOS - Pt.8 - Adding a graphical terminal - Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/programming/2024/02/04/So-CustomOsPt8-Terminal.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.8 - Adding a graphical terminal - Dennis Salzner" />
+  <meta property="og:description" content="After trying out Rust and some experiments interfacing it with C we can move forward with the implementation of the graphical terminal." />
+  <meta property="og:url" content="/programming/2024/02/04/So-CustomOsPt8-Terminal.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2024-02-04 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2024-02-04 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2024-02-04 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="After trying out Rust and some experiments interfacing it with C we can move forward with the imp..." />
+  <meta name="twitter:title" content="CustomOS - Pt.8 - Adding a graphical terminal - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/js/lightbox.js"></script>
+  <link href="/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - CustomOs - Pt.8 - Graphical Terminal written in Rust</h1>
+<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+
+<div class="page-title">CustomOS - Pt.8 - Adding a graphical terminal</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS)</div>
+<div class="page-seperator"></div>
+
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<h2 id="what-we-are-trying-to-achieve">What we are trying to achieve</h2>
+
+<p>What’s missing in our CustomOS is a graphical terminal. Up until now we used the text mode of the BIOS, but it can’t be used to display image, colours or a graphical user interface.</p>
+
+<p>We’ve seen in Pt.6 how we can access a raw graphics buffer and set invidiual pixels. Using this text can be displayed by displaying a pre-rendered bitmap font.</p>
+
+<p>With that we can write our own graphical terminal that renders the characters to the screen. We will need to handle rendering the font, line breaks, line feed and carriage return ourselves.</p>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>In the last part of the series we’ve seen how code written in Rust can be built and interfaced with C. We can build on that knowledge now.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>Apart from being an interesting new langauge Rust is particularly useful for our use case when it comes to buffer overflow protection.
+While a bit tedious to develop it actively prevents the developer from accidently writing out of bounds of arrays.</p>
+
+<p>With some programming effort we can display a graphical terminal that accepts user input and calls C functions that come back to Rust and print to the graphical terminal.</p>
+
+<p><img src="../../../../images/2024-02-04-So-CustomOsPt8-Terminal/terminal-readfile.gif" width="40%" /></p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#what-we-are-trying-to-achieve" id="markdown-toc-what-we-are-trying-to-achieve">What we are trying to achieve</a></li>
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#available-resolution-and-colours" id="markdown-toc-available-resolution-and-colours">Available Resolution and Colours</a></li>
+  <li><a href="#interfacing-with-c" id="markdown-toc-interfacing-with-c">Interfacing with C</a>    <ul>
+      <li><a href="#calling-rust-from-c" id="markdown-toc-calling-rust-from-c">Calling Rust from C</a></li>
+      <li><a href="#arrays" id="markdown-toc-arrays">Arrays</a></li>
+      <li><a href="#dealing-with-chars-from-c" id="markdown-toc-dealing-with-chars-from-c">Dealing with Chars from C</a></li>
+      <li><a href="#dealing-with-char-arrays-from-c" id="markdown-toc-dealing-with-char-arrays-from-c">Dealing with Char Arrays from C</a></li>
+      <li><a href="#sending-rust-str-to-c" id="markdown-toc-sending-rust-str-to-c">Sending Rust str to C</a></li>
+      <li><a href="#the-unsafe-keyword" id="markdown-toc-the-unsafe-keyword">The “unsafe” keyword</a></li>
+      <li><a href="#out-of-bounds-checking" id="markdown-toc-out-of-bounds-checking">Out of bounds checking</a></li>
+    </ul>
+  </li>
+  <li><a href="#font-rendering" id="markdown-toc-font-rendering">Font Rendering</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="available-resolution-and-colours">Available Resolution and Colours</h2>
+
+<p>In the BIOS mode I’m using I’ve got 320x200 pixels available. I’m using 16-bit color.</p>
+
+<p>One of the first things to think about is how to use the limited space and the limited number of availble colours.</p>
+
+<p>We only have limited colours available in VGA 16-Bit</p>
+
+<p><img src="../../../../images/2024-02-04-So-CustomOsPt8-Terminal/vga-16bit-palette-lospec_com.png" width="20%" />
+<br /><small>(Image taken from [1])</small></p>
+
+<p>But as a starting point I had a look at the current Gnome Terminal color scheme used in Ubuntu 22.04 that I’ve come to appreciate</p>
+
+<p><img src="../../../../images/2024-02-04-So-CustomOsPt8-Terminal/gnome-terminal-color-scheme.png" width="40%" /></p>
+
+<p>and simply aim for most similar colour.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="interfacing-with-c">Interfacing with C</h2>
+
+<p>In order to interface C with Rust we need to do a lot of type conversion. There are many Rust libraries to do this such as the “Foreign Function Interface” with it’s <code class="language-plaintext highlighter-rouge">std::ffi::CString</code> class, but the CustomOS is intentionally limited in functionally and lacks exception handling and a heap and most notably dynamic memory allocation (so now <code class="language-plaintext highlighter-rouge">malloc</code>, <code class="language-plaintext highlighter-rouge">free</code>).</p>
+
+<p>To keep the OS as lean as possible I’m trying to see how much can be implemented without these features. This means many String-Functions built into Rust’s standard library won’t compile due to missing symbols.</p>
+
+<h3 id="calling-rust-from-c">Calling Rust from C</h3>
+
+<p>In order to safely call a Rust function from C we need to mark it with <code class="language-plaintext highlighter-rouge">#[no_mangle]</code> to prevent the Rust compiler from name mangling it.
+It has to be public <code class="language-plaintext highlighter-rouge">pub</code> to be accessable and <code class="language-plaintext highlighter-rouge">extern "C"</code> to make it available to C.</p>
+
+<p>Additionally all paramters need to be C compatible. The datatype <code class="language-plaintext highlighter-rouge">cty::c_char</code> in Rust is compatible with a C-Char.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nd">#[no_mangle]</span>
+<span class="k">pub</span> <span class="k">unsafe</span> <span class="k">extern</span> <span class="s">"C"</span> <span class="k">fn</span> <span class="nf">shellKeyboardDown</span><span class="p">(</span><span class="k">mut</span> <span class="n">key</span><span class="p">:</span> <span class="nn">cty</span><span class="p">::</span><span class="nb">c_char</span><span class="p">,</span> <span class="n">scancode</span><span class="p">:</span> <span class="nb">u8</span><span class="p">)</span> <span class="p">{</span> 
+  <span class="k">if</span> <span class="n">key</span> <span class="k">as</span> <span class="nb">u8</span> <span class="o">==</span> <span class="mi">10</span> <span class="p">{</span> <span class="c1">// newline</span>
+</code></pre></div></div>
+
+<h3 id="arrays">Arrays</h3>
+
+<p>Arrays seem a bit backward in defintion, but are okay once gotten used to.</p>
+
+<p>Where a two dimensional Array in C looks like this:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">char</span> <span class="n">fontSourceCodeProLight10pt_buffer</span><span class="p">[</span><span class="mi">93</span><span class="p">][</span><span class="mi">14</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+<span class="p">{</span><span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">,</span>
+</code></pre></div></div>
+
+<p>In Rust it becomes something like this:</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">const</span> <span class="n">FONT_SOURCECODEPRO_LIGHT_10PT_BUFFER</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">[[</span><span class="nb">u8</span><span class="p">;</span><span class="mi">14</span><span class="p">];</span><span class="mi">93</span><span class="p">]</span> <span class="o">=</span> <span class="o">&amp;</span><span class="p">[</span>
+<span class="p">[</span><span class="mi">0x00</span><span class="p">,</span> <span class="mi">0x04</span><span class="p">,</span> <span class="mi">0x04</span><span class="p">,</span>
+</code></pre></div></div>
+
+<p>Notice how row and column are swapped in order. Rust has a built-in linter that causes warnings if something other than snake-case and capital letters are used. C uses curly braces “{“, for Rust square brackets were chosen “[”. I guess it just had to be made different.</p>
+
+<h3 id="dealing-with-chars-from-c">Dealing with Chars from C</h3>
+
+<p>C-Chars can be used from Rust by casting them over by <code class="language-plaintext highlighter-rouge">as u8 as char</code>.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">key</span> <span class="k">as</span> <span class="nb">u8</span> <span class="k">as</span> <span class="nb">char</span> <span class="o">==</span> <span class="sc">'y'</span> <span class="p">{</span>
+</code></pre></div></div>
+
+<h3 id="dealing-with-char-arrays-from-c">Dealing with Char Arrays from C</h3>
+
+<p>In order to get things working I’ll receive C chars <code class="language-plaintext highlighter-rouge">cty::c_char</code> or pointers to C-Char Array <code class="language-plaintext highlighter-rouge">buffer: *mut cty::c_char</code> and thoughtfully access them with Rusts built-in <code class="language-plaintext highlighter-rouge">pointer::offset()</code>-functions, then cast the result <code class="language-plaintext highlighter-rouge">as u8 as char</code> to get a Rust char.</p>
+
+<p>I managed to get around most of that by simply sending character by character from C. Conveniently we already had the <code class="language-plaintext highlighter-rouge">_put_char(char ch)</code> function in C that handles all the output from the custom implementations of <code class="language-plaintext highlighter-rouge">printf</code>, <code class="language-plaintext highlighter-rouge">snprintf</code>, etc in C</p>
+
+<h3 id="sending-rust-str-to-c">Sending Rust str to C</h3>
+
+<p>The other way around is a bit more involved.</p>
+
+<p>The following snippet does work for my use cases, but we need to keep in mind that Rust doesn’t null-terminate strings.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">mystring</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">"Testing attention please"</span><span class="p">;</span>
+<span class="k">let</span> <span class="n">bytes</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="nb">u8</span><span class="p">]</span> <span class="o">=</span> <span class="n">mystring</span><span class="nf">.as_bytes</span><span class="p">();</span>
+<span class="k">let</span> <span class="n">name</span><span class="p">:</span> <span class="o">*</span><span class="k">const</span> <span class="nn">cty</span><span class="p">::</span><span class="nb">c_char</span> <span class="o">=</span> <span class="n">bytes</span><span class="nf">.as_ptr</span><span class="p">()</span> <span class="k">as</span> <span class="o">*</span><span class="k">const</span> <span class="nb">i8</span><span class="p">;</span> <span class="c1">// Caution: this C-Char-Array is not null-terminated</span>
+
+<span class="nf">ataList</span><span class="p">(</span><span class="n">name</span><span class="p">);</span> <span class="c1">// call a C function</span>
+</code></pre></div></div>
+
+<h3 id="the-unsafe-keyword">The “unsafe” keyword</h3>
+
+<p>All of the above, due to raw pointer access and char conversion means that essentially the entire code has to be marked “unsafe” in Rust.</p>
+
+<p>This is not ideal by any means, but is easily done by extending the function defintions with the <code class="language-plaintext highlighter-rouge">unsafe</code> keyword.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">unsafe</span> <span class="k">fn</span> <span class="n">shellCheckCommand</span>
+</code></pre></div></div>
+
+<h3 id="out-of-bounds-checking">Out of bounds checking</h3>
+
+<p>Where Rust really excels is for Out of bounds checking. For implementing a Terminal there are a lot of low-level pixel buffer/char array manipulations. Especially when iterating over arrays of char pointers it is far too easy to run out of bounds and overwrite other memory locations.</p>
+
+<p>Each time I forgot to manually check the bounds</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">SHELL_TEXT_POSITION</span> <span class="o">&gt;</span> <span class="n">SHELL_TEXT_BUFFER</span><span class="nf">.len</span><span class="p">()</span> <span class="o">-</span> <span class="mi">1</span> <span class="p">{</span>
+<span class="k">if</span> <span class="n">SHELL_TEXT_POSITION</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">{</span>
+</code></pre></div></div>
+
+<p>Rust would immediatly try to pull in <code class="language-plaintext highlighter-rouge">_ZN4core9panicking18panic_bounds_check17h17c53c20976be3aeE</code> and the compiler would fail due to missing symbols.</p>
+
+<p>It’s easy to find the culprit by commenting out code and then adding such out-of-bounds checks. The compiler will then build the code and as a developer I know I haven’t accidently overwritten anything.</p>
+
+<h2 id="font-rendering">Font Rendering</h2>
+
+<p>Initially I had used the “Roboto Mono” Font, but it isn’t designed to render to 6x14 pixels.</p>
+
+<p><img src="../../../../images/2024-02-04-So-CustomOsPt8-Terminal/terminal-rust-large-font.gif" width="30%" /></p>
+
+<p>Later I switched to “Source Code Pro”. That looked a lot better.</p>
+
+<p><img src="../../../../images/2024-02-04-So-CustomOsPt8-Terminal/shell-rust_commands.gif" width="30%" /></p>
+
+<p>I’ve spent quite some time to get my Python pre-rendering script to properly align the characters in the pixel buffer.
+Due to rounding errors by a single pixel the text was all over the place as seen below.</p>
+
+<p><img src="../../../../images/2024-02-04-So-CustomOsPt8-Terminal/font-alignment.png" width="60%" /></p>
+
+<p>Eventually I got it right by writing the entire Char-Set into one wide image with Python’s PIL-library and then chopping it up to invidual images that were then convertered to *.xbm format to get C-Arrays and from there rewritten to Rust-Arrays by Python script.</p>
+
+<p>With that I was eventually able to properly display the characters at the right height and without cutting of the bottom half of the letter ‘g’ or top half of ‘T’.</p>
+
+<p><img src="../../../../images/2024-02-04-So-CustomOsPt8-Terminal/proper-font.png" width="30%" /></p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>So far we’ve already achieved a lot. The CustomOS is now getting close in capabilities to an early version of DOS or Commodore DOS.</p>
+
+<p>Looking back at the goals I had defined in Part 1 we’ve reached the most important ones:</p>
+
+<ul>
+  <li>create a cross-compile toolchain - compile binaries that can run directly on the hardware</li>
+  <li>compile a bootloader - boot the OS</li>
+  <li>read keyboard input - allow user interaction</li>
+  <li>add a file system driver - read and store files</li>
+  <li>enable graphical output - be able to graphically interact with the system</li>
+</ul>
+
+<p>I’ve added in</p>
+
+<ul>
+  <li>interrupt handling - to better handle the keyboard</li>
+  <li>bindings from Rust to C - to be able to write the graphical terminal in the more safe Rust programming language</li>
+</ul>
+
+<p>Additionally I had planed to</p>
+
+<ul>
+  <li>run applications from disk - to be able to extend the OS with useful features</li>
+  <li>write a simple text editor - to write text and also source code from inside the OS</li>
+  <li>add a small built-in compiler - to be able to create more applications from within the operating system</li>
+</ul>
+
+<p>There are also a number smaller fixes that can be made</p>
+
+<ul>
+  <li>show a prompt on the terminal and use colours for the text</li>
+  <li>increase the screen resolution from 320x200 to 640x480</li>
+  <li>wire more terminal functions to the existing code “list directory”, “write file”, “read file”, “append file”</li>
+  <li>introduce mouse support and display images</li>
+</ul>
+
+<p>And some new ideas</p>
+
+<ul>
+  <li>implement a basic Network Interface driver, bring in a small microcontroller-based TCP/IP stack and perhaps the mbedtls library for HTTPS and use it to interact with services on the Internet using HTTP-Get-Requests</li>
+  <li>run the game DOOM on it. Since “doomgeneric” only requires setting up a keyboard-callback, tick-counter and pixelbuffer that should be easily achievable.</li>
+</ul>
+
+<hr />
+
+<pre>
+1] https://lospec.com/palette-list/microsoft-vga
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="CustomOS - Pt.8 - Adding a graphical terminal"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

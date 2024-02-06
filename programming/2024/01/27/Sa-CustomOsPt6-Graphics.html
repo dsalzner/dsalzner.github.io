@@ -77,14 +77,14 @@
   <li>and implemented persistant storage to a FAT32 storage device by the IDE-Controller</li>
 </ul>
 
-<p>With that we we’re able to boot into our Custom OS, display text and get user input. We we’re also able to write files and increment a simple boot counter.</p>
+<p>With that we’re able to boot into our Custom OS, display text and get user input. We’re also able to write files and increment a simple boot counter.</p>
 
 <h2>What to expect</h2>
 
-<p>This time I’d like to add graphics. That will gives us an area in memory that represents a two-dimensional array with the pixels of the screen. We can then easily write values to it in order to display graphics on the screen.</p>
+<p>This time I’d like to add graphics. We can use a BIOS feature for that. It will give us an area in memory that represents a two-dimensional array representing the pixels of the screen. We can then easily write values to it in order to display graphics on the screen.</p>
 
-<p><img src="../../../../images/2024-01-27-Sa-CustomOsPt6-Graphics/customos-graphics.png" width="320px" />
-<img src="../../../../images/2024-01-27-Sa-CustomOsPt6-Graphics/customos-graphics-text.png" width="240px" /></p>
+<p><img src="../../../../images/2024-01-27-Sa-CustomOsPt6-Graphics/customos-graphics.png" width="30%" />
+<img src="../../../../images/2024-01-27-Sa-CustomOsPt6-Graphics/customos-graphics-text.png" width="20%" /></p>
 
 <p>With that we can then set up a graphics library to display buttons and react to mouse input. I’ve done something very similar when writing to a raw graphics buffers in WebAssembly (see <a href="/programming/2022/02/13/Sa-ParticleSimulationWebAssemblyDiseaseSpread.html">WebAssembly Particle Simulation user interface </a>)</p>
 
@@ -112,7 +112,7 @@
 
 <p>If you’ve ever noticed how, during boot of a Linux without UEFI, it first displays corse grained black and white text and the suddenly switches to colourful text on boot - that is the point where the system switches from pure text-based to low-resolution, usually 640x480 pixel Mode 13h. Later during boot Linux will load the real graphics driver and display higher quality graphics.</p>
 
-<p><img src="../../../../images/2024-01-27-Sa-CustomOsPt6-Graphics/bios-modes.png" width="320px" />
+<p><img src="../../../../images/2024-01-27-Sa-CustomOsPt6-Graphics/bios-modes.png" width="30%" />
 <br /><small>(Screenshot taken from [1])</small></p>
 
 <p>There is an excellent description of the Bios Mode 13h and Set Mode 10h at [1].</p>
@@ -259,6 +259,7 @@ As we’re now dealing with a graphics buffer we need to “render” text to it
         <span class="n">cury</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
         <span class="n">curx</span> <span class="o">=</span> <span class="n">x</span><span class="p">;</span>
       <span class="p">}</span>
+
       <span class="c1">// -- draw pixel if bit is set</span>
       <span class="k">if</span><span class="p">(</span><span class="n">bits</span> <span class="o">&amp;</span> <span class="mh">0x01</span><span class="p">)</span> <span class="p">{</span>
         <span class="kt">uint16_t</span> <span class="n">pos</span> <span class="o">=</span> <span class="n">cury</span> <span class="o">*</span> <span class="n">screenWidth</span> <span class="o">+</span> <span class="n">curx</span><span class="p">;</span>
