@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Zephyr RTOS - Pt.2 - Conan - Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/programming/2024/03/16/Sa-ZephyrPt2-Conan.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Zephyr RTOS - Pt.2 - Conan - Dennis Salzner" />
+  <meta property="og:description" content="To speed up future development we can adapt the build process and introduce a package manager." />
+  <meta property="og:url" content="/programming/2024/03/16/Sa-ZephyrPt2-Conan.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2024-03-16 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2024-03-16 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2024-03-16 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="To speed up future development we can adapt the build process and introduce a package manager." />
+  <meta name="twitter:title" content="Zephyr RTOS - Pt.2 - Conan - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/js/lightbox.js"></script>
+  <link href="/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Zephyr RTOS - Pt.2 - Conan</h1>
+<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+
+<div class="page-title">Zephyr RTOS - Pt.2 - Conan</div>
+<div class="page-subtitle">Packaging with the Conan Package Manager</div>
+<div class="page-seperator"></div>
+
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p><img src="../../../../images/2024-03-16-Sa-ZephyrPt2-Conan/conan.png" width="10%" />
+<img src="../../../../images/2024-03-16-Sa-ZephyrPt2-Conan/zephyr.png" width="10%" /></p>
+
+<p>In the last part we’ve seen how we can compile flash images for ESP32-CAM modules with Zephyr.</p>
+
+<p>For this we set up the SDK with toolchain, optional host-tools and checked out the zephyr-sources git repos to then run “west update” and checkout additional 64 git repos configured the <code class="language-plaintext highlighter-rouge">west.yml</code>manifest.</p>
+
+<p>To develop more efficiently in future we can introduce Conan as a package manager to create packages that can be cached. We can then build our future user applications by running <code class="language-plaintext highlighter-rouge">conan install .</code> and <code class="language-plaintext highlighter-rouge">conan build .</code> in the source code directory.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#zephyr-directory-structure-free-standing-application-vs-repo-application" id="markdown-toc-zephyr-directory-structure-free-standing-application-vs-repo-application">Zephyr Directory Structure “Free-Standing Application” vs. “Repo Application”</a>    <ul>
+      <li><a href="#repo-application" id="markdown-toc-repo-application">“Repo Application”</a></li>
+      <li><a href="#free-standing-application" id="markdown-toc-free-standing-application">“Free-Standing Application”</a>        <ul>
+          <li><a href="#manual-out-of-tree-build" id="markdown-toc-manual-out-of-tree-build">Manual Out-of-Tree build</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#remarks-on-packaging-zephyr-in-general" id="markdown-toc-remarks-on-packaging-zephyr-in-general">Remarks on packaging Zephyr in general</a>    <ul>
+      <li><a href="#regarding-the-toolchain" id="markdown-toc-regarding-the-toolchain">Regarding the Toolchain</a></li>
+      <li><a href="#regarding-the-host-tools" id="markdown-toc-regarding-the-host-tools">Regarding the Host-Tools</a></li>
+      <li><a href="#regarding-the-west-metatool" id="markdown-toc-regarding-the-west-metatool">Regarding the “west” metatool</a></li>
+      <li><a href="#esp32-pinctrl-headers" id="markdown-toc-esp32-pinctrl-headers">ESP32 PinCtrl Headers</a></li>
+    </ul>
+  </li>
+  <li><a href="#packaging-with-conan" id="markdown-toc-packaging-with-conan">Packaging with Conan</a>    <ul>
+      <li><a href="#example-application" id="markdown-toc-example-application">Example Application</a></li>
+      <li><a href="#zephyr-sdk" id="markdown-toc-zephyr-sdk">Zephyr-SDK</a></li>
+      <li><a href="#zephyr-sources" id="markdown-toc-zephyr-sources">Zephyr-Sources</a></li>
+      <li><a href="#optional-hosttools" id="markdown-toc-optional-hosttools">(Optional) Hosttools</a></li>
+    </ul>
+  </li>
+  <li><a href="#building" id="markdown-toc-building">Building</a></li>
+  <li><a href="#development-testing-and-flashing" id="markdown-toc-development-testing-and-flashing">Development, Testing and Flashing</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>I’ve used Conan at previous and current employers for large-scale deployments. It has a learning curve, but, when done right, significantly improves development.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>In small-scale, even hobbyist projects that you only work on from time to time, it’s still convenient to be able to resort to cached packages and only issue the same two commands and immediatly have a workspace configured.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>Conan is a recipe-based package manager. Similar to a cooking recipe you add your build-requirements, instructions on how to build and what to package after the build. It distinguishes packages by hash that are generated from requirements list, settings and options. It comes with common predefined settings such as os, build_type release/debug. It’s generally highly configurable. Custom options can be added.</p>
+
+<p>As mentioned above it really pays off in large scale deployments with a central artefact storage, but it’s still useful when using it only locally without a remote server as it keeps your projects organized and reproducable.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="zephyr-directory-structure-free-standing-application-vs-repo-application">Zephyr Directory Structure “Free-Standing Application” vs. “Repo Application”</h2>
+
+<p>First let’s look at the directory structure of the Zephyr workspace we created in the last part of the series.</p>
+
+<h3 id="repo-application">“Repo Application”</h3>
+
+<p>The Zephyr “Getting Started” guide we followed in Part 1 got us to the following directory structure:</p>
+
+<p><img src="../../../../images/2024-03-16-Sa-ZephyrPt2-Conan/zephyr-app-repo.png" width="20%" /></p>
+
+<p>There is a samples (or applications) folder inside the zephyr workspace alongside all other files.
+This includes the zephyr repo from <code class="language-plaintext highlighter-rouge">zephyrproject-rtos/zephyr</code> and 65 additional repos pulled in by west following the <code class="language-plaintext highlighter-rouge">west.yml</code> configuration in that repo.
+Additionally we have the SDK located under <code class="language-plaintext highlighter-rouge">/opt/zephyr-sdk</code></p>
+
+<h3 id="free-standing-application">“Free-Standing Application”</h3>
+
+<p>What we really want is the “free-standing” mode [1].</p>
+
+<p><img src="../../../../images/2024-03-16-Sa-ZephyrPt2-Conan/zephyr-app-freestanding.png" width="20%" /></p>
+
+<p>Here the application can be moved to any other folder giving us more autonomy.</p>
+
+<p>Looking at <code class="language-plaintext highlighter-rouge">zephyr/zephyr-env.sh</code> in our workspace from last time we find the environment vairable <code class="language-plaintext highlighter-rouge">ZEPHYR_BASE</code>. Following the documentation we can set that variable to a different location to enable building applications in other directories (out-of-tree).</p>
+
+<h4 id="manual-out-of-tree-build">Manual Out-of-Tree build</h4>
+
+<p>First let’s remove all environment variables we’ve set to avoid confusion</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">rm</span> <span class="nt">-rf</span> <span class="nv">$HOME</span>/.cmake/packages/Zephyr-sdk
+<span class="nb">mv</span> /opt/zephyr-sdk/0.9 <span class="nv">$HOME</span>/somewhere-zephyr-sdk
+<span class="nb">mv</span> %HOME/zehpyr <span class="nv">$HOME</span>/somewhere-zephyr-workspace
+</code></pre></div></div>
+
+<p>Then move the contents of <code class="language-plaintext highlighter-rouge">zephyr/samples/basic/blinky</code> to a new location. We can see that we can still build, if we set the variables appropriately. We will have to imitate this behaviour with our conan recipes.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">ZEPHYR_SDK_INSTALL_DIR</span><span class="o">=</span><span class="nv">$HOME</span>/somewhere-zephyr-sdk
+<span class="nb">export </span><span class="nv">ZEPHYR_BASE</span><span class="o">=</span><span class="nv">$HOME</span>/somewhere-zephyr-workspace
+west build <span class="nt">-p</span> always <span class="nt">-b</span> esp32_devkitc_wroom src/
+</code></pre></div></div>
+
+<h2 id="remarks-on-packaging-zephyr-in-general">Remarks on packaging Zephyr in general</h2>
+
+<p>Starting off I’ve learned some things about Zephyr the hard way that I’d like to share.</p>
+
+<h4 id="regarding-the-toolchain">Regarding the Toolchain</h4>
+
+<p>For various hard-coded reasons, that the toolchains such as <code class="language-plaintext highlighter-rouge">toolchain_linux-x86_64_xtensa-espressif_esp32_zephyr-elf.tar.xz</code> appear to have to be inside the SDK directory.</p>
+
+<p>There are environment variables like <code class="language-plaintext highlighter-rouge">TOOLCHAIN_ROOT</code>, <code class="language-plaintext highlighter-rouge">ZEPHYR_TOOLCHAIN_VARIANT</code>, <code class="language-plaintext highlighter-rouge">HOST_TOOLS_HOME</code>, but these have side-effects.</p>
+
+<p>Also since there is only one <code class="language-plaintext highlighter-rouge">TOOLCHAIN_ROOT</code> you’d run into trouble when you have multiple toolchains (x86_64 for Qemu for locally debugging alongside ESP32 for instance) without dynamically switching that variable.</p>
+
+<p>Starting off I’ll just package the toolchain with the SDK.</p>
+
+<h4 id="regarding-the-host-tools">Regarding the Host-Tools</h4>
+
+<p>The Host-Tools seem to be optional for building, but are required for debugging and advanced usage.</p>
+
+<p>They contain binaries that only need to be added to the PATH environment variable. This is optional, but packing them is a bit involved. I’ll also add a conan recipe for that below.</p>
+
+<p><img src="../../../../images/2024-03-16-Sa-ZephyrPt2-Conan/zephyr-host-tools.png" width="25%" /></p>
+
+<h4 id="regarding-the-west-metatool">Regarding the “west” metatool</h4>
+
+<p>The west-tool is essentially a simple Python tool to download the west.yml into proper locations. It uses CMake underneath and so, after prior setup with west, we can fallback to CMake for more advanced configuration.</p>
+
+<p>Regarding the tool itself it could be packaged with Conan to keep everything self-contained or for bleeding-edge or modified versions of the tool, but apart from that it is already available as a pip package and since we’re usually installing Conan also via pip, there’s not much advantage of repackaging the tool.</p>
+
+<h4 id="esp32-pinctrl-headers">ESP32 PinCtrl Headers</h4>
+
+<p>Below I’ll be switching to a known Git commit by Conan’s Git-SCM-Module rather than the west tool, as it doesn’t appear to support cloning a specific Git-Commit, but only tags or branches.</p>
+
+<p>For the ESP32 I’ve found that the current most recent v3.5 of Zephyr is missing the ESP32 pinctrl-Headers, but they are contained in the current main.</p>
+
+<p>This is probably a temporary issue that will go way with v3.6 and only relevent when using the ESP32. Normally it’s very much advised to package the latest stable version of software.</p>
+
+<p><img src="../../../../images/2024-03-16-Sa-ZephyrPt2-Conan/zephyr-3-5-esp32-missing-pinctrl.png" width="45%" /></p>
+
+<h2 id="packaging-with-conan">Packaging with Conan</h2>
+
+<p>With the above in mind and the “freestanding” build of an application working, we can create the recipes.</p>
+
+<p>We aim for the following structure:</p>
+
+<p><img src="../../../../images/2024-03-16-Sa-ZephyrPt2-Conan/zephyr-conan-packaging.png" width="35%" /></p>
+
+<h3 id="example-application">Example Application</h3>
+
+<p>Starting off with our application, the “blinky” sample, we move the code from <code class="language-plaintext highlighter-rouge">zephyr/samples/basic/blinky</code> to a new directory and add a <strong><em>conanfile.py</em></strong>.</p>
+
+<p><img src="../../../../images/2024-03-16-Sa-ZephyrPt2-Conan/zephyr-app.png" width="35%" /></p>
+
+<p>Inside the CMakeLists.txt you’ll find relies on an environment variable <code class="language-plaintext highlighter-rouge">ZEYPHR_BASE</code>. We will need to set that environment variable and the <code class="language-plaintext highlighter-rouge">ZEPHYR_SDK_INSTALL_DIR</code> for the SDK.</p>
+
+<div class="language-cmake highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cmake_minimum_required</span><span class="p">(</span>VERSION 3.20.0<span class="p">)</span>
+<span class="nb">find_package</span><span class="p">(</span>Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE}<span class="p">)</span>
+<span class="nb">project</span><span class="p">(</span>blinky<span class="p">)</span>
+
+<span class="nb">target_sources</span><span class="p">(</span>app PRIVATE src/main.c<span class="p">)</span>
+</code></pre></div></div>
+
+<p>In the <strong><em>conanfile.py</em></strong> all we need is to require the sources and SDK. In the following sections you’ll see the recipes for both.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
+<span class="kn">from</span> <span class="nn">conan.tools.files</span> <span class="kn">import</span> <span class="n">chdir</span><span class="p">,</span> <span class="n">copy</span>
+
+<span class="k">class</span> <span class="nc">ZephyrExample</span><span class="p">(</span><span class="n">ConanFile</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">"zephyr-example"</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="s">"0.0.1"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="s">"*"</span>
+
+    <span class="k">def</span> <span class="nf">requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">requires</span><span class="p">(</span><span class="s">"zephyr-sources/85b503e"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">requires</span><span class="p">(</span><span class="s">"zephyr-sdk/0.16.5-1"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"*"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">recipe_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"src"</span><span class="p">)</span>    
+        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'ZEPHYR_SDK_INSTALL_DIR'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dependencies</span><span class="p">[</span><span class="s">"zephyr-sdk"</span><span class="p">].</span><span class="n">package_folder</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'ZEPHYR_BASE'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">dependencies</span><span class="p">[</span><span class="s">"zephyr-sources"</span><span class="p">].</span><span class="n">package_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"zephyr"</span><span class="p">)</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s">"west build -p always -b esp32_devkitc_wroom src/"</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"build/zephyr/zephyr.elf"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">,</span> <span class="n">keep_path</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+</code></pre></div></div>
+
+<p>Note:</p>
+
+<ul>
+  <li>the <code class="language-plaintext highlighter-rouge">os.environ</code> is better handled by <code class="language-plaintext highlighter-rouge">self.env_info.ZEPHYR_SDK_INSTALL_DIR</code> in the sdk/source recipes, but there has been a change in behaviour between conan 1.x and 2.x and for the sake of simplicity and demonstration the above works across both versions more reliably</li>
+</ul>
+
+<h3 id="zephyr-sdk">Zephyr-SDK</h3>
+
+<p>Here we remove the included hosttools as we will package them seperately.</p>
+
+<p>Unfortunately, as mentioned above, I haven’t found a way to handle (multiple) toolchains without packaging them together with the SDK. For most use-cases the following is sufficient.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
+<span class="kn">from</span> <span class="nn">conan.tools.files</span> <span class="kn">import</span> <span class="n">chdir</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">get</span>
+
+<span class="k">class</span> <span class="nc">ZephyrSdkConan</span><span class="p">(</span><span class="n">ConanFile</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">"zephyr-sdk"</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="s">"0.16.5-1"</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">"https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_linux-x86_64_minimal.tar.xz"</span>
+    <span class="n">sha256</span> <span class="o">=</span> <span class="s">"f23836a1d35800ae7d98073f8f7c79166deeed753b5af927ef778764592d9675"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="s">"*"</span>
+
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">url</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">sha256</span><span class="p">)</span>
+
+        <span class="c1"># -- remove hosttools archive
+</span>        <span class="n">zephyrHostToolsSh</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"**/zephyr-sdk-*-hosttools-standalone-*.sh"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zephyrHostToolsSh</span><span class="p">)</span>
+        
+        <span class="c1"># -- remove setup script
+</span>        <span class="n">setupSh</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"**/setup.sh"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">setupSh</span><span class="p">)</span>
+
+        <span class="c1"># -- add toolchain
+</span>        <span class="n">zephyr_sdk_directory</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"zephyr-sdk-*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">toolchain_url</span> <span class="o">=</span> <span class="s">"https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/toolchain_linux-x86_64_xtensa-espressif_esp32_zephyr-elf.tar.xz"</span>
+        <span class="n">toolchain_sha256</span> <span class="o">=</span> <span class="s">"c28062aef858681ce06899a1ff393170deed4554de94a9ed21b8719a7656d14e"</span>
+        <span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">toolchain_url</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="n">toolchain_sha256</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="n">zephyr_sdk_directory</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">zephyr_sdk_directory</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"zephyr-sdk-*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"*"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span> <span class="o">/</span> <span class="n">zephyr_sdk_directory</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">env_info</span><span class="p">.</span><span class="n">ZEPHYR_SDK_INSTALL_DIR</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span>
+</code></pre></div></div>
+
+<h3 id="zephyr-sources">Zephyr-Sources</h3>
+
+<p>The Zephyr west metatool clones a large number of GitHub repos depending on its the west.yml configuration.</p>
+
+<p>The best way to deal with this seems to overwrite the west.yml with a custom filtered one, then run <code class="language-plaintext highlighter-rouge">west init</code> once , switch to a known Git commit and run <code class="language-plaintext highlighter-rouge">west update</code>. As mentioned above it’s better to checkout a specific release of Zephyr via west instead of switching to a Git-Hash from main, but for ESP32 support I currently need the main.</p>
+
+<p>That way you can use the resulting package in future without having to checkout everything again, you can easily update at a later time and control what gets cloned and from where - in case we need to mirror the repos from the west.yml to our own infrastructure.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
+<span class="kn">from</span> <span class="nn">conan.tools.files</span> <span class="kn">import</span> <span class="n">chdir</span><span class="p">,</span><span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">conan.tools.scm</span> <span class="kn">import</span> <span class="n">Git</span>
+
+<span class="k">class</span> <span class="nc">ZephyrSourcesConan</span><span class="p">(</span><span class="n">ConanFile</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">"zephyr-sources"</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">"https://github.com/zephyrproject-rtos/zephyr.git"</span>
+    <span class="n">commit</span> <span class="o">=</span> <span class="s">"85b503e23b17aef4e4a6d172ec99eac17a1db25e"</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="n">commit</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="s">"*.yml"</span>
+    
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>    
+        <span class="c1"># -- run west init with a specific version
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s">"west init -m </span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">url</span><span class="si">}</span><span class="s"> --mr main ."</span><span class="p">)</span> <span class="c1"># pip install west
+</span>
+        <span class="c1"># -- switch to fixed commit
+</span>        <span class="n">git</span> <span class="o">=</span> <span class="n">Git</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">"zephyr"</span><span class="p">):</span>
+          <span class="n">git</span><span class="p">.</span><span class="n">checkout</span><span class="p">(</span><span class="n">commit</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">commit</span><span class="p">)</span>
+
+        <span class="c1"># -- overwrite west.yml
+</span>        <span class="n">west_manifest_src</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">recipe_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"west.yml"</span>
+        <span class="n">west_manifest_dst</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"zephyr"</span> <span class="o">/</span> <span class="s">"west.yml"</span>
+        <span class="n">shutil</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">west_manifest_src</span><span class="p">,</span> <span class="n">west_manifest_dst</span><span class="p">)</span>
+
+        <span class="c1"># -- run west update to download repos configured in west.yml
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="s">"west update"</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"*"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="p">.</span><span class="n">env_info</span><span class="p">.</span><span class="n">ZEPHYR_BASE</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"zephyr"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="optional-hosttools">(Optional) Hosttools</h3>
+
+<p>For the optional hosttools I’ve chosen to package them seperately.</p>
+
+<p>The only challenge here is to extract a Yocto-style self-extracting shell script. The shell script contains a “MARKER” line after which the binary of a 7zip-Archive follows.</p>
+
+<p>As the conan recipes are written in Python we can just imitate that behaviour. It seems we can’t use Conan’s <code class="language-plaintext highlighter-rouge">unzip</code> function as the 7z is not compatible, so I’m using patoolib.</p>
+
+<p>After extracting the 7zip archive from the Shell-Script, extracting it which automatically extracts the *.tar inside of that (at least on Linux - seems to behave differently on Windows), we just package the files and set all **/bin-folders in the PATH-variable.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">patoolib</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">from</span> <span class="nn">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
+<span class="kn">from</span> <span class="nn">conan.tools.files</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">get</span>
+
+<span class="k">class</span> <span class="nc">ZephyrHosttools</span><span class="p">(</span><span class="n">ConanFile</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s">"zephyr-hosttools"</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="s">"0.16.5"</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="s">"https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5/hosttools_linux-x86_64.tar.xz"</span>
+    <span class="n">sha256</span> <span class="o">=</span> <span class="s">"b9a1effc8c0bb089ac3b06e0981a04365cb3328042d766ec2715b4d7bdd4b9d0"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="s">"*"</span>
+
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">url</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">sha256</span><span class="p">)</span>
+
+        <span class="c1"># -- extract hosttools 7z from sh-Archive
+</span>        <span class="n">archiveSh</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"zephyr-sdk-*-hosttools-standalone-*.sh"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archiveSh</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">blob</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">marker</span> <span class="o">=</span> <span class="sa">b</span><span class="s">'MARKER:</span><span class="se">\n</span><span class="s">'</span>
+        <span class="n">markerPosition</span> <span class="o">=</span> <span class="n">blob</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+        <span class="n">blob</span> <span class="o">=</span> <span class="n">blob</span><span class="p">[</span><span class="n">markerPosition</span><span class="p">:]</span>
+        <span class="n">archive7z</span> <span class="o">=</span> <span class="n">archiveSh</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">".sh"</span><span class="p">,</span> <span class="s">".7z"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archive7z</span><span class="p">,</span> <span class="s">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span>
+
+        <span class="c1"># -- extract 7z and tar inside
+</span>        <span class="bp">self</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s">"patool extract </span><span class="si">{</span><span class="n">archive7z</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
+        <span class="n">archiveTar</span> <span class="o">=</span> <span class="n">archive7z</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'.7z'</span><span class="p">,</span> <span class="s">'.tar'</span><span class="p">)</span>
+
+        <span class="c1"># -- remove parent directory
+</span>        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">os</span><span class="p">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">archiveTar</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]):</span>
+            <span class="n">shutil</span><span class="p">.</span><span class="n">move</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">archiveTar</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span> <span class="o">/</span> <span class="n">element</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span>
+
+        <span class="c1"># -- remove excluded files
+</span>        <span class="n">os</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">archiveSh</span><span class="p">)</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">archive7z</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"*"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">bin_folders</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"**/bin"</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">bin_folder</span> <span class="ow">in</span> <span class="n">bin_folders</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">.</span><span class="n">env_info</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span> <span class="o">/</span> <span class="n">bin_folder</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="building">Building</h2>
+
+<p>With that we can already build by running <code class="language-plaintext highlighter-rouge">conan create</code> on all of our recipes one by one.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conan create conan-zephyr-sdk/
+conan create conan-zephyr-sources/
+conan create example/
+</code></pre></div></div>
+
+<p>The first two calls download and checkout repos from the internet and take the most time, but we’ll only have to run that once.</p>
+
+<p>If you’re collaborating in a team and have an artefact storage you can upload the packages and your colleagues can quickly get setup in a clean and reproducable way, even without access to the global internet - often a requirement in corporations for safety reasons.</p>
+
+<p>The last call will compile the project, produce the *.elf file and place it in the package directory.</p>
+
+<p><img src="../../../../images/2024-03-16-Sa-ZephyrPt2-Conan/zephyr-conan-success.png" width="40%" /></p>
+
+<p>on my system it’s in</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$HOME</span>/.conan2/p/b/zephyfc68e6f85973b/p
+</code></pre></div></div>
+
+<p>As Conan will tell you</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conan list zephyr-example/0.0.1:<span class="k">*</span> <span class="c"># returns package_hash</span>
+conan cache path zephyr-example/0.0.1:&lt;package_hash&gt; <span class="c"># returns package path containing *.elf binary</span>
+</code></pre></div></div>
+
+<h2 id="development-testing-and-flashing">Development, Testing and Flashing</h2>
+
+<p>In practice, when working on the application, you’d <code class="language-plaintext highlighter-rouge">conan install</code> and <code class="language-plaintext highlighter-rouge">conan build</code> in your workspace.</p>
+
+<p>In an automated CI/CD you might run conan tests on the packages and promote them through a staging system.</p>
+
+<p>For flashing you’d probably have a script that either runs <code class="language-plaintext highlighter-rouge">conan install</code> in temporary directory and then runs <code class="language-plaintext highlighter-rouge">west flash</code> or uses <code class="language-plaintext highlighter-rouge">conan download</code> to download the package, grab the *.elf from the package folder and flash it.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>We now have a quick, cached, efficient and reproducable way to build Zephyr applications with fine-granular control over what dependencies get dragged in.</p>
+
+<p>Deployments get much cleaner and also locally runable when your Shell scripts, Jenkins scripts, GitHub Workflows, Dockerfiles can all consistently <code class="language-plaintext highlighter-rouge">pip install conan</code>, <code class="language-plaintext highlighter-rouge">conan config install &lt;config&gt;</code> and then only <code class="language-plaintext highlighter-rouge">git clone</code> and <code class="language-plaintext highlighter-rouge">conan create</code> each package.</p>
+
+<hr />
+
+<pre>
+1] https://docs.zephyrproject.org/latest/develop/application/index.html#zephyr-freestanding-application
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Zephyr RTOS - Pt.2 - Conan"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>CustomOS - Pt.9 - Enhancements - Dennis Salzner</title>
+
+  <!-- search engine -->
+  <meta name="description" content="Dennis Salzner"/>
+  <link rel="canonical" href="/programming/2024/02/04/Sa-CustomOsPt9-Enhancements.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.9 - Enhancements - Dennis Salzner" />
+  <meta property="og:description" content="Some thoughts on enhancements: Better Graphics Drivers,  font improvements, running user-space applications." />
+  <meta property="og:url" content="/programming/2024/02/04/Sa-CustomOsPt9-Enhancements.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2024-02-04 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2024-02-04 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2024-02-04 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Some thoughts on enhancements: Better Graphics Drivers,  font improvements, running user-space ap..." />
+  <meta name="twitter:title" content="CustomOS - Pt.9 - Enhancements - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="/js/lightbox.js"></script>
+  <link href="/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - CustomOs - Pt.9 - Enhancements</h1>
+<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+
+<div class="page-title">CustomOS - Pt.9 - Enhancements</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS)</div>
+<div class="page-seperator"></div>
+
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<h2 id="what-we-are-trying-to-achieve">What we are trying to achieve</h2>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#what-we-are-trying-to-achieve" id="markdown-toc-what-we-are-trying-to-achieve">What we are trying to achieve</a></li>
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#screen-resolution" id="markdown-toc-screen-resolution">Screen Resolution</a>    <ul>
+      <li><a href="#current-configuration---mode-13h" id="markdown-toc-current-configuration---mode-13h">Current Configuration - Mode 13h</a></li>
+      <li><a href="#mode-12h-quirks" id="markdown-toc-mode-12h-quirks">Mode 12h quirks</a></li>
+      <li><a href="#vbe-modes" id="markdown-toc-vbe-modes">VBE Modes</a></li>
+    </ul>
+  </li>
+  <li><a href="#font-fixes" id="markdown-toc-font-fixes">Font Fixes</a></li>
+  <li><a href="#user-space-applications" id="markdown-toc-user-space-applications">User-Space Applications</a>    <ul>
+      <li><a href="#ground-for-experimentation" id="markdown-toc-ground-for-experimentation">Ground for experimentation</a></li>
+      <li><a href="#first-sample-application-to-overwrite-pixels-in-the-framebuffer" id="markdown-toc-first-sample-application-to-overwrite-pixels-in-the-framebuffer">First sample application to overwrite pixels in the Framebuffer</a></li>
+      <li><a href="#prepare-some-code" id="markdown-toc-prepare-some-code">Prepare some code</a>        <ul>
+          <li><a href="#create-the-application" id="markdown-toc-create-the-application">Create the application</a></li>
+          <li><a href="#get-the-opcodes" id="markdown-toc-get-the-opcodes">Get the Opcodes</a></li>
+          <li><a href="#running-opcodes-from-arrays" id="markdown-toc-running-opcodes-from-arrays">Running Opcodes from Arrays</a></li>
+        </ul>
+      </li>
+      <li><a href="#second-sample-application---calling-kernel-functions" id="markdown-toc-second-sample-application---calling-kernel-functions">Second sample application - calling Kernel functions</a>        <ul>
+          <li><a href="#get-address-of-function-in-the-customos" id="markdown-toc-get-address-of-function-in-the-customos">Get address of function in the CustomOS</a></li>
+          <li><a href="#calling-functions-by-address" id="markdown-toc-calling-functions-by-address">Calling functions by address</a></li>
+          <li><a href="#opcodes" id="markdown-toc-opcodes">Opcodes</a></li>
+          <li><a href="#extended-version" id="markdown-toc-extended-version">Extended Version</a></li>
+        </ul>
+      </li>
+      <li><a href="#executable-formats" id="markdown-toc-executable-formats">Executable Formats</a>        <ul>
+          <li><a href="#elf-file-format" id="markdown-toc-elf-file-format">ELF File Format</a></li>
+          <li><a href="#pe-file" id="markdown-toc-pe-file">PE file</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<h2 id="screen-resolution">Screen Resolution</h2>
+
+<p>So far we’ve used only 320 x 200 pixels by setting mode 13h. I’d like to increase the resolution to 640 x 480 pixels at the expensive of reducing the available colours.</p>
+
+<h3 id="current-configuration---mode-13h">Current Configuration - Mode 13h</h3>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">regs</span><span class="p">.</span><span class="n">ax</span> <span class="o">=</span> <span class="mh">0x0013</span><span class="p">;</span>
+<span class="n">int32</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">regs</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="mode-12h-quirks">Mode 12h quirks</h3>
+
+<p>By setting mode 12h we get 640 x 480 pixels with 16 Colours.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">regs</span><span class="p">.</span><span class="n">ax</span> <span class="o">=</span> <span class="mh">0x0012</span><span class="p">;</span>
+<span class="n">int32</span><span class="p">(</span><span class="mh">0x10</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">regs</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>16 colours are represented by 4 Bit and not 8 Bit. This makes rendering a bit more complicated.
+Additionally in mode 12h we are dealing with “planes” that we have to switch through.
+Each plane represents on of the bits of the 4 bit colour. For this I’ve borrowed and adapted some code from [5,1].</p>
+
+<p>We can select the plane by</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define VGA_GC_INDEX      0x3CE
+#define VGA_GC_DATA       0x3CF
+#define VGA_SEQ_INDEX     0x3C4
+#define VGA_SEQ_DATA      0x3C5
+</span>
+<span class="kt">uint8_t</span> <span class="n">pmask</span><span class="p">;</span>
+<span class="n">p</span> <span class="o">&amp;=</span> <span class="mi">3</span><span class="p">;</span>
+<span class="n">pmask</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">p</span><span class="p">;</span>
+
+<span class="c1">// set read</span>
+<span class="n">outportb</span><span class="p">(</span><span class="n">VGA_GC_INDEX</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="n">outportb</span><span class="p">(</span><span class="n">VGA_GC_DATA</span><span class="p">,</span> <span class="n">p</span><span class="p">);</span>
+
+<span class="c1">// set write</span>
+<span class="n">outportb</span><span class="p">(</span><span class="n">VGA_SEQ_INDEX</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">outportb</span><span class="p">(</span><span class="n">VGA_SEQ_DATA</span><span class="p">,</span> <span class="n">pmask</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Apparantly we need to <code class="language-plaintext highlighter-rouge">set read</code> first, but sometimes it works without.</p>
+
+<p>So in order to make the entire screen colour blue we can</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">uint16_t</span> <span class="n">screenHeight</span> <span class="o">=</span> <span class="mi">480</span><span class="p">;</span>
+<span class="kt">uint16_t</span> <span class="n">screenWidth</span> <span class="o">=</span> <span class="mi">640</span><span class="p">;</span>
+<span class="kt">char</span> <span class="o">*</span> <span class="n">screenBuffer</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="mh">0xA0000</span><span class="p">;</span>
+
+<span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">p</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">set_plane</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+  <span class="n">delay</span><span class="p">();</span>
+  <span class="kt">int</span> <span class="n">pos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="n">screenHeight</span> <span class="o">-</span> <span class="mi">20</span><span class="p">;</span> <span class="n">y</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">screenWidth</span> <span class="o">-</span> <span class="mi">20</span><span class="p">;</span> <span class="n">x</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">pos</span> <span class="o">=</span> <span class="n">y</span><span class="o">*</span><span class="n">screenWidth</span> <span class="o">+</span> <span class="n">x</span><span class="p">;</span>
+      <span class="n">screenBuffer</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="mi">255</span><span class="p">;</span> <span class="c1">// set all on</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This sort of works, but either I’m missing something, there’s a timing issue or a problem in QEmu. It could be due to a missing “vertical blank interrupt” that is signaled similarly to the keyboard interrupt on the “Programmable Interrupt Controller” (PIC). We likely shouldn’t just write to the buffer at any time, but rather when that interrupt fires so the BIOS knows the buffer is in consistant and clean state.</p>
+
+<p>Every time I run it, it shows a different result</p>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/mode-12h-instable.gif" width="40%" /></p>
+
+<p>Also taken from [5,1] we can use the <code class="language-plaintext highlighter-rouge">write_pixel4p</code> function</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">graphicsPutPixel</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">x</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">y</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">unsigned</span> <span class="n">wd_in_bytes</span><span class="p">,</span> <span class="n">off</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pmask</span><span class="p">;</span>
+  <span class="n">wd_in_bytes</span> <span class="o">=</span> <span class="n">screenWidth</span> <span class="o">/</span> <span class="mi">8</span><span class="p">;</span>
+  <span class="n">off</span> <span class="o">=</span> <span class="n">wd_in_bytes</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">x</span> <span class="o">/</span> <span class="mi">8</span><span class="p">;</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="mi">7</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">mask</span> <span class="o">=</span> <span class="mh">0x80</span> <span class="o">&gt;&gt;</span> <span class="n">x</span><span class="p">;</span>
+  <span class="n">pmask</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">p</span><span class="o">++</span><span class="p">){</span>
+    <span class="n">set_plane</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">pmask</span> <span class="o">&amp;</span> <span class="n">c</span><span class="p">)</span>
+      <span class="o">*</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)(</span><span class="mh">0xA000</span><span class="o">*</span><span class="mi">16</span><span class="o">+</span><span class="n">off</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)((</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="mh">0xA000</span><span class="o">*</span><span class="mi">16</span> <span class="o">+</span> <span class="n">off</span><span class="p">))</span><span class="o">|</span><span class="n">mask</span><span class="p">;</span>
+    <span class="k">else</span>
+      <span class="o">*</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)(</span><span class="mh">0xA000</span><span class="o">*</span><span class="mi">16</span><span class="o">+</span><span class="n">off</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)((</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="mh">0xA000</span><span class="o">*</span><span class="mi">16</span> <span class="o">+</span> <span class="n">off</span><span class="p">))</span><span class="o">&amp;~</span><span class="n">mask</span><span class="p">;</span>
+    <span class="n">pmask</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>By writing less pixels at once we can write coloured rectangles in the corners - but it’s still very unstable and bootloops on every other boot.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">40</span><span class="p">;</span> <span class="n">y</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">600</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">640</span><span class="p">;</span> <span class="n">x</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">graphicsPutPixel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// 10 = green, 12 = light red, 18 = dark green</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">440</span><span class="p">;</span> <span class="n">y</span> <span class="o">&lt;</span> <span class="mi">480</span><span class="p">;</span> <span class="n">y</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">600</span><span class="p">;</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">640</span><span class="p">;</span> <span class="n">x</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">graphicsPutPixel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="mi">12</span><span class="p">);</span> <span class="c1">// 10 = green, 12 = light red, 18 = dark green</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div></div>
+
+<p>We can how ever see that in theory it should have worked. Unforunately most these VGA Modes are not standardized and so emulators and hardware may behave differently. YMMV.</p>
+
+<p>Double Buffering, adding delays for timing and writing only 20-40 pixels at once may help.</p>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/colours.png" width="30%" /></p>
+
+<h3 id="vbe-modes">VBE Modes</h3>
+
+<p>On the osdev-forums [2] I found suggestions to use <code class="language-plaintext highlighter-rouge">INT 10h/AH=4F</code> instead as it expects a linear buffer with out planes.
+There are more modes documented here [3]. VBE Modes in Qemu/Bochs source code [4].</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define VBE_VESA_MODE_640X480X888                        0x112
+</span></code></pre></div></div>
+
+<p>The interface to use VBE Modes is a bit more involved we’d need to lookup and fill structs</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>struct VbeInfoBlock {
+   [..]
+   uint16_t OemStringPtr[2];         // isa vbeFarPtr
+   [..]
+   uint16_t TotalMemory;             // as # of 64KB blocks
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>struct vbe_mode_info_structure {
+  [..]
+  uint16_t pitch;			// number of bytes per horizontal line
+	uint16_t width;			// width in pixels
+	uint16_t height;
+	[..]
+	uint32_t framebuffer;
+</code></pre></div></div>
+
+<h2 id="font-fixes">Font Fixes</h2>
+
+<p>As we can see in direct comparison in text mode the numbers ‘0’ and ‘8’ are clearly distinguishable. But in the graphical terminal with our subpar font and really low resolution they are hard to tell appart.</p>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/font-before.png" width="20%" />
+<img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/diskio.png" width="20%" /></p>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/digits.png" width="10%" /></p>
+
+<p>The difference is a single pixel on the left side.</p>
+
+<p>To fix this I’ve simply swapped the letter “O” with “0”. It’s a hack, but solves the problem and is also the same approach old type writers made for traveling take, where ‘O’ is also ‘0’ and ‘I’ is also ‘1’.</p>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/font-after.png" width="30%" /></p>
+
+<h2 id="user-space-applications">User-Space Applications</h2>
+
+<p>To extend the operating system we’d need executable files containing applications.</p>
+
+<p>In order to build compatible executable files we can use the same compiler as for the operating system. But loading and running additional code from disk and interfacing it with the kernel functions is more involved.</p>
+
+<h3 id="ground-for-experimentation">Ground for experimentation</h3>
+
+<p>As a ground for experimentaiton it makes sense to add a terminal command and function to the CustomOS dedicated to experimentation.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">extern</span> <span class="s">"C"</span> <span class="p">{</span>
+  <span class="p">[</span><span class="o">..</span><span class="p">]</span>
+  <span class="k">fn</span> <span class="nf">runExperiment</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="k">unsafe</span> <span class="k">fn</span> <span class="nf">shellCommand</span><span class="p">(</span><span class="n">textBufferPos</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">[</span><span class="o">..</span><span class="p">]</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="nf">shellCheckCommand</span><span class="p">(</span><span class="n">textBufferPos</span><span class="p">,</span> <span class="s">"run-experiment"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">runExperiment</span><span class="p">();</span>
+  <span class="p">[</span><span class="o">..</span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And implement a function in C to print something:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">runExperiment</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"Test!</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/test-function.png" width="20%" /></p>
+
+<h3 id="first-sample-application-to-overwrite-pixels-in-the-framebuffer">First sample application to overwrite pixels in the Framebuffer</h3>
+
+<p>As a first sample application we can start off by ignoring how to call kernel functions and just attempt to get our code to be run by the CustomOS. In order to tell whether it properly ran we can take advange of the framebuffer as it has a fixed and known memory location <code class="language-plaintext highlighter-rouge">0xA0000</code>.</p>
+
+<h3 id="prepare-some-code">Prepare some code</h3>
+
+<p>As a first step to get code we can later put in an executable let’s write directly to the frame buffer into it.</p>
+
+<p>This code will overwrite the top border from Cyan to Blue. The way the CustomOS is currently implemented the Top-Border isn’t overwritten by the <code class="language-plaintext highlighter-rouge">screenUpdate()</code> function so often so that we can see the result.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">runExperiment</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">320</span><span class="o">*</span><span class="mi">20</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="mh">0xA0000</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">// blue</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>issuing “run-experiement” yields</p>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/top-border-by-function.png" width="20%" /></p>
+
+<h4 id="create-the-application">Create the application</h4>
+
+<p>With that code prepared, let’s make a standalone application that sets the colour red this time around.</p>
+
+<p>In the next steps we’ll see how we can get the CustomOS to run that code from file.</p>
+
+<p>In a newly created <code class="language-plaintext highlighter-rouge">main.c</code> write:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">320</span><span class="o">*</span><span class="mi">20</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">((</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="mh">0xA0000</span><span class="p">)[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span> <span class="c1">// red</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>and compile it with the same compiler used for the CustomOS</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>../../../Pt1-CrossCompiler/out/path/bin/i686-elf-gcc <span class="nt">-c</span> main.c <span class="nt">-o</span> main.o <span class="nt">-ffreestanding</span> <span class="nt">-O2</span> <span class="nt">-Wall</span> <span class="nt">-Wextra</span> <span class="nt">-fno-exceptions</span>
+</code></pre></div></div>
+
+<h4 id="get-the-opcodes">Get the Opcodes</h4>
+
+<p>When compiling code the compiler converts the human readable code to OpCodes (Operation-Codes). These codes are the commands the CPU will run.</p>
+
+<p>Since modern computers follow the Von-Neumann architecture control commands and data are not separated from one another.
+This means we can load data containing Opcodes and then run that data on the CPU directly.</p>
+
+<p>To get the Opcodes we run</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>objdump -d main.o
+</code></pre></div></div>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/color-top-bar-opcodes.png" width="60%" /></p>
+
+<p>We can see the value range of the for-loop 320*20 and the for loop itself. It contains the jump “jne” (=jump when not equal) to line 10 and increments the counter in line 17.</p>
+
+<h4 id="running-opcodes-from-arrays">Running Opcodes from Arrays</h4>
+
+<p>In order for the CustomOS to run our “overwrite-framebuffer” application we need to inject these Opcodes.</p>
+
+<p>The approach to this is not much different to the way buffer overflows, format-string bugs, etc can be exploited. The book “The Shellcoders Handbook” [6] is a good read on this.</p>
+
+<p>Let’s make shell code of this and run it inside the CustomOS by adapting our <code class="language-plaintext highlighter-rouge">runExperiment()</code> function.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">runExperiment</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="n">shellcode</span><span class="p">[]</span> <span class="o">=</span><span class="s">"</span><span class="se">\xc6\x80\x00\x00\x0a\x00\x04\x83\xc0\x01\x3d\x00\x19\x00\x00\x75\xef</span><span class="s">"</span><span class="p">;</span>
+
+  <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">shellcode</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>and inside the CustomOS issue</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>run-experiment
+</code></pre></div></div>
+
+<h3 id="second-sample-application---calling-kernel-functions">Second sample application - calling Kernel functions</h3>
+
+<p>So far we’ve just overwritten a memory location. In order to properly write to the CustomOS terminal we need to be able to call the <code class="language-plaintext highlighter-rouge">terminal_putchar</code> function.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">terminal_putchar</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">)</span> <span class="p">{</span>
+</code></pre></div></div>
+
+<p>But how do the applications interface with the operating systems or more specifically how do we call that CustomOS kernel function from the application?</p>
+
+<p>Since a function is simply a location in memory that we can jump to all we need is the address of that function in memory and knowledge of it’s signature.</p>
+
+<h4 id="get-address-of-function-in-the-customos">Get address of function in the CustomOS</h4>
+
+<p>The address can change between recompilations of the OS so the easiest approach is to get it from the the OS itself.</p>
+
+<p>To do this we can use our <code class="language-plaintext highlighter-rouge">run-experiment</code> function.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">runExperiment</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"Exec Address of terminalPutChar: %p</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">terminal_putchar</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We can then run it to get the address</p>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/address-of-function.png" width="30%" /></p>
+
+<h4 id="calling-functions-by-address">Calling functions by address</h4>
+
+<p>Calling a function by address isn’t difficult. This code writes an ‘X’ to the terminal.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">runExperiment</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">typedef</span> <span class="kt">void</span> <span class="n">func</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">);</span>
+  <span class="n">func</span><span class="o">*</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">func</span><span class="o">*</span><span class="p">)</span><span class="mh">0xC0103A00</span><span class="p">;</span>
+  <span class="n">f</span><span class="p">(</span><span class="sc">'X'</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Notice how it calls a function at the address <code class="language-plaintext highlighter-rouge">0xC0103A00</code> we got from above and how we’re just assuming it to have the signature <code class="language-plaintext highlighter-rouge">void f(char c)</code>.</p>
+
+<h4 id="opcodes">Opcodes</h4>
+
+<p>Just as above we can extract the opcodes and make shellcode out of it</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>objdump -d main.o
+</code></pre></div></div>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/opcodes.png" width="50%" /></p>
+
+<p>and adapt our function to try it</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">runExperiment</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="n">shellcode</span><span class="p">[]</span> <span class="o">=</span><span class="s">"</span><span class="se">\xb8\x00\x3a\x10\xc0\xff\x71\xfc\x55\x89\xe5\x51\x83\xec\x10\x6a\x58\xff\xd0\x8b\x4d\xfc\x83\xc4\x10\x31\xc0\xc9\x89\x61\xfc\xc3</span><span class="s">"</span><span class="p">;</span>
+  <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="n">shellcode</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>and run it from the terminal in the CustomOS by</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>run-experiment
+</code></pre></div></div>
+
+<h4 id="extended-version">Extended Version</h4>
+
+<p>We can of course do something a little more useful by writing an entire string and we could also invoke other functions from the kernel in the same manner.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="kt">void</span> <span class="nf">func</span><span class="p">(</span><span class="kt">char</span> <span class="n">c</span><span class="p">);</span>
+<span class="n">func</span><span class="o">*</span> <span class="n">f</span> <span class="o">=</span> <span class="p">(</span><span class="n">func</span><span class="o">*</span><span class="p">)</span><span class="mh">0xC0103A00</span><span class="p">;</span>
+
+<span class="kt">char</span> <span class="o">*</span> <span class="n">testStr</span> <span class="o">=</span> <span class="s">"Hello World!</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="k">for</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">14</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">f</span><span class="p">(</span><span class="n">testStr</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+</code></pre></div></div>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/call-by-address.png" width="30%" /></p>
+
+<h3 id="executable-formats">Executable Formats</h3>
+
+<p>With the above approach we’re still hardcoding the code into the kernel by putting the opcodes in the <code class="language-plaintext highlighter-rouge">shellcode[]</code> array.</p>
+
+<p>But clearly we could just load that array from file. In the most simplest approach we could do just that.</p>
+
+<p>Modern Unix/Windows have slightly more advanced executable file formats.</p>
+
+<h4 id="elf-file-format">ELF File Format</h4>
+
+<p>Executable files in Unix Operating-Systems are usually in the “Executable and Linkable Format” (ELF).</p>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/elf-file.png" width="10%" />
+<br /><small>(Image taken from [8])</small></p>
+
+<p>It wraps the Opcodes in the .datasection with a header and additional sections for additional data.</p>
+
+<h4 id="pe-file">PE file</h4>
+
+<p>Windows does it a bit differently with the “Microsoft PE file”.</p>
+
+<p><img src="../../../../images/2024-02-10-CustomOsPt9-Enhancements/win-pe-file.png" width="10%" />
+<br /><small>(Image taken from [9])</small></p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The CustomOS is beginning to become useful for actual tasks such as basic text editing. There are a number of further enhancements to be made. It’s been fun so far, there was a lot to learn and there is a path forward. Most of the goals defined in the first part of the series have been achieved.</p>
+
+<hr />
+
+<pre>
+1] https://github.com/levex/LevOS/blob/9abd49abfb6a8dffbc2c9c96c37f472c56ec700a/kernel/Kernel/VGAdriver.cpp#L795
+2] https://forum.osdev.org/viewtopic.php?t=36632&amp;p=305037
+3] http://www.ctyme.com/intr/rb-0069.htm
+4] https://github.com/qemu/vgabios/blob/19ea12c230ded95928ecaef0db47a82231c2e485/vbe.h#L192C3-L192C63
+5] https://files.osdev.org/mirrors/geezer/osd/graphics/modes.c
+6] Book: Anley et al. "The Shellcoder's Handbook"
+8] https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
+9] https://en.wikibooks.org/wiki/X86_Disassembly/Windows_Executable_Files
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="CustomOS - Pt.9 - Enhancements"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>
