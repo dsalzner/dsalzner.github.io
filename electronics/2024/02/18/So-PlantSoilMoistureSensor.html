@@ -3,40 +3,42 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
   <title>Plant Soil Moisture Sensor - Dennis Salzner</title>
-
+  
+  
   <!-- search engine -->
-  <meta name="description" content="Dennis Salzner"/>
-  <link rel="canonical" href="/electronics/2024/02/18/So-PlantSoilMoistureSensor.html">
+  <meta name="description" content="Monitoring Soil Moisture with a Wemos D1 Mini, MCP3008 and cheap soil moisture probe. Some years ago I bought roughly a dozen cheap plant soil moisture probes. In the following ..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/02/18/So-PlantSoilMoistureSensor.html">
   <meta property="og:locale" content="en_EN" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Plant Soil Moisture Sensor - Dennis Salzner" />
-  <meta property="og:description" content="Monitoring Soil Moisture with a Wemos D1 Mini, MCP3008 and cheap soil moisture probe" />
-  <meta property="og:url" content="/electronics/2024/02/18/So-PlantSoilMoistureSensor.html" />
+  <meta property="og:description" content="Monitoring Soil Moisture with a Wemos D1 Mini, MCP3008 and cheap soil moisture probe. Some years ago I bought roughly a dozen cheap plant soil moisture probe..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2024/02/18/So-PlantSoilMoistureSensor.html" />
   <meta property="og:site_name" content="Dennis Salzner" />
-  <meta property="article:section" content="electronics" />
+  <meta property="article:section" content="Electronics" />
   <meta property="article:published_time" content="2024-02-18 00:00:00 +0100" />
   <meta property="article:modified_time" content="2024-02-18 00:00:00 +0100" />
   <meta property="og:updated_time" content="2024-02-18 00:00:00 +0100" />
   <meta property="og:image" content="" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:description" content="Monitoring Soil Moisture with a Wemos D1 Mini, MCP3008 and cheap soil moisture probe" />
+  <meta name="twitter:description" content="Monitoring Soil Moisture with a Wemos D1 Mini, MCP3008 and cheap soil moisture probe. Some years ago I bought roughly a dozen cheap plant soil moisture probes. In the following ..." />
   <meta name="twitter:title" content="Plant Soil Moisture Sensor - Dennis Salzner" />
   <meta name="twitter:image" content="" />
 
   <!-- syntax highlighting in code snippets -->
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
   
   <!-- jquery (for vimeo video embedding)-->
-  <script src="/js/jquery.min.js"></script>
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
   <!-- photos -->
-  <script src="/js/lightbox.js"></script>
-  <link href="/css/lightbox.css" rel="stylesheet">
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
   
   <!-- diagramms -->
-  <script src="/js/mermaid.min.js"></script>
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
 
 
 <!-- Google tag (gtag.js) -->
@@ -56,21 +58,21 @@
     
 
 <h1>Dennis Salzner - Plant Soil Moisture Sensor</h1>
-<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
 
 <div class="page-title">Plant Soil Moisture Sensor</div>
 <div class="page-subtitle">Building a small IoT device to monitor the soil moisture of our plants</div>
 <div class="page-seperator"></div>
 
-
 <div class="post-content" itemprop="articleBody">
     <p style="font-size: 60%;" align="right">What</p>
 
-<p>Some years ago I bought roughly a dozen of these cheap plant soil moisture probes.</p>
+<p>Monitoring Soil Moisture with a Wemos D1 Mini, MCP3008 and cheap soil moisture probe. Some years ago I bought roughly a dozen cheap plant soil moisture probes. In the following I’ll describe how to connect them to a Wemos D1 Mini Dev-Board with an mcp3008 Analog-Digital-Conveter and how to send messages with the readings to your Telegram chat client.</p>
 
-<p><img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-probe.jpg" width="30%" /></p>
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-probe.jpg" width="30%" />
 
-<p>In the following I’ll describe how to connect them to a Wemos D1 Mini Dev-Board with an mcp3008 Analog-Digital-Conveter.</p>
+
+
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -147,9 +149,15 @@ The sensors can be connected directly to the Wemos D1 chip with an Arduino libra
 
 <p>Wiring is straight-forward: Just connect the SPI lines.</p>
 
-<p><img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/wemos-d1-mini.png" width="20%" /></p>
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/wemos-d1-mini.png" width="20%" />
 
-<p><img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/mcp3008-wemos-d1-mini.png" width="30%" /></p>
+
+
+
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/mcp3008-wemos-d1-mini.png" width="30%" />
+
+
+
 
 <p>We can connect a total of eight Soil Moisture Sensors to the analog input pins of the mcp3008.</p>
 
@@ -159,11 +167,17 @@ The sensors can be connected directly to the Wemos D1 chip with an Arduino libra
 
 <p>That schematic was first wired on a breadboard.</p>
 
-<p><img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-breadboard.jpg" width="20%" /></p>
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-breadboard.jpg" width="20%" />
+
+
+
 
 <p>And later soldered to a perfboard.</p>
 
-<p><img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-perfboard.jpg" width="20%" /></p>
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-perfboard.jpg" width="20%" />
+
+
+
 
 <h3 id="power">Power</h3>
 
@@ -177,7 +191,10 @@ The sensors can be connected directly to the Wemos D1 chip with an Arduino libra
 
 <p>To protect from water and to protect from short circuit fires I like to throw these kind of projects into simple junction boxes.</p>
 
-<p><img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-junction-box.jpg" width="20%" /></p>
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-junction-box.jpg" width="20%" />
+
+
+
 
 <h2 id="software">Software</h2>
 
@@ -376,7 +393,10 @@ It also auto-sends readings every half hour.</p>
 
 <p style="font-size: 60%;" align="right">Progress</p>
 
-<p><img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-telegram.jpg" width="30%" /></p>
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-telegram.jpg" width="20%" />
+
+
+
 
 <p>As you can see the messages are delivered to my phone. Mission accomplished.</p>
 
@@ -401,11 +421,27 @@ It also auto-sends readings every half hour.</p>
 
 <p>Currently I’m using these Blumat suction things.</p>
 
-<p><img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/blumat.png" width="10%" /></p>
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/blumat.png" width="10%" />
+
+
+
 
 <p>They automatically pull water from a bottle, but are hard to properly adjust. The soil moisture sensor helps adjusting them and seeing how the plants react.</p>
 
 <p>A further improvement could be to add a small drip pump controlled by relay instead to water the plants.</p>
+
+<p><strong>Update 2024-04-21</strong></p>
+
+<p>The readings were way off and so I investigated. Seems the probes on the sensors have completly disintegrated due to corossion. The connection pins break off and the traces on the boards are practically gone.</p>
+
+<p>Seems the companies behind these probes don’t seem to expect anyone would seriously use them in projects. Many DIYs order things, myself included - these probes are probably 3 years old - and never get around to using them for a long time or ever. And so the company either had no idea what they were doing or thought they can get away with using coroding material on a plant sensor.</p>
+
+<p>The part is very basic. I’ll probably just use something that doesn’t corrode like copper wires or aluminium rods with some 3D printed part to keep them at an equal distance and will connect the sensor boards to that.</p>
+
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-probe-corrosionon.jpg" width="15%" />
+
+
+
 
 
 </div>

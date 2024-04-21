@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>3D Scanners - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="There is a lot to consider when buying a 3D scanner. I'll compare some use-cases, cameras and technologies in order to make the right choice."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/technology/2024/02/18/So-3dScanning.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="3D Scanners - Dennis Salzner" />
+  <meta property="og:description" content="There is a lot to consider when buying a 3D scanner. I'll compare some use-cases, cameras and technologies in order to make the right choice." />
+  <meta property="og:url" content="https://www.dennissalzner.de/technology/2024/02/18/So-3dScanning.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Technology" />
+  <meta property="article:published_time" content="2024-02-18 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2024-02-18 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2024-02-18 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="There is a lot to consider when buying a 3D scanner. I'll compare some use-cases, cameras and technologies in order to make the right choice." />
+  <meta name="twitter:title" content="3D Scanners - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - 3D Scanners</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">3D Scanners</div>
+<div class="page-subtitle">Choosing the right depth camera for 3D Scanning</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>I’ve had an interest in cameras for 3D scanning for a while, but so far couldn’t justify the price.</p>
+
+<p>3D scanning is a promising technology. It would allow creating 3D models (mesh and texture) by walking around an object and “filming” it.</p>
+
+<p>Unfortunately prices are high and a lot more goes into this than one would expect.</p>
+
+<p>I haven’t yet bought a 3D camera, but have read into the topic and share my insights here. All information is from my research and not guaranteed to be accurate.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#entrypoint" id="markdown-toc-entrypoint">Entrypoint</a></li>
+  <li><a href="#my-use-cases" id="markdown-toc-my-use-cases">My Use-Cases</a>    <ul>
+      <li><a href="#real-estate-scanning" id="markdown-toc-real-estate-scanning">Real-Estate Scanning</a></li>
+      <li><a href="#furniture-scale-scanning" id="markdown-toc-furniture-scale-scanning">Furniture-scale scanning</a></li>
+      <li><a href="#full-body-scans" id="markdown-toc-full-body-scans">Full-body scans</a></li>
+      <li><a href="#robot-localisation" id="markdown-toc-robot-localisation">Robot Localisation</a></li>
+      <li><a href="#3d-print-reproduction" id="markdown-toc-3d-print-reproduction">3D Print Reproduction</a></li>
+    </ul>
+  </li>
+  <li><a href="#requirements" id="markdown-toc-requirements">Requirements</a>    <ul>
+      <li><a href="#gaming" id="markdown-toc-gaming">Gaming</a></li>
+      <li><a href="#industry-quality-assurance" id="markdown-toc-industry-quality-assurance">Industry Quality Assurance</a></li>
+      <li><a href="#real-estate-scanning-1" id="markdown-toc-real-estate-scanning-1">Real Estate Scanning</a></li>
+      <li><a href="#robot-localisation-1" id="markdown-toc-robot-localisation-1">Robot Localisation</a></li>
+      <li><a href="#3d-print-reproduction--ecommerce" id="markdown-toc-3d-print-reproduction--ecommerce">3D Print Reproduction / eCommerce</a></li>
+      <li><a href="#landscape" id="markdown-toc-landscape">Landscape</a></li>
+    </ul>
+  </li>
+  <li><a href="#technologies" id="markdown-toc-technologies">Technologies</a>    <ul>
+      <li><a href="#structured-light" id="markdown-toc-structured-light">Structured Light</a></li>
+      <li><a href="#stereo-vision" id="markdown-toc-stereo-vision">Stereo Vision</a></li>
+      <li><a href="#lidar" id="markdown-toc-lidar">LiDAR</a></li>
+      <li><a href="#dtofitof" id="markdown-toc-dtofitof">dToF/iToF</a></li>
+      <li><a href="#turn-table-vs-freehand-scanning" id="markdown-toc-turn-table-vs-freehand-scanning">Turn-Table vs. Freehand scanning</a></li>
+    </ul>
+  </li>
+  <li><a href="#low-cost-entry-level-consumer-devices" id="markdown-toc-low-cost-entry-level-consumer-devices">Low-Cost Entry-Level Consumer Devices</a>    <ul>
+      <li><a href="#revopoint-range-2" id="markdown-toc-revopoint-range-2">Revopoint Range 2</a></li>
+      <li><a href="#shining3d-einscan" id="markdown-toc-shining3d-einscan">Shining3D Einscan</a></li>
+    </ul>
+  </li>
+  <li><a href="#technical-details-beginnings-and-diy" id="markdown-toc-technical-details-beginnings-and-diy">Technical Details, Beginnings and DIY</a>    <ul>
+      <li><a href="#pure-photogrammetry" id="markdown-toc-pure-photogrammetry">Pure Photogrammetry</a></li>
+      <li><a href="#measuring-distance-with-a-laser-pointer" id="markdown-toc-measuring-distance-with-a-laser-pointer">Measuring distance with a Laser Pointer</a></li>
+      <li><a href="#using-laser-lines-instead-of-points" id="markdown-toc-using-laser-lines-instead-of-points">Using laser lines instead of points</a></li>
+      <li><a href="#using-beamers-to-project-grids" id="markdown-toc-using-beamers-to-project-grids">Using beamers to project grids</a></li>
+      <li><a href="#better-grid-projection" id="markdown-toc-better-grid-projection">Better grid projection</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="entrypoint">Entrypoint</h2>
+
+<p>My entrypoint to the world of 3D scanning was probably the Kinect cameras made for the XBox gaming consoles. Some tech enthusiasts were able to conect to the camera to computers instead and use them for various purposes.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/kinect360.png" width="20%" />
+<br /><small>(Image taken from [1])</small></p>
+
+<p>I bought the enhanced Kinect One on the used market and modified the proprietary connector to USB-3.0.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/kinectone.png" width="20%" />
+<br /><small>(Image taken from [2])</small></p>
+
+<p>Together with the ROS (Robotic Operating System, version “Melodic Morenia”) I was able to get first scans out of it ca. 2021.</p>
+
+<p>The approach had a lot of drawbacks:</p>
+
+<ul>
+  <li>installing ROS melodic with the libfreenect2 drivers, iai_kinect2 bridge and rtabmap mapping is <strong><em>very</em></strong> involved</li>
+  <li>most of the reason is complex academic software that isn’t very well maintained</li>
+  <li>it ran only on ubuntu bionic for me and the software versions need to be tightly aligned.</li>
+  <li>for this I had an additional hard drive to swap for. Hardware acceleration is tricky to set up.</li>
+  <li>there is some incompatibility with libusb, I was experimenting with different power supplies, but always had data dropouts</li>
+  <li>a docker container allowed me to run the software on another operating system, but then the libusb issues got worse</li>
+  <li>the entire software ran excessively slow</li>
+  <li>the camera just doesn’t have a very good resolution.</li>
+</ul>
+
+<p>But during these first experiemnts I learned what goes into 3D scanning, how important good software and hardware support is and how limited the cameras to date still are.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h2 id="my-use-cases">My Use-Cases</h2>
+
+<p>Since then a lot of cameras have been introduced to the market. I’ve realized that these cameras are often very specifically tailored to a use-case. When buying such a camera it makes sense to look at the use-case first.</p>
+
+<p>There are a number of extremly useful usecases for 3D cameras. Some typical use-cases I’m interested in are:</p>
+
+<h3 id="real-estate-scanning">Real-Estate Scanning</h3>
+
+<p>I’d like to <strong><em>scan a house or appartment</em></strong> and get and accurate enough representation to be able to document the current state, move furnature around, digitally experiment with different placement of furnature and wallcolours and plan renovations.</p>
+
+<h3 id="furniture-scale-scanning">Furniture-scale scanning</h3>
+
+<p>For 3D models of real-estate, but also for modifying games and developing own games I’d like to <strong><em>scan large objects roughly the size of furniture</em></strong>. That includes vehicles and complex shapes such as plants which are hard to model manually.</p>
+
+<h3 id="full-body-scans">Full-body scans</h3>
+
+<p>It would be nice to be able to make accurate <strong><em>full body scans</em></strong> to track fitness progress and to make game avatars.</p>
+
+<h3 id="robot-localisation">Robot Localisation</h3>
+
+<p>A depth camera equipped robot could <strong><em>track its own location</em></strong> relative to it’s surroundings in order to be able to know its own position and to be able to react to commands and drive to specific locations such as charging bays.</p>
+
+<h3 id="3d-print-reproduction">3D Print Reproduction</h3>
+
+<p>Additionally it would be nice if we could scan a medium to small objects, create a mesh and the <strong><em>print that on the 3D printer</em></strong>. This would also come in handy to create ideally measured pieces to fit into existing gaps of projects I’m working on.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="requirements">Requirements</h2>
+
+<p>The reason the cameras are so different is that for each use-case there are vastly different specific requirements that can’t be covered by a single technology.</p>
+
+<h3 id="gaming">Gaming</h3>
+
+<p>The <strong><em>XBox Kinect</em></strong>, PlayStation EyeToy, Nintendo Wii, HTC Vive were all designed for gaming. Here we need to track Hands and Feet acurately, but low resolution and high power consumption and size is acceptable.</p>
+
+<ul>
+  <li>Requirement: Track People, Hands and Feet</li>
+  <li>Resolution: low</li>
+  <li>Distance: &lt;5m</li>
+  <li>Accurracy: &lt;5cm</li>
+  <li>Scan Size: small</li>
+</ul>
+
+<h3 id="industry-quality-assurance">Industry Quality Assurance</h3>
+
+<p><strong><em>Industrial cameras</em></strong> such as cameras by SICK have a completly different use-case. They are meant to detect faults in manufacturing or to accurately detect deformed objects on a conveyor belt.</p>
+
+<ul>
+  <li>Requirement: Accurately detect objects and deformation</li>
+  <li>Resolution: extremly high</li>
+  <li>Distance: &lt;50cm</li>
+  <li>Accuracy: &lt;0.1cm</li>
+  <li>Scan Size: varies</li>
+</ul>
+
+<h3 id="real-estate-scanning-1">Real Estate Scanning</h3>
+
+<p>Many real estate sites not offer “3D tours” to give potential buyers a look into the properties. Here colour accuracy is important, but the mesh doesn’t have to be that accurate. Devices such as the <strong><em>Matterport Pro</em></strong> are in that field. Sometimes even a <strong><em>360 Degree camera</em></strong> that produces a spherical panorama is perfectly sufficient.</p>
+
+<p>Additionally the 3d model needs to be provided via the browser to PCs and low-power smartphones so the point cloud or polygon count will be heavily reduced.</p>
+
+<ul>
+  <li>Requirement: Photographic colours, low accuracy mesh</li>
+  <li>Resolution: high image, low on mesh</li>
+  <li>Distance: 0.5-10m</li>
+  <li>Accuracy: +/- 0.5m</li>
+  <li>Scan Size: large</li>
+</ul>
+
+<h3 id="robot-localisation-1">Robot Localisation</h3>
+
+<p>Here we need low-power and small form-factor. Products like the <strong><em>Oak-D Lite</em></strong> fit the bill. A far cheaper and more accurate, energy efficient and cheaper option for simple robot to gain SLAM (Simultaneous Localisation and Mapping) capabilities are 360 Lidar scanners like the <strong><em>ydLidar X4</em></strong> or <strong><em>RpiLidar</em></strong> used on entry-grade robotic vacuums.</p>
+
+<ul>
+  <li>Requirement: Monochrome sufficient, medium accuracy distance readings.</li>
+  <li>Resolution: meters</li>
+  <li>Distance: meters</li>
+  <li>Accuracy: +/- 0.5m</li>
+  <li>Scan Size: medium</li>
+</ul>
+
+<h3 id="3d-print-reproduction--ecommerce">3D Print Reproduction / eCommerce</h3>
+
+<p>For reproducing small objects for 3D printing a very low-range high-accuracy camera with no colour is sufficent. Here the <strong><em>Creality CR-Scan</em></strong> or <strong><em>Revopoint Inspire 3D</em></strong> scanners are among the best options.</p>
+
+<p>For small online shops and eCommerce the requirements are similar. Industrial hardware stores may need highly accurate cameras.</p>
+
+<p>McMaster-Carr provides accurate 3D-CAD-Models of most of their products free to download [9]. It looks like the CAD models were either provided by the manufacrurers or handmade in CAD applications rather than scanned.</p>
+
+<ul>
+  <li>Requirement: accurate low-scale reproduction</li>
+  <li>Resolution: millimerts</li>
+  <li>Distance: centimeters</li>
+  <li>Accuracy: +/-0.1cm</li>
+  <li>Scan Size: very small</li>
+</ul>
+
+<h3 id="landscape">Landscape</h3>
+
+<p>For landscapes and caves we might resort to photogrammetry instead. Using two high-quality DSLR cameras and software such as MeshRoom [3] might be more suited.</p>
+
+<ul>
+  <li>Requirement: accurate colour reproduction, medium mesh accuracy</li>
+  <li>Resolution: centimeters</li>
+  <li>Distance: meters</li>
+  <li>Accuracy: +/- 30cm</li>
+  <li>Scan Size: very large</li>
+</ul>
+
+<h2 id="technologies">Technologies</h2>
+
+<p>Additionally there are a number of different underlying techonologies built into the cameras. Some cameras have a built-in inertial measurement unit (essentially a 3D compass + movement sensor), some have GPS tracking, some rely only on images, some have one of many types of depth sensing cameras, some rely only on images shot from differnt angles. There an be an AI chip built-in that can do object recognition to aid in localisation.</p>
+
+<p>We can distinguish between these technological categories [4]:</p>
+
+<h3 id="structured-light">Structured Light</h3>
+
+<p>Here a grid is projected onto the scene that is captured by camera additionally to the actual image. It very common in gaming accessories.</p>
+
+<p>The <strong><em>HTC Vive</em></strong> virtual reality system uses “lighthouses” for this that are mounted to the wall and project an Infra-Red-Grid on top the room that is captuired by the headset.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/htc-vive-lighthouse.png" width="20%" /></p>
+
+<p>Also the XBox Kinect Sensors apply this technology.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/kinect-ir-project.png" width="20%" />
+<br /><small>(Image taken from [5])</small></p>
+
+<p>There exist open-source solutions using off-the-shelf beamers to project such a grid and software [6] to create meshes.</p>
+
+<h3 id="stereo-vision">Stereo Vision</h3>
+
+<p>Human visual 3D perception is achieved by two eyes at an angle. So intuitively if we place two cameras at an angle we can immitate that effect.
+Clever software can then take the images and align them to create a Mesh. This is extremly computationally expensive and difficult to set up, lighting conditions make it very fragile, but a very versatile option and often the only option for landscape.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/photogrammetry.png" width="30%" />
+<br /><small>(Image taken from [8])</small></p>
+
+<h3 id="lidar">LiDAR</h3>
+
+<p>For simple 2D SLAM mapping of robots a rotating Lidar is often the best option.</p>
+
+<p>It contains a Laser-Distance-Sensor like you’d get from the hardware-store and spins it at 5-10 times per second yielding 2% accuracy in ranges ideal for measuring distances between walls and furnature in homes.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/lidar.png" width="10%" /></p>
+
+<p>It only produces a 2D map.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/lidar-map.png" width="10%" /></p>
+
+<h3 id="dtofitof">dToF/iToF</h3>
+
+<p>Direct-Time-of-Flight-Sensoren (dToF) and Indirect-Time-of-Flight-Sensoren (dToF) are similar and produce pulsing laser light with varying width. The time of arrival of the reflection is then measured by the camera.</p>
+
+<p>Often chips such as the <strong><em>Sony IMX570</em></strong> is used. Many of the  <strong><em>Luxonis OAK-D</em></strong> Cameras use the IMX378 chip.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h3 id="turn-table-vs-freehand-scanning">Turn-Table vs. Freehand scanning</h3>
+
+<p>There is an important distinction to make between 3D scanners. Some are build to be moved around an object. These tend to be for scanning large objects. While others are made to remain at a fixed position with the object to scan being placed on a turn table. The later is more for small-scale, but more accurate scans of objects with controlled lighting.</p>
+
+<p>In practice different scanners are more well suited for different scenarios. Unfortunately there is no one-fits all.</p>
+
+<h2 id="low-cost-entry-level-consumer-devices">Low-Cost Entry-Level Consumer Devices</h2>
+
+<p>Based on that information we can exclude some of the common cameras for our use-cases.</p>
+
+<ul>
+  <li>the <strong><em>Kinect v2</em></strong> wasn’t stable and accurate enough for my use-cases</li>
+  <li><strong><em>industrial scanners</em></strong> are too expensive and too use-case specific</li>
+  <li>real-estate cameras like the <strong><em>Matterport devices</em></strong> are too inaccurate, expensive and often tied to cloud provider subscriptions.</li>
+  <li>pure <strong><em>photogrammetry</em></strong> is too difficult to set up and too computationally expensive</li>
+  <li>the <strong><em>Oak-D</em></strong> is too inaccurate outside of Robot localisation and object detection. For localisation I’d rather use a 360 degree Lidar.</li>
+  <li>most of the cameras for 3D printing like the <strong><em>Revopoint devices</em></strong> are too limited in scanning range</li>
+</ul>
+
+<p>There are two consumer entry-grade scanenrs on the market in the 900 Eur range.</p>
+
+<h3 id="revopoint-range-2">Revopoint Range 2</h3>
+
+<p>An interesting device that might suite my needs is the “Revopoint Range 2”. I’m not sure what chip it uses as I can’t find and photos from inside the device or schematics online. It could be a custom ASIC or a Sony IMX chip with a special lense assembly to increase the scanning range.</p>
+
+<ul>
+  <li>uses structured light</li>
+  <li>costs around 600 Eur and</li>
+  <li>scans to a precision of 0.1mm at 40-130cm range</li>
+  <li>has a 9-axis IMU</li>
+</ul>
+
+<p>It’s not ideal for robot localisation, but likely suited for scaning furniture, people and small areas in real estate. Provided good enough accuracy multiple scans could be stiched to a full scale scan of a house. The software support seems to be alright, but probably there are only proprietary drivers.</p>
+
+<h3 id="shining3d-einscan">Shining3D Einscan</h3>
+
+<p>A direct competitor to the Range 2 is the Einscan.</p>
+
+<p>It also uses structured light with two cameras at an angle and a third camera to pick-up colour. It uses a very similar approach as the  Range 2, but relies more on computing power than on-device computation with a purpose built chip.</p>
+
+<p>According to reviews it seems, at least with enough computing power, to perform better than the Range 2. Due to that constraint it is less mobile. The software seems to be ahead as Shining3D also offers much more expensive scanners and uses the same software also for their entry-level scanners.</p>
+
+<h2 id="technical-details-beginnings-and-diy">Technical Details, Beginnings and DIY</h2>
+
+<p>In order to 3D scan an object, for every pixel in an image, we need to measure depth information.
+We then take multiple such RGB-D (red, green, blue and depth values) Images and Software creates a 3D model from it.</p>
+
+<h3 id="pure-photogrammetry">Pure Photogrammetry</h3>
+
+<p>Two calibrated cameras looking at the same object at different angles can give a perseption of depth. This is much like human vision, but is very computationally intensive and not as accurate as adding depth information.</p>
+
+<p>The above mentioned Meshroom is open-software for that purpose.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/photogrammetry.png" width="20%" />
+<br /><small>(Image taken from [8])</small></p>
+
+<h3 id="measuring-distance-with-a-laser-pointer">Measuring distance with a Laser Pointer</h3>
+
+<p>A laserpointer and a webcam fixed at an angle can measure the distance by simple trigonometry. The concept is so simple that I had played in the early 2000s. Basic trigonometry taught in school is sufficient.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/laserpointer-distance.png" width="20%" />
+<br /><small>(Image taken from [6])</small></p>
+
+<p>My application from Sept 2008 can still be run in on WinXP in QEmu on Linux with Visual Basic 6.0 installed that is now freely downloadble on the internet. However finding a WinXP compatible webcam and USB pass-through is a pain to setup and I’d probably rather rewrite the software in something like Python.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/laserpointer.png" width="25%" />
+<br /><small>Laser Range Measurement, written Visual Basic 6.0</small></p>
+
+<p>After all it it only looks for a red or green point in the image, draws a crosshair und measures the pixel-wise distance to reference points to get a relatively accurate measure for distance.</p>
+
+<h3 id="using-laser-lines-instead-of-points">Using laser lines instead of points</h3>
+
+<p>Extrapolate the single point range finding with a laser pointer to a laser line and you’ve got a significant improvement.</p>
+
+<p>This is the approach the “David” Laserscanner from the Technical University of Braunschweig takes [10]. The team published a paper and software in 2010.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/david-scanner.png" width="25%" />
+<br /><small>(Image taken from 11)</small></p>
+
+<p>With a webcam, a line laser as used in construction and a lot of calibration you have a basic 3D scanner.</p>
+
+<h3 id="using-beamers-to-project-grids">Using beamers to project grids</h3>
+
+<p>Moving closer the structured light the next logical progression is to use a projector to project a grid.</p>
+
+<p>The DAVID SLS-1, from the same research group of TU Braunschweig, built a kit with a modified Beamer from Acer, two industrial cameras, a rig and software.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/david-sls1.png" width="25%" />
+<br /><small>(Image taken from the David SLS-1 Manual, 12)</small></p>
+
+<p>The rig is not particularly mobile and more for turntable scanning.</p>
+
+<p>Whats great about this is that the software is free and open-source [13] and can and has been [14] extended.</p>
+
+<p>It is expensive. For accurate and fast scans industrial cameras with rolling shutter like the Sony IMX 236 are suggested. The beamer needs to modified for the purpose with the color wheel removed.
+But all parts would also be reusable for other projects. You can put the color wheel back into the beamer and use it for its intended purpose, like watching a movie, and an industrial camera can also be used for astrophotography, machine learning and more.</p>
+
+<p>There seems to be a group on reddit and telegram dedicated to David SLS scanners. Some DIY budget options use Webcams and cost only 150 USD [17].</p>
+
+<h3 id="better-grid-projection">Better grid projection</h3>
+
+<p>The commercial products “RevoPoint 2” and “Shining3D Einscan” both use the VCSEL (Vertical cavitiy surface emitting laser) to project a grid. The “Kinect 2”, from what I can tell, seems to be do something similar, but with an IR-LED arrangement. The HTC Vive Lighthouses use a spinning disk infront of an IR-LED.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/ricoh-vcsel.png" width="10%" />
+<br /><small>(Ricoh VCSEL Array, Image taken from 15)</small></p>
+
+<p>These Laser-Arrays are very small and energy efficient.</p>
+
+<p>Of course there is a whole row of patents on this obvious technological step, that I hope won’t block future development and drive prices.</p>
+
+<p><img src="../../../../images/2024-02-18-So-3dScanning/vcsel-scanner-patent.png" width="25%" />
+<br /><small>(VCSEL Scanner Patent, Image taken from 16)</small></p>
+
+<p>From the image it looks very much like what would be inside the Shining 3D Einstar and Revopoint Range 2 scanners.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I’m now investigating in two directions: Perhaps a DIY David SLS scanner, expensive and hard to calibrate, stationary, but extensible, better results and interesting reusable parts.</p>
+
+<p>Or an entry-level scanner like the Shining3D Einstar. Also expensive considering its single purpose, but mobile and pre-calibrated. Would become a paperweight as soon as a better scanner comes to market.</p>
+
+<hr />
+
+<pre>
+1] https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Xbox-360-Kinect-Standalone.png/1920px-Xbox-360-Kinect-Standalone.png
+2] https://upload.wikimedia.org/wikipedia/commons/f/f6/Xbox-One-Kinect.jpg
+3] https://alicevision.org/
+4] https://www.framos.com/de/fachartikel/what-are-depth-sensing-cameras-and-how-do-they-work
+5] https://www.allaboutcircuits.com/news/teardown-tuesday-microsofts-xbox-360-kinect/
+6] https://github.com/jakobwilm/slstudio
+7] https://www.researchgate.net/figure/Distance-measurement-system-using-a-camera-and-a-laser-pointer-H-is-the-distance-between_fig7_221967624
+8] https://peterfalkingham.com/2018/08/11/photogrammery-testing-14-alicevision-meshroom/
+9] https://www.mcmaster.com/cad-models/
+10] https://de.wikipedia.org/wiki/David-Laserscanner
+11] https://de.wikipedia.org/wiki/David-Laserscanner#/media/Datei:DAVID-LASERSCANNER_start_screen.jpg
+12] https://manuals.plus/de/david/sls-1-structure-light-3d-scanner-manual
+13] https://github.com/jakobwilm/slstudio
+14] https://github.com/fablabnbg/3D-Scanner-Turntable
+15] https://www.ricoh.com/technology/tech/038_vcsel
+16] https://patents.google.com/patent/US10007994B2/en
+17] https://www.reddit.com/r/3DScanning/comments/n6eb0n/diy_3d_sls_scanner/
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="3D Scanners"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

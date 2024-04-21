@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Encrypted Media Streaming with the Chromium web browser - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="On-demand streaming services use methods to protect their content. These methods are intended to allow subscribers to view, but not download and distribute the content. For this..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/technology/2022/03/19/Sa-ChromiumEncryptedMediaStreaming.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Encrypted Media Streaming with the Chromium web browser - Dennis Salzner" />
+  <meta property="og:description" content="On-demand streaming services use methods to protect their content. These methods are intended to allow subscribers to view, but not download and distribute t..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/technology/2022/03/19/Sa-ChromiumEncryptedMediaStreaming.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Technology" />
+  <meta property="article:published_time" content="2022-03-19 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2022-03-19 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2022-03-19 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="On-demand streaming services use methods to protect their content. These methods are intended to allow subscribers to view, but not download and distribute the content. For this..." />
+  <meta name="twitter:title" content="Encrypted Media Streaming with the Chromium web browser - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Encrypted Media Streaming with the Chromium web browser</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Encrypted Media Streaming with the Chromium web browser</div>
+<div class="page-subtitle">How encrypted media with DRM is handled in the Chromium web browser</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<h2>What this is about</h2>
+
+<p>On-demand streaming services use methods to protect their content. These methods are intended to allow subscribers to view, but not download and distribute the content. For this the transfer of media data is encrypted and elaborate key exchange mechanisms are used to transfer the required information for decryption to the player software.</p>
+
+<p>These key exchange mechanisms are handled inside proprietary code in shared libraries, such as “libwidevinecdm.so”. The library communicates with a licensing server to get information required for decryption and then decryptes media samples that are passed to it.
+This means for media consumption viewers are required to run that proprietary code on their systems and allow it to communicate with a license server. The license server can collect tracking information. There is no way to tell what information is actually collected in such content-protection modules and what software bugs may be introduced to your computer. This brings up distinct memories of the copy protection rootkit scandal in 2005 [6] or, more recently, the Intel Management Engine [10].</p>
+
+<p>Often DASH streaming is used in combination with DRM encryption. What has interested me is what exactly prevents simply extracting the decrypted media data right after the decryption process in the player within a web browser. As it turns out probably not much.</p>
+
+<h2>Legal</h2>
+
+<p>The legal situation with DRM (Digital Rights Management) is complicated. The legality of investigating DRM depends heavily on where you are located. In the US the DMCA (Digital Millennium Copyright Act) is very prohibitive, while the situation in the EU more relaxed.</p>
+
+<p>Either way, bypassing media encryption and especially then distributing content you don’t own the rights to, is almost certainly illegal no matter where you live.</p>
+
+<p>Here we’ll be investigating media pipelines, specifically without reverse engineering or even touching the DRM decryption module so that should not be an issue. There are DRM encrypted streams for testing that use free content [9].</p>
+
+<h2>Content Distribution</h2>
+
+<p>Most online streaming services distribute their content either over DASH (Dynamic Adaptive Streaming over HTTP) or HLS (HTTP-Streaming). In both cases what is essentially an MP4 file is split into an “init” and a number of “media” segments. For the former an XML manifest (*.mpd) describes where these segments are located, for the later a playlist file (*.m3u8) is used. Either the (*.mpd) or the (*.m3u8) is the entry point for a player trying to play the stream.</p>
+
+<p>The init segments contain much of the required configuration for the player and codecs, while the media segments contain the actual media data.</p>
+
+<div class="mermaid" style="width: 800px">
+graph LR;
+    A(mpd)
+</div>
+
+<div class="mermaid" style="width: 800px">
+graph LR;
+    A(video_init) --&gt; B(video_segment_1)
+    B --&gt; C(video_segment_2)
+    C --&gt; D(...)
+    D --&gt; E(video_segment_n)
+</div>
+
+<div class="mermaid" style="width: 800px">
+graph LR;
+    A(audio_init) --&gt; B(audio_segment_1)
+    B --&gt; C(audio_segment_2)
+    C --&gt; D(...)
+    D --&gt; E(audio_segment_n)
+</div>
+
+<p>In order to provide functionality to switch between multiple video and audio content servers, resolutions, qualities, languages, codecs and so forth, the manifest can contain multiple so-called “representations.”</p>
+
+<p>Hence the audio and video is generally kept separate and the player must combine them during playback according to the selected playback options, by concatenation of the media segments with the corresponding init segment.</p>
+
+<h2>Playback with web browsers</h2>
+
+<h3>DASH is handled by Java-Script libraries</h3>
+
+<p>When viewing an stream in a web browser the HTML page is first loaded. Within the HTML page a Java-Script library is loaded. This Java-Script library, in the case of DASH, then parses the XML Description (*.mpd) and orchestrates a series of downloads via the browser’s XMLHttpRequest capabilities.</p>
+
+<h3>Manifest and Segments are downloaded via XMLHttpRequest</h3>
+
+<p>The “XMLHttpRequest” may be known to some from the early days of “Web 2.0”. When the Internet as we know it was originally conceived it was made up of static web pages. This was later called “Web 1.0”. Soon an interest in dynamic web-pages came about. The idea being to not reload an entire page, but rather have the page reload only portions of itself via JavaScript. The most basic use of this is for news tickers at the top of a page that are updated while you are reading the actual article.
+To support this “XMLHttpRequest” was added with the intention of enabling web developers to load XML data asynchroniously from within a web page to get, for instance, the aforementioned news ticker data. With this AJAX (“Asynchronous JavaScript and XML”) was born.</p>
+
+<p>Now for online streaming the “XMLHttpRequest” is used to load the XML Description (*.mpd) and also, as it can handle binary data aswell, the media segments.</p>
+
+<h3>Chromium Media Pipleine</h3>
+
+<p>The Chromium web browser is the open-source web browser source code that the popular Chome web browser is based on. Chromium is also capable of playing DRM encrypted DASH streams. We can use it to analyze the media pipeline within Chrome/Chromium.</p>
+
+<p>After the XML Description (*.mpd) is parsed by the Java-Script DASH-library, the media segments are downloaded and passed back to the HTML5 HTMLMediaElement.</p>
+
+<p>From there they enter the media pipeline inside the browser. That data travels through multiple class instances, constructed by factory and proxy/adapter design patterns, in a heavily object-oriented design, until it reaches the renderer.</p>
+
+<p>A basic top-level overview of how this works on Linux:</p>
+
+<div class="mermaid" style="width: 800px">
+graph LR;
+    A(<b>Java-Script Player</b><br />via Dash.JS library) --&gt; B(<b>HTML Rendering</b>&lt;/br/&gt;via Blink HTML Renderer)
+    B --&gt; C(<b>Chromium</b>)
+    C --&gt; D(<b>Vulkan avc/H.264 decoding</b><br />via libAngle)
+    D --&gt; E(<b>Display</b>)
+    C --&gt; F(<b>Content Decryption</b><br />via Widevine DRM Decryption Module)
+    F --&gt; C
+</div>
+
+<p>In more detail with references to the specific source code files in the Chromium web browser:</p>
+
+<div class="mermaid" style="width: 800px">
+graph TD;
+    A(<b>HTML Page</b><br />with JavaScript DASH-Player, feeds Media Segments) --&gt; C(<b>html_media_element.cc</b><br />third_party/blink/renderer/core/html/media/)
+    A --&gt; B(<b>xml_http_request.cc</b><br />Download Manifest and Media Segments<br />third_party/blink/renderer/core/xmlhttprequest/)
+    C --&gt; D(<b>source_buffer.cc</b><br />third_party/blink/renderer/modules/mediasource/)
+    D --&gt; E(<b>mp4_stream_parser.cc</b><br />media/formats/mp4/)
+    E --&gt; F(<b>decrypting_demuxer_stream.cc</b><br />media/filters/)
+    F --&gt; G(<b>track_run_iterator.cc</b><br />key_id extraction, from MP4 init<br />media/formats/mp4/)
+    F --&gt; H(<b>cdm_adapter.cc</b><br />media/cdm/)
+    H --&gt; I(<b>cdm_wrapper.cc</b><br />media/cdm/)
+    I --&gt; J(<b>cdm_module.cc</b><br />media/cdm/)
+    J --&gt; K(<b>decryption of media samples</b><br />libwidevinecdm.so)
+    F --&gt; L(<b>decrypting_video_decoder.cc</b><br />/media/filters/)
+    L --&gt; M(<b>RendererVk.cpp</b><br />Decode avc/h264 and send to Display<br />third_party/angle/src/libANGLE/renderer/vulkan/)
+</div>
+
+<h3>DRM-encrypted media compared to unencrypted media</h3>
+
+<p>In order for the DASH.JS-Player and the Browser to be aware of the encryption and for them to be able to provide the decryption module with the required information, additional data has to be transported in the MP4 segments and the XML Description (*.mpd).</p>
+
+<p>The Dash-IF security guidelines, section 8.1 in particular, give details on this [7]. Multiple sections (called ‘boxes’) in the MP4 contain additional information when using encryption. 
+Section 9 gives details on how the XML Description (*.mpd) is altered to support encrypted streams [9].
+The documentation states:</p>
+
+<p><b>In the XML Description (*.mpd)<b></b></b></p>
+
+<ul>
+  <li>a “ContentProtection” descriptor, that
+    <ul>
+      <li>may contain pssh data, that can be alternatively signalled in the MP4</li>
+      <li>key_ids for the key server to look-up the content key for the specific media to be decrypted</li>
+      <li>the protection scheme used</li>
+      <li>the URL of the license server</li>
+    </ul>
+  </li>
+</ul>
+
+<p><b>In the init segments</b></p>
+
+<ul>
+  <li>zero or more “Protection System Specific Header” boxes (moov/pssh)</li>
+  <li>one “Scheme Type” box (moov/trak/mdia/minf/stbl/stsd/sinf/schm)</li>
+  <li>one “Track Encryption” box (moov/trak/mdia/minf/stbl/stsd/sinf/schi/tenc)</li>
+</ul>
+
+<p><b>In the media segments</b></p>
+
+<ul>
+  <li>one “Sample Encryption” box (moof/traf/senc)</li>
+  <li>zero or one “Sample Auxiliary Information Size” box (moof/traf/saiz)</li>
+  <li>zero or one “Sample Auxiliary Information Offset” box (moof/traf/saio)</li>
+  <li>zero or more “Protection System Specific Header” box (moof/pssh)</li>
+  <li>one, for each sample group “Sample Group Description” box (moof/traf/sgpd) - may override the “tenc” box</li>
+  <li>one, for each sample grouping type “Sample to Group” box (moof/traf/sbgp)</li>
+</ul>
+
+<h2>The levels of DRM</h2>
+
+<p>There are different levels of DRM. The most commonly used Widevine Level 3 uses the heavily obfuscated proprietary “libwidevinecdm.so” shared object (or widevinecdm.dll dynamic link library on windows).</p>
+
+<p>Level 1 is meant to be more secure and requires an “unhackable” TPM (Trusted Platform Module) hardware module that is currently being integrated in computer hardware and is tied into Windows 11 and MacOS.</p>
+
+<p><b>Read:</b> for copyright purposes the industry is forcing consumers to accept and even pay for additional hardware chips with proprietary software on their computer hardware.</p>
+
+<p>These modules can almost certainly be trivially used to also uniquely identify computer systems by using, for instance, a fake media stream and license server to which the TPM will blindly connect to.</p>
+
+<h2>On trivially bypassing DRM</h2>
+
+<p>As seen above, no matter the level DRM that is used, we can almost always trivially extract the decrypted stream anyway.
+With the current integration of the level 3 Widevine CDM module in Chromium, the encrypted and decrypted buffers are passed in to and received from the “libwidevinecdm.so” shared object.</p>
+
+<p>This means it would likely be possible to, for instance, use a modified Chromium web browser and gain access to the decrypted stream by:</p>
+
+<ul>
+  <li>dumping the encrypted DASH media segments where they are downloaded (in xml_http_request.cc)</li>
+  <li>dumping the encrypted samples before and after decryption with (cdm_adapter.cc) in (decrypting_demuxer_stream.cc)</li>
+</ul>
+
+<p>The process of dumping a decrypted stream could then merely be:</p>
+
+<ul>
+  <li>binary search &amp; replace the encrypted samples in the media segments with the corresponding decrypted ones.</li>
+  <li>strip all encryption metadata from the MP4 boxes</li>
+  <li>concatenate and multiplex the stream, for instance with FFmpeg.</li>
+</ul>
+
+<p>For an attacker there is no need to get his hands on the encryption keys. This could be done without even touching the content decryption module and simply using it as it was intended.</p>
+
+<p>The method would have draw backs:</p>
+
+<ul>
+  <li>it requires playing the entire stream to get all segments</li>
+  <li>and keeping the stream quality settings from switching in the player during playback</li>
+</ul>
+
+<h2>How DRM adds aggravation and does little for content protection</h2>
+
+<p>Even if the above weren’t possible and the media would travel all the way to the computer screen in an encrypted manner, just like with regular television sets, one could strip the encryption off the HDMI-HDCP-signal and record that. Or even simply point a camera at the computer screen and record the stream that way.</p>
+
+<p>If hardware to do this weren’t accessible, then hackers would modify the electronics in television sets.</p>
+
+<p>So long as one person dumps and shares a particular stream, the whole content protection scheme for that particular content is useless.</p>
+
+<p>It really makes me wonder if all the headache for developers, media professionals and media consumers is worth it. It seems to be economically viable, because it deters simple attempts and probably the vendor lock-in is also profitable. The most complex attacks, especially in computing, can be easily accessible to anyone as soon as simple to use software is created that automates the attack [11].</p>
+
+<h2>Further Information</h2>
+
+<p>There are many other attacks on DRM. One approach has been detailed in a paper here [1]. For a nice overview of DRM see the Dash-IF documentation [2,3]. The communication with DRM license servers is documented here [2,4].</p>
+
+<hr />
+
+<pre>
+1] https://www.usenix.org/sites/default/files/conference/protected-files/wang1_sec13_slides.pdf
+2] https://dashif-documents.azurewebsites.net/Guidelines-Security/master/Guidelines-Security.html
+3] https://dashif-documents.azurewebsites.net/Guidelines-Security/master/Diagrams/DrmBigPicture.png
+4] https://dashif-documents.azurewebsites.net/Guidelines-Security/master/Diagrams/LicenseRequestModel-BaselineArchitecture.png
+5] https://www.bento4.com/developers/dash/encryption_and_drm/
+6] https://en.wikipedia.org/wiki/Sony_BMG_copy_protection_rootkit_scandal
+7] https://dashif-documents.azurewebsites.net/Guidelines-Security/master/Guidelines-Security.html#CPS-cmaf-structure
+8] https://dashif-documents.azurewebsites.net/Guidelines-Security/master/Guidelines-Security.html#CPS-mpd
+9] https://bitmovin.com/demos/drm
+10] https://en.wikipedia.org/wiki/Intel_Management_Engine
+11] https://en.wikipedia.org/wiki/Script_kiddie
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Encrypted Media Streaming with the Chromium web browser"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

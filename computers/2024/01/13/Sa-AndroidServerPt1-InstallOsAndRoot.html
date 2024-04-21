@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Android Server - Pt.1 - Installing Lineage OS and gaining root - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="Using a rooted Android device is an option for a small home server that is low-cost, low-power and low-maintainance. For this we need to replace the stock operating system with ..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/computers/2024/01/13/Sa-AndroidServerPt1-InstallOsAndRoot.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Android Server - Pt.1 - Installing Lineage OS and gaining root - Dennis Salzner" />
+  <meta property="og:description" content="Using a rooted Android device is an option for a small home server that is low-cost, low-power and low-maintainance. For this we need to replace the stock op..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/computers/2024/01/13/Sa-AndroidServerPt1-InstallOsAndRoot.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Computers" />
+  <meta property="article:published_time" content="2024-01-13 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2024-01-13 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2024-01-13 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Using a rooted Android device is an option for a small home server that is low-cost, low-power and low-maintainance. For this we need to replace the stock operating system with ..." />
+  <meta name="twitter:title" content="Android Server - Pt.1 - Installing Lineage OS and gaining root - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Android Server - Pt.1 - Installing Lineage OS and gaining root</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Android Server - Pt.1 - Installing Lineage OS and gaining root</div>
+<div class="page-subtitle">Rooting an Android Device and using it as a low-cost low-power Linux home server</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>Most of us likely already have a drawer full of old Android devices. Some may have server software running on a Raspberry Pi. Using a rooted Android device is an option for a small home server that is low-cost, low-power and low-maintainance. For this we need to replace the stock operating system with a new one and gain root access.</p>
+
+<h1 id="contents">Contents</h1>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a>    <ul>
+      <li><a href="#raspberry-pi-vs-android-mobile-devices" id="markdown-toc-raspberry-pi-vs-android-mobile-devices">Raspberry PI vs. Android mobile devices</a></li>
+      <li><a href="#android-is-linux" id="markdown-toc-android-is-linux">Android is Linux</a></li>
+      <li><a href="#rooting-the-device" id="markdown-toc-rooting-the-device">Rooting the device</a>        <ul>
+          <li><a href="#enable-developer-mode-and-oem-unlock" id="markdown-toc-enable-developer-mode-and-oem-unlock">Enable Developer Mode and OEM-Unlock</a></li>
+          <li><a href="#flash-the-twrp-custom-recovery" id="markdown-toc-flash-the-twrp-custom-recovery">Flash the TWRP Custom Recovery</a></li>
+          <li><a href="#flash-lineageos" id="markdown-toc-flash-lineageos">Flash LineageOS</a></li>
+          <li><a href="#gain-root-priviledges" id="markdown-toc-gain-root-priviledges">Gain root priviledges</a></li>
+          <li><a href="#enable-adb" id="markdown-toc-enable-adb">Enable ADB</a></li>
+          <li><a href="#install-termux" id="markdown-toc-install-termux">Install Termux</a></li>
+        </ul>
+      </li>
+      <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+    </ul>
+  </li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h2 id="raspberry-pi-vs-android-mobile-devices">Raspberry PI vs. Android mobile devices</h2>
+
+<p>But why do this? First let’s have a look at the advantages/disadvantages of running a small server on a Raspberry Pi vs. an Android device.</p>
+
+<p><strong>Reliablility</strong></p>
+
+<p>For a low-mantainance a server has to be reliable. You’d think a Raspberry Pi is more reliable than an Android phone, but from my experience that isn’t necessarily the case. My experience with a Raspberry PI 2 Model B and two different 3 Model B+ is that they consistently crash after a few days of operation. No matter what SD-Cards (even “known to work” SD-Cards of the “A1” line in various classes), no matter what power supplies or operating systems. The only Raspberry Pi that does relaibly work, well for approx half a year at a time, is one of the Model 3 B+ that is running the Victron OS for my solar power system. It’s a very light operating system that seems to be loaded in memory and doesn’t frequently access the SD-Card.</p>
+
+<p><strong>Cost</strong></p>
+
+<p>An old Android phone that isn’t in use anymore is basically free not considering you might be able to sell it. Old phones are so highly available in online auction houses that you can get a decent older model for cheap.</p>
+
+<p><strong>Power Consumption</strong></p>
+
+<p>The Raspberry PI 3B+ consumer about 260 mA of power when in idle. A phone, since it is built for prolonged battery life consumes only about 50 mA.</p>
+
+<p><strong>Performance</strong></p>
+
+<p>The Raspberry PI 3B+ runs a Broadcom BCM2837B0 SoC Cortex-A53 (ARMv8) 64-bit with 1GB of RAM.</p>
+
+<p>The 2007 model “Galaxy J3 SM-J330FN” phone has a Samsung Exynos 7 Quad 7570 64bit SoC containing also an ARM Cortex-A53 (ARMv8) 64-Bit CPU. It has twice the RAM with 2GB.</p>
+
+<p><strong>Housing &amp; Display</strong></p>
+
+<p>While the Raspberry PI come without an enclosure the phone, obviously already has this enclosure and comes with a display.</p>
+
+<p><strong>Backup Battery</strong></p>
+
+<p>Phones, even heavily used ones with a weak battery, can sustance some time without power due to their batteries.</p>
+
+<p><strong>Connectivity</strong></p>
+
+<p>A downside to using Android Devices for servers are the limited connectivity. They do mostly have SD-Cards slots with better SD-Card compatibility, but generally only one USB-Port that is also used for charging. There exist models with USB-OTG capabailities and there are y-Connector-Cables that allow charing while using the USB-Port for a USB-Stick oder similar.</p>
+
+<p>It’s possible to connect an microcontroller via a USB-TTL-Converter (something I’ve done for my <a href="/electronics/2018/09/05/Mi-CocktailMachine.html">Cocktail Mixing Machine</a>), but it’s a bit more involed.</p>
+
+<p>Though phones usually sport more stable and faster Wifi, 4G and GSM and better Bluetooth, so there’s a bunch of advantages right there. there.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="android-is-linux">Android is Linux</h2>
+
+<p>The reason this even works is because the Android operating system that powers most mobile phones and tablets is actually based on Linux. All we need to do is replace the operating system and overwrite it with a cleaned up Linux with full administrative priviledges. This process is called “flashing” (installing a new operating system to the flash ROM chip) and “rooting” (gaining “root”-user priviledges).</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="rooting-the-device">Rooting the device</h2>
+
+<p>A lot can be run without rooting the phone, but the energy saving and screen locking mechanisms frequently shut down apps. We also need to be able to autostart processes on boot that normally wouldn’t be easily possible.</p>
+
+<p>In order to change these kind of settings we need fully priviledges. Frankly also to remove much of the garbage and free some space, gain stability and disable auto-updating and phone home features.</p>
+
+<p>I’ve rooted a bunch of mobile devices. The process is very different every time.</p>
+
+<ul>
+  <li><strong>LG D605</strong>: straight forward fastboot unlock and adb flash</li>
+  <li><strong>LG H440n</strong>: not possible at the time</li>
+  <li><strong>ZTE Axon 7</strong>: fastboot unlock and adb flash and/or, if accidently flashed a wrong recovery image, jumper wire on the mainboard to put the Qualcomm processor in a special mode and use Qualcomm software to flash. With Kingroot it’s also possible to overwrite the recovery image with TWRP using “dd”.</li>
+  <li><strong>Samsung Galaxy Tab P3110</strong>: if I recall correctly install the Kingroot spyware riddled exploit, then flash recovery followed by the new OS</li>
+  <li><strong>Xiaomi Mi 8</strong>: send in a written(!) request to the chinese manufacturer to request, with reasoning, to get permission to root your device.</li>
+  <li><strong>Samsung Galaxy Tab A2 SM-T580</strong>: see below</li>
+</ul>
+
+<p>You will need to look up how to root your specific device, but there are helpful guides online for most devices.</p>
+
+<p><strong>Disclaimers:</strong> Keep in mind that rooting can brick the device, that the custom os may contain security vulnerabilities and backdoors and that afterwards apps that detect root, such as banking apps likely won’t work. I wouldn’t suggest using banking apps on a rooted device anyhow and the goal here is to use the device as an insecure mini server that will be exposed to the internet.</p>
+
+<p><strong>Rooting a Samsung Galaxy Tab A2 SM-T580 on Linux</strong>
+(see also 1)</p>
+
+<h3 id="enable-developer-mode-and-oem-unlock">Enable Developer Mode and OEM-Unlock</h3>
+
+<p>It took me some 3-4 hours of fiddling around to figure out how this works for this particular tablet while also documenting the process.</p>
+
+<p>The process for me was as follows:</p>
+
+<p>1) Fully charge the device</p>
+
+<p>2) Backup your data</p>
+
+<p>3) Under “Settings” -&gt; “Info” -&gt; “Software Information” -&gt; Tap “Build Number” five times to enable developer mode</p>
+
+<p>4) Under “Settings” -&gt; “Developer Mode” -&gt; enable “OEM-Unlock”</p>
+
+<p>5) Connect the tablet to you Linux computer via USB</p>
+
+<p>6)  Switch off, then hold “Home + Power + Volume down” for a few seconds to get into “download mode” and “volume up” to continue after the warning</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/1-download-mode-warning.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/1-download-mode-warning.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/2-in-download-mode.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/2-in-download-mode.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<h3 id="flash-the-twrp-custom-recovery">Flash the TWRP Custom Recovery</h3>
+
+<p>7) on the Linux PC</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nt">-y</span> <span class="nb">install </span>heimdall-flash
+heimdall detect
+</code></pre></div></div>
+<p>shows “Device detected”</p>
+
+<p>8) get compatible twrp recovery image “twrp-3.7.0_9-0-gtaxlwifi.img” (from [2])</p>
+
+<p>9) flash recovery</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>heimdall flash <span class="nt">--RECOVERY</span> twrp-3.7.0_9-0-gtaxlwifi.img <span class="nt">--no-reboot</span>  
+</code></pre></div></div>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/heimdall.png" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/heimdall.png" alt="" class="" style="width:10%;" /></a></p>
+
+<p>10) Hold Volume Down and the Power for  7 seconds to restart</p>
+
+<p>11) Hold Recovery Mode Keys “Home + Power + Volume up” (not “down” as before)</p>
+
+<p><strong>note</strong> if you’ve booted the original OS inbetween the TWRP recovery will be overwritten by the original samsung recovery and you have to repeat the previous steps.</p>
+
+<p>The Samsung Recovery that you do not want to be in looks like this:</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/3-samsung-recovery.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/3-samsung-recovery.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/4-samsung-recovery.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/4-samsung-recovery.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/5-samsung-recovery.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/5-samsung-recovery.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/6-samsung-recovery.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/6-samsung-recovery.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p>It contains an image signature verification with which we can install an OS with “adb sideload”, but it declines OSes that weren’t signed by the manufacturer.</p>
+
+<p>The correct TWRP recovery looks like this:</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/7-twrp.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/7-twrp.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p>12) accept the warning by swiping right</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/8-twrp-warning.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/8-twrp-warning.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p>13) on Linux</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb devices
+</code></pre></div></div>
+
+<p>TWRP shows up as</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/adb-twrp.png" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/adb-twrp.png" alt="" class="" style="width:10%;" /></a></p>
+
+<p>the incorrect samsung recovery would show up as “sideload”</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/adb-samsung.png" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/adb-samsung.png" alt="" class="" style="width:10%;" /></a></p>
+
+<h3 id="flash-lineageos">Flash LineageOS</h3>
+
+<p>14) Get a compatible Lineage image (e.g. “lineage-19.1-20231213-UNOFFICIAL-gtaxlwifi.zip” from [4] or “lineage-18.1-20220130-UNOFFICIAL-gtaxlwifi.zip” from [5])</p>
+
+<p>15) flash it</p>
+
+<p>By first pushing the image on the device</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb push lineage-19.1-20231213-UNOFFICIAL-gtaxlwifi.zip /sdcard
+</code></pre></div></div>
+<p>and then “install” it via the menu in TWRP</p>
+
+<p>16) if “Failed to mount /data (Invalid Argument)” errors appear we need to fix the file system (see also [6])</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/10-twrp-data.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/10-twrp-data.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p>In TWRP: wipe -&gt; advanced wipe -&gt; select data, “repair or change filesystem” -&gt; “change file system” -&gt; “ext4”</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/11-twrp-data-change-format.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/11-twrp-data-change-format.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p>and install lineage in TWRP again. This time it should succeed</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/12-twrp-flash-successfull.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/12-twrp-flash-successfull.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p>17) Press “Wipe Cache and Dalvik” and “Reboot System”</p>
+
+<p>18) Boot into Lineage</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/13-lineage-boots.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/13-lineage-boots.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p>19) if “Encryption unsuccessful”</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/14-encryption-issue.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/14-encryption-issue.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p>Initially I ran into an “encryption unsuccessful” error that caused a boot loop.</p>
+
+<p>I don’t know what exactly fixed it, but it has to do with the /data partition. That partition has to be formated as “ext4” in TWRP and we need to “Wipe Data” and confirm that by spelling out “yes” in TWRP to get rid of the encryption (see also [7])</p>
+
+<p>I had to repeat the flashing (step 13)</p>
+
+<p>Even though mentioned in online forums this had nothing to do with OpenGoogleApps or the rooting package Magisk.</p>
+
+<p>I’ve also installed the “no-verity-opt-encrypt-6.1.zip” (see 10) via TWRP “dm-verify and forced encryption disabler”, but can’t say for certain if that was ultimatly the fix. After repeating the some of the above steps it worked at some point.</p>
+
+<p>I’m now running</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Model: SM-t580
+OS: lineage-19.1-20231213-UNOFFICIAL-gtaxlwifi.zip
+Android Version: 12
+</code></pre></div></div>
+
+<p>20) When Lineage OS boots for the first time it looks like this</p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/15-lineage.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/15-lineage.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<p><a href="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/16-lineage.jpg" data-lightbox="image" data-title=""><img src="../../../../images/2024-01-13-Sa-AndroidServerPt1-InstallOsAndRoot/16-lineage.jpg" alt="" class="" style="width:10%;" /></a></p>
+
+<h3 id="gain-root-priviledges">Gain root priviledges</h3>
+
+<p>21) We can now gain root privilidges by installing Magisk</p>
+
+<ul>
+  <li>from the Browser download “Magisk-v24.1.zip” from Lineage Browser.</li>
+  <li>Reboot into TWRP (by turning off and holding the above mentioned button combination) and install Magisk from TWRP.</li>
+  <li>Reboot into the OS</li>
+</ul>
+
+<h3 id="enable-adb">Enable ADB</h3>
+
+<p>22) This time in LineageOS we again enable Developer-Mode and “adb”</p>
+
+<ul>
+  <li>under Settings -&gt; Info press “Build Number” 5 times</li>
+  <li>under Settings -&gt; “System” -&gt; “Developer Mode” enable “USB Debugging”</li>
+  <li>accept the popup that asks whether your connected PC is trustworthy</li>
+  <li>on your Linux PC the device should show up again in the device list</li>
+</ul>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb devices
+</code></pre></div></div>
+
+<h3 id="install-termux">Install Termux</h3>
+
+<p>23) Install the Termux terminal emulator and try superuser access</p>
+
+<p>First set up the Wifi connection on the device.</p>
+
+<p>from Linux with the device connected we can then run:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://f-droid.org/repo/com.termux_118.apk
+adb <span class="nb">install </span>com.termux_118.apk
+</code></pre></div></div>
+
+<p>and start it</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb shell am start <span class="nt">-n</span> com.termux/com.termux.app.TermuxActivity
+</code></pre></div></div>
+
+<ul>
+  <li>in termux “su” should now work</li>
+</ul>
+
+<p>we can send that command from the Linux PC via adb to the current app in focus on the device by</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>adb shell "input text 'su' &amp;&amp; input keyevent KEYCODE_ENTER"
+</code></pre></div></div>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>With the above we now have a new recovery image, TWRP and operating system, LineageOS, with root and the termux terminal emulator installed on the Android device.</p>
+
+<p>This allows us to install server software as described in the next part of this series.</p>
+
+<hr />
+
+<pre>
+1] https://xdaforums.com/t/recovery-sm-t580-sm-t585-official-twrp-for-galaxy-tab-a-10-1.3995181/
+2] https://dl.twrp.me/gtaxlwifi/
+3] https://www.hardreset.info/de/devices/samsung/samsung-t580-galaxy-tab-a-101-2016-wifi/recovery-modus/
+4] https://xdaforums.com/t/lineageos-19-1-for-sm-t580-gtaxlwifi-sm-t585-gtaxllte-sm-p580-gtanotexlwifi-and-sm-p585-gtanotexllte.4432957/
+5] https://www.android-hilfe.de/forum/root-custom-roms-modding-fuer-samsung-galaxy-tab-a-2016-10-1.3054/rom-sm-t580-unofficial-lineageos-18-1-android-11-hin-und-wieder-updates.998072.html
+6] https://droidwin.com/failed-to-mount-data-invalid-argument-in-twrp-fix/
+7] https://www.android-hilfe.de/forum/bootloop-freeze-oder-nicht-startendes-samsung-galaxy-s7.3618/solved-s7-encryption-unsuccessful.940158.html
+8] https://www.android-hilfe.de/forum/root-custom-roms-modding-fuer-samsung-galaxy-tab-a-2016-10-1.3054/rom-sm-t580-unofficial-lineageos-18-1-android-11-hin-und-wieder-updates.998072.html
+9] https://opengapps.org/
+10] https://build.nethunter.com/android-tools/no-verity-opt-encrypt/
+11] https://www.android-hilfe.de/forum/root-custom-roms-modding-fuer-samsung-galaxy-tab-a-2016-10-1.3054/rom-sm-t580-unofficial-lineageos-18-1-android-11-hin-und-wieder-updates.998072.html
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Android Server - Pt.1 - Installing Lineage OS and gaining root"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

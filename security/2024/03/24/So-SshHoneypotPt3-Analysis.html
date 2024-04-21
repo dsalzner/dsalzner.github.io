@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>SSH Botnet Honeypot - Pt.3 - Analysis - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="Let's see what the cat dragged in. With the Honeypot Qemu machine working we can analyse the logs."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/security/2024/03/24/So-SshHoneypotPt3-Analysis.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="SSH Botnet Honeypot - Pt.3 - Analysis - Dennis Salzner" />
+  <meta property="og:description" content="Let's see what the cat dragged in. With the Honeypot Qemu machine working we can analyse the logs." />
+  <meta property="og:url" content="https://www.dennissalzner.de/security/2024/03/24/So-SshHoneypotPt3-Analysis.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Security" />
+  <meta property="article:published_time" content="2024-03-24 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2024-03-24 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2024-03-24 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Let's see what the cat dragged in. With the Honeypot Qemu machine working we can analyse the logs." />
+  <meta name="twitter:title" content="SSH Botnet Honeypot - Pt.3 - Analysis - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - SSH Botnet Honeypot - Pt.3 - Analysis</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">SSH Botnet Honeypot - Pt.3 - Analysis</div>
+<div class="page-subtitle">Analysing the results from the Honeypot</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>Let’s see what the cat dragged in. With the Honeypot Qemu machine working we can analyse the logs.</p>
+
+<p><img src="../../../../images/2024-03-24-So-SshHoneypotPt3-Analysis/bond-fishing.png" width="25%" />
+<br /><small>(Scene from ‘89 movie “License to Kill” [2]</small>)</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#accessing-the-logs" id="markdown-toc-accessing-the-logs">Accessing the Logs</a>    <ul>
+      <li><a href="#backup-the-disk" id="markdown-toc-backup-the-disk">Backup the Disk</a></li>
+      <li><a href="#compare-with-virt-diff" id="markdown-toc-compare-with-virt-diff">Compare with virt-diff</a></li>
+      <li><a href="#access-by-mounting-the-virtual-disk" id="markdown-toc-access-by-mounting-the-virtual-disk">Access by mounting the virtual disk</a></li>
+      <li><a href="#access-log-files" id="markdown-toc-access-log-files">Access log files</a>        <ul>
+          <li><a href="#journalctl-incompatibilities-and-chroot" id="markdown-toc-journalctl-incompatibilities-and-chroot">journalctl incompatibilities and chroot</a></li>
+          <li><a href="#view-log-files" id="markdown-toc-view-log-files">View log files</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#analysis" id="markdown-toc-analysis">Analysis</a>    <ul>
+      <li><a href="#failed-due-to-invalid-usernames" id="markdown-toc-failed-due-to-invalid-usernames">Failed due to invalid usernames</a></li>
+      <li><a href="#accepted-root-logins" id="markdown-toc-accepted-root-logins">Accepted root logins</a></li>
+      <li><a href="#attempted-user-names" id="markdown-toc-attempted-user-names">Attempted user names</a></li>
+      <li><a href="#mysterious-username" id="markdown-toc-mysterious-username">Mysterious username</a></li>
+      <li><a href="#mysterious-ssh-key" id="markdown-toc-mysterious-ssh-key">Mysterious SSH-key</a></li>
+    </ul>
+  </li>
+  <li><a href="#results" id="markdown-toc-results">Results</a>    <ul>
+      <li><a href="#mdrfckr-ssh-key" id="markdown-toc-mdrfckr-ssh-key">“mdrfckr” SSH-key</a></li>
+      <li><a href="#many-intrusions-but-not-much-happend" id="markdown-toc-many-intrusions-but-not-much-happend">Many Intrusions, but not much happend</a></li>
+      <li><a href="#honeypot-being-detected" id="markdown-toc-honeypot-being-detected">Honeypot being detected</a></li>
+      <li><a href="#state-of-linux-malware" id="markdown-toc-state-of-linux-malware">State of Linux Malware</a>        <ul>
+          <li><a href="#intrusion" id="markdown-toc-intrusion">Intrusion</a></li>
+          <li><a href="#goals" id="markdown-toc-goals">Goals</a></li>
+          <li><a href="#hiding" id="markdown-toc-hiding">Hiding</a></li>
+          <li><a href="#based-on-open-source" id="markdown-toc-based-on-open-source">Based on Open-Source</a></li>
+          <li><a href="#use-of-programming-languages" id="markdown-toc-use-of-programming-languages">Use of programming languages</a></li>
+          <li><a href="#common-linux-malware-names" id="markdown-toc-common-linux-malware-names">Common Linux Malware Names</a></li>
+          <li><a href="#sophistication" id="markdown-toc-sophistication">Sophistication</a></li>
+          <li><a href="#state-actors" id="markdown-toc-state-actors">State actors</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>I’ve run the honeypot for 2-3 hours, but already within 20 minutes the log was full of login attempts.</p>
+
+<p>Even though the server is wide open and will accept <strong><em>any password</em></strong> for root there are login attempts for different user names that fail, because they don’t exist.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>I’m really curious to see what the state of Linux malware is and what kind of discoveries we will make.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>The Qemu virtual machine is using a *.qcow file as it’s virtual disk. We will need to mount that on our host machine to read the files in it.</p>
+
+<p>Additionally modern linux uses journald as its logging service. To read a journald log we need to use a journalctl. Unfortunately there have been breaking changes in the journalctl that will likely require the use of chroot to be able to enter the same environment and use the journalctl from the honeypot machine as described below.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="accessing-the-logs">Accessing the Logs</h2>
+
+<p>Accessing the logs from the Qemu machine takes some steps that can easily be scripted.</p>
+
+<h3 id="backup-the-disk">Backup the Disk</h3>
+
+<p>In order to analyse the logs offline with the Qemu honeypot still running, we can simply copy the disk image.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp </span>hda.qcow hda-original.qcow
+</code></pre></div></div>
+
+<h3 id="compare-with-virt-diff">Compare with virt-diff</h3>
+
+<p>I didn’t have much luck with virt-diff, it should have worked as follows:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nt">-y</span> <span class="nb">install </span>guestfs-tools
+<span class="nb">sudo </span>virt-diff <span class="nt">-a</span> hda-original.qcow <span class="nt">-A</span> hda.qcow
+</code></pre></div></div>
+
+<h3 id="access-by-mounting-the-virtual-disk">Access by mounting the virtual disk</h3>
+
+<p>However you can mount the original and infiltrated qcow image as mentioned above and do a regular diff on the directories.</p>
+
+<p>For convenience I’ve written a small shell script. It makes a copy of the running qemu disk and mounts it.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="nb">sudo </span>umount /mnt/tmp
+<span class="nb">sudo </span>qemu-nbd <span class="nt">--disconnect</span> /dev/nbd0
+
+<span class="nb">cp </span>hda.qcow hda-snapshot.qcow
+
+<span class="nb">sudo </span>modprobe nbd <span class="nv">max_part</span><span class="o">=</span>8
+<span class="nb">sudo </span>qemu-nbd <span class="nt">--connect</span><span class="o">=</span>/dev/nbd0 hda-snapshot.qcow
+<span class="nb">sudo </span>mount /dev/nbd0p1 /mnt/tmp
+</code></pre></div></div>
+
+<p>and to remove</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nb">sudo </span>umount /mnt/tmp
+<span class="nb">sudo </span>qemu-nbd <span class="nt">--disconnect</span> /dev/nbd0
+</code></pre></div></div>
+
+<h3 id="access-log-files">Access log files</h3>
+
+<p>With the disk mounted we can access the log files.</p>
+
+<h4 id="journalctl-incompatibilities-and-chroot">journalctl incompatibilities and chroot</h4>
+
+<p>The Debian 12 I’m using</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /mnt/tmp/etc/<span class="k">*</span>release
+<span class="nv">PRETTY_NAME</span><span class="o">=</span><span class="s2">"Debian GNU/Linux 12 (bookworm)"</span>
+</code></pre></div></div>
+
+<p>uses journald for logging. Logs are found under:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/mnt/tmp/var/log/journal/534c2f67387847c396690747c845ab99/system.journal
+</code></pre></div></div>
+
+<p>This is a more advanced logging mechanism than syslog.</p>
+
+<p>Normally you would read the logs like so</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">--file</span> /mnt/tmp/var/log/journal/534c2f67387847c396690747c845ab99/system.journal
+</code></pre></div></div>
+
+<p>For instance, with journalctl from</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">PRETTY_NAME</span><span class="o">=</span><span class="s2">"Ubuntu 22.04.3 LTS"</span>
+</code></pre></div></div>
+
+<p>I receive an error message</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Failed to open files: Protocol not supported
+</code></pre></div></div>
+
+<p>The logfiles are compressed and there are incompatibilities between different versions of journalctl.</p>
+
+<p>I can’t install a newer journalctl on my machine as it’s linked to systemd and that would update the entire system.
+I thought about compiling a newer journalctl from source, but it’s tied to systemd and requires dependencies I can’t easily install.</p>
+
+<p>But as we have a full system-image from the Qemu image the easiest way to get around this is to chroot and use the journalctl version provided by Debian 12.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /mnt/tmp
+<span class="nb">sudo chroot</span> /mnt/tmp /bin/bash
+journalctl <span class="nt">-m</span>
+</code></pre></div></div>
+
+<h4 id="view-log-files">View log files</h4>
+
+<p>To check for ssh login attempts, inside the chroot environment, the “-u ssh” option can be used.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> ssh
+</code></pre></div></div>
+
+<h2 id="analysis">Analysis</h2>
+
+<p>With that we can have a look at the log files from journald.</p>
+
+<h3 id="failed-due-to-invalid-usernames">Failed due to invalid usernames</h3>
+
+<p>Even though anyone can log-in with the user “jason” and “root” with any password they please I couldn’t add all usernames the bots attempt to use and so we still get failed login attempts.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> ssh | <span class="nb">grep</span> <span class="s2">"Failed"</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Mar 25 17:30:33 raspberrypi sshd[421]: Failed password <span class="k">for </span>invalid user faridehnadimi from 117.72.44.30 port 45184 ssh2
+Mar 25 17:34:12 raspberrypi sshd[449]: Failed password <span class="k">for </span>invalid user omkar from 117.72.44.30 port 50276 ssh2
+Mar 25 17:35:57 raspberrypi sshd[456]: Failed password <span class="k">for </span>invalid user dan from 117.72.44.30 port 52598 ssh2
+</code></pre></div></div>
+
+<h3 id="accepted-root-logins">Accepted root logins</h3>
+
+<p>But, as we’ve allowed any password for our root user, we get loads of accepted root logins from various IP-Addresses</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> ssh | <span class="nb">grep</span> <span class="s2">"Accepted"</span>
+
+Mar 26 11:35:02 raspberrypi sshd[2344]: Accepted password <span class="k">for </span>root from 43.156.6.131 port 41394 ssh2
+Mar 26 11:35:03 raspberrypi sshd[2346]: Accepted password <span class="k">for </span>root from 190.0.63.226 port 47516 ssh2
+Mar 26 11:35:08 raspberrypi sshd[2358]: Accepted password <span class="k">for </span>root from 190.0.63.226 port 49374 ssh2
+Mar 26 11:35:27 raspberrypi sshd[2365]: Accepted password <span class="k">for </span>root from 165.154.131.4 port 35120 ssh2
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>journalctl <span class="nt">-u</span> ssh | <span class="nb">grep</span> <span class="s2">"Accepted password for root "</span> | <span class="nb">awk</span> <span class="s1">'{print($11)}'</span> | <span class="nb">sort</span> | <span class="nb">uniq</span> <span class="nt">-c</span> | <span class="nb">sort</span> <span class="nt">-r</span> <span class="nt">-k</span> 1
+
+     40 43.156.6.131
+     40 159.203.104.187
+     38 165.154.131.4
+     36 190.0.63.226
+     35 43.134.164.71
+     34 50.114.64.139
+     34 34.41.17.26
+     13 119.91.139.84
+      2 31.19.59.52
+      1 127.0.0.1
+</code></pre></div></div>
+
+<h3 id="attempted-user-names">Attempted user names</h3>
+
+<p>Attempted user names within 1-2 hours</p>
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">journalctl <span class="nt">-u</span> ssh | <span class="nb">grep</span> <span class="s2">"Invalid user "</span> | <span class="nb">awk</span> <span class="s1">'{print($8)}'</span> | <span class="nb">sort</span> <span class="nt">-k</span> 2 | <span class="nb">uniq</span> <span class="nt">-c</span>
+    133 345gs5662d34
+      1 administrator
+      1 ahmadafsari
+      4 ahmaddd</code></pre></figure>
+
+<details>
+<summary>
+Expand for more
+</summary>
+
+
+<figure class="highlight"><pre><code class="language-sh" data-lang="sh">      2 alib
+      1 alimokari
+      3 alis
+      1 amirf
+      3 anid
+      2 auraj
+      1 az
+      2 bakhtiari
+      1 charlie
+      2 daedong
+      1 dai
+      1 dan
+      3 daniel
+      5 developer
+      1 dsceltic
+      1 dspace
+      1 f-tomizawa
+      1 faridehnadimi
+      4 feisal
+      1 ghaderi
+      3 git
+      2 gpappas
+      1 gracesb
+      2 hezujiao
+      2 hyundai
+      2 jenkins
+      3 kingabra
+      1 lazer
+      2 liujiahao
+      2 liweiliang
+      1 luiscarlos
+      1 lvm
+      2 m7
+      2 marina
+      1 mehrnoosh
+      3 minecraft
+      3 monitirtha
+      3 nani
+      1 olga
+      1 omkar
+      1 ork
+      1 pippo
+      2 r00t
+      1 royafallahi
+      2 rpandey
+      1 sato
+      2 sekreto
+      1 senkhxsi
+      3 shinestar
+      3 student3
+      3 sysadmin
+      4 <span class="nb">test
+      </span>4 tester
+      4 testwww
+      1 tom
+      9 ubuntu
+      1 unclem
+      1 upload
+      4 user
+      1 www
+      1 xsp
+      1 youlog
+      3 zhinoos
+      1 zhouwei</code></pre></figure>
+
+</details>
+
+<h3 id="mysterious-username">Mysterious username</h3>
+
+<p>The username</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>345gs5662d34
+</code></pre></div></div>
+
+<p>was attempted hundreds of times.</p>
+
+<p>That username has also been observed by others [8, 9]</p>
+
+<p>On deencode [1] it decodes to a japanese sequence that Google translate translates to “Let’s meet each other”, but I’m not sure if that is just a faulty translation.</p>
+
+<h3 id="mysterious-ssh-key">Mysterious SSH-key</h3>
+
+<p>An SSH key was added to my “authorized_keys”. The “mdrfckr” part of it immediatly caught my eye.</p>
+
+<style>
+.highlight pre{
+  white-space: pre-wrap;
+}
+</style>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> ./root/.ssh/authorized_keys 
+
+ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEArDp4cun2lhr4KUhBGE7VvAcwdli2a8
+dbnrTOrbMz1+5O73fcBOx8NVbUT0bUanUV9tJ2/9p7+vD0EpZ3Tz/+0kX34uAx1RV/
+75GVOmNx+9EuWOnvNoaJe0QXxziIg9eLBHpgLMuakb5+BgTFB+rKJAw9u9FSTDengv
+S8hX1kNFS4Mjux0hJOK8rvcEmPecjdySYMb66nylAKGwCEE6WEQHmd1mUPgHwGQ0hW
+CwsQk13yCGPK5w6hYp5zYkFnvlC8hGmd4Ww+u97k6pfTGTUbJk14ujvcD9iUKQTTWY
+YjIIu5PmUux5bsZ0R4WFwdIe6+i6rBLAsPKgAySVKPRK+oRw<span class="o">==</span> mdrfckr
+</code></pre></div></div>
+
+<h2 id="results">Results</h2>
+
+<p>I’ve made some observations from running the honeypot for a short while.</p>
+
+<h3 id="mdrfckr-ssh-key">“mdrfckr” SSH-key</h3>
+
+<p>The most interesting find was that SSH-key that got automatically added to my <code class="language-plaintext highlighter-rouge">.ssh/authorized_hosts</code>.</p>
+
+<p>Looks like this has also been going on for a while [11,12,13,14,15] and seems to be related to a crypto-mining bot, either a modified Mirai, NoaBot, Dota or similar running the xmrig crypo-miner.</p>
+
+<h3 id="many-intrusions-but-not-much-happend">Many Intrusions, but not much happend</h3>
+
+<p>Interestingly, even though the system is wide open and there are logins, I see nothing special happening on the machine or in my Wireshark log.</p>
+
+<p>Perhaps the successful logins are being stored in some database and, at another time, an actual attack may occur.</p>
+
+<h3 id="honeypot-being-detected">Honeypot being detected</h3>
+
+<p>Perhaps the honeypot is being detected. If we accept all passwords and the attackers are clever, they will realize that this system allows any password and is likely a honeypot.</p>
+
+<p>Another indication of this being a honeypot is the cpuinfo showing Qemu.</p>
+
+<p>My honeypot is not well hidden. From what I’ve read it seems that many botnets check cpuinfo. For a crypto-mining bot the performance of the device is interesting and CPU details may also reveal honeypots.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /proc/cpuinfo | <span class="nb">grep</span> <span class="s2">"model name"</span>
+model name	: QEMU Virtual CPU version 2.5+
+</code></pre></div></div>
+
+<p>So perhaps a further infection does not occur due to this.</p>
+
+<h3 id="state-of-linux-malware">State of Linux Malware</h3>
+
+<p>During my research of that SSH-Key and Botnets in general I’ve found some information on the current state of Linux malware.</p>
+
+<h4 id="intrusion">Intrusion</h4>
+
+<p>It seems the use of security vulnerabilities are rather rare, though easy to implement attacks against old vulnerabilities like “shellshock” [14] are still being used. Most attacks we see are dumb brute-force attacks where lists of user/password combinations are attempted.</p>
+
+<p>Many bots are based on the “Mirai” Bot [3]. It originally only attacked Telnet-servers and was open-sourced revealing the hardcoded password list [4].</p>
+
+<h4 id="goals">Goals</h4>
+
+<p>The goals of most of these linux botnets are to</p>
+
+<ul>
+  <li>maintain access to a system, allowing download, upload and execution of files and sometimes shell access</li>
+  <li>allow for coordinated DDOS attackes. Usually SYN/ACK/GRE (generic routung encapsulation) [9] packet flooding</li>
+  <li>install cryptominers, often “XMRig” is used.</li>
+</ul>
+
+<h4 id="hiding">Hiding</h4>
+
+<p>Some bots run only on memory and don’t write anything to disk. They don’t persist after reboots, but weaken security by adding malicious SSH-keys to authorized_hosts.</p>
+
+<p>Some bots install trojans like XORDDOS [5], which have sophisticated rootkits that hook into kernel functions to hide from task lists, network port lists and file browsers.</p>
+
+<h4 id="based-on-open-source">Based on Open-Source</h4>
+
+<p>The XORDDOS apparently uses portions of “suterusu” [6] an open-source linux kernel module rootkit.</p>
+
+<p>There is also mirai [7, 16] which was open-sourced. Process injections proof-of-concepts like “injectso64” [8]. The “kaiten” IRC bot [11] and its rewrite [12]. Or scripts for brute forcing for priveledge escalation [10]. All of these are available as open-source online and are being used by malware creators.</p>
+
+<h4 id="use-of-programming-languages">Use of programming languages</h4>
+
+<p>Malware creators seem to use a variety of programming languages. With some written in perl [13], others in C, go or simple shell scripts. The langauge “go” seems to be popular as it’s a bit more difficult to reverse engineer.</p>
+
+<h4 id="common-linux-malware-names">Common Linux Malware Names</h4>
+
+<p>bots</p>
+
+<ul>
+  <li>“Mirai”</li>
+  <li>“Noabot”</li>
+  <li>“Kaiten”</li>
+  <li>“Ziggy”</li>
+  <li>“Hand of Thief”</li>
+  <li>“Tsunami”</li>
+</ul>
+
+<p>rootkits</p>
+
+<ul>
+  <li>“suterusu”</li>
+</ul>
+
+<p>tools</p>
+
+<ul>
+  <li>“MIG Logcleaner v2.0”</li>
+  <li>“Shadow Log Cleaner”</li>
+</ul>
+
+<p>cryptominers</p>
+
+<ul>
+  <li>“XMRig”</li>
+</ul>
+
+<p>trojans</p>
+
+<ul>
+  <li>“XOR DDoS”</li>
+</ul>
+
+<h4 id="sophistication">Sophistication</h4>
+
+<p>Most of the bots are poorly written, contain cobbled together code and just try passwords. But by far the most sophisticated malware on Linux I’ve seen so far is the XORDDOS trojan with its built-in rootkit</p>
+
+<h4 id="state-actors">State actors</h4>
+
+<p>It truely seems there is a cyberwar with state actors going on. Groups such as the ‘Outlaw Hacking Group’ [15] are trying to gain access to western systems. These groups seem to be particularly blunt as they need not fear repercussions.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>It feels like I’ve found a new hobby. Next time I’ll try to hide honeypot a bit better and see if the bots will then behave differently.</p>
+
+<hr />
+
+<pre>
+1] https://dencode.com/en/
+2] https://en.wikipedia.org/wiki/Licence_to_Kill
+3] https://en.wikipedia.org/wiki/Mirai_(malware)
+4] https://github.com/jgamblin/Mirai-Source-Code/blob/3273043e1ef9c0bb41bd9fcdc5317f7b797a2a94/mirai/bot/scanner.c#L124
+5] https://unit42.paloaltonetworks.com/new-linux-xorddos-trojan-campaign-delivers-malware/
+6] https://github.com/mncoppola/suterusu
+7] https://github.com/jgamblin/Mirai-Source-Code
+8] https://github.com/ice799/injectso64
+9] https://en.wikipedia.org/wiki/Generic_Routing_Encapsulation
+10] https://github.com/carlospolop/PEASS-ng/tree/master/linPEAS
+11] https://github.com/brianredbeard/toorcon16/blob/master/kaiten/kaiten.c
+12] https://github.com/isdrupter/ziggystartux
+13] https://www.trendmicro.com/en_us/research/18/k/perl-based-shellbot-looks-to-target-organizations-via-cc.html
+14] https://securityintelligence.com/articles/shellshock-vulnerability-in-depth/
+15] https://hackernoon.com/outlaw-hacking-group-resurfaces
+16] https://github.com/techgaun/mirai/tree/master
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="SSH Botnet Honeypot - Pt.3 - Analysis"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

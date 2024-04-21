@@ -178,20 +178,6 @@ function newWindow(mypage,myname,w,h,features) {
   win.window.focus();
 }
 
-if (document.images) {
-teaching_mouseover = new Image(94, 18);teaching_mouseover.src = 'teaching_mouseover.gif';
-teaching_mouseout = new Image(94, 18);teaching_mouseout.src = 'teaching_mouseout.gif';
-links_mouseover = new Image(94, 18);links_mouseover.src = 'links_mouseover.gif';
-links_mouseout = new Image(94, 18);links_mouseout.src = 'links_mouseout.gif';
-research_mouseover = new Image(94, 18);research_mouseover.src = 'research_mouseover.gif';
-research_mouseout = new Image(94, 18);research_mouseout.src = 'research_mouseout.gif';
-publications_mouseover = new Image(94, 18);publications_mouseover.src = 'publications_mouseover.gif';
-publications_mouseout = new Image(94, 18);publications_mouseout.src = 'publications_mouseout.gif';
-cv_mouseover = new Image(94, 18);cv_mouseover.src = 'cv_mouseover.gif';
-cv_mouseout = new Image(94, 18);cv_mouseout.src = 'cv_mouseout.gif';
-home_mouseover = new Image(94, 18);home_mouseover.src = 'home_mouseover.gif';
-home_mouseout = new Image(94, 18);home_mouseout.src = 'home_mouseout.gif';
-}
 function di(id,name){
   if (document.images) {document.images[id].src=eval(name+".src"); }
 }

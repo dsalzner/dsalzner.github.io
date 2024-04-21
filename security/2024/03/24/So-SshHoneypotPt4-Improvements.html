@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>SSH Botnet Honeypot - Pt.4 - Improving the Honeypot - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="With the honeypot set up we can see the successful login attempts, but not much is happening appart from strange SSH-Keys being added. This is likely due to the honeypot being d..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/security/2024/03/24/So-SshHoneypotPt4-Improvements.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="SSH Botnet Honeypot - Pt.4 - Improving the Honeypot - Dennis Salzner" />
+  <meta property="og:description" content="With the honeypot set up we can see the successful login attempts, but not much is happening appart from strange SSH-Keys being added. This is likely due to ..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/security/2024/03/24/So-SshHoneypotPt4-Improvements.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Security" />
+  <meta property="article:published_time" content="2024-03-24 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2024-03-24 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2024-03-24 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="With the honeypot set up we can see the successful login attempts, but not much is happening appart from strange SSH-Keys being added. This is likely due to the honeypot being d..." />
+  <meta name="twitter:title" content="SSH Botnet Honeypot - Pt.4 - Improving the Honeypot - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - SSH Botnet Honeypot - Pt.4 - Improving the Honeypot</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">SSH Botnet Honeypot - Pt.4 - Improving the Honeypot</div>
+<div class="page-subtitle">Improving the Honeypot by patching the source code of the OpenSSH server</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>With the honeypot set up we can see the successful login attempts, but not much is happening appart from strange SSH-Keys being added. This is likely due to the honeypot being detected as such by the malware. The honeypot is not covert enough and is lacking features to log the passwords and commands that were attemped. In the following we’ll enhance it.</p>
+
+<p>In the following we will:</p>
+
+<ul>
+  <li>fake the output of <code class="language-plaintext highlighter-rouge">cpuinfo</code> to resemble a real non-virtualised CPU</li>
+  <li>patch the source code of OpenSSH to log command history, usernames and passwords and to also accept and password.</li>
+  <li>compile that patched custom OpenSSH server in Docker and deploy the binaries to the QEmu honeypot we created last time.</li>
+</ul>
+
+<p><img src="../../../../images/2024-03-24-So-SshHoneypotPt4-Improvements/ssh-server-logging.png" width="25%" /></p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#goals" id="markdown-toc-goals">Goals</a>    <ul>
+      <li><a href="#cpu-info-is-a-dead-giveaway" id="markdown-toc-cpu-info-is-a-dead-giveaway">CPU info is a dead giveaway</a></li>
+      <li><a href="#failed-passwords" id="markdown-toc-failed-passwords">Failed Passwords</a></li>
+      <li><a href="#logging" id="markdown-toc-logging">Logging</a></li>
+    </ul>
+  </li>
+  <li><a href="#available-options" id="markdown-toc-available-options">Available Options</a>    <ul>
+      <li><a href="#cpu-info" id="markdown-toc-cpu-info">CPU Info</a>        <ul>
+          <li><a href="#-cpu-host" id="markdown-toc--cpu-host">“-cpu host”</a></li>
+          <li><a href="#patching" id="markdown-toc-patching">Patching</a></li>
+          <li><a href="#bind-mount" id="markdown-toc-bind-mount">Bind mount</a></li>
+        </ul>
+      </li>
+      <li><a href="#command-history" id="markdown-toc-command-history">Command History</a>        <ul>
+          <li><a href="#bash_history" id="markdown-toc-bash_history">bash_history</a></li>
+          <li><a href="#set-prompt_command" id="markdown-toc-set-prompt_command">set PROMPT_COMMAND</a></li>
+          <li><a href="#bash-shopt" id="markdown-toc-bash-shopt">bash shopt</a></li>
+          <li><a href="#script" id="markdown-toc-script">script</a></li>
+          <li><a href="#pam_auditso" id="markdown-toc-pam_auditso">pam_audit.so</a></li>
+          <li><a href="#patching-openssh" id="markdown-toc-patching-openssh">Patching OpenSSH</a></li>
+        </ul>
+      </li>
+      <li><a href="#logging-passwords" id="markdown-toc-logging-passwords">Logging Passwords</a></li>
+    </ul>
+  </li>
+  <li><a href="#implementation" id="markdown-toc-implementation">Implementation</a>    <ul>
+      <li><a href="#patching-openssh-1" id="markdown-toc-patching-openssh-1">Patching OpenSSH</a>        <ul>
+          <li><a href="#patch-for-command-history" id="markdown-toc-patch-for-command-history">Patch for Command History</a></li>
+          <li><a href="#patch-for-password-authentication" id="markdown-toc-patch-for-password-authentication">Patch for Password Authentication</a></li>
+          <li><a href="#patch-to-accept-any-password" id="markdown-toc-patch-to-accept-any-password">Patch to Accept any Password</a></li>
+          <li><a href="#dockerfile" id="markdown-toc-dockerfile">Dockerfile</a></li>
+          <li><a href="#building" id="markdown-toc-building">Building</a></li>
+          <li><a href="#producing-patches" id="markdown-toc-producing-patches">Producing Patches</a></li>
+          <li><a href="#result" id="markdown-toc-result">Result</a></li>
+          <li><a href="#copy-sshd-from-the-docker-container-to-the-qemu-honeypot" id="markdown-toc-copy-sshd-from-the-docker-container-to-the-qemu-honeypot">Copy sshd from the Docker container to the Qemu Honeypot</a></li>
+        </ul>
+      </li>
+      <li><a href="#fake-cpuinfo" id="markdown-toc-fake-cpuinfo">Fake CpuInfo</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>When starting the honeypot it was already clear that I’d need to put in a least some effort ot make it look like a honeypot too obviously.</p>
+
+<p>After all this is the reason I’m using a virtual machine instead of a python honeypot with limited command set.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h2 id="goals">Goals</h2>
+
+<p>To improve the honeypot three things need to be changed.</p>
+
+<h3 id="cpu-info-is-a-dead-giveaway">CPU info is a dead giveaway</h3>
+
+<p>One of the most issued commands by malware currently in the wild is</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /proc/cpuinfo | <span class="nb">grep </span>name
+</code></pre></div></div>
+
+<p>but also</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>lscpu | <span class="nb">grep </span>Model
+</code></pre></div></div>
+
+<p>It’s unclear if this is just for logging, to select a suitably powerful host for cryptomining or to detect virtual machines.</p>
+
+<p>Either way this could prevent further infection by malware and for an effective honeypot we should make sure cpuinfo looks like a real machine.</p>
+
+<h3 id="failed-passwords">Failed Passwords</h3>
+
+<p>It would be nice to see the passwords that have been attemped. The source code of the openssh server needs to be altered to do this.</p>
+
+<h3 id="logging">Logging</h3>
+
+<p>And while we’re at it, I’d like to see the commands the attackerd entered.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="available-options">Available Options</h2>
+
+<h3 id="cpu-info">CPU Info</h3>
+
+<p>There are different way to fake the cpuinfo in a Qemu machine.</p>
+
+<h4 id="-cpu-host">“-cpu host”</h4>
+
+<p>The easiest option is probably to use the <code class="language-plaintext highlighter-rouge">-cpu host</code> option in Qemu. This will duplicate the cpuinfo from the host system thereby seeming like a real system.</p>
+
+<h4 id="patching">Patching</h4>
+
+<p>Another option is of course patching the Qemu source.</p>
+
+<h4 id="bind-mount">Bind mount</h4>
+
+<p>But according to [2] we can also bind-mount a different cpuinfo inside the system.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /proc/cpuinfo | perl <span class="nt">-pe</span> <span class="s1">'s/4096 KB/8192 KB/g'</span> <span class="o">&gt;</span> cpuinfo.lie
+mount <span class="nt">--bind</span> cpuinfo.lie /proc/cpuinfo<span class="s2">"
+</span></code></pre></div></div>
+
+<h3 id="command-history">Command History</h3>
+
+<p>I’ve found some options for how to get a log file of all actions performed on the SSH-Server. They have some drawbacks.</p>
+
+<h4 id="bash_history">bash_history</h4>
+
+<p>The easiest is the <code class="language-plaintext highlighter-rouge">.bash_history</code> file in the user directory.</p>
+
+<p>However this has significant drawbacks</p>
+
+<p>Drawbacks</p>
+<ul>
+  <li>can be cleared by the attacker</li>
+  <li>logging can be disabled by setting <code class="language-plaintext highlighter-rouge">HISTFILE</code> to <code class="language-plaintext highlighter-rouge">/dev/null</code></li>
+  <li>doesn’t show timestamps by default</li>
+  <li>can be circumvented by starting a new shell session</li>
+  <li>or by running commands from a compiled application or script</li>
+</ul>
+
+<h4 id="set-prompt_command">set PROMPT_COMMAND</h4>
+
+<p>Also easily detectable and removable is setting <code class="language-plaintext highlighter-rouge">PROMPT_COMMAND</code>` [3,4].</p>
+
+<p>Drawbacks</p>
+<ul>
+  <li>can be removed</li>
+  <li>easy to detect</li>
+</ul>
+
+<h4 id="bash-shopt">bash shopt</h4>
+
+<p>A bash option can be set to log to a file</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">shopt</span> <span class="nt">-s</span> syslog_history
+</code></pre></div></div>
+
+<p>Drawbacks</p>
+<ul>
+  <li>same as above</li>
+  <li>setting can be reset by attacker</li>
+  <li>log file can be overwritten by attacker</li>
+</ul>
+
+<h4 id="script">script</h4>
+
+<p>An elegant solution is to add <code class="language-plaintext highlighter-rouge">script</code> to the <code class="language-plaintext highlighter-rouge">/etc/bashrc</code>.</p>
+
+<p>Drawbacks</p>
+<ul>
+  <li>same as above</li>
+</ul>
+
+<h4 id="pam_auditso">pam_audit.so</h4>
+
+<p>Perhaps the best built-in method for security audit logging is <code class="language-plaintext highlighter-rouge">pam_audit.so</code>.</p>
+
+<p>Drawbacks</p>
+<ul>
+  <li>logs hard to read</li>
+  <li>can be detected by <code class="language-plaintext highlighter-rouge">lsmod</code>, or unloaded my <code class="language-plaintext highlighter-rouge">rmmod</code></li>
+  <li>or checking the audit configuration</li>
+  <li>writes logs in common well known locations</li>
+</ul>
+
+<h4 id="patching-openssh">Patching OpenSSH</h4>
+
+<p>We can go further and just patch OpenSSH, as you’ll see below.</p>
+
+<p>For an older version of OpenSSH there is a patch here [7].</p>
+
+<p>We’ll likely have to do this a bit differently for newer OpenSSH versions, but it shows where we would have to make changes.</p>
+
+<p>Namely in the function <code class="language-plaintext highlighter-rouge">channel_handle_rfd</code> which is in <code class="language-plaintext highlighter-rouge">channels.c</code>.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">datagram</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">buffer_put_string</span><span class="p">(</span><span class="o">&amp;</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">input</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">len</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>There is an even better patch for version 4.2 [8] that writes in a format compatible with <code class="language-plaintext highlighter-rouge">script</code> that we can use <code class="language-plaintext highlighter-rouge">replay</code> on and also records timestamps of the interactions.</p>
+
+<h3 id="logging-passwords">Logging Passwords</h3>
+
+<p>There is no official option in the OpenSSH-server to log passwords of failed login attempts.</p>
+
+<p>However, since we’ll be patching the OpenSSH-server anyway to get the command history, we can apply a patch with minimal modification to log authentication attempts as well [9].</p>
+
+<p>We need to hook into the <code class="language-plaintext highlighter-rouge">int auth_password</code> function of <code class="language-plaintext highlighter-rouge">auth-passwd.c</code> [10].</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cm">/*
+ * Tries to authenticate the user using password.  Returns true if
+ * authentication succeeds.
+ */</span>
+<span class="kt">int</span>
+<span class="nf">auth_password</span><span class="p">(</span><span class="k">struct</span> <span class="n">ssh</span> <span class="o">*</span><span class="n">ssh</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span><span class="n">password</span><span class="p">)</span>
+<span class="p">{</span>
+	<span class="n">Authctxt</span> <span class="o">*</span><span class="n">authctxt</span> <span class="o">=</span> <span class="n">ssh</span><span class="o">-&gt;</span><span class="n">authctxt</span><span class="p">;</span>
+	<span class="k">struct</span> <span class="n">passwd</span> <span class="o">*</span><span class="n">pw</span> <span class="o">=</span> <span class="n">authctxt</span><span class="o">-&gt;</span><span class="n">pw</span><span class="p">;</span>
+	<span class="kt">int</span> <span class="n">result</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">authctxt</span><span class="o">-&gt;</span><span class="n">valid</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Another patch implementation [11,12] uses a Dockerfile that grabs the OpenSSSH source via <code class="language-plaintext highlighter-rouge">apt-get source</code> and patches with <code class="language-plaintext highlighter-rouge">sed</code> which makes it more flexible regarding minor changes of the OpenSSH code.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>With the above information we can get coding, fake the cpu info and write the patches for the OpenSSH server.</p>
+
+<h3 id="patching-openssh-1">Patching OpenSSH</h3>
+
+<p>For the OpenSSH server I ended up with three patches to</p>
+
+<ul>
+  <li>log the command history</li>
+  <li>log usernames and passwords of failed authentication attempts</li>
+  <li>and, because it just one line, accept any password</li>
+</ul>
+
+<p>Also provided is a Docker file that I use in order to build for Debian 12 in a compatible way.</p>
+
+<h4 id="patch-for-command-history">Patch for Command History</h4>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim docker-openssh-logging/openssh-log-history.diff
+</code></pre></div></div>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">---</span> <span class="n">openssh</span><span class="o">-</span><span class="mi">9</span><span class="p">.</span><span class="mi">2</span><span class="n">p1</span><span class="o">-</span><span class="n">orig</span><span class="o">/</span><span class="n">channels</span><span class="p">.</span><span class="n">c</span>	<span class="mi">2024</span><span class="o">-</span><span class="mo">03</span><span class="o">-</span><span class="mi">27</span> <span class="mi">16</span><span class="o">:</span><span class="mi">27</span><span class="o">:</span><span class="mi">53</span><span class="p">.</span><span class="mo">000000000</span> <span class="o">+</span><span class="mo">0000</span>
+<span class="o">+++</span> <span class="n">openssh</span><span class="o">-</span><span class="mi">9</span><span class="p">.</span><span class="mi">2</span><span class="n">p1</span><span class="o">/</span><span class="n">channels</span><span class="p">.</span><span class="n">c</span>	<span class="mi">2024</span><span class="o">-</span><span class="mo">03</span><span class="o">-</span><span class="mi">28</span> <span class="mi">12</span><span class="o">:</span><span class="mi">27</span><span class="o">:</span><span class="mi">09</span><span class="p">.</span><span class="mi">624032043</span> <span class="o">+</span><span class="mo">0000</span>
+<span class="err">@@</span> <span class="o">-</span><span class="mi">2175</span><span class="p">,</span><span class="mi">6</span> <span class="o">+</span><span class="mi">2175</span><span class="p">,</span><span class="mi">14</span> <span class="err">@@</span>
+ <span class="cp">#endif
+</span> 
+ 	<span class="n">len</span> <span class="o">=</span> <span class="n">write</span><span class="p">(</span><span class="n">c</span><span class="o">-&gt;</span><span class="n">wfd</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">dlen</span><span class="p">);</span>
+<span class="o">+</span>
+<span class="o">+</span>        <span class="kt">char</span> <span class="n">sLogfileName</span><span class="p">[</span><span class="mi">50</span><span class="p">];</span>
+<span class="o">+</span>        <span class="n">sprintf</span><span class="p">(</span><span class="n">sLogfileName</span><span class="p">,</span> <span class="s">"/ssh-log-%.100s-%d.txt"</span><span class="p">,</span> <span class="n">ssh_remote_ipaddr</span><span class="p">(</span><span class="n">ssh</span><span class="p">),</span> <span class="n">ssh_remote_port</span><span class="p">(</span><span class="n">ssh</span><span class="p">));</span>
+<span class="o">+</span>        <span class="kt">FILE</span> <span class="o">*</span><span class="n">pLogfile</span><span class="p">;</span>
+<span class="o">+</span>        <span class="n">pLogfile</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="n">sLogfileName</span><span class="p">,</span> <span class="s">"a"</span><span class="p">);</span>
+<span class="o">+</span>        <span class="n">fwrite</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">char</span><span class="p">),</span> <span class="n">dlen</span><span class="p">,</span> <span class="n">pLogfile</span><span class="p">);</span>
+<span class="o">+</span>        <span class="n">fclose</span><span class="p">(</span><span class="n">pLogfile</span><span class="p">);</span>
+<span class="o">+</span>
+ 	<span class="k">if</span> <span class="p">(</span><span class="n">len</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="o">&amp;&amp;</span>
+ 	    <span class="p">(</span><span class="n">errno</span> <span class="o">==</span> <span class="n">EINTR</span> <span class="o">||</span> <span class="n">errno</span> <span class="o">==</span> <span class="n">EAGAIN</span> <span class="o">||</span> <span class="n">errno</span> <span class="o">==</span> <span class="n">EWOULDBLOCK</span><span class="p">))</span>
+ 		<span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h4 id="patch-for-password-authentication">Patch for Password Authentication</h4>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim docker-openssh-logging/openssh-log-auth.diff
+</code></pre></div></div>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">---</span> <span class="n">openssh</span><span class="o">-</span><span class="mi">9</span><span class="p">.</span><span class="mi">2</span><span class="n">p1</span><span class="o">-</span><span class="n">orig</span><span class="o">/</span><span class="n">auth</span><span class="o">-</span><span class="n">passwd</span><span class="p">.</span><span class="n">c</span>    <span class="mi">2024</span><span class="o">-</span><span class="mo">03</span><span class="o">-</span><span class="mi">27</span> <span class="mi">16</span><span class="o">:</span><span class="mi">27</span><span class="o">:</span><span class="mi">53</span><span class="p">.</span><span class="mo">000000000</span> <span class="o">+</span><span class="mo">0000</span>
+<span class="o">+++</span> <span class="n">openssh</span><span class="o">-</span><span class="mi">9</span><span class="p">.</span><span class="mi">2</span><span class="n">p1</span><span class="o">/</span><span class="n">auth</span><span class="o">-</span><span class="n">passwd</span><span class="p">.</span><span class="n">c</span> <span class="mi">2024</span><span class="o">-</span><span class="mo">03</span><span class="o">-</span><span class="mi">28</span> <span class="mi">08</span><span class="o">:</span><span class="mi">20</span><span class="o">:</span><span class="mi">10</span><span class="p">.</span><span class="mi">689818076</span> <span class="o">+</span><span class="mo">0000</span>
+<span class="err">@@</span> <span class="o">-</span><span class="mi">83</span><span class="p">,</span><span class="mi">6</span> <span class="o">+</span><span class="mi">83</span><span class="p">,</span><span class="mi">18</span> <span class="err">@@</span>
+        <span class="k">static</span> <span class="kt">int</span> <span class="n">expire_checked</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+ <span class="cp">#endif
+</span>
+<span class="o">+</span>        <span class="kt">char</span> <span class="n">s</span><span class="p">[</span><span class="mi">30</span><span class="p">];</span>
+<span class="o">+</span>        <span class="kt">size_t</span> <span class="n">i</span><span class="p">;</span>
+<span class="o">+</span>        <span class="k">struct</span> <span class="n">tm</span> <span class="n">tim</span><span class="p">;</span>
+<span class="o">+</span>        <span class="kt">time_t</span> <span class="n">now</span><span class="p">;</span>
+<span class="o">+</span>        <span class="n">now</span> <span class="o">=</span> <span class="n">time</span><span class="p">(</span><span class="nb">NULL</span><span class="p">);</span>
+<span class="o">+</span>        <span class="n">tim</span> <span class="o">=</span> <span class="o">*</span><span class="p">(</span><span class="n">localtime</span><span class="p">(</span><span class="o">&amp;</span><span class="n">now</span><span class="p">));</span>
+<span class="o">+</span>        <span class="n">i</span> <span class="o">=</span> <span class="n">strftime</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span><span class="s">"%b %d, %Y; %H:%M:%S"</span><span class="p">,</span><span class="o">&amp;</span><span class="n">tim</span><span class="p">);</span>
+<span class="o">+</span>        <span class="kt">FILE</span> <span class="o">*</span><span class="n">pLogfile</span><span class="p">;</span>
+<span class="o">+</span>        <span class="n">pLogfile</span> <span class="o">=</span> <span class="n">fopen</span><span class="p">(</span><span class="s">"/ssh-log-auth.txt"</span><span class="p">,</span> <span class="s">"a"</span><span class="p">);</span>
+<span class="o">+</span>        <span class="n">fprintf</span><span class="p">(</span><span class="n">pLogfile</span><span class="p">,</span> <span class="s">"Login, time: %s, user: %s, password: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">authctxt</span><span class="o">-&gt;</span><span class="n">user</span><span class="p">,</span> <span class="n">password</span><span class="p">);</span>
+<span class="o">+</span>        <span class="n">fclose</span><span class="p">(</span><span class="n">pLogfile</span><span class="p">);</span>
+<span class="o">+</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">strlen</span><span class="p">(</span><span class="n">password</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">MAX_PASSWORD_LEN</span><span class="p">)</span>
+                <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h4 id="patch-to-accept-any-password">Patch to Accept any Password</h4>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim docker-openssh-logging/openssh-any-password.diff
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">---</span> openssh-9.2p1/auth-passwd.c	2024-03-28 09:46:06.327595032 +0000
++++ openssh-9.2p1/auth-passwd.c	2024-03-28 09:44:50.803515067 +0000
+@@ <span class="nt">-93</span>,6 +93,7 @@
+         pLogfile <span class="o">=</span> fopen<span class="o">(</span><span class="s2">"/ssh-log-auth.txt"</span>, <span class="s2">"a"</span><span class="o">)</span><span class="p">;</span>
+         fprintf<span class="o">(</span>pLogfile, <span class="s2">"Login, time: %s, user: %s, password: %s</span><span class="se">\n</span><span class="s2">"</span>, s, authctxt-&gt;user, password<span class="o">)</span><span class="p">;</span>
+         fclose<span class="o">(</span>pLogfile<span class="o">)</span><span class="p">;</span>
++        <span class="k">return </span>ok<span class="p">;</span>
+ 
+ 	<span class="k">if</span> <span class="o">(</span>strlen<span class="o">(</span>password<span class="o">)</span> <span class="o">&gt;</span> MAX_PASSWORD_LEN<span class="o">)</span>
+ 		<span class="k">return </span>0<span class="p">;</span>
+</code></pre></div></div>
+
+<p>With this patch we don’t need the pam audit configuration we’ve added previously.</p>
+
+<h4 id="dockerfile">Dockerfile</h4>
+
+<p>In order to easily build in a compatible way for Debian 12 I’ll use Docker.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim docker-openssh-logging/Dockerfile
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM debian:bookworm-slim@sha256:ccb33c3ac5b02588fc1d9e4fc09b952e433d0c54d8618d0ee1afadf1f3cf2455
+
+<span class="c"># -- grab openssh source and dependencies</span>
+RUN <span class="nb">echo</span> <span class="s2">"deb http://deb.debian.org/debian stable main contrib non-free"</span> <span class="o">&gt;&gt;</span> /etc/apt/sources.list
+RUN <span class="nb">echo</span> <span class="s2">"deb-src http://deb.debian.org/debian stable main contrib non-free"</span> <span class="o">&gt;&gt;</span> /etc/apt/sources.list
+RUN <span class="nb">echo</span> <span class="s2">"deb http://security.debian.org/debian-security stable-security main contrib non-free"</span> <span class="o">&gt;&gt;</span> /etc/apt/sources.list
+RUN <span class="nb">echo</span> <span class="s2">"deb-src http://svoimvecurity.debian.org/debian-security stable-security main contrib non-free"</span> <span class="o">&gt;&gt;</span> /etc/apt/sources.list
+
+RUN apt-get update <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    <span class="nv">DEBIAN_FRONTEND</span><span class="o">=</span>noninteractive apt-get <span class="nt">-y</span> <span class="nb">install</span> <span class="nt">--no-install-recommends</span> tzdata <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get <span class="nt">-y</span> build-dep openssh-server <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get <span class="nt">-y</span> <span class="nb">install </span>build-essential fakeroot devscripts <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    <span class="nb">mkdir </span>src <span class="o">&amp;&amp;</span> <span class="nb">cd </span>src <span class="o">&amp;&amp;</span> <span class="se">\</span>
+    apt-get <span class="nb">source </span>openssh-server
+
+<span class="c"># -- install killall and vim</span>
+RUN apt <span class="nt">-y</span> <span class="nb">install </span>vim psmisc
+RUN <span class="nb">echo</span> <span class="s2">"set mouse="</span> <span class="o">&gt;&gt;</span> /root/.vimrc
+
+<span class="c"># -- prerequisites for sshd to run</span>
+RUN <span class="nb">echo</span> <span class="s2">"PermitRootLogin yes"</span> <span class="o">&gt;&gt;</span> /usr/local/etc/sshd_config
+RUN <span class="nb">sed</span> <span class="nt">-i</span> <span class="s1">'/UsePAM/d'</span> /usr/local/etc/sshd_config
+RUN <span class="nb">sed</span> <span class="nt">-i</span> <span class="s1">'/gssapiauthentication/d'</span> /usr/local/etc/sshd_config
+RUN useradd sshd
+
+<span class="c"># -- backup original code in case we want to diff patches</span>
+RUN <span class="nb">cp</span> <span class="nt">-r</span> /src/openssh-9.2p1 /src/openssh-9.2p1-orig
+
+<span class="c"># -- patch  history</span>
+COPY openssh-log-history.diff /src/openssh-log-history.diff
+RUN <span class="nb">cd</span> /src/openssh-9.2p1 <span class="o">&amp;&amp;</span> patch <span class="nt">-p1</span> <span class="nt">-F10</span>  &lt; ../openssh-log-history.diff
+
+<span class="c"># -- patch password authentication</span>
+COPY openssh-log-auth.diff /src/openssh-log-auth.diff
+RUN <span class="nb">cd</span> /src/openssh-9.2p1 <span class="o">&amp;&amp;</span> patch <span class="nt">-p1</span> <span class="nt">-F10</span> &lt; ../openssh-log-auth.diff
+
+<span class="c"># -- patch allow any password</span>
+COPY openssh-any-password.diff /src/openssh-any-password.diff
+RUN <span class="nb">cd</span> /src/openssh-9.2p1 <span class="o">&amp;&amp;</span> patch <span class="nt">-p1</span> <span class="nt">-F10</span> &lt; ../openssh-any-password.diff
+
+<span class="c"># -- build</span>
+RUN <span class="nb">cd</span> /src/openssh-9.2p1 <span class="o">&amp;&amp;</span> autoreconf
+RUN <span class="nb">cd</span> /src/openssh-9.2p1 <span class="o">&amp;&amp;</span> ./configure
+RUN <span class="nb">cd</span> /src/openssh-9.2p1 <span class="o">&amp;&amp;</span> make
+RUN <span class="nb">cd</span> /src/openssh-9.2p1 <span class="o">&amp;&amp;</span> make <span class="nb">install</span>
+
+<span class="c"># -- run</span>
+EXPOSE 22
+CMD <span class="o">[</span><span class="s2">"/src/openssh-9.2p1/sshd"</span><span class="o">]</span>
+</code></pre></div></div>
+
+<h4 id="building">Building</h4>
+
+<p>With that we can build the container</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> debian12 docker-openssh-logging/
+</code></pre></div></div>
+
+<p>and run it</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">--rm</span> <span class="nt">-it</span> <span class="nt">--name</span> deb12 <span class="nt">--entrypoint</span> /bin/bash debian12
+</code></pre></div></div>
+
+<h4 id="producing-patches">Producing Patches</h4>
+
+<p>To make changes or add additional patches, we can simply edit, for instance</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim src/openssh-9.2p1/channels.c
+</code></pre></div></div>
+
+<p>test it by rebuilding</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make
+killall sshd
+/src/openssh-9.2p1/sshd
+ssh root@localhost
+</code></pre></div></div>
+
+<p>and, if it works as expected, produce patch files that can be added to the Dockerfile.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /src
+diff <span class="nt">--unified</span> openssh-9.2p1-orig/auth-passwd.c openssh-9.2p1/auth-passwd.c <span class="o">&gt;</span> /openssh-log-auth.diff
+diff <span class="nt">--unified</span> openssh-9.2p1-orig/channels.c openssh-9.2p1/channels.c <span class="o">&gt;</span> /openssh-log-history.diff
+</code></pre></div></div>
+
+<h4 id="result">Result</h4>
+
+<p>We see everything being logged in</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /ssh-log-auth.txt
+</code></pre></div></div>
+
+<p>and</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /ssh-log-&lt;ip&gt;-&lt;port&gt;.txt
+</code></pre></div></div>
+
+<p>files.</p>
+
+<p>Note:</p>
+<ul>
+  <li>use vim to view these files as there are escape sequences in the test that distract simple file readers like <code class="language-plaintext highlighter-rouge">cat</code> (though you could use the <code class="language-plaintext highlighter-rouge">-v</code> option).</li>
+  <li>putting the ip and port into the logfiles is necessary to be able to handle simultaneous connections without getting interleaved logfiles</li>
+</ul>
+
+<p><img src="../../../../images/2024-03-24-So-SshHoneypotPt4-Improvements/ssh-server-logfiles.png" width="25%" />
+<img src="../../../../images/2024-03-24-So-SshHoneypotPt4-Improvements/ssh-server-command-history.png" width="15%" /></p>
+
+<h4 id="copy-sshd-from-the-docker-container-to-the-qemu-honeypot">Copy sshd from the Docker container to the Qemu Honeypot</h4>
+
+<p>With the docker container running</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker build <span class="nt">-t</span> debian12 docker-openssh-logging/
+docker run <span class="nt">--rm</span> <span class="nt">-it</span> <span class="nt">--name</span> deb12 <span class="nt">--entrypoint</span> /bin/bash debian12
+</code></pre></div></div>
+
+<p>In another console</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+docker <span class="nb">cp </span>deb12:/src/openssh-9.2p1/sshd sshd-patched
+<span class="nb">sudo </span>modprobe nbd <span class="nv">max_part</span><span class="o">=</span>8
+<span class="nb">sudo </span>qemu-nbd <span class="nt">--connect</span><span class="o">=</span>/dev/nbd0 <span class="nv">$HOME</span>/hda.qcow
+<span class="nb">sudo </span>mount /dev/nbd0p1 /mnt/tmp
+
+<span class="nb">sudo cp </span>sshd-patched /mnt/tmp/usr/sbin/sshd
+<span class="nb">sudo cp</span> <span class="nt">-r</span> /mnt/tmp/etc/ssh /mnt/tmp/usr/local/etc
+<span class="nb">sudo sed</span> <span class="nt">-i</span> <span class="s1">'/UsePAM/d'</span> /mnt/tmp/usr/local/etc/sshd_config
+<span class="nb">echo</span> <span class="s2">"HostKey /etc/ssh/ssh_host_rsa_key"</span>  | <span class="nb">sudo tee</span> <span class="nt">-a</span> /mnt/tmp/usr/local/etc/sshd_config
+
+<span class="nb">sudo </span>umount /mnt/tmp
+<span class="nb">sudo </span>qemu-nbd <span class="nt">--disconnect</span> /dev/nbd0
+</code></pre></div></div>
+
+<p>and run the qemu machine</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qemu-system-x86_64 <span class="nt">-hda</span> hda.qcow <span class="nt">-m</span> 512 <span class="nt">-net</span> nic,model<span class="o">=</span>virtio,macaddr<span class="o">=</span>52:54:00:00:00:01 <span class="nt">-net</span> bridge,br<span class="o">=</span>virtbr0
+</code></pre></div></div>
+
+<h3 id="fake-cpuinfo">Fake CpuInfo</h3>
+
+<p>Next we can fake the cpuinfo.</p>
+
+<p>The Qemu options “-cpu host” didn’t work and “-L pc-bios” had no effect on the output of cpuinfo.</p>
+
+<p>In the end I just bind mounted a copy of the cpuinfo from my host system.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>modprobe nbd <span class="nv">max_part</span><span class="o">=</span>8
+<span class="nb">sudo </span>qemu-nbd <span class="nt">--connect</span><span class="o">=</span>/dev/nbd0 <span class="nv">$HOME</span>/hda.qcow
+<span class="nb">sudo </span>mount /dev/nbd0p1 /mnt/tmp
+
+<span class="nb">cat</span> /proc/cpuinfo | <span class="nb">sudo tee</span> /mnt/tmp/root/cpuinfo.lie
+<span class="nb">echo</span> <span class="s2">"mount --bind /root/cpuinfo.lie /proc/cpuinfo"</span>  | <span class="nb">sudo tee</span> <span class="nt">-a</span> /mnt/tmp/root/.bashrc
+
+<span class="nb">sudo </span>umount /mnt/tmp
+<span class="nb">sudo </span>qemu-nbd <span class="nt">--disconnect</span> /dev/nbd0
+</code></pre></div></div>
+
+<p>The honeypot machine now claims to use a Ryzen 5 processor even though it is running on a virtual single core in Qemu.</p>
+
+<p><img src="../../../../images/2024-03-24-So-SshHoneypotPt4-Improvements/fake-cpuinfo.png" width="25%" /></p>
+
+<p>This is a quite versatile method to also fake other configuration files, if we need to.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>We’ve set a correct cpuinfo and we’re able to monitor an attackers actions more closely.</p>
+
+<p>We also learn: never use a system where an attacker has had root access as then any application may have been recompiled with extra logging to expose user credentials.</p>
+
+<hr />
+
+<pre>
+1] https://blog.port22.dk/mdrfckrs-part-one/
+2] https://bugs.launchpad.net/ubuntu/+source/qemu-kvm/+bug/529008
+3] https://gist.github.com/JPvRiel/df1d4c795ebbcad522188759c8fd69c7
+4] https://coderwall.com/p/anphha/save-bash-history-in-syslog-on-centos
+5] https://www.seimaxim.com/kb/how-to-log-all-bash-history-commands-to-syslog
+6] https://askubuntu.com/questions/161935/how-do-i-log-all-input-and-output-in-a-terminal-session
+7] https://github.com/jimtangshfx/openssh-sshd-patch/blob/master/README.md
+8] http://www.kdvelectronics.eu/ssh-logging/ssh-logging.html
+9] https://www.hackerfactor.com/blog/index.php?/categories/21-Honeypot
+10] https://github.com/openssh/openssh-portable/blob/edcff77f82c2bb2b5653b36f1e47274c5ef3e8be/auth-passwd.c#L77C1-L77C14
+11] https://metamorphant.de/blog/posts/2021-04-14-ssh-server-opensshd-logging-passwords/
+12] https://gist.github.com/JohannesFKnauf/8f1e00c823a8fdba6eccd75a89f420f8
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="SSH Botnet Honeypot - Pt.4 - Improving the Honeypot"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

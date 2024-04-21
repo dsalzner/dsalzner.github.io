@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>SSH Botnet Honeypot - Pt.2 - Setting up a Honeypot - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="After detecting failed login attempts at my SSH server let's setup a fake SSH server (a honeypot) and see what these bot are upto."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/security/2024/03/24/So-SshHoneypotPt2-Honeypot.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="SSH Botnet Honeypot - Pt.2 - Setting up a Honeypot - Dennis Salzner" />
+  <meta property="og:description" content="After detecting failed login attempts at my SSH server let's setup a fake SSH server (a honeypot) and see what these bot are upto." />
+  <meta property="og:url" content="https://www.dennissalzner.de/security/2024/03/24/So-SshHoneypotPt2-Honeypot.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Security" />
+  <meta property="article:published_time" content="2024-03-24 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2024-03-24 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2024-03-24 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="After detecting failed login attempts at my SSH server let's setup a fake SSH server (a honeypot) and see what these bot are upto." />
+  <meta name="twitter:title" content="SSH Botnet Honeypot - Pt.2 - Setting up a Honeypot - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - SSH Botnet Honeypot - Pt.2 - Setting up a Honeypot</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">SSH Botnet Honeypot - Pt.2 - Setting up a Honeypot</div>
+<div class="page-subtitle">Setting up a Qemu honeypot machine</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>After detecting failed login attempts at my SSH server let’s setup a fake SSH server (a honeypot) and see what these bot are upto.</p>
+
+<p><img src="../../../../images/2024-03-24-So-SshHoneypotPt2-Honeypot/ssh-honeypot-accepting.png" width="35%" /></p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#types-of-honeypots" id="markdown-toc-types-of-honeypots">Types of Honeypots</a>    <ul>
+      <li><a href="#tarpits" id="markdown-toc-tarpits">Tarpits</a></li>
+      <li><a href="#highmidlow-interaction-honeypots" id="markdown-toc-highmidlow-interaction-honeypots">High/Mid/Low Interaction Honeypots</a></li>
+      <li><a href="#high-interaction" id="markdown-toc-high-interaction">“High” Interaction</a></li>
+      <li><a href="#real-qemu-system" id="markdown-toc-real-qemu-system">Real Qemu System</a></li>
+    </ul>
+  </li>
+  <li><a href="#setup-honeypot-machine-in-qemu" id="markdown-toc-setup-honeypot-machine-in-qemu">Setup Honeypot Machine in Qemu</a>    <ul>
+      <li><a href="#create-qemu-image-and-boot-debian" id="markdown-toc-create-qemu-image-and-boot-debian">Create Qemu image and boot Debian</a></li>
+      <li><a href="#perform-standard-install" id="markdown-toc-perform-standard-install">Perform standard install</a></li>
+      <li><a href="#boot-it" id="markdown-toc-boot-it">Boot it</a></li>
+      <li><a href="#networking" id="markdown-toc-networking">Networking</a>        <ul>
+          <li><a href="#default-configuration-is-host-only" id="markdown-toc-default-configuration-is-host-only">Default configuration is Host-Only</a></li>
+          <li><a href="#setup-bridged-networking" id="markdown-toc-setup-bridged-networking">Setup bridged networking</a></li>
+          <li><a href="#verify-networking" id="markdown-toc-verify-networking">Verify Networking</a></li>
+        </ul>
+      </li>
+      <li><a href="#mountingunmounting-the-qemu-disk" id="markdown-toc-mountingunmounting-the-qemu-disk">Mounting/Unmounting the Qemu Disk</a></li>
+      <li><a href="#ssh-server" id="markdown-toc-ssh-server">SSH-Server</a>        <ul>
+          <li><a href="#weaken" id="markdown-toc-weaken">Weaken</a></li>
+        </ul>
+      </li>
+      <li><a href="#test" id="markdown-toc-test">Test</a></li>
+    </ul>
+  </li>
+  <li><a href="#risks" id="markdown-toc-risks">Risks</a></li>
+  <li><a href="#going-live" id="markdown-toc-going-live">Going live</a></li>
+  <li><a href="#results" id="markdown-toc-results">Results</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>There are dedicated Honeypot tools that simulate servers, but we can also setup our own in about half an hour.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>After the sequence of coordinated bruteforce attacks on my SSH server I’m very much interested in where they came from and what the attacking botnet would have attempted on my servers.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="types-of-honeypots">Types of Honeypots</h2>
+
+<p>After some reasearch I’ve found a number of SSH-Honeypots written in Python that simulate an SSH-Server.</p>
+
+<p>The goal is to run a fake server that an attacker or attacking botnet then connects to and log his or it’s actions.</p>
+
+<h3 id="tarpits">Tarpits</h3>
+
+<p>A simple effective method to delay attackers is to use a tarpit. A tarpit slows down an attacker by responsing extremly slowly. Effectivly DOS’ing (Denial of Service) the attacker.</p>
+
+<h3 id="highmidlow-interaction-honeypots">High/Mid/Low Interaction Honeypots</h3>
+
+<p>An SSH-Honeypot can have varying levels of capabilities. A low interaction HoneyPot will only log attemps whereas a high interaction will let the intruder access a sandbox system and then evaluate his actions.</p>
+
+<h3 id="high-interaction">“High” Interaction</h3>
+
+<p>There are several high interaction honeypots available.</p>
+
+<ul>
+  <li>Kojoney2</li>
+  <li>Cowrie [1]</li>
+  <li>Kippo [2]</li>
+</ul>
+
+<p>Cowrie can be setup quickly by docker</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker run <span class="nt">-p</span> 2222:2222 cowrie/cowrie:latest <span class="nt">-v</span> cowrie-etc:/cowrie/cowrie-git/etc <span class="nt">-v</span> cowrie-var:/cowrie/cowrie-git/var
+ssh <span class="nt">-p</span> 2222 root@localhost
+</code></pre></div></div>
+
+<p>There are also ready-made VMWare images [2] loaded with Honeypots such as Crowrie.</p>
+
+<h3 id="real-qemu-system">Real Qemu System</h3>
+
+<p>I thought about using Kojoney, Cowrie or similar Honeypots, but found that they only support a very limited set of commands.</p>
+
+<p>An attacker would easily detect such a honeypot by simply running “uname”, looking at processor details “cat /proc/cpuinfo” or any other dead giveaway that it isn’t a real system. That may alter the behaviour of the attacker.</p>
+
+<p>Instead I want to run a real server in QEmu on an isolated network to make the system look as real as possible to the attacker.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="setup-honeypot-machine-in-qemu">Setup Honeypot Machine in Qemu</h2>
+
+<p>Note that we will setup a real Debian system without an protection, so be sure to isolate it from your network.</p>
+
+<h3 id="create-qemu-image-and-boot-debian">Create Qemu image and boot Debian</h3>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.5.0-amd64-netinst.iso
+qemu-img create <span class="nt">-f</span> qcow2 hda.qcow 10G
+qemu-system-x86_64 <span class="nt">-hda</span> hda.qcow <span class="nt">-cdrom</span> debian-12.5.0-amd64-netinst.iso <span class="nt">-boot</span> d <span class="nt">-m</span> 512
+</code></pre></div></div>
+
+<p>Note: ctrl+alt+g releases the mouse from Qemu windows.</p>
+
+<h3 id="perform-standard-install">Perform standard install</h3>
+
+<p>Will go into ncurses installer due to low-memory as we’ve set only 512mb of RAM, this is fine.</p>
+
+<p>Total installation took about 20 minutes here, but that may vary depending on your internet connection due to it being a net installation that downloads the packages.</p>
+
+<ol>
+  <li>continent or region</li>
+  <li>country</li>
+  <li>language</li>
+  <li>name: raspberrypi, domain: empty</li>
+  <li>root password: 12345 (purposely weak)</li>
+  <li>user jason, password 12345 (purposely weak)</li>
+  <li>partition, guided, use entire disk, all files in one partition, finish &amp; write changes to disk</li>
+</ol>
+
+<p>Takes some time to install.</p>
+
+<ol>
+  <li>install only system utilities, not graphical desktop - for a quick installation</li>
+  <li>install grub bootloader, select /dev/sda</li>
+</ol>
+
+<h3 id="boot-it">Boot it</h3>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qemu-system-x86_64 <span class="nt">-hda</span> hda.qcow <span class="nt">-m</span> 512
+</code></pre></div></div>
+
+<p>Login with above credentials.</p>
+
+<p>Check internet connection</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ping 8.8.8.8
+</code></pre></div></div>
+
+<h3 id="networking">Networking</h3>
+
+<p>We need to make the Qemu machine accessable on the local network so we can forward a port to it from our internet router.</p>
+
+<h4 id="default-configuration-is-host-only">Default configuration is Host-Only</h4>
+
+<p>Running</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/sbin/ifconfig
+</code></pre></div></div>
+
+<p>you’ll find the system has an IP-Adresse like “10.0.2.15”. This is host only and inaccessable from the router, we need to enable bridged networking.</p>
+
+<h4 id="setup-bridged-networking">Setup bridged networking</h4>
+
+<p>On the Host</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>brctl addbr virtbr0
+<span class="nb">sudo </span>brctl addif virtbr0 enp7s0
+<span class="nb">sudo </span>ip addr add 192.168.0.20/24 dev virtbr0
+<span class="nb">sudo </span>ip <span class="nb">link set </span>virtbr0 up
+<span class="nb">sudo </span>iptables <span class="nt">-I</span> FORWARD <span class="nt">-m</span> physdev <span class="nt">--physdev-is-bridged</span> <span class="nt">-j</span> ACCEPT
+</code></pre></div></div>
+
+<p>Check</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>brctl show
+
+virtbr0		8000.16a021033ae1	no		enp7s0
+</code></pre></div></div>
+
+<p>Configure QEmu bridge helper</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"allow all"</span> | <span class="nb">sudo tee</span> /etc/qemu/<span class="k">${</span><span class="nv">USER</span><span class="k">}</span>.conf
+<span class="nb">echo</span> <span class="s2">"include /etc/qemu/</span><span class="k">${</span><span class="nv">USER</span><span class="k">}</span><span class="s2">.conf"</span> | <span class="nb">sudo tee</span> <span class="nt">--append</span> /etc/qemu/bridge.conf
+<span class="nb">sudo chown </span>root:<span class="k">${</span><span class="nv">USER</span><span class="k">}</span> /etc/qemu/<span class="k">${</span><span class="nv">USER</span><span class="k">}</span>.conf
+<span class="nb">sudo chmod </span>640 /etc/qemu/<span class="k">${</span><span class="nv">USER</span><span class="k">}</span>.conf
+</code></pre></div></div>
+
+<h4 id="verify-networking">Verify Networking</h4>
+
+<p>Run Qemu</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>qemu-system-x86_64 <span class="nt">-hda</span> hda.qcow <span class="nt">-m</span> 512 <span class="nt">-net</span> nic,model<span class="o">=</span>virtio,macaddr<span class="o">=</span>52:54:00:00:00:01 <span class="nt">-net</span> bridge,br<span class="o">=</span>virtbr0
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/sbin/ifconfig
+</code></pre></div></div>
+
+<p>will now how an IP-Adress on your network.</p>
+
+<h3 id="mountingunmounting-the-qemu-disk">Mounting/Unmounting the Qemu Disk</h3>
+
+<p>To adjust configurations and analyse the disk images after incidents it’s good to know how to mount and unmount the disk.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>modprobe nbd <span class="nv">max_part</span><span class="o">=</span>8
+<span class="nb">sudo </span>qemu-nbd <span class="nt">--connect</span><span class="o">=</span>/dev/nbd0 hda.qcow
+<span class="nb">sudo </span>mount /dev/nbd0p1 /mnt/tmp
+</code></pre></div></div>
+
+<p>to unmount</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>umount /mnt/tmp
+<span class="nb">sudo </span>qemu-nbd <span class="nt">--disconnect</span> /dev/nbd0
+</code></pre></div></div>
+
+<h3 id="ssh-server">SSH-Server</h3>
+
+<p>The heart of our honeypot is the SSH-Server. Let’s install it and then weaken it to accept any password.</p>
+
+<p>First install the SSH server</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>su
+apt update
+apt <span class="nb">install</span> <span class="nt">-y</span> openssh-server
+systemctl <span class="nb">enable </span>ssh
+apt <span class="nb">install</span> <span class="nt">-y</span> net-tools <span class="c"># for ifconfig</span>
+</code></pre></div></div>
+
+<p>Allow SSH access through firewall.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>su
+apt <span class="nb">install</span> <span class="nt">-y</span> ufw
+/sbin/ufw allow ssh
+</code></pre></div></div>
+
+<h4 id="weaken">Weaken</h4>
+
+<p>To allow any password on first try we modify the authentication settings.</p>
+
+<p>The pam authentication configuration is a bit hard to understand at first glance.</p>
+
+<p>The authentication daemon will go through the file line by line and load shared objects (*.so) that return “success” or “failure”.
+Depending on order and whether lines are marked “required”, “sufficient” or “requisite” it may accept, ignore or only accept a login with a certain combination of successes against further authentication modules.</p>
+
+<p>That and the significance of this file makes the configuration a bit daunting.</p>
+
+<p>It’s actually quite elegant as the flexibility of this configuration allows scenarios where, for instance, if you have a biometric finger print scanner and you’d like to additionally authenticate with a password. Perhaps a user should be able to use a smart card in combination with an iris scanner instead. This configuration file allows for all of these combinations and the shared objects can be libraries interfacing with external authentication devices.</p>
+
+<p>With that knowledge we can simply add as the first line of the file and the system will let anyone in, with any username or password.
+Normally this would be absolute madness, but perfect for our honeypot.</p>
+
+<p>Following [5,7] we can configure the SSH-Server to allow any password</p>
+
+<p>Leave common-auth as is, similar to:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nb">install </span>vim
+<span class="nb">sudo </span>vim /mnt/tmp/etc/pam.d/common-auth
+
+auth    <span class="o">[</span><span class="nv">success</span><span class="o">=</span>1 <span class="nv">default</span><span class="o">=</span>ignore]      pam_unix.so nullok
+auth    requisite                       pam_deny.so
+auth    required                        pam_permit.so
+</code></pre></div></div>
+
+<p>But repllace pam.d/sshd</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo mv</span> /mnt/tmp/etc/pam.d/sshd /mnt/tmp/etc/pam.d/sshd.bak
+<span class="nb">sudo </span>vim /mnt/tmp/etc/pam.d/sshd
+
+auth    required    pam_permit.so
+</code></pre></div></div>
+
+<p>and allow root logins on the ssh daemon</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /mnt/tmp/etc/ssh/sshd_config
+
+PermitRootLogin <span class="nb">yes</span>
+</code></pre></div></div>
+
+<h3 id="test">Test</h3>
+
+<p>Now anyone can login with</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh jason@&lt;ip-address&gt;
+</code></pre></div></div>
+
+<p>or even</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh root@&lt;ip-address&gt;
+</code></pre></div></div>
+
+<p>and any password</p>
+
+<h2 id="risks">Risks</h2>
+
+<p>Researching bots I’ve found information about an exploit on Fritz!Box Routers [16]. These are really common. There have also been security vulnerabilities with the Philips Hue bridges [17].</p>
+
+<p>Normally these type of exploits are not that risky as control ports of the devices are usually only exposed to the internal network.</p>
+
+<p>But if you’re running a honeypot and a worm spreads inside your network and reaches your devices from the internal network and uses an unpatched vulnerability, then you’ve got an infiltration at your devices. Modern botnets seem to persist only in memory, but routers, smarthome bridges and other IoT devices rarely get rebooted.</p>
+
+<p>So it’s important to isolate the honeypot from the entire rest of the network and also make sure it can’t reach configuration pages of your devices.</p>
+
+<h2 id="going-live">Going live</h2>
+
+<p>With all that configured let’s go live.</p>
+
+<p>To be safe make sure there’s nothing else accessable on the local network and then</p>
+
+<ul>
+  <li>while running wireshark to monitor connections</li>
+  <li>forward the ssh port from the internet router to the IP-address of the honeypot Qemu box.</li>
+</ul>
+
+<p>On my router I forward a random TCP IPv4 port to port 22 on the Qemu machine</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="results">Results</h2>
+
+<p>Already after a few minutes we get successful logins.</p>
+
+<p><img src="../../../../images/2024-03-24-So-SshHoneypotPt2-Honeypot/ssh-honeypot-accepting.png" width="25%" /></p>
+
+<p>I’ll analyse the findings in the next post.</p>
+
+<hr />
+
+<pre>
+1] https://github.com/cowrie/cowrie
+2] https://bruteforce.gr/announcing-honeybox/
+3] https://github.com/MegaManSec/SSH-Snake
+4] https://github.com/desaster/kippo
+5] https://unix.stackexchange.com/questions/330120/how-to-add-a-user-that-accept-any-password-as-a-valid-password
+6] https://github.com/cardigliano/wireshark-fritzbox/tree/master
+7] https://serverfault.com/questions/618953/accept-any-ssh-connection-irrespective-of-client-key
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="SSH Botnet Honeypot - Pt.2 - Setting up a Honeypot"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>

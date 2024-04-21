@@ -3,40 +3,42 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
   <title>Zephyr RTOS - Pt.1 - Esp32-Cam - Dennis Salzner</title>
-
+  
+  
   <!-- search engine -->
-  <meta name="description" content="Dennis Salzner"/>
-  <link rel="canonical" href="/programming/2024/03/10/So-ZephyrPt1-Esp32.html">
+  <meta name="description" content="The Esp32-Cam board is very cheap board with a dual-core ARM chip that is officially supported by the Zephyr Project. We'll flash and test it with the Arduino code provided with..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/programming/2024/03/10/So-ZephyrPt1-Esp32.html">
   <meta property="og:locale" content="en_EN" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Zephyr RTOS - Pt.1 - Esp32-Cam - Dennis Salzner" />
   <meta property="og:description" content="The Esp32-Cam board is very cheap board with a dual-core ARM chip that is officially supported by the Zephyr Project. We'll flash and test it with the Arduin..." />
-  <meta property="og:url" content="/programming/2024/03/10/So-ZephyrPt1-Esp32.html" />
+  <meta property="og:url" content="https://www.dennissalzner.de/programming/2024/03/10/So-ZephyrPt1-Esp32.html" />
   <meta property="og:site_name" content="Dennis Salzner" />
-  <meta property="article:section" content="programming" />
+  <meta property="article:section" content="Programming" />
   <meta property="article:published_time" content="2024-03-10 00:00:00 +0100" />
   <meta property="article:modified_time" content="2024-03-10 00:00:00 +0100" />
   <meta property="og:updated_time" content="2024-03-10 00:00:00 +0100" />
   <meta property="og:image" content="" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:description" content="The Esp32-Cam board is very cheap board with a dual-core ARM chip that is officially supported by..." />
+  <meta name="twitter:description" content="The Esp32-Cam board is very cheap board with a dual-core ARM chip that is officially supported by the Zephyr Project. We'll flash and test it with the Arduino code provided with..." />
   <meta name="twitter:title" content="Zephyr RTOS - Pt.1 - Esp32-Cam - Dennis Salzner" />
   <meta name="twitter:image" content="" />
 
   <!-- syntax highlighting in code snippets -->
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
   
   <!-- jquery (for vimeo video embedding)-->
-  <script src="/js/jquery.min.js"></script>
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
   <!-- photos -->
-  <script src="/js/lightbox.js"></script>
-  <link href="/css/lightbox.css" rel="stylesheet">
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
   
   <!-- diagramms -->
-  <script src="/js/mermaid.min.js"></script>
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
 
 
 <!-- Google tag (gtag.js) -->
@@ -56,12 +58,11 @@
     
 
 <h1>Dennis Salzner - Zephyr RTOS - Pt.1 - Esp32-Cam</h1>
-<p align="right" style="font-size:80%"><a href="/"><< Back Home</a></p>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
 
 <div class="page-title">Zephyr RTOS - Pt.1 - Esp32-Cam</div>
 <div class="page-subtitle">Building Zephyr for the Esp32-Cam</div>
 <div class="page-seperator"></div>
-
 
 <div class="post-content" itemprop="articleBody">
     <p style="font-size: 60%;" align="right">What</p>
@@ -156,7 +157,7 @@ It’s focus is on IoT devices such as tooth brushes, smart watches, IoT gateway
 
 <h2 id="test-with-official-sample-code">Test with official Sample Code</h2>
 
-<p>With the board manager configured and the chip connected to the compuer via the Rs232 you can flash the sample firmware.
+<p>With the board manager configured and the chip connected to the computer via the Rs232 you can flash the sample firmware.
 In the Arduino IDE you can select the “CameraWebServer” under File -&gt; Examples -&gt; Esp32 -&gt; Camera -&gt; CameraWebServer</p>
 
 <p>With the camera module connected and the webinterace opened we can see the image from the camera in the browser.</p>
@@ -195,7 +196,7 @@ mpv http://192.168.2.138/mjpeg/1
 
 <p>With the Esp32Cam confirmed to be fully functioning we can move to setting up a Zephyr build environment.</p>
 
-<p>I’ll use a newly installed Debian 12 “bookworm”.</p>
+<p>I’ll use a newly installed machine (running Debian 12 “bookworm”) to develop on, so I can be sure I don’t miss any dependencies that were still on the system from before.</p>
 
 <h2 id="install-west-meta-tool">Install “west” meta-tool</h2>
 
@@ -497,7 +498,6 @@ crw-rw----+ 1 root dialout 188, 0 Mär 17 10:08 /dev/ttyUSB0
 6] https://www.thingiverse.com/thing:4760797
 7] https://github.com/zephyrproject-rtos/zephyr/discussions/65244
 </pre>
-
 
 </div>
 

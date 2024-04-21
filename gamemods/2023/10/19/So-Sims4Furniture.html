@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Sims 4 Custom Content Furniture - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="Using the approach I've described previously to create 3D models we can also create custom content for the game Sims 4"/>
+  <link rel="canonical" href="https://www.dennissalzner.de/gamemods/2023/10/19/So-Sims4Furniture.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Sims 4 Custom Content Furniture - Dennis Salzner" />
+  <meta property="og:description" content="Using the approach I've described previously to create 3D models we can also create custom content for the game Sims 4" />
+  <meta property="og:url" content="https://www.dennissalzner.de/gamemods/2023/10/19/So-Sims4Furniture.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="GameMods" />
+  <meta property="article:published_time" content="2023-10-19 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2023-10-19 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2023-10-19 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Using the approach I've described previously to create 3D models we can also create custom content for the game Sims 4" />
+  <meta name="twitter:title" content="Sims 4 Custom Content Furniture - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Sims 4 Custom Content Furniture</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Sims 4 Custom Content Furniture</div>
+<div class="page-subtitle">Custom content for the game Sims 4</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>Using the approach I’ve described previously to create 3D models we can also create custom content for the game Sims 4.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/73.png" height="280px" /></p>
+
+<p>The desk in the image is a custom 3D model inspired by my actual desk.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h1 id="contents">Contents</h1>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a>    <ul>
+      <li><a href="#background" id="markdown-toc-background">Background</a></li>
+      <li><a href="#importing-a-3d-model-into-the-game" id="markdown-toc-importing-a-3d-model-into-the-game">Importing a 3D Model into the game</a>        <ul>
+          <li><a href="#create-a-new-project" id="markdown-toc-create-a-new-project">Create a new Project</a>            <ul>
+              <li><a href="#install-blender" id="markdown-toc-install-blender">Install Blender</a></li>
+              <li><a href="#load-the-exported-project-in-blender" id="markdown-toc-load-the-exported-project-in-blender">Load the exported project in Blender</a></li>
+              <li><a href="#import-the-3d-model" id="markdown-toc-import-the-3d-model">Import the 3D model</a></li>
+              <li><a href="#scale" id="markdown-toc-scale">Scale</a></li>
+              <li><a href="#align" id="markdown-toc-align">Align</a></li>
+            </ul>
+          </li>
+          <li><a href="#removing-the-original-mesh" id="markdown-toc-removing-the-original-mesh">Removing the original Mesh</a>            <ul>
+              <li><a href="#move-it-away" id="markdown-toc-move-it-away">Move it away</a></li>
+              <li><a href="#switch-to-edit-mode" id="markdown-toc-switch-to-edit-mode">Switch to Edit mode</a></li>
+              <li><a href="#change-selection-behaviour" id="markdown-toc-change-selection-behaviour">Change Selection Behaviour</a></li>
+              <li><a href="#select-what-we-want-to-remove" id="markdown-toc-select-what-we-want-to-remove">Select what we want to remove</a></li>
+              <li><a href="#remove" id="markdown-toc-remove">Remove</a></li>
+            </ul>
+          </li>
+          <li><a href="#load-in-sims-4-studio" id="markdown-toc-load-in-sims-4-studio">Load in Sims 4 Studio</a></li>
+          <li><a href="#adding-it-to-the-game" id="markdown-toc-adding-it-to-the-game">Adding it to the game</a></li>
+          <li><a href="#using-it-in-the-game" id="markdown-toc-using-it-in-the-game">Using it in the game</a></li>
+        </ul>
+      </li>
+      <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+    </ul>
+  </li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>The process is actually quite straight-forward with an already existing 3D model. It does take a lot of clicking around in the tools involved.</p>
+
+<p>3D models can either be custom made, exported from other games or from, for example, 3D printing sites.</p>
+
+<p>There is lots of room for creativity here.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>I’m particularly interested in the game, but my girl friend plays it and we’re in the market for housing and so sometimes we use it to try out architectural designs of houses we’re interested in.</p>
+
+<p>Imagining how it would be like to live in particular house with a specific floor plan and how our paths through the house would be works a lot better with models of actual furniture.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="background">Background</h2>
+
+<p>With the 3D modeling <a href="/3dmodeling/2023/09/23/Sa-3DModeling.html">approach</a> using the open-source tools OpenScad, Gimp and Blender we can produce Wavefront *.obj files and the corresponding *.mtl material files and *.png textures.</p>
+
+<p>For that guide I’ve used Blender 3.6.3. To edit Sims 4 game files we will need another tool called “Sims 4 Studio”. It can be downloaded online and I’ll be using version 3.1.6.3. Unfortunately that version only works with Blender 2.7x. I’ll use 2.70a.</p>
+
+<p>After creating the 3D Model in Blender 3.6.3 following my <a href="/3dmodeling/2023/09/23/Sa-3DModeling.html">other guide</a>, we continue with Sims 4 Studio and Blender 2.7x.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="importing-a-3d-model-into-the-game">Importing a 3D Model into the game</h2>
+
+<p>Starting out you need a finished 3D model of something.</p>
+
+<p>You’ll need an export of the wavefront *.obj, material *.mtl and texture *.png files of that model.</p>
+
+<p>I’m using a model of my desk that I’ve made previously.</p>
+
+<h3 id="create-a-new-project">Create a new Project</h3>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/00.png" height="160px" /></p>
+
+<p>Download and then open Sims 4 Studio</p>
+
+<p>Enter a creator name in the bottom right or it will not work.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/01.png" height="280px" /></p>
+
+<p>Select “Create 3D Mesh” and click on “Object”</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/02.png" height="280px" /></p>
+
+<p>Select some furnature that serves a similar purpose to what you are planing to add.</p>
+
+<p>That’s important, because by using an existing object and adjusting ours to it we know it will be scaled and aligned properly in the game later on</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/03.png" height="280px" /></p>
+
+<p>Sims 4 Studio will ask to save it somewhere.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/04.png" height="280px" /></p>
+
+<p>We then click on “export mesh”.</p>
+
+<h4 id="install-blender">Install Blender</h4>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/05.png" height="280px" /></p>
+
+<p>Sims4 Studio calls the Blender 2.7 by API. If it can’t find it, it will come back with an error.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/06.png" height="120px" /></p>
+
+<p>In that case install Blender.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/07.png" height="280px" /></p>
+
+<p>Export again.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/08.png" height="280px" /></p>
+
+<p>If it works Sims 4 will produce a *.blend file.</p>
+
+<h4 id="load-the-exported-project-in-blender">Load the exported project in Blender</h4>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/09.png" height="280px" /></p>
+
+<p>We load Blender</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/10.png" height="280px" /></p>
+
+<p>and open that file</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/11.png" height="280px" /></p>
+
+<h4 id="import-the-3d-model">Import the 3D model</h4>
+
+<p>Next we can import our own 3D model</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/12.png" height="280px" /></p>
+
+<h4 id="scale">Scale</h4>
+
+<p>Probably it’s in correctly scaled.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/13.png" height="280px" /></p>
+
+<p>Scaling in Blender 2.7 works differntly than in Blender 3.6.</p>
+
+<p>Without touching anything we need to click on “Scale” in the middle column.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/14.png" height="280px" /></p>
+
+<p>We can then enter numbers in the bottom of the middle column.</p>
+
+<h4 id="align">Align</h4>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/15.png" height="280px" /></p>
+
+<p>In order to align its easiest to cycle through “top”, “left” and “front” views.</p>
+
+<p>For this, in the bottom of the screen under the middle column click on the “view” menu and select “Top”.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/16.png" height="280px" /></p>
+
+<p>We can then click “translate” - translate means move.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/17.png" height="280px" /></p>
+
+<p>And punch in the numbers in the bottom of the middle column.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/18.png" height="280px" /></p>
+
+<p>I usually write the numbers down in case I have to quickly redo the work.</p>
+
+<p>We can move the object axes by axes this way. Every time going to “View” -&gt; Side, Front, Top first.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/19.png" height="280px" /></p>
+
+<h3 id="removing-the-original-mesh">Removing the original Mesh</h3>
+
+<p>Next we need to remove the original desk.</p>
+
+<p>It actually took me quite some time to figure this one out.</p>
+
+<h4 id="move-it-away">Move it away</h4>
+
+<p>We can do this by selecting the mesh of the original Sims desk in the menu in the top right corner.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/30.png" height="280px" /></p>
+
+<p>Then select “translate”.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/31.png" height="280px" /></p>
+
+<p>And move it away</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/32.png" height="280px" /></p>
+
+<h4 id="switch-to-edit-mode">Switch to Edit mode</h4>
+
+<p>To delete an Object we need to switch from “Object Mode” to “Edit Mode” from the menu at the bottom of the screen.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/37.png" height="280px" /></p>
+
+<h4 id="change-selection-behaviour">Change Selection Behaviour</h4>
+
+<p>We need to change the selection behaviour to select not only the top vertices, but also select vertices behind it.</p>
+
+<p>To do this there is a really hard to find button in the bottom right of the screen that says “limit selection to visible” when you hover over it.</p>
+
+<p>Disable that.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/43.png" height="280px" /></p>
+
+<h4 id="select-what-we-want-to-remove">Select what we want to remove</h4>
+
+<p>To select open the “Select” menu and click on “Border Select”.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/38.png" height="280px" /></p>
+
+<p>Now you can select the old model by clicking and dragging.</p>
+
+<h4 id="remove">Remove</h4>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/39.png" height="280px" /></p>
+
+<p>And press “Del” on the keyboard to open the delete menu.</p>
+
+<p>Select “Edges”</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/41b.png" height="280px" /></p>
+
+<p>and it should be gone. Save the result</p>
+
+<h3 id="load-in-sims-4-studio">Load in Sims 4 Studio</h3>
+
+<p>Go back to Sims 4 Studio</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/46.png" height="280px" /></p>
+
+<p>Open the project</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/47.png" height="280px" /></p>
+
+<p>and click on “Import Mesh”</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/48.png" height="120px" /></p>
+
+<p>Wait for it to import</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/49.png" height="280px" /></p>
+
+<p>We can see it’s imported, but using the texture from the old model.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/50.png" height="280px" /></p>
+
+<p>On the right switch to the “texture” tab.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/51.png" height="280px" /></p>
+
+<p>Click on “import” there</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/52.png" height="120px" /></p>
+
+<p>In the file browser select the texture file and click “Open”</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/53.png" height="280px" /></p>
+
+<p>The Sims 4 table I used had a second texture for a desk matt.</p>
+
+<p>Since I’m not using it I created a second texture in the color of the surface of my desk and set that as the second texure.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/54.png" height="280px" /></p>
+
+<p>You can also see that desk matt in the blender model.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/55.png" height="280px" /></p>
+
+<p>We need to import the mesh also for the other “Level of Detail” (LOD).</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/56.png" height="280px" /></p>
+
+<p>Then in the “Catalog” tab add an adequate description</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/70.png" height="280px" /></p>
+
+<p>and then save the result.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/57.png" height="120px" /></p>
+
+<h3 id="adding-it-to-the-game">Adding it to the game</h3>
+
+<p>Copy the exported *.package file to</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>C:\Users\&lt;username&gt;\Documents\Electronic Arts\The Sims 4\ Mods\"
+</code></pre></div></div>
+
+<p>Load the game</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/58.png" height="64px" /></p>
+
+<p>Under settings allow “Custom Content”</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/60.png" height="280px" /></p>
+
+<p>Don’t forget to click “apply”. The button is strangely located.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/62.png" height="280px" /></p>
+
+<p>It will ask to restart the game</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/61.png" height="120px" /></p>
+
+<p>Reopening it will show a list of mods that should mention the new package we’ve created.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/63.png" height="320px" /></p>
+
+<h3 id="using-it-in-the-game">Using it in the game</h3>
+
+<p>In the game we can now access the model from the “Build Mode”</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/64.png" height="280px" /></p>
+
+<p>It will show up along side the other desks in the game</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/71.png" height="280px" /></p>
+
+<p>And, as long as we didn’t destroy the anchor points during edits in Blender, we can place obects on the desk as with the other desks in the game.</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/72.png" height="280px" /></p>
+
+<p>And make it look like the image from above</p>
+
+<p><img src="../../../../images/2023-10-15-So-Sims4Furniture/73.png" height="280px" /></p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Following those steps we can get any 3D model into the game and extend it.</p>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Sims 4 Custom Content Furniture"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2021
+</div>
+
+  </body>
+</html>
