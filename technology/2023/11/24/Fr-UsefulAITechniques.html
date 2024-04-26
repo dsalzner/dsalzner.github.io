@@ -294,8 +294,8 @@ This was surprisingly difficult for a computer to do for a very long time.</p>
 
 <p>We can then use the euclidean distance.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">distance_red</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">x_red_mean</span> <span class="o">-</span> <span class="n">x_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_red_mean</span> <span class="o">-</span> <span class="n">y_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="p">)</span>
-<span class="n">distance_blue</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">x_blue_mean</span> <span class="o">-</span> <span class="n">x_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_blue_mean</span> <span class="o">-</span> <span class="n">y_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">distance_red</span> <span class="o">=</span> <span class="nf">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">x_red_mean</span> <span class="o">-</span> <span class="n">x_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_red_mean</span> <span class="o">-</span> <span class="n">y_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="p">)</span>
+<span class="n">distance_blue</span> <span class="o">=</span> <span class="nf">sqrt</span><span class="p">(</span> <span class="p">(</span><span class="n">x_blue_mean</span> <span class="o">-</span> <span class="n">x_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y_blue_mean</span> <span class="o">-</span> <span class="n">y_of_image_to_classify</span><span class="p">)</span><span class="o">^</span><span class="mi">2</span> <span class="p">)</span>
 </code></pre></div></div>
 
 <p>It relies on squaring to sure we don’t run into issues mixing positive and negative values. The square root reverses this on the result and can be removed in our use-case as we only care which value is relatively lower.</p>
@@ -303,16 +303,16 @@ This was surprisingly difficult for a computer to do for a very long time.</p>
 <p>The classification result is then given by:</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span> <span class="n">distance_blue</span> <span class="o">&lt;</span> <span class="n">distance_red</span><span class="p">:</span>
-  <span class="k">return</span> <span class="s">"blue"</span>
+  <span class="k">return</span> <span class="sh">"</span><span class="s">blue</span><span class="sh">"</span>
 <span class="k">else</span>
-  <span class="k">return</span> <span class="s">"red"</span>
+  <span class="k">return</span> <span class="sh">"</span><span class="s">red</span><span class="sh">"</span>
 </code></pre></div></div>
 
 <h5 id="principle-component-analysis">Principle Component Analysis</h5>
 
 <p>We’ve established that we need some “transform” to convert an image into a coordinate space</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="p">...)</span> <span class="o">=</span> <span class="n">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="p">...)</span> <span class="o">=</span> <span class="nf">transform</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>and then need to rotate that space so that we can draw a clean dividing line between our groups.</p>
@@ -384,22 +384,22 @@ But in order for this to actually automatically play I need to recognize the dig
 
 <p>Also the images are converted to black and white by deviation from brown (r:100, g:50, b:0). I’ve set this specifically for the Neopets game.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">IMAGE_DIR</span><span class="o">=</span><span class="s">"&lt;image directory&gt;"</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">IMAGE_DIR</span><span class="o">=</span><span class="sh">"</span><span class="s">&lt;image directory&gt;</span><span class="sh">"</span>
 
-<span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
-<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="n">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
+<span class="kn">import</span> <span class="n">numpy</span>
 
 <span class="n">threshold</span> <span class="o">=</span> <span class="mi">65</span> <span class="c1"># deviation from brown
 </span>
-<span class="n">images</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="n">IMAGE_DIR</span> <span class="o">+</span> <span class="s">"*.png"</span><span class="p">)</span>
-<span class="n">width</span><span class="p">,</span><span class="n">height</span> <span class="o">=</span> <span class="n">Image</span><span class="p">.</span><span class="nb">open</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="n">size</span>
+<span class="n">images</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="n">IMAGE_DIR</span> <span class="o">+</span> <span class="sh">"</span><span class="s">*.png</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">width</span><span class="p">,</span><span class="n">height</span> <span class="o">=</span> <span class="n">Image</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="n">images</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="n">size</span>
 
 <span class="k">def</span> <span class="nf">load_image_into_matrix</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span><span class="n">image_number</span><span class="p">,</span> <span class="n">A</span><span class="p">):</span>
-    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">.</span><span class="nb">open</span><span class="p">(</span><span class="n">image_filename</span><span class="p">).</span><span class="n">convert</span><span class="p">(</span><span class="s">'RGB'</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="p">.</span><span class="n">width</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="p">.</span><span class="n">width</span><span class="p">):</span>
-            <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="n">getpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="n">image_filename</span><span class="p">).</span><span class="nf">convert</span><span class="p">(</span><span class="sh">'</span><span class="s">RGB</span><span class="sh">'</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="p">.</span><span class="n">width</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">img</span><span class="p">.</span><span class="n">width</span><span class="p">):</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">img</span><span class="p">.</span><span class="nf">getpixel</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
             <span class="k">if</span> <span class="n">r</span> <span class="o">&gt;</span> <span class="mi">100</span> <span class="o">-</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="o">+</span> <span class="n">threshold</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">g</span> <span class="o">&gt;</span> <span class="mi">50</span> <span class="o">-</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">g</span> <span class="o">&lt;</span> <span class="mi">50</span> <span class="o">+</span><span class="n">threshold</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="o">-</span> <span class="n">threshold</span> <span class="ow">and</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">+</span> <span class="n">threshold</span><span class="p">:</span>
@@ -407,11 +407,11 @@ But in order for this to actually automatically play I need to recognize the dig
                         <span class="k">continue</span>
             <span class="n">A</span><span class="p">[</span><span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">image_number</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-<span class="n">A</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">width</span><span class="o">*</span><span class="n">height</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">images</span><span class="p">)))</span>
-<span class="k">for</span> <span class="n">image_number</span><span class="p">,</span> <span class="n">image_filename</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
-    <span class="n">load_image_into_matrix</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">image_number</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="n">width</span><span class="o">*</span><span class="n">height</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">images</span><span class="p">)))</span>
+<span class="k">for</span> <span class="n">image_number</span><span class="p">,</span> <span class="n">image_filename</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">images</span><span class="p">):</span>
+    <span class="nf">load_image_into_matrix</span><span class="p">(</span><span class="n">image_filename</span><span class="p">,</span> <span class="n">image_number</span><span class="p">,</span> <span class="n">A</span><span class="p">)</span>
     
-<span class="k">print</span><span class="p">(</span><span class="s">"Done"</span><span class="p">)</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Done</span><span class="sh">"</span><span class="p">)</span>
 
 </code></pre></div></div>
 
@@ -423,27 +423,27 @@ But in order for this to actually automatically play I need to recognize the dig
 
 <p>First we compute the average image or mean_face:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span>
 
-<span class="n">rows</span><span class="p">,</span><span class="n">cols</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">shape</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
-<span class="n">mean_face</span> <span class="o">=</span> <span class="n">A</span><span class="p">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rows</span><span class="p">,</span><span class="n">cols</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="nf">shape</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">mean_face</span> <span class="o">=</span> <span class="n">A</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>Then we subtract the average image from each image individually</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="n">transpose</span><span class="p">()</span> <span class="o">-</span> <span class="n">mean_face</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span><span class="p">.</span><span class="nf">transpose</span><span class="p">()</span> <span class="o">-</span> <span class="n">mean_face</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>We then move on to computing the Singular Value Decomposition using the Pythons Numpy package:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">L</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">.</span><span class="n">transpose</span><span class="p">())</span>
-<span class="n">u</span><span class="p">,</span> <span class="n">eig_val</span><span class="p">,</span> <span class="n">vt</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="n">svd</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-<span class="n">eig_vec</span> <span class="o">=</span> <span class="n">vt</span><span class="p">.</span><span class="n">transpose</span><span class="p">()</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">L</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="nf">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">.</span><span class="nf">transpose</span><span class="p">())</span>
+<span class="n">u</span><span class="p">,</span> <span class="n">eig_val</span><span class="p">,</span> <span class="n">vt</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">linalg</span><span class="p">.</span><span class="nf">svd</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">eig_vec</span> <span class="o">=</span> <span class="n">vt</span><span class="p">.</span><span class="nf">transpose</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>And sort the Eigenvectors by the Eigenvalues</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ind</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">s</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ind</span> <span class="o">=</span> <span class="n">numpy</span><span class="p">.</span><span class="nf">argsort</span><span class="p">(</span><span class="n">s</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 <span class="n">u</span> <span class="o">=</span> <span class="n">u</span><span class="p">[:,</span> <span class="n">ind</span><span class="p">]</span>
 <span class="n">eig_val</span> <span class="o">=</span> <span class="n">eig_val</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
 <span class="n">eig_vec</span> <span class="o">=</span> <span class="n">eig_vec</span><span class="p">[:,</span> <span class="n">ind</span><span class="p">]</span>
@@ -483,17 +483,17 @@ But in order for this to actually automatically play I need to recognize the dig
 <p>The idea is to feed the input images into the input layer, send them through a much smaller hidden layer (the “latent space”) and then back to an output layer of the same size as the input layer.
 The input and output layers have the same number of Neurons as the Images have pixels. The hidden layer has only two Neurons for two Dimensions.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">tensorflow.compat.v1</span> <span class="k">as</span> <span class="n">tf</span>
-<span class="n">tf</span><span class="p">.</span><span class="n">disable_v2_behavior</span><span class="p">()</span>
-<span class="kn">from</span> <span class="nn">tf_slim.layers</span> <span class="kn">import</span> <span class="n">layers</span> <span class="k">as</span> <span class="n">_layers</span><span class="p">;</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">tensorflow.compat.v1</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="n">tf</span><span class="p">.</span><span class="nf">disable_v2_behavior</span><span class="p">()</span>
+<span class="kn">from</span> <span class="n">tf_slim.layers</span> <span class="kn">import</span> <span class="n">layers</span> <span class="k">as</span> <span class="n">_layers</span><span class="p">;</span>
 
 <span class="n">num_input</span> <span class="o">=</span> <span class="n">image_length</span>
 <span class="n">num_hidden</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1"># -- for two dimensions
 </span><span class="n">num_output</span> <span class="o">=</span> <span class="n">image_length</span>
 
-<span class="n">input_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="n">num_input</span><span class="p">])</span>
-<span class="n">hidden_layer</span> <span class="o">=</span> <span class="n">_layers</span><span class="p">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">input_layer</span><span class="p">,</span> <span class="n">num_hidden</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
-<span class="n">output_layer</span> <span class="o">=</span> <span class="n">_layers</span><span class="p">.</span><span class="n">fully_connected</span><span class="p">(</span><span class="n">hidden_layer</span><span class="p">,</span> <span class="n">num_output</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="n">input_layer</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="nf">placeholder</span><span class="p">(</span><span class="n">tf</span><span class="p">.</span><span class="n">float32</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">[</span><span class="bp">None</span><span class="p">,</span> <span class="n">num_input</span><span class="p">])</span>
+<span class="n">hidden_layer</span> <span class="o">=</span> <span class="n">_layers</span><span class="p">.</span><span class="nf">fully_connected</span><span class="p">(</span><span class="n">input_layer</span><span class="p">,</span> <span class="n">num_hidden</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<span class="n">output_layer</span> <span class="o">=</span> <span class="n">_layers</span><span class="p">.</span><span class="nf">fully_connected</span><span class="p">(</span><span class="n">hidden_layer</span><span class="p">,</span> <span class="n">num_output</span><span class="p">,</span> <span class="n">activation_fn</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h5 id="training-1">Training</h5>
@@ -554,38 +554,38 @@ with tf.Session() as sess:
 
 <p>For input we need a bunch of text files. I’m using my Markdown notes.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">glob</span>
-<span class="n">NOTES_DIR</span> <span class="o">=</span> <span class="s">"&lt;notes directory&gt;"</span>
-<span class="n">note_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="n">NOTES_DIR</span> <span class="o">+</span> <span class="s">"**/*.md"</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">glob</span>
+<span class="n">NOTES_DIR</span> <span class="o">=</span> <span class="sh">"</span><span class="s">&lt;notes directory&gt;</span><span class="sh">"</span>
+<span class="n">note_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="n">NOTES_DIR</span> <span class="o">+</span> <span class="sh">"</span><span class="s">**/*.md</span><span class="sh">"</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-<span class="n">text</span> <span class="o">=</span> <span class="s">""</span>
+<span class="n">text</span> <span class="o">=</span> <span class="sh">""</span>
 <span class="k">for</span> <span class="n">note_file</span> <span class="ow">in</span> <span class="n">note_files</span><span class="p">:</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">note_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">'utf-8'</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s">'ignore'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">+=</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+    <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="n">note_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="sh">'</span><span class="s">utf-8</span><span class="sh">'</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="sh">'</span><span class="s">ignore</span><span class="sh">'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="n">f</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
 
-<span class="n">chars</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
-<span class="n">char_indices</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chars</span><span class="p">))</span>
-<span class="n">indices_char</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">chars</span><span class="p">))</span>
+<span class="n">chars</span> <span class="o">=</span> <span class="nf">sorted</span><span class="p">(</span><span class="nf">list</span><span class="p">(</span><span class="nf">set</span><span class="p">(</span><span class="n">text</span><span class="p">)))</span>
+<span class="n">char_indices</span> <span class="o">=</span> <span class="nf">dict</span><span class="p">((</span><span class="n">c</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">chars</span><span class="p">))</span>
+<span class="n">indices_char</span> <span class="o">=</span> <span class="nf">dict</span><span class="p">((</span><span class="n">i</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">chars</span><span class="p">))</span>
 </code></pre></div></div>
 
 <p>We split that into sections of 40 chars and make and create X and Y the way we expect the output to be.</p>
 
 <p>Once trained the Neural Network will act as a function f_neuralNetwork(X_currentText) = Y_textContinuation.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
 
 <span class="n">maxlen</span> <span class="o">=</span> <span class="mi">40</span>
 <span class="n">step</span> <span class="o">=</span> <span class="mi">3</span>
 <span class="n">sentences</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">next_chars</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">maxlen</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
-    <span class="n">sentences</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">])</span>
-    <span class="n">next_chars</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">])</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">maxlen</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+    <span class="n">sentences</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span><span class="p">:</span> <span class="n">i</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">])</span>
+    <span class="n">next_chars</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">text</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">])</span>
 
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">),</span> <span class="n">maxlen</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sentences</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="nf">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">),</span> <span class="n">maxlen</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="nf">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">),</span> <span class="nf">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">sentences</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
         <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">char_indices</span><span class="p">[</span><span class="n">char</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">char_indices</span><span class="p">[</span><span class="n">next_chars</span><span class="p">[</span><span class="n">i</span><span class="p">]]]</span> <span class="o">=</span> <span class="mi">1</span>
 </code></pre></div></div>
@@ -597,21 +597,21 @@ with tf.Session() as sess:
 
 <p>I’m using a “Long Short-Term Memory” (LTSM) layer as that seems to be the most promising.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
-<span class="kn">from</span> <span class="nn">tensorflow.keras</span> <span class="kn">import</span> <span class="n">layers</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">tensorflow</span> <span class="k">as</span> <span class="n">tf</span>
+<span class="kn">from</span> <span class="n">tensorflow.keras</span> <span class="kn">import</span> <span class="n">layers</span>
 
-<span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">models</span><span class="p">.</span><span class="n">Sequential</span><span class="p">()</span>
-<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">LSTM</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">maxlen</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">))))</span>
-<span class="n">model</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="n">Dense</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="s">"softmax"</span><span class="p">))</span>
-<span class="n">model</span><span class="p">.</span><span class="nb">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="s">"categorical_crossentropy"</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="s">"adam"</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">tf</span><span class="p">.</span><span class="n">keras</span><span class="p">.</span><span class="n">models</span><span class="p">.</span><span class="nc">Sequential</span><span class="p">()</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="nc">LSTM</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">input_shape</span><span class="o">=</span><span class="p">(</span><span class="n">maxlen</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">chars</span><span class="p">))))</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">add</span><span class="p">(</span><span class="n">layers</span><span class="p">.</span><span class="nc">Dense</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">chars</span><span class="p">),</span> <span class="n">activation</span><span class="o">=</span><span class="sh">"</span><span class="s">softmax</span><span class="sh">"</span><span class="p">))</span>
+<span class="n">model</span><span class="p">.</span><span class="nf">compile</span><span class="p">(</span><span class="n">loss</span><span class="o">=</span><span class="sh">"</span><span class="s">categorical_crossentropy</span><span class="sh">"</span><span class="p">,</span> <span class="n">optimizer</span><span class="o">=</span><span class="sh">"</span><span class="s">adam</span><span class="sh">"</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h4 id="training-2">Training</h4>
 
 <p>Next we train the net. This takes forever without GPU acceleration.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">):</span>
-    <span class="n">model</span><span class="p">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">30</span><span class="p">):</span>
+    <span class="n">model</span><span class="p">.</span><span class="nf">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h4 id="text-generation">Text Generation</h4>
@@ -621,17 +621,17 @@ with tf.Session() as sess:
 <p>With this helper function</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">generate_text</span><span class="p">(</span><span class="n">length</span><span class="p">,</span> <span class="n">diversity</span><span class="p">):</span>
-    <span class="n">start_index</span> <span class="o">=</span> <span class="n">random</span><span class="p">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">maxlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">generated</span> <span class="o">=</span> <span class="s">''</span>
+    <span class="n">start_index</span> <span class="o">=</span> <span class="n">random</span><span class="p">.</span><span class="nf">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">-</span> <span class="n">maxlen</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">generated</span> <span class="o">=</span> <span class="sh">''</span>
     <span class="n">sentence</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="n">start_index</span><span class="p">:</span> <span class="n">start_index</span> <span class="o">+</span> <span class="n">maxlen</span><span class="p">]</span>
     <span class="n">generated</span> <span class="o">+=</span> <span class="n">sentence</span>
-    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
-            <span class="n">x_pred</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">maxlen</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)))</span>
-            <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="n">length</span><span class="p">):</span>
+            <span class="n">x_pred</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="n">maxlen</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">chars</span><span class="p">)))</span>
+            <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">char</span> <span class="ow">in</span> <span class="nf">enumerate</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
                 <span class="n">x_pred</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">char_indices</span><span class="p">[</span><span class="n">char</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">1.</span>
 
-            <span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x_pred</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">next_index</span> <span class="o">=</span> <span class="n">sample</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">diversity</span><span class="p">)</span>
+            <span class="n">preds</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="nf">predict</span><span class="p">(</span><span class="n">x_pred</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">next_index</span> <span class="o">=</span> <span class="nf">sample</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">diversity</span><span class="p">)</span>
             <span class="n">next_char</span> <span class="o">=</span> <span class="n">indices_char</span><span class="p">[</span><span class="n">next_index</span><span class="p">]</span>
 
             <span class="n">generated</span> <span class="o">+=</span> <span class="n">next_char</span>
@@ -734,14 +734,14 @@ Hence it’s always been subject to research to analyse the distances of words t
 <p>for this I manually set the values in 2D as they would come from a properly trained Word2Vec model</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">arr</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="s">"man"</span><span class="p">),</span>
-    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="s">"woman"</span><span class="p">),</span>
-    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="s">"king"</span><span class="p">),</span>
-    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="s">"queen"</span><span class="p">)</span>
+    <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="sh">"</span><span class="s">man</span><span class="sh">"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="sh">"</span><span class="s">woman</span><span class="sh">"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="sh">"</span><span class="s">king</span><span class="sh">"</span><span class="p">),</span>
+    <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="sh">"</span><span class="s">queen</span><span class="sh">"</span><span class="p">)</span>
 <span class="p">]</span>
-<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
-<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
-<span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
+<span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="nf">for </span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="n">y</span> <span class="nf">for </span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
+<span class="n">l</span> <span class="o">=</span> <span class="p">[</span><span class="n">l</span> <span class="nf">for </span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span> <span class="ow">in</span> <span class="n">arr</span><span class="p">]</span>
 </code></pre></div></div>
 
 <p>then I can do the calculation</p>
@@ -771,35 +771,35 @@ plt.scatter(queen_x, queen_y, marker='X', color='black', s=300.0);
 
 <p>As input I’ll use by notes. The gensim Word2Vec Python Library requires a special array structure. Aa list of sentences, with each sentence containing a list of words.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">from</span> <span class="nn">nltk.tokenize</span> <span class="kn">import</span> <span class="n">sent_tokenize</span><span class="p">,</span> <span class="n">word_tokenize</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="n">warnings</span><span class="p">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span> <span class="o">=</span> <span class="s">'ignore'</span><span class="p">)</span> 
-<span class="kn">import</span> <span class="nn">gensim</span>
-<span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">Word2Vec</span>
-<span class="kn">import</span> <span class="nn">nltk</span>
-<span class="n">nltk</span><span class="p">.</span><span class="n">download</span><span class="p">(</span><span class="s">'punkt'</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">from</span> <span class="n">nltk.tokenize</span> <span class="kn">import</span> <span class="n">sent_tokenize</span><span class="p">,</span> <span class="n">word_tokenize</span>
+<span class="kn">import</span> <span class="n">warnings</span>
+<span class="n">warnings</span><span class="p">.</span><span class="nf">filterwarnings</span><span class="p">(</span><span class="n">action</span> <span class="o">=</span> <span class="sh">'</span><span class="s">ignore</span><span class="sh">'</span><span class="p">)</span> 
+<span class="kn">import</span> <span class="n">gensim</span>
+<span class="kn">from</span> <span class="n">gensim.models</span> <span class="kn">import</span> <span class="n">Word2Vec</span>
+<span class="kn">import</span> <span class="n">nltk</span>
+<span class="n">nltk</span><span class="p">.</span><span class="nf">download</span><span class="p">(</span><span class="sh">'</span><span class="s">punkt</span><span class="sh">'</span><span class="p">)</span>
 
-<span class="n">NOTES_DIR</span> <span class="o">=</span> <span class="s">"&lt;Notes Directory&gt;"</span>
-<span class="n">note_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="n">NOTES_DIR</span> <span class="o">+</span> <span class="s">"**/*.md"</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+<span class="n">NOTES_DIR</span> <span class="o">=</span> <span class="sh">"</span><span class="s">&lt;Notes Directory&gt;</span><span class="sh">"</span>
+<span class="n">note_files</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="n">NOTES_DIR</span> <span class="o">+</span> <span class="sh">"</span><span class="s">**/*.md</span><span class="sh">"</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="k">for</span> <span class="n">note_file</span> <span class="ow">in</span> <span class="n">note_files</span><span class="p">:</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">note_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">'utf-8'</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s">'ignore'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">sent_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+    <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="n">note_file</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="sh">'</span><span class="s">utf-8</span><span class="sh">'</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="sh">'</span><span class="s">ignore</span><span class="sh">'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="nf">sent_tokenize</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
             <span class="n">temp</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="n">word_tokenize</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
-                <span class="n">temp</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">word</span><span class="p">.</span><span class="n">lower</span><span class="p">())</span>
-            <span class="n">data</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">word</span> <span class="ow">in</span> <span class="nf">word_tokenize</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+                <span class="n">temp</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">word</span><span class="p">.</span><span class="nf">lower</span><span class="p">())</span>
+            <span class="n">data</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">temp</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h4 id="training-3">Training</h4>
 
 <p>We can then create the model.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="o">=</span> <span class="n">gensim</span><span class="p">.</span><span class="n">models</span><span class="p">.</span><span class="n">Word2Vec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">min_count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">vector_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">window</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
-<span class="n">words</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">wv</span><span class="p">.</span><span class="n">key_to_index</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">model</span> <span class="o">=</span> <span class="n">gensim</span><span class="p">.</span><span class="n">models</span><span class="p">.</span><span class="nc">Word2Vec</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">min_count</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">vector_size</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span> <span class="n">window</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">words</span> <span class="o">=</span> <span class="nf">sorted</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">wv</span><span class="p">.</span><span class="n">key_to_index</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h4 id="implementation">Implementation</h4>
@@ -808,7 +808,7 @@ plt.scatter(queen_x, queen_y, marker='X', color='black', s=300.0);
 
 <p>For example querying for the game “Anno 1800”</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">wv</span><span class="p">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s">'anno1800'</span><span class="p">],</span> <span class="n">topn</span><span class="o">=</span><span class="mi">40</span><span class="p">))</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">print</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">wv</span><span class="p">.</span><span class="nf">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">anno1800</span><span class="sh">'</span><span class="p">],</span> <span class="n">topn</span><span class="o">=</span><span class="mi">40</span><span class="p">))</span>
 </code></pre></div></div>
 
 <p>yields</p>
@@ -820,7 +820,7 @@ plt.scatter(queen_x, queen_y, marker='X', color='black', s=300.0);
 
 <p>It lists other games, mixed with foods - probably because I had some lists with video games I wanted to play and shopping lists.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">print</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">wv</span><span class="p">.</span><span class="n">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="s">'frau'</span><span class="p">,</span> <span class="s">'könig'</span><span class="p">],</span> <span class="n">negative</span><span class="o">=</span><span class="p">[</span><span class="s">'mann'</span><span class="p">]))</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">print</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">wv</span><span class="p">.</span><span class="nf">most_similar</span><span class="p">(</span><span class="n">positive</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">frau</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">könig</span><span class="sh">'</span><span class="p">],</span> <span class="n">negative</span><span class="o">=</span><span class="p">[</span><span class="sh">'</span><span class="s">mann</span><span class="sh">'</span><span class="p">]))</span>
 </code></pre></div></div>
 
 <p>The above example does not work well on my notes - I don’t have many mentions of the word “king” or “queen” in my texts.</p>
@@ -920,7 +920,7 @@ With <strong><em>Diffusion</em></strong> new images that weren’t part of the t
 
 
     <div class="footer">
-  D.Salzner : www.dennissalzner.de : 2021
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
 </div>
 
   </body>

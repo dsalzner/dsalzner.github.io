@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-  <title>[WiP] Sim City 4 Plug-In Development - Dennis Salzner</title>
+  <title>Sim City 4 Web Interface Plug-In - Dennis Salzner</title>
   
   
   <!-- search engine -->
@@ -12,7 +12,7 @@
   <link rel="canonical" href="https://www.dennissalzner.de/gamemods/2024/03/31/So-SimCity4Plugins.html">
   <meta property="og:locale" content="en_EN" />
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="[WiP] Sim City 4 Plug-In Development - Dennis Salzner" />
+  <meta property="og:title" content="Sim City 4 Web Interface Plug-In - Dennis Salzner" />
   <meta property="og:description" content="Most would agree that Sim City 4 is by far the best city-building simulation game. It's a 20 year old game that hasn't received any updates since. But recent..." />
   <meta property="og:url" content="https://www.dennissalzner.de/gamemods/2024/03/31/So-SimCity4Plugins.html" />
   <meta property="og:site_name" content="Dennis Salzner" />
@@ -23,7 +23,7 @@
   <meta property="og:image" content="" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:description" content="Most would agree that Sim City 4 is by far the best city-building simulation game. It's a 20 year old game that hasn't received any updates since. But recently there have been s..." />
-  <meta name="twitter:title" content="[WiP] Sim City 4 Plug-In Development - Dennis Salzner" />
+  <meta name="twitter:title" content="Sim City 4 Web Interface Plug-In - Dennis Salzner" />
   <meta name="twitter:image" content="" />
 
   <!-- syntax highlighting in code snippets -->
@@ -57,8 +57,592 @@
     <div style="margin: 32px;">
     
 
-    <p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+<h1>Dennis Salzner - Sim City 4 Web Interface Plug-In</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
 
+<div class="page-title">Sim City 4 Web Interface Plug-In</div>
+<div class="page-subtitle">A web interface plug-in for Sim City 4 that allows viewing game metrics in web browsers</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p><a href="https://github.com/dsalzner/simcity4-webinterface-plugin">
+    <img style="position: absolute; top: 0; right: 0; border: 0; height: 100px" src="../../../../images/github-fork-ribbon.png" alt="Fork me on GitHub" />
+</a></p>
+
+<p style="font-size: 60%;" align="right">What</p>
+
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-window.png" width="45%" />
+
+
+
+
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-webinterface-plugin.png" width="45%" />
+
+
+
+
+<p>Most would agree that Sim City 4 is by far the best city-building simulation game. It’s a 20 year old game that hasn’t received any updates since. But recently there have been significant advancements in plug-in development for the game. I’ve written a plug-in for Sim City 4 that allows viewing game metrics in a web browser. The web browser can run on a secondary monitor, smart phone or tablet. This adds basic second-screen/multi-monitor capabilities to the game.</p>
+
+<p>The plug-in source-code and pre-compiled *.dll is available on GitHub (see <a href="https://github.com/dsalzner/simcity4-webinterface-plugin">GitHub simcity4-webinterface-plugin</a>).</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#beginnings" id="markdown-toc-beginnings">Beginnings</a></li>
+  <li><a href="#goal" id="markdown-toc-goal">Goal</a></li>
+  <li><a href="#research" id="markdown-toc-research">Research</a>    <ul>
+      <li><a href="#modding-activity" id="markdown-toc-modding-activity">Modding Activity</a></li>
+      <li><a href="#class-ids" id="markdown-toc-class-ids">Class IDs</a></li>
+      <li><a href="#component-object-model-com" id="markdown-toc-component-object-model-com">Component Object Model (COM)</a></li>
+    </ul>
+  </li>
+  <li><a href="#plan" id="markdown-toc-plan">Plan</a>    <ul>
+      <li><a href="#server" id="markdown-toc-server">Server</a></li>
+      <li><a href="#gzcom-interfaces" id="markdown-toc-gzcom-interfaces">GZCOM interfaces</a></li>
+      <li><a href="#data-model" id="markdown-toc-data-model">Data Model</a></li>
+      <li><a href="#frontend" id="markdown-toc-frontend">Frontend</a></li>
+    </ul>
+  </li>
+  <li><a href="#implementation" id="markdown-toc-implementation">Implementation</a>    <ul>
+      <li><a href="#build-an-existing-plug-in" id="markdown-toc-build-an-existing-plug-in">Build an existing plug-in</a>        <ul>
+          <li><a href="#get-the-code" id="markdown-toc-get-the-code">Get the Code</a></li>
+          <li><a href="#install-visual-studio" id="markdown-toc-install-visual-studio">Install Visual Studio</a></li>
+          <li><a href="#setup-boost" id="markdown-toc-setup-boost">Setup Boost</a></li>
+          <li><a href="#add-include-path" id="markdown-toc-add-include-path">Add Include Path</a></li>
+          <li><a href="#configure-post-build-copy" id="markdown-toc-configure-post-build-copy">Configure Post-Build Copy</a></li>
+          <li><a href="#setup-windowed-mode" id="markdown-toc-setup-windowed-mode">Setup Windowed Mode</a></li>
+          <li><a href="#plug-in-config-file" id="markdown-toc-plug-in-config-file">Plug-In config file</a></li>
+          <li><a href="#try-it" id="markdown-toc-try-it">Try it</a></li>
+        </ul>
+      </li>
+      <li><a href="#adapt" id="markdown-toc-adapt">Adapt</a>        <ul>
+          <li><a href="#try-adding-some-extra-logging" id="markdown-toc-try-adding-some-extra-logging">Try adding some extra logging</a></li>
+          <li><a href="#log-the-city-name" id="markdown-toc-log-the-city-name">Log the city name</a></li>
+        </ul>
+      </li>
+      <li><a href="#implement-the-web-server" id="markdown-toc-implement-the-web-server">Implement the Web-Server</a></li>
+      <li><a href="#json-key-value-store" id="markdown-toc-json-key-value-store">JSON Key-Value Store</a></li>
+      <li><a href="#putting-it-all-together" id="markdown-toc-putting-it-all-together">Putting it all together</a></li>
+      <li><a href="#winsock-hell" id="markdown-toc-winsock-hell">Winsock Hell</a></li>
+      <li><a href="#plug-in-path-unicode-directory-paths" id="markdown-toc-plug-in-path-unicode-directory-paths">Plug-In Path, Unicode Directory Paths</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="beginnings">Beginnings</h2>
+
+<p>For the longest time the closest I could find online regarding plug-in development was the “gzcom-dll” GitHub-Repo [1].
+The repo contains the “Extra Cheats DLL”, an example that shows how plug-ins for the game could be written such that the game can successfully load them.</p>
+
+<p>It was a good first step, but required significant further reverse engineering of the game. If you look at the Git commit history you’ll find that up until recently there were only commits up to March of 2018 - 6 years ago.</p>
+
+<p>But since last winter a lot has happened and we may now have all information available to (more easily) write plug-ins for the game.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h2 id="goal">Goal</h2>
+
+<p>So why write plug-ins for this 20 year old game? One feature I’d be very interested in would be the ability to somehow use multiple monitors.</p>
+
+<p>One key aspect of the game is to continuously monitoring the in-game metrics.</p>
+
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-graph-budget.png" width="35%" />
+
+
+
+
+<p>If these metrics like available electricity, water, RCI demand, budget significantly drop the player has to intervene. Otherwise the Sims will flee the city, tax income will depleat and the city will spiral out of control. An configurable automation that can pause the game would be nice.</p>
+
+<p>The game only supports viewing on graph at a time. If we could run an in-game web server that extracts these metrics and provides a web page with all the metrics we could view them on a second monitor or even a smartphone.</p>
+
+<p>In recent years, with limited information on the internals of the game and limited time, I didn’t get around to developing this. The recent code on GitHub could make developing such a plug-in much more feasible.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="research">Research</h2>
+
+<p>A lot has been found out in a large effort on Sim City 4 forums by modders. We can use the information that is now available to write our own plug-in.</p>
+
+<h3 id="modding-activity">Modding Activity</h3>
+
+<p>Recently there has been a lot of activity in the Sim City 4 modding community. We can learn a lot from the recently published source codes.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>GitHub-Repo</th>
+      <th>Last Update (as of writing)</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>nsgomez/gzcom-dll</td>
+      <td>Mar 28, 2018, then Mar 24, 2024</td>
+      <td>Plug-in *.dll that is loadable by the game</td>
+    </tr>
+    <tr>
+      <td>0xC0000054/sc4-add-new-ordinances</td>
+      <td>Jan 8, 2024</td>
+      <td>Adds new Ordinances</td>
+    </tr>
+    <tr>
+      <td>0xC0000054/sc4-cpu-options</td>
+      <td>Mar 12, 2024</td>
+      <td>Multi-Core Support</td>
+    </tr>
+    <tr>
+      <td>0xC0000054/sc4-ghidra-symbols</td>
+      <td>Apr 3, 2024</td>
+      <td>Debug Symbolds for Ghidra reverse engineering tool</td>
+    </tr>
+    <tr>
+      <td>0xC0000054/sc4-full-screen-32-bit</td>
+      <td>Mar 12, 2024</td>
+      <td>DirectX full screen mode with 32-bit color</td>
+    </tr>
+    <tr>
+      <td>0xC0000054/sc4-more-building-styles</td>
+      <td>Mar 12, 2024</td>
+      <td>Add building styles</td>
+    </tr>
+    <tr>
+      <td>Killeroo/SC4MessageViewer</td>
+      <td>Nov 16, 2023</td>
+      <td>Display in-game messages</td>
+    </tr>
+    <tr>
+      <td>Killeroo/SC4Parser</td>
+      <td>Mar 11, 2023</td>
+      <td>Parsing “Maxis Database Packed Files (DBPF)” game files</td>
+    </tr>
+    <tr>
+      <td>Killeroo/SC4Cartographer</td>
+      <td>Jan 4, 2024</td>
+      <td>Generate Maps from the Game</td>
+    </tr>
+    <tr>
+      <td>memo33/sc4-3d-camera-dll</td>
+      <td>Apr 1, 2024</td>
+      <td>Change the camera angles</td>
+    </tr>
+    <tr>
+      <td>NAMTeam/nam-dll</td>
+      <td>Feb 27, 2024</td>
+      <td>Improvements for Network Addon Mod</td>
+    </tr>
+    <tr>
+      <td>0xC0000054/sc4-gzids</td>
+      <td>Mar 30, 2024</td>
+      <td>List of Class IDs (GZID)</td>
+    </tr>
+    <tr>
+      <td>0xC0000054/sc4-resource-loading-hooks</td>
+      <td>Mar 12, 2024</td>
+      <td>Modify resources as the game loads them</td>
+    </tr>
+    <tr>
+      <td>0xC0000054/sc4-exemplar-load-logging</td>
+      <td>Mar 15, 2024</td>
+      <td>Extra logging for resource loading</td>
+    </tr>
+    <tr>
+      <td>ChrisNonyminus/TS-DLL</td>
+      <td>Jan 19, 2023</td>
+      <td>GzCom for The Sims 2</td>
+    </tr>
+    <tr>
+      <td>Songg45/gzcom-dll-test</td>
+      <td>Feb 24, 2024</td>
+      <td>Fork of GzCom</td>
+    </tr>
+    <tr>
+      <td>Kopachris/SC4-gzcom</td>
+      <td>Oct 18, 2022</td>
+      <td>Fork of GzCom</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="class-ids">Class IDs</h3>
+
+<p>I had already found out some years ago that the game seems to run on a publish/subscriber or observer pattern architecture. Game objects send “messages”. Oftentimes so many messages that the game stutters and crashes.</p>
+
+<p>There’s a plug-in [9] available on GitHub that opens a console from the game and shows these messages.</p>
+
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-messagelog-plugin.png" width="35%" />
+
+
+
+
+<p>The messages are sent from classes. The reverse engineering effort is in decoding the class ids [2] and understanding their contents. There are lots of them.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">an</span> <span class="n">enumeration</span> <span class="n">of</span> <span class="n">all</span> <span class="n">known</span> <span class="n">class</span> <span class="n">IDs</span> <span class="n">in</span> <span class="n">SC4</span><span class="p">.</span>
+<span class="p">[...]</span>
+<span class="n">A</span> <span class="n">list</span> <span class="n">of</span> <span class="n">all</span> <span class="n">known</span> <span class="n">engine</span> <span class="n">class</span> <span class="n">IDs</span> <span class="p">(</span><span class="n">GZCLSIDs</span><span class="p">)</span>
+<span class="p">[...]</span>
+ 
+<span class="n">class</span> <span class="n">GZCLSID</span> <span class="p">{</span>
+  <span class="nl">public:</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int32_t</span> <span class="n">kGZWinFlatRect</span> <span class="o">=</span> <span class="mh">0xc2afa76e</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int32_t</span> <span class="n">kcGZBuffer</span> <span class="o">=</span> <span class="mh">0x0C470D325</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int32_t</span> <span class="n">kcGZDrawContext</span> <span class="o">=</span> <span class="mh">0x0AE6320E</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int32_t</span> <span class="n">kcGZDrawContextAsBuffer</span> <span class="o">=</span> <span class="mh">0x0AB300B20</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int32_t</span> <span class="n">kcGZDrawFontRenderer</span> <span class="o">=</span> <span class="mh">0x8B3255F9</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int32_t</span> <span class="n">kcGZDrawSystem</span> <span class="o">=</span> <span class="mh">0x0AB2EA3AA</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int32_t</span> <span class="n">kcGZLuaScriptServer</span> <span class="o">=</span> <span class="mh">0x0CBD101A9</span><span class="p">;</span>
+    <span class="k">static</span> <span class="k">const</span> <span class="kt">int32_t</span> <span class="n">kcGZMessageQueueManager2</span> <span class="o">=</span> <span class="mh">0x452294DF</span><span class="p">;</span>
+    <span class="p">[..]</span>
+</code></pre></div></div>
+
+<h3 id="component-object-model-com">Component Object Model (COM)</h3>
+
+<p>Similarly to Windows COM, “Object Linking and Embedding” (OLE), “OLE custom controls” (OCX, a *.dll that supports OLE), ActiveX (the whole OLE/OCX thing for Webpages with DCOM) and “Distributed Component Object Model” (DCOM) Sim City 4 uses a Component Object Model internally.</p>
+
+<p>Essentially this means the game is heavily object-oriented, uses a common base class and each class has a UUID. 
+The goal is to have bindings for many languages and be able to reuse components across applications and in some cases even remotely.</p>
+
+<p>In Sim City 4 [3] it’s called GZCOM (Gonzo COM) and the “GZCOM Framework” [4] coordinates between the objects and allows setting hooks.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">class</span> <span class="n">cIGZUnknown</span> <span class="p">{</span>
+  <span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="n">bool</span> <span class="n">QueryInterface</span><span class="p">(</span><span class="kt">uint32_t</span> <span class="n">riid</span><span class="p">,</span> <span class="kt">void</span><span class="o">**</span> <span class="n">ppvObj</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">uint32_t</span> <span class="n">AddRef</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="k">virtual</span> <span class="kt">uint32_t</span> <span class="n">Release</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h2 id="plan">Plan</h2>
+
+<p>The pieces I need for the Sim City 4 Rest-API Plug-In are the following:</p>
+
+<ul>
+  <li>Server - a small TCP-Server that responds to HTTP-GET-Requests, can respons to requests by sending JSON and HTML files</li>
+  <li>Sim City 4 GZCOM interfaces - for getting the in-game state and controlling play/pause</li>
+  <li>Data model - a simple extensible JSON serialisation of the in-game state (city name, population, available power, time, …)</li>
+  <li>Frontend Page - an HTML page that auto-refreshes the JSON data and displays the information</li>
+</ul>
+
+<p>With that we could point a web browser to the TCP server the Plug-In will start and see the Frontend-Page that will display in-game stats and allow to play and pause the game. The can then also be automated to pause the game when the population drops by say 10%, so the player can intervene.</p>
+
+<h3 id="server">Server</h3>
+
+<p>For the server and as we’ll be on Windows, we’ll need to use Winsock. It’s been a while. Last I used Winsock was on Visual Basic 6.0 via the OCX component.
+There’s good example code on the web [5].</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;winsock2.h&gt;</span><span class="cp">
+#pragma comment (lib, "Ws2_32.lib")
+</span><span class="p">[..]</span>
+<span class="n">WSADATA</span> <span class="n">wsaData</span><span class="p">;</span>
+<span class="n">iResult</span> <span class="o">=</span> <span class="n">WSAStartup</span><span class="p">(</span><span class="n">MAKEWORD</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="o">&amp;</span><span class="n">wsaData</span><span class="p">);</span>
+<span class="p">[..]</span>
+<span class="n">ListenSocket</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">ai_family</span><span class="p">,</span> <span class="n">result</span><span class="o">-&gt;</span><span class="n">ai_socktype</span><span class="p">,</span> <span class="n">result</span><span class="o">-&gt;</span><span class="n">ai_protocol</span><span class="p">);</span>
+<span class="p">[..]</span>
+<span class="n">iResult</span> <span class="o">=</span> <span class="n">bind</span><span class="p">(</span> <span class="n">ListenSocket</span><span class="p">,</span> <span class="n">result</span><span class="o">-&gt;</span><span class="n">ai_addr</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">result</span><span class="o">-&gt;</span><span class="n">ai_addrlen</span><span class="p">);</span>
+<span class="n">iResult</span> <span class="o">=</span> <span class="n">listen</span><span class="p">(</span><span class="n">ListenSocket</span><span class="p">,</span> <span class="n">SOMAXCONN</span><span class="p">);</span>
+<span class="p">[..]</span>
+<span class="n">ClientSocket</span> <span class="o">=</span> <span class="n">accept</span><span class="p">(</span><span class="n">ListenSocket</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span> <span class="c1">// block until connection</span>
+<span class="p">[..]</span>
+<span class="k">do</span> <span class="p">{</span>
+  <span class="p">[..]</span>
+  <span class="n">iResult</span> <span class="o">=</span> <span class="n">recv</span><span class="p">(</span><span class="n">ClientSocket</span><span class="p">,</span> <span class="n">recvbuf</span><span class="p">,</span> <span class="n">recvbuflen</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="n">iSendResult</span> <span class="o">=</span> <span class="n">send</span><span class="p">(</span> <span class="n">ClientSocket</span><span class="p">,</span> <span class="n">recvbuf</span><span class="p">,</span> <span class="n">iResult</span><span class="p">,</span> <span class="mi">0</span> <span class="p">);</span>
+  <span class="p">[..]</span>
+</code></pre></div></div>
+
+<p>What I don’t like about this is that it can handle only one simultaneous connection, but if we code it robust enough to reopen after close and the web browsers behave nicely and close the connection, we it could be good enough for a start and save us from having to implement a more complex threading model.</p>
+
+<h3 id="gzcom-interfaces">GZCOM interfaces</h3>
+
+<p>Some general information about the city can be queried from GZCOM’s <code class="language-plaintext highlighter-rouge">cISC4City</code> [11]. This will give us:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">virtual</span> <span class="n">bool</span> <span class="n">GetCityName</span><span class="p">(</span><span class="n">cIGZString</span><span class="o">&amp;</span> <span class="n">szPath</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">virtual</span> <span class="n">bool</span> <span class="n">GetMayorName</span><span class="p">(</span><span class="n">cIGZString</span><span class="o">&amp;</span> <span class="n">szName</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">virtual</span> <span class="n">bool</span> <span class="n">GetCityDescription</span><span class="p">(</span><span class="n">cIGZString</span><span class="o">&amp;</span> <span class="n">szDescription</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>For the interface we can have a look at the “legalize gambling ordinance” plug-in [8].</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span> <span class="kt">float</span> <span class="n">lowWealthPopulation</span> <span class="o">=</span> <span class="n">GetCityPopulation</span><span class="p">(</span><span class="mh">0x1011</span><span class="p">);</span>
+<span class="k">const</span> <span class="kt">float</span> <span class="n">medWealthPopulation</span> <span class="o">=</span> <span class="n">GetCityPopulation</span><span class="p">(</span><span class="mh">0x1021</span><span class="p">);</span>
+<span class="k">const</span> <span class="kt">float</span> <span class="n">highWealthPopulation</span> <span class="o">=</span> <span class="n">GetCityPopulation</span><span class="p">(</span><span class="mh">0x1031</span><span class="p">);</span>
+
+<span class="kt">float</span> <span class="nf">GetCityPopulation</span><span class="p">(</span><span class="kt">uint32_t</span> <span class="n">groupID</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">constexpr</span> <span class="kt">uint32_t</span> <span class="n">cityCensusIndex</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">const</span> <span class="n">cISC4Demand</span><span class="o">*</span> <span class="n">demand</span> <span class="o">=</span> <span class="n">pDemandSimulator</span><span class="o">-&gt;</span><span class="n">GetDemand</span><span class="p">(</span><span class="n">groupID</span><span class="p">,</span> <span class="n">cityCensusIndex</span><span class="p">);</span>
+  <span class="n">value</span> <span class="o">=</span> <span class="n">demand</span><span class="o">-&gt;</span><span class="n">QuerySupplyValue</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The city finances can be queried from GZCOM’s <code class="language-plaintext highlighter-rouge">cISC4Simulator</code></p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">virtual</span> <span class="kt">int64_t</span> <span class="n">GetYTDIncome</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">virtual</span> <span class="kt">int64_t</span> <span class="n">GetEstIncome</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		
+<span class="k">virtual</span> <span class="kt">int64_t</span> <span class="n">GetYTDExpenses</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">virtual</span> <span class="kt">int64_t</span> <span class="n">GetEstExpenses</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+		
+<span class="k">virtual</span> <span class="kt">uint32_t</span> <span class="n">GetTotalMonthlyExpense</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">virtual</span> <span class="kt">int64_t</span> <span class="n">GetTotalYearlyExpense</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+	
+<span class="k">virtual</span> <span class="kt">int32_t</span> <span class="n">GetTotalMonthlyIncome</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">virtual</span> <span class="kt">int64_t</span> <span class="n">GetTotalYearlyIncome</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>There’s also a message ID we might have to subscribe to</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">kSC4MessageFundsChanged</span> <span class="o">=</span> <span class="mh">0x772FAD4</span><span class="p">,</span>
+</code></pre></div></div>
+
+<p>I also want to have console window instead of silent logging to a file, for this we can have a look at the “message viewer” plug-in [9] - the console logger class is exactly what we need [10]. It uses relatively simple Windows API calls.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">AllocConsole</span>
+<span class="nf">GetConsoleScreenBufferInfo</span><span class="p">(</span><span class="n">hConsoleOutput</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">sbiConsoleInfo</span><span class="p">)</span>
+<span class="n">hConsoleOutput</span> <span class="o">=</span> <span class="n">GetStdHandle</span><span class="p">(</span><span class="n">STD_OUTPUT_HANDLE</span><span class="p">);</span>
+<span class="n">WriteFile</span><span class="p">(</span><span class="n">hConsoleOutput</span><span class="p">,</span> <span class="n">message</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">(),</span> <span class="n">length</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>For the game play/pause state there are functions in GZCOM’s <code class="language-plaintext highlighter-rouge">cISC4Simulator</code> [12]</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">virtual</span> <span class="n">bool</span> <span class="n">Pause</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">virtual</span> <span class="n">bool</span> <span class="n">IsPaused</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="data-model">Data Model</h3>
+
+<p>As for the data model I want to keep things as simple as possible and build something similar to a REST-API.</p>
+
+<p>To get the in-game state we’ll do</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://127.0.0.1:6043/state
+</code></pre></div></div>
+
+<p>and get something like</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{
+  "state" : "paused",
+  "demand_city_population_low_wealth" : "10000",
+  "demand_city_population_mid_wealth" : "8000",
+  "demand_city_population_high_wealth" : "2000",
+}
+</code></pre></div></div>
+
+<p>Additionally there will be a call to play and pause the game</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://127.0.0.1:6043/pause
+http://127.0.0.1:6043/play
+</code></pre></div></div>
+
+<h3 id="frontend">Frontend</h3>
+
+<p>With that we can build a simple HTML frontend. In HTML/jQuery [6] we can do something like this:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$("button").click(function(){
+  $.getJSON("state", function(result){
+    $.each(result, function(i, field){
+      $("div").append(field + " ");
+    });
+  });
+});
+</code></pre></div></div>
+
+<p>Of course we can then build on that and use something like d3.js to draw nice charts [7].</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>With that vague plan of where we want to go we can start implementing.</p>
+
+<h3 id="build-an-existing-plug-in">Build an existing plug-in</h3>
+
+<p>To get started it makes sense to take any existing plug-in project and try to build and run that first.</p>
+
+<h4 id="get-the-code">Get the Code</h4>
+
+<p>To get started I’ve downloaded the legalize gambling ordinance upgrade plug-in from 0xC0000054 [13].</p>
+
+<h4 id="install-visual-studio">Install Visual Studio</h4>
+
+<p>It’s configured for <code class="language-plaintext highlighter-rouge">VisualStudioVersion = 17.8</code> according to the *.sln so that’s what I downloaded.
+Visual Studio 2022 Community Edition is available for free [14].</p>
+
+<h4 id="setup-boost">Setup Boost</h4>
+
+<p>It requires the boost libraries otherwise an include <code class="language-plaintext highlighter-rouge">#include "boost/property_tree/ptree.hpp"</code> will be missing.
+So we get that</p>
+
+<div class="language-ps highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">wget</span> <span class="nf">https:</span><span class="err">/</span><span class="nv">/boostorg.jfrog.io/artifactory/main/release/1.84.0/source/boost_1_84_0.zip</span> <span class="nf">-OutFile</span> <span class="nf">boost_1_84_0.zip</span>
+</code></pre></div></div>
+
+<p>and extract it.</p>
+<div class="language-ps highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">Add-Type</span> <span class="nf">-Assembly</span> <span class="nf">"System.IO.Compression.Filesystem"</span>
+<span class="p">[</span><span class="nf">System.IO.Compression.ZipFile</span><span class="p">]</span><span class="nf">::ExtractToDirectory</span><span class="s">(".</span><span class="se">\b</span><span class="s">oost_1_84_0.zip", "boost_1_84_0")</span>
+</code></pre></div></div>
+
+<p>(Expand-Archive .\boost_1_84_0.zip -DestinationPath boost_1_84_0 is awefully slow)</p>
+
+<p>Note that I was able to get rid of “Boost” and the “Windows Implementation Layer” later on during development.</p>
+
+<h4 id="add-include-path">Add Include Path</h4>
+
+<p>Set the inlude path in Visual Studio by the Solution Explorer Pane, Configuration Properties &gt; C/C++ &gt; General &gt; Additional Include Directories</p>
+
+<h4 id="configure-post-build-copy">Configure Post-Build Copy</h4>
+
+<p>There’s an <code class="language-plaintext highlighter-rouge">xcopy</code> with a wrong directory Post-Build Command configured, so we change that to</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xcopy "$(TargetPath)" "C:\Users\&lt;username&gt;\Documents\SimCity 4\Plugins" /y
+</code></pre></div></div>
+<h4 id="setup-windowed-mode">Setup Windowed Mode</h4>
+
+<p>To get Sim City to run in windowed mode we can set “-w” in the Sream Options.</p>
+
+<h4 id="plug-in-config-file">Plug-In config file</h4>
+
+<p>This particular plug-in requires copying <code class="language-plaintext highlighter-rouge">SC4LegalizeGamblingUpgrade.ini</code> to the plug-in directory, as the log file will tell you</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"SC4LegalizeGamblingUpgrade v1.0.0
+15:01:57 Failed top open the settings file."
+</code></pre></div></div>
+
+<h4 id="try-it">Try it</h4>
+
+<p>With this plug-in the gambling ordinance will vary by the population instead of constant 150$ or so. You can see this in the Budget window in the game.</p>
+
+<h3 id="adapt">Adapt</h3>
+
+<p>With that we have a plug-in that properly loads that we can adapt for our needs.</p>
+
+<h4 id="try-adding-some-extra-logging">Try adding some extra logging</h4>
+
+<p>With this plug-in the GetCurrentMonthlyIncome() function gets called frequently, so we can add additional logging.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int64_t</span> <span class="n">LegalizeGamblingOrdinanceUpgrade</span><span class="o">::</span><span class="n">GetCurrentMonthlyIncome</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">Logger</span><span class="o">&amp;</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">Logger</span><span class="o">::</span><span class="n">GetInstance</span><span class="p">();</span>
+  <span class="n">logger</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">LogOptions</span><span class="o">::</span><span class="n">Errors</span><span class="p">,</span> <span class="s">"GetCurrentMonthlyIncome"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>and verify it shows up in the log file.</p>
+
+<h4 id="log-the-city-name">Log the city name</h4>
+
+<p>More interestingly lets get the name of the city. This involves handling strings.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cISC4AppPtr</span> <span class="n">pSC4App</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">pSC4App</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">cISC4City</span><span class="o">*</span> <span class="n">pCity</span> <span class="o">=</span> <span class="n">pSC4App</span><span class="o">-&gt;</span><span class="n">GetCity</span><span class="p">();</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">pCity</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">cRZBaseString</span> <span class="n">tmp</span><span class="p">;</span>
+	  <span class="c1">// -- set city name</span>
+    <span class="n">pCity</span><span class="o">-&gt;</span><span class="n">GetCityName</span><span class="p">(</span><span class="n">tmp</span><span class="p">);</span>
+    <span class="n">logMessage</span><span class="p">(</span><span class="s">"[I] CityName: "</span> <span class="o">+</span> <span class="n">String</span><span class="p">(</span><span class="n">tmp</span><span class="p">.</span><span class="n">ToChar</span><span class="p">()));</span>
+    <span class="n">m_state</span><span class="o">-&gt;</span><span class="n">setEntry</span><span class="p">(</span><span class="s">"cityName"</span><span class="p">,</span> <span class="n">tmp</span><span class="p">.</span><span class="n">ToChar</span><span class="p">());</span>
+</code></pre></div></div>
+
+<p>With COM we need to first instantiate an empty <code class="language-plaintext highlighter-rouge">cRZBaseString</code>-class and pass it into the Getter-Functions where it will be overwritten with the actual content</p>
+
+<h3 id="implement-the-web-server">Implement the Web-Server</h3>
+
+<p>I’ve briefly considered developing the Webserver from scratch, but in between I was working on an ESP-8266 electronics project and it has a very nice built-in Web-Server. The only work the developer has to do is setup a <code class="language-plaintext highlighter-rouge">request_handler</code> function.</p>
+
+<p>While we can’t use that diretly in a desktop application I’ve found <code class="language-plaintext highlighter-rouge">libmicrohttpd</code> [15].</p>
+
+<p>So as the next step I wrote a standalone Linux Web Server using libmicrohttpd, based on their <code class="language-plaintext highlighter-rouge">minimal_server.c</code> example code and hosted JSON and an HTML page.</p>
+
+<h3 id="json-key-value-store">JSON Key-Value Store</h3>
+
+<p>I have a very minimalis JSON Key-Value store that I wrote a while ago for Arduino projects.</p>
+
+<p>The interface has four functions:</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">String serializeToJson();</code></li>
+  <li><code class="language-plaintext highlighter-rouge">void updateFromJson(String data);</code></li>
+  <li><code class="language-plaintext highlighter-rouge">String getEntry(String key);</code></li>
+  <li><code class="language-plaintext highlighter-rouge">void setEntry(String key, String value);</code></li>
+</ul>
+
+<p>With this we can have the game plug-in writing values with <code class="language-plaintext highlighter-rouge">setEntry</code> and the Webserver using <code class="language-plaintext highlighter-rouge">serializeToJson</code> upon Web-Requests to the URL <code class="language-plaintext highlighter-rouge">/state</code>. Exactly what we need.</p>
+
+<h3 id="putting-it-all-together">Putting it all together</h3>
+
+<p>From there I’ve switched to the code from <code class="language-plaintext highlighter-rouge">Killeroo/SC4MessageViewer</code> and quickly had the Sim City 4 plug-in running and printing the city name to the console.</p>
+
+<p>Next I had to get that adapted libhttpmicroserver <code class="language-plaintext highlighter-rouge">minimal_server.c</code> code I had written on Linux running on Windows in Visual Studio.</p>
+
+<p>After struggles I decided to just copy out the portions of <code class="language-plaintext highlighter-rouge">libhttpmicroserver</code> directly into a fresh Visual Studio 2022 project avoiding the complex project configuration, *.dll configuration and the usual Visual Studio project setup issues. Doing this I setup the file paths in the Visual Studio project configuration *.vcxproj with a text editor. To build it I use the developer command prompt with <code class="language-plaintext highlighter-rouge">msbuild .\SC4WebInterface.sln</code> avoiding the Visual Studio IDE. This gave me enough control over the library and header paths to actually fix the issues.</p>
+
+<h3 id="winsock-hell">Winsock Hell</h3>
+
+<p>With Winsock you always have to watch out to <code class="language-plaintext highlighter-rouge">#define WIN32_LEAN_AND_MEAN</code> maintain an exact order of <code class="language-plaintext highlighter-rouge">#include &lt;windows.h&gt;</code>, <code class="language-plaintext highlighter-rouge">#include &lt;winsock2.h&gt;</code>, <code class="language-plaintext highlighter-rouge">#include &lt;ws2tcpip.h&gt;</code> and the library <code class="language-plaintext highlighter-rouge">#pragma comment(lib, "Ws2_32.lib")</code>, because there are two incompatible implementations in Windows (yields redefinition errors) and somehow it always goes wrong at first. It gets even more tricky when you’re mixing C and C++ code, building a portion in a library and have to deal with Visual Studio at the same time.</p>
+
+<h3 id="plug-in-path-unicode-directory-paths">Plug-In Path, Unicode Directory Paths</h3>
+
+<p>One interesting thing I encountered was getting the path of the *.dll and not that of SimCity4.exe, which loads the *.dll.</p>
+
+<p>This can be done with the “Windows Implementation Layer” as other Plug-Ins do, but I wanted a more lean approach.</p>
+
+<p>For this I ended up using the Windows API <code class="language-plaintext highlighter-rouge">GetModuleHandleExW</code> directly and going though the hassle of <code class="language-plaintext highlighter-rouge">codecvt_utf8</code> converting the wide string to string and to c_str. Probably there will be encoding issues with foreign langauges, but I don’t think unicode chars are in use with these paths.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-webinterface-plugin.png" width="35%" />
+
+
+
+
+<p>The C/C++ portion of the plug-in is mostly completed.</p>
+
+<p>Next steps would be to:</p>
+
+<ul>
+  <li>add more metrics</li>
+  <li>enhance the interface page. The JSON could be shown as a table and live graphs would be nice.</li>
+  <li>for this allow the web server to grab more files than just the index page.</li>
+  <li>fix the play/pause behaviour. Pausing doesn’t work reliable. Perhaps we need to set the speed instead.</li>
+</ul>
+
+<p>I’ve uploaded all the code an a precompiled release to GitHub. See <a href="https://github.com/dsalzner/simcity4-webinterface-plugin">GitHub simcity4-webinterface-plugin</a>.</p>
+
+<hr />
+
+<pre>
+1] https://github.com/nsgomez/gzcom-dll
+2] https://github.com/nsgomez/gzcom-dll/blob/804a52ef12c3bbb1b19bbdc6216ac08ddb274ae3/gzcom-dll/include/GZCLSIDDefs.h
+3] https://github.com/nsgomez/gzcom-dll/wiki/Component-Object-Model
+4] https://github.com/nsgomez/gzcom-dll/wiki/GZCOM-Framework
+5] https://learn.microsoft.com/en-us/windows/win32/winsock/complete-server-code
+6] https://www.w3schools.com/jquery/ajax_getjson.asp
+7] https://dev.to/mblayman/a-simple-d3-js-area-chart-4bkf
+8] https://github.com/0xC0000054/sc4-legalize-gambling-ordinance-upgrade
+9] https://github.com/Killeroo/SC4MessageViewer
+10] https://github.com/Killeroo/SC4MessageViewer/blob/main/src/cConsoleLogger.cpp
+11] https://github.com/nsgomez/gzcom-dll/blob/524e4e16871c967745691f4d87f530d77451d219/gzcom-dll/include/cISC4City.h
+12] https://github.com/nsgomez/gzcom-dll/blob/524e4e16871c967745691f4d87f530d77451d219/gzcom-dll/include/cISC4Simulator.h
+13] https://github.com/0xC0000054/sc4-legalize-gambling-ordinance-upgrade
+14] https://visualstudio.microsoft.com/de/downloads/
+15] https://github.com/Karlson2k/libmicrohttpd
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Sim City 4 Web Interface Plug-In"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
 
 
 </div>
@@ -66,7 +650,7 @@
 
 
     <div class="footer">
-  D.Salzner : www.dennissalzner.de : 2021
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
 </div>
 
   </body>
