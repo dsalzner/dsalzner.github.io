@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>CustomOS - Pt.10 - Editor & Compiler - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="It would be nice to be able to extend the CustomOS without relying on other operating systems to write additional software for it. For this I've added a text editor to the Custo..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/programming/2024/05/22/Mi-CustomOsPt10-Compiler.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.10 - Editor & Compiler - Dennis Salzner" />
+  <meta property="og:description" content="It would be nice to be able to extend the CustomOS without relying on other operating systems to write additional software for it. For this I've added a text..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/programming/2024/05/22/Mi-CustomOsPt10-Compiler.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Programming" />
+  <meta property="article:published_time" content="2024-05-22 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-05-22 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-05-22 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="It would be nice to be able to extend the CustomOS without relying on other operating systems to write additional software for it. For this I've added a text editor to the Custo..." />
+  <meta name="twitter:title" content="CustomOS - Pt.10 - Editor & Compiler - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - CustomOS - Pt.10 - Editor & Compiler</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">CustomOS - Pt.10 - Editor & Compiler</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS)</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p><a href="https://github.com/dsalzner/customos/">
+    <img style="position: absolute; top: 0; right: 0; border: 0; height: 100px" src="../../../../images/github-fork-ribbon.png" alt="Fork me on GitHub" />
+</a></p>
+
+<p style="font-size: 60%;" align="right">What</p>
+
+<h2 id="what-we-are-trying-to-achieve">What we are trying to achieve</h2>
+
+<p>It would be nice to be able to extend the CustomOS without relying on other operating systems to write additional software for it. For this I’ve added a text editor to the CustomOS. It can be used to write code. An additional built-in C-Code compiler can compile and run code. With both combined we can write, compile and run code from inside the CustomOS.</p>
+
+<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/customos-compiler.gif" width="35%" />
+
+
+
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#what-we-are-trying-to-achieve" id="markdown-toc-what-we-are-trying-to-achieve">What we are trying to achieve</a></li>
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#text-editor" id="markdown-toc-text-editor">Text Editor</a></li>
+  <li><a href="#compiler" id="markdown-toc-compiler">Compiler</a>    <ul>
+      <li><a href="#compiler-vs-interpreter" id="markdown-toc-compiler-vs-interpreter">Compiler vs. Interpreter</a></li>
+      <li><a href="#choosing-a-compiler-to-integrate" id="markdown-toc-choosing-a-compiler-to-integrate">Choosing a compiler to integrate</a></li>
+      <li><a href="#challenge" id="markdown-toc-challenge">Challenge</a></li>
+      <li><a href="#c-standard-libraries" id="markdown-toc-c-standard-libraries">C-Standard-Libraries</a></li>
+      <li><a href="#required-signatures-from-cstdlib" id="markdown-toc-required-signatures-from-cstdlib">Required Signatures from CStdLib</a></li>
+      <li><a href="#maintaining-the-gap-to-unixoid-operating-systems" id="markdown-toc-maintaining-the-gap-to-unixoid-operating-systems">Maintaining the gap to Unixoid operating systems</a></li>
+    </ul>
+  </li>
+  <li><a href="#text-editor---implementation" id="markdown-toc-text-editor---implementation">Text Editor - Implementation</a>    <ul>
+      <li><a href="#software-interfaces" id="markdown-toc-software-interfaces">Software Interfaces</a></li>
+      <li><a href="#user-interface" id="markdown-toc-user-interface">User Interface</a></li>
+    </ul>
+  </li>
+  <li><a href="#compiler---integration" id="markdown-toc-compiler---integration">Compiler - Integration</a>    <ul>
+      <li><a href="#c-code-interpreter-with-tinycc" id="markdown-toc-c-code-interpreter-with-tinycc">C-Code Interpreter with TinyCC</a></li>
+      <li><a href="#attempt-1---using-tinycc-as-a-single-header-lib" id="markdown-toc-attempt-1---using-tinycc-as-a-single-header-lib">Attempt 1 - Using TinyCC as a single header lib</a></li>
+      <li><a href="#attempt-2---using-musl-c-standard-library" id="markdown-toc-attempt-2---using-musl-c-standard-library">Attempt 2 - Using musl C standard library</a>        <ul>
+          <li><a href="#bringing-it-into-the-customos" id="markdown-toc-bringing-it-into-the-customos">Bringing it into the CustomOS</a></li>
+          <li><a href="#removing-functionality-to-get-it-to-build-in-the-customos" id="markdown-toc-removing-functionality-to-get-it-to-build-in-the-customos">Removing functionality to get it to build in the CustomOS</a></li>
+          <li><a href="#typedefs-and-defines" id="markdown-toc-typedefs-and-defines">Typedefs and Defines</a></li>
+          <li><a href="#resolving-missing-symbols" id="markdown-toc-resolving-missing-symbols">Resolving Missing Symbols</a></li>
+        </ul>
+      </li>
+      <li><a href="#attempt-3---success-with-tccboot" id="markdown-toc-attempt-3---success-with-tccboot">Attempt 3 - Success with tccboot</a>        <ul>
+          <li><a href="#significance-of-tccboot-for-this-project" id="markdown-toc-significance-of-tccboot-for-this-project">Significance of tccboot for this project</a></li>
+          <li><a href="#malloc" id="markdown-toc-malloc">Malloc</a></li>
+          <li><a href="#glue-code-layer" id="markdown-toc-glue-code-layer">Glue-Code Layer</a></li>
+          <li><a href="#example-application" id="markdown-toc-example-application">Example Application</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>Modern operating systems have become so powerful by a process known in computer science as “bootstrapping”. The first computers were hand-wired and relied on punch cards that were manually punched in order to set the signal lines high or low.</p>
+
+<p>Later came more sophisticated computers where the boot loader was on such punch cards, but they were used to load the drivers, editors and compilers in order to access a spinning disk with which then even more complex software could be written, stored and loaded later on.</p>
+
+<p>Eventually the point of early operating systems such as DOS (Disk Operating System) was reached. After a computer booted it’s built-in BIOS it could load DOS from a floppy disk. Later larger storage media came about and drivers for things like CD-ROM drives, large ATA- and SCSI hard drives.</p>
+
+<p>From there, within MS-DOS, Windows was written. Early Windows versions up until Windows XP loaded MS-DOS first and then launched Windows from there. Meanwhile DOS has been abandoned.</p>
+
+<p>Nowadays developers write most software on very advanced operating systems such as Windows, Linux or MacOS.</p>
+
+<p>For the CustomOS we’re reproducing the stages of early computer development. After Part 1 through 9 we are nearly at the stage of an early DOS. What is missing is a text editor, MS-DOS had the MS-DOS Editor “EDIT”, and some compilers to convert source code written in that text editor into binaries that can be run.</p>
+
+<h2 id="text-editor">Text Editor</h2>
+
+<p>For the text editor I’ve gone with a simple implementation. As we already have a terminal written in Rust we can write the Editor in a very similar manner.</p>
+
+<p>Here Rust really excelled. For such a task we need a substantial amount of character manipulation on arrays. Rust actively prevents developers from iterating out of bounds of arrays. That greatly helped avoiding bugs before they happen.</p>
+
+<p>I took some time and rewrote the editor a couple of times as I wanted it to be as reliable as possible. Nothing would be more annoying than a text editor that displays something different than it writes to disk or if it were to mess up a file. Especially if we’ll attempt writing software with it.</p>
+
+<p>The editor has a very simplistic interface to the rest of the CustomOS. All I needed were functions to get and set entire text buffers, some for writing and drawing to screen and <code class="language-plaintext highlighter-rouge">init()</code> and <code class="language-plaintext highlighter-rouge">update()</code> hooks.</p>
+
+<h2 id="compiler">Compiler</h2>
+
+<p>For the compiler things get complicated. As seen in the last part of the series we can run opcodes - the machine codes for the processor - by storing them in a buffer in memory and then using the assembler <code class="language-plaintext highlighter-rouge">jmp</code> to jump to them.</p>
+
+<p>Of course we could use the text editor and manually write these as hex values, save them and then load and run them.</p>
+
+<p>But in order to productively develop software in the CustomOS we need something that can take source code written in a higher-level language such as C and automatically translate it into opcodes that we can run. For this we need a compiler.</p>
+
+<h3 id="compiler-vs-interpreter">Compiler vs. Interpreter</h3>
+
+<p>A compiler will take the source code and convert it to binaries. These can then be run on directly on the machine.</p>
+
+<p>In contrast an interpreter would run command for command directly without writing a binary to disk in between.</p>
+
+<p>Both has its uses. Python and Java-Script are both interpreter languages, while C/C++ is compiled. Java is somewhere in between with the source code being compiled to an intermediary format that is then interpreted on the Java virtual machine.</p>
+
+<p>There are also very useful scripting languages such as Tcl and Lua that are also interpreted.</p>
+
+<p>If we want to be able to freely extend the operating system, without an interpreter blocking direct access to the hardware, we need a full compiler.</p>
+
+<h3 id="choosing-a-compiler-to-integrate">Choosing a compiler to integrate</h3>
+
+<p>From the top of my head there are some options.</p>
+
+<p>Common interpreters that could probably be easily added exist for</p>
+
+<ul>
+  <li>Tcl</li>
+  <li>Lua</li>
+  <li>Basic</li>
+</ul>
+
+<p>But as we want a full compiler and ideally one that can compile C-Code there seems to be only one reasonably lean option</p>
+
+<ul>
+  <li>TinyCC</li>
+</ul>
+
+<p>Only with real C-code and the ability to manipulate memory can I write application drivers that can significantly extend the functionality of the CustomOS.</p>
+
+<p>Full-blown compilers like</p>
+
+<ul>
+  <li>Gcc</li>
+  <li>Clang</li>
+</ul>
+
+<p>are much to large and difficult to integrate for our purpose.</p>
+
+<h3 id="challenge">Challenge</h3>
+
+<p>The challenge in adding such a compiler, even the TinyCC compiler, is the complex code base and the high number of dependencies on the C-Standard-Library.</p>
+
+<p>I need a lot of string conversion functions from all sorts of integer widths to string. These kind of functions need to work reliably and so I’ll probably have to bring in some portions of C-Standard-Library implementations.</p>
+
+<p>From first inspection I thought I could get away without implementing a heap (my CustomOS currently has no malloc). As it turned out however, I did have to add a heap, because TinyCC reads the code, needs to write it somewhere. The output can vary so dramatically in size that a fixed buffer just wouldn’t make sense.</p>
+
+<h3 id="c-standard-libraries">C-Standard-Libraries</h3>
+
+<p>There are a number of C-Standard-Libraries.</p>
+
+<ul>
+  <li>glibc - the most common, but very large, c library</li>
+  <li>ulibc - micro libc reduced and simplified for micro controllers</li>
+  <li>dietlibc - similar</li>
+  <li>newlib - standard c library replacement with reduced functionality</li>
+  <li>musl - this is used Linux distributions and also in the GCC compiler itself</li>
+</ul>
+
+<p>I decided to go with portions of code from musl. It has some very elegant implementations, but is still huge with 1601 source files and 737 header files. Much of which we will not need. Musl is structures in a way that much of the features  can be compiled standalone.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>musl-1.2.5<span class="nv">$ </span>find <span class="nb">.</span> <span class="nt">-type</span> f | <span class="nb">grep</span> <span class="s2">"</span><span class="se">\.</span><span class="s2">c"</span> | <span class="nb">wc</span> <span class="nt">-l</span>
+1601
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>musl-1.2.5<span class="nv">$ </span>find <span class="nb">.</span> <span class="nt">-type</span> f | <span class="nb">grep</span> <span class="s2">"</span><span class="se">\.</span><span class="s2">c"</span> | <span class="nb">wc</span> <span class="nt">-l</span>
+737
+</code></pre></div></div>
+
+<h3 id="required-signatures-from-cstdlib">Required Signatures from CStdLib</h3>
+
+<p>The TinyCC compiler comes with a header that conveniently lists all the external functions that we will need to implement for it to run.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat </span>tcc-0.9.27/tcclib.h
+
+void <span class="k">*</span>calloc<span class="o">(</span>size_t nmemb, size_t size<span class="o">)</span><span class="p">;</span>
+void <span class="k">*</span>malloc<span class="o">(</span>size_t size<span class="o">)</span><span class="p">;</span>
+void free<span class="o">(</span>void <span class="k">*</span>ptr<span class="o">)</span><span class="p">;</span>
+void <span class="k">*</span>realloc<span class="o">(</span>void <span class="k">*</span>ptr, size_t size<span class="o">)</span><span class="p">;</span>
+int atoi<span class="o">(</span>const char <span class="k">*</span>nptr<span class="o">)</span><span class="p">;</span>
+long int strtol<span class="o">(</span>const char <span class="k">*</span>nptr, char <span class="k">**</span>endptr, int base<span class="o">)</span><span class="p">;</span>
+unsigned long int strtoul<span class="o">(</span>const char <span class="k">*</span>nptr, char <span class="k">**</span>endptr, int base<span class="o">)</span><span class="p">;</span>
+void <span class="nb">exit</span><span class="o">(</span>int<span class="o">)</span><span class="p">;</span>
+
+typedef struct __FILE FILE<span class="p">;</span>
+<span class="c">#define EOF (-1)</span>
+extern FILE <span class="k">*</span>stdin<span class="p">;</span>
+extern FILE <span class="k">*</span>stdout<span class="p">;</span>
+extern FILE <span class="k">*</span>stderr<span class="p">;</span>
+FILE <span class="k">*</span>fopen<span class="o">(</span>const char <span class="k">*</span>path, const char <span class="k">*</span>mode<span class="o">)</span><span class="p">;</span>
+FILE <span class="k">*</span>fdopen<span class="o">(</span>int fildes, const char <span class="k">*</span>mode<span class="o">)</span><span class="p">;</span>
+FILE <span class="k">*</span>freopen<span class="o">(</span>const  char <span class="k">*</span>path, const char <span class="k">*</span>mode, FILE <span class="k">*</span>stream<span class="o">)</span><span class="p">;</span>
+int fclose<span class="o">(</span>FILE <span class="k">*</span>stream<span class="o">)</span><span class="p">;</span>
+size_t  fread<span class="o">(</span>void <span class="k">*</span>ptr, size_t size, size_t nmemb, FILE <span class="k">*</span>stream<span class="o">)</span><span class="p">;</span>
+size_t  fwrite<span class="o">(</span>void <span class="k">*</span>ptr, size_t size, size_t nmemb, FILE <span class="k">*</span>stream<span class="o">)</span><span class="p">;</span>
+int fgetc<span class="o">(</span>FILE <span class="k">*</span>stream<span class="o">)</span><span class="p">;</span>
+char <span class="k">*</span>fgets<span class="o">(</span>char <span class="k">*</span>s, int size, FILE <span class="k">*</span>stream<span class="o">)</span><span class="p">;</span>
+int getc<span class="o">(</span>FILE <span class="k">*</span>stream<span class="o">)</span><span class="p">;</span>
+int getchar<span class="o">(</span>void<span class="o">)</span><span class="p">;</span>
+char <span class="k">*</span>gets<span class="o">(</span>char <span class="k">*</span>s<span class="o">)</span><span class="p">;</span>
+int ungetc<span class="o">(</span>int c, FILE <span class="k">*</span>stream<span class="o">)</span><span class="p">;</span>
+int fflush<span class="o">(</span>FILE <span class="k">*</span>stream<span class="o">)</span><span class="p">;</span>
+int putchar <span class="o">(</span>int c<span class="o">)</span><span class="p">;</span>
+
+int <span class="nb">printf</span><span class="o">(</span>const char <span class="k">*</span>format, ...<span class="o">)</span><span class="p">;</span>
+int fprintf<span class="o">(</span>FILE <span class="k">*</span>stream, const char <span class="k">*</span>format, ...<span class="o">)</span><span class="p">;</span>
+int sprintf<span class="o">(</span>char <span class="k">*</span>str, const char <span class="k">*</span>format, ...<span class="o">)</span><span class="p">;</span>
+int snprintf<span class="o">(</span>char <span class="k">*</span>str, size_t size, const  char  <span class="k">*</span>format, ...<span class="o">)</span><span class="p">;</span>
+int asprintf<span class="o">(</span>char <span class="k">**</span>strp, const char <span class="k">*</span>format, ...<span class="o">)</span><span class="p">;</span>
+int dprintf<span class="o">(</span>int fd, const char <span class="k">*</span>format, ...<span class="o">)</span><span class="p">;</span>
+int vprintf<span class="o">(</span>const char <span class="k">*</span>format, va_list ap<span class="o">)</span><span class="p">;</span>
+int vfprintf<span class="o">(</span>FILE  <span class="k">*</span>stream,  const  char <span class="k">*</span>format, va_list ap<span class="o">)</span><span class="p">;</span>
+int vsprintf<span class="o">(</span>char <span class="k">*</span>str, const char <span class="k">*</span>format, va_list ap<span class="o">)</span><span class="p">;</span>
+int vsnprintf<span class="o">(</span>char <span class="k">*</span>str, size_t size, const char  <span class="k">*</span>format, va_list ap<span class="o">)</span><span class="p">;</span>
+int vasprintf<span class="o">(</span>char  <span class="k">**</span>strp,  const  char <span class="k">*</span>format, va_list ap<span class="o">)</span><span class="p">;</span>
+int vdprintf<span class="o">(</span>int fd, const char <span class="k">*</span>format, va_list ap<span class="o">)</span><span class="p">;</span>
+
+void perror<span class="o">(</span>const char <span class="k">*</span>s<span class="o">)</span><span class="p">;</span>
+
+char <span class="k">*</span>strcat<span class="o">(</span>char <span class="k">*</span>dest, const char <span class="k">*</span>src<span class="o">)</span><span class="p">;</span>
+char <span class="k">*</span>strchr<span class="o">(</span>const char <span class="k">*</span>s, int c<span class="o">)</span><span class="p">;</span>
+char <span class="k">*</span>strrchr<span class="o">(</span>const char <span class="k">*</span>s, int c<span class="o">)</span><span class="p">;</span>
+char <span class="k">*</span>strcpy<span class="o">(</span>char <span class="k">*</span>dest, const char <span class="k">*</span>src<span class="o">)</span><span class="p">;</span>
+void <span class="k">*</span>memcpy<span class="o">(</span>void <span class="k">*</span>dest, const void <span class="k">*</span>src, size_t n<span class="o">)</span><span class="p">;</span>
+void <span class="k">*</span>memmove<span class="o">(</span>void <span class="k">*</span>dest, const void <span class="k">*</span>src, size_t n<span class="o">)</span><span class="p">;</span>
+void <span class="k">*</span>memset<span class="o">(</span>void <span class="k">*</span>s, int c, size_t n<span class="o">)</span><span class="p">;</span>
+char <span class="k">*</span>strdup<span class="o">(</span>const char <span class="k">*</span>s<span class="o">)</span><span class="p">;</span>
+size_t strlen<span class="o">(</span>const char <span class="k">*</span>s<span class="o">)</span><span class="p">;</span>
+
+<span class="c">#define RTLD_LAZY       0x001</span>
+<span class="c">#define RTLD_NOW        0x002</span>
+<span class="c">#define RTLD_GLOBAL     0x100</span>
+
+void <span class="k">*</span>dlopen<span class="o">(</span>const char <span class="k">*</span>filename, int flag<span class="o">)</span><span class="p">;</span>
+const char <span class="k">*</span>dlerror<span class="o">(</span>void<span class="o">)</span><span class="p">;</span>
+void <span class="k">*</span>dlsym<span class="o">(</span>void <span class="k">*</span>handle, char <span class="k">*</span>symbol<span class="o">)</span><span class="p">;</span>
+int dlclose<span class="o">(</span>void <span class="k">*</span>handle<span class="o">)</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>As you can see some of the functions are trivial, but there are also some really nasty ones.</p>
+
+<p>All <code class="language-plaintext highlighter-rouge">printf</code>-functions with a <code class="language-plaintext highlighter-rouge">v</code> in front are “variadic” functions that require va_args, va_lists, etc to be implemented. I do have a printf implementation in the CustomOS, but I’m not sure if it’s feature complete enough. We may be able to get rid of some of those by patching TinyCC.</p>
+
+<p>The <code class="language-plaintext highlighter-rouge">strtol</code> and <code class="language-plaintext highlighter-rouge">strtoul</code> have really complex implementations in glibc. In musl the implementation is much more elegant, but relies on <code class="language-plaintext highlighter-rouge">FILE*</code>-functions and so we would need to implement all file handling functions and wire them to the FatFs library we use for disk input/output.</p>
+
+<p>The file handling functions can’t really be circumvented, as the compiler also needs to write compiled binary either to disk or memory in order to run it.</p>
+
+<p>As I saw later some of these includes will pull in system calls, threading pthread_t, localized strings locale_t, formatted date and time time_t, handling of wide character wchar_t and loads and loads of defines and typedefs that need to be configured to our machine.</p>
+
+<p>In order to get the TinyCC compile to work in the CustomOS we will have either implement some of these interfaces or remove features from TinyCC and musl until we can get it build.</p>
+
+<p>Afterwards we can try to reduce code to only the portions that we require.</p>
+
+<h3 id="maintaining-the-gap-to-unixoid-operating-systems">Maintaining the gap to Unixoid operating systems</h3>
+
+<p>Of course the CustomOS should be my own lean operating system. I don’t want to bring in so many dependencies that it turns into a poorly written Linux-Kernel with butchered drivers.</p>
+
+<p>The TinyCC is a big package that forces me to bring in quite a few C-Standard-Library and file handling. I’ll try to keep things as lean as possible.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="text-editor---implementation">Text Editor - Implementation</h2>
+
+<p>With the goals set, I started with the text editor implementation. It was rather easy going with some fiddling around to get automatic line breaks working properly.</p>
+
+<p>Eventually I found that conversion functions “bufferPosToBirtualXYPos” and “virtualXYPosToBufferPos” made things a lot easier. Doing this I could boil the code down to 380 lines. Much of the manual out-of-bounds checking I have in order to avoid adding exception handling could be circumvented all together.</p>
+
+<h3 id="software-interfaces">Software Interfaces</h3>
+
+<p>The text editor code ties into the rest of the CustomOS by a very basic interface.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">extern</span> <span class="s">"C"</span> <span class="p">{</span>
+  <span class="k">fn</span> <span class="nf">ataGetFileContents</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="o">*</span><span class="k">const</span> <span class="nn">cty</span><span class="p">::</span><span class="nb">c_char</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="o">*</span><span class="k">mut</span> <span class="nn">cty</span><span class="p">::</span><span class="nb">c_char</span><span class="p">,</span> <span class="n">bufferLen</span><span class="p">:</span> <span class="nb">u32</span><span class="p">);</span>
+  <span class="k">fn</span> <span class="nf">ataSetFileContents</span><span class="p">(</span><span class="n">fileName</span><span class="p">:</span> <span class="o">*</span><span class="k">const</span> <span class="nn">cty</span><span class="p">::</span><span class="nb">c_char</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="o">*</span><span class="k">mut</span> <span class="nn">cty</span><span class="p">::</span><span class="nb">c_char</span><span class="p">,</span> <span class="n">bufferLen</span><span class="p">:</span> <span class="nb">u32</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="n">shellCharArrayToCChar</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>It uses two function from my lean PCI/IDE disk driver<code class="language-plaintext highlighter-rouge">ata.h</code> to read and write entire buffers to disk. To use them I need to translate Rust arrays to C char arrays, for this I have <code class="language-plaintext highlighter-rouge">shellCharArrayToCChar</code> which is implemented in the code of the terminal.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">pub</span> <span class="k">unsafe</span> <span class="k">fn</span> <span class="nf">editorSetFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="o">&amp;</span><span class="p">[</span><span class="nb">char</span><span class="p">;</span><span class="mi">255</span><span class="p">],</span> <span class="n">length</span><span class="p">:</span> <span class="nb">usize</span><span class="p">)</span>
+<span class="k">pub</span> <span class="k">unsafe</span> <span class="k">fn</span> <span class="nf">editorKeyboardDown</span><span class="p">(</span><span class="n">key</span><span class="p">:</span> <span class="nn">cty</span><span class="p">::</span><span class="nb">c_char</span><span class="p">,</span> <span class="n">scancode</span><span class="p">:</span> <span class="nb">u8</span><span class="p">)</span>
+<span class="k">pub</span> <span class="k">unsafe</span> <span class="k">fn</span> <span class="nf">editorUpdate</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>When in Editor-Mode the CustomOS sends all screen update calls to <code class="language-plaintext highlighter-rouge">editorUpdate()</code> and keyboard button presses to <code class="language-plaintext highlighter-rouge">editorKeyboardDown</code>.</p>
+
+<p>The filename with which the editor was opened with, shell syntax is <code class="language-plaintext highlighter-rouge">ed &lt;filename&gt;</code>, is sent to <code class="language-plaintext highlighter-rouge">editorSetFilename</code>.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="n">shellWidth</span><span class="p">;</span>
+<span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="n">shellHeight</span><span class="p">;</span>
+<span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="n">shellFontWidth</span><span class="p">;</span>
+<span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="n">shellFontHeight</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Additionally the editor needed some functions to query screen width and height as well as font width and height.</p>
+
+<div class="language-rust highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="n">shellSetPixel</span><span class="p">;</span>
+<span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="n">shellRenderChar</span><span class="p">;</span>
+
+<span class="k">use</span> <span class="k">crate</span><span class="p">::</span><span class="n">COLOR_</span> <span class="p">[</span><span class="o">..</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>It can then set pixel to a specific color or render characters with the functions provided by the CustomOS terminal.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>use crate::shellSetActive;
+</code></pre></div></div>
+
+<p>And when exiting we only signal the terminal to switch its enum back to stop relaying <code class="language-plaintext highlighter-rouge">update()</code> and <code class="language-plaintext highlighter-rouge">keyboardDown()</code> events to the editor, but back to the terminal as before.</p>
+
+<h3 id="user-interface">User Interface</h3>
+
+<p>For the user to interact with the Editor apart from the expected typing into the text field, I needed to be able to save and exit.</p>
+
+<p>After considering how <code class="language-plaintext highlighter-rouge">vim</code>, <code class="language-plaintext highlighter-rouge">nano</code> or even the MS-DOS Editor do this I decided to just use the function keys. This is similar to the MS-DOS Editor, but without the menus. The editor is self explanatory as it displays to the user which function keys do what in the bottom footer of the screen.</p>
+
+<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/customos-editor.gif" width="35%" />
+
+
+
+
+<h2 id="compiler---integration">Compiler - Integration</h2>
+
+<p>Getting the compiler in there was a bit of an effort. I had first started with glibc, but then gave up because it was just far too large and intertwined with Linux. After switching to musl I was able to move forward. In the end I found the tccboot project that gave me the missing bits and pieces to get it running.</p>
+
+<h3 id="c-code-interpreter-with-tinycc">C-Code Interpreter with TinyCC</h3>
+
+<p>As a starting point I added a function intended to compile and run incoming C-code from a char array. From there I started fixing missing symbol by missing symbol and adding in glue code as needed.</p>
+
+<p>There is a good example snippet in one of the tests in TinyCC under <code class="language-plaintext highlighter-rouge">tcc-0.9.27/tests/libtcc_test.c</code>. I’ve reduced it to the bare minimum and was left with this:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">tinycc_run_code</span><span class="p">(</span><span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">program</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">TCCState</span> <span class="o">*</span><span class="n">s</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="p">(</span><span class="o">*</span><span class="n">func</span><span class="p">)(</span><span class="kt">int</span><span class="p">);</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="n">tcc_new</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">s</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">"Could not create tcc state</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+        <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="n">tcc_set_output_type</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">TCC_OUTPUT_MEMORY</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="n">tcc_compile_string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">my_program</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="cm">/* relocate the code */</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">tcc_relocate</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">TCC_RELOCATE_AUTO</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="cm">/* get entry symbol */</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="n">tcc_get_symbol</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">"foo"</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+
+    <span class="cm">/* run the code */</span>
+    <span class="n">func</span><span class="p">(</span><span class="mi">32</span><span class="p">);</span>
+
+    <span class="cm">/* delete the state */</span>
+    <span class="n">tcc_delete</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The function <code class="language-plaintext highlighter-rouge">tinycc_run_code</code> can accept a string containing C-Code and then run it through TinyCC. TinyCC will compile the binary and write it to memory. We can then jump into it (see the line <code class="language-plaintext highlighter-rouge">func(32);</code>) and run it.</p>
+
+<h3 id="attempt-1---using-tinycc-as-a-single-header-lib">Attempt 1 - Using TinyCC as a single header lib</h3>
+
+<p>There is a single header variant of TinyCC written by github/kyx0r.</p>
+
+<p>On my first attempt I tried to just build that straight into the CustomOS and try to fix the missing symbols there.</p>
+
+<p>I soon ended up with having to implement really nasty functions like <code class="language-plaintext highlighter-rouge">strtoull</code> where, at the time, I had only the very convoluted implementation in <code class="language-plaintext highlighter-rouge">glibc</code> or the implementation on <code class="language-plaintext highlighter-rouge">musl</code> that relies heavily on file pointers, and nasty things like thread locking functions underneath.</p>
+
+<p>After many modifications I wasn’t even sure if the TinyCC would even work anymore. I had commented out many file handling functions, but then realized that TinyCC uses file handlers to also compile to memory before running the code. So I became fairly certain the code wouldn’t work and started over.</p>
+
+<h3 id="attempt-2---using-musl-c-standard-library">Attempt 2 - Using musl C standard library</h3>
+
+<p>So after giving up on the single header lib attempt I started again from the original TinyCC and the Musl code. These became incredibly difficult tedious to rewire and brought so much unwanted functionality in, that I had to reiterate to a new approach.</p>
+
+<p>I tried to build it with the cross-compile tool chain of the CustomOS. Every time a function was missing, I searched through libmusl with <code class="language-plaintext highlighter-rouge">grep</code> to find it and added each include folder to the list of includes.</p>
+
+<p>Now musl uses <code class="language-plaintext highlighter-rouge">configure</code> to configure the workspace based on *.in-files. I can’t really reliably use this on my custom tool chain and want to control every setting manually. So every time a define or typedef was missing I added it to my manually generated alltypes.h file.</p>
+
+<p>After a lot of trial and error my Makefile looked like this.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"#pragma once </span><span class="se">\n</span><span class="s2">#define TYPEDEF typedef</span><span class="se">\n</span><span class="s2">
+#define size_t unsigned int</span><span class="se">\n</span><span class="s2">#define ssize_t unsigned int</span><span class="se">\n</span><span class="s2">
+#define __isoc_va_list void *</span><span class="se">\n</span><span class="s2">#define uint32_t unsigned int</span><span class="se">\n</span><span class="s2">
+#define int32_t int</span><span class="se">\n</span><span class="s2">typedef struct _IO_FILE FILE;</span><span class="se">\n</span><span class="s2">
+typedef int32_t off_t;</span><span class="se">\n</span><span class="s2">"</span> | <span class="nb">cat</span> - musl-1.2.5/arch/i386/bits/alltypes.h.in | <span class="nb">tee </span>musl-1.2.5/arch/i386/bits/alltypes.h
+
+<span class="si">$(</span>CC<span class="si">)</span>  <span class="nt">-c</span> tcc-0.9.27/tests/libtcc_test.c <span class="nt">-Imusl-1</span>.2.5/include/ <span class="nt">-Imusl-1</span>.2.5/arch/i386 <span class="nt">-Imusl-1</span>.2.5/src/internal/ <span class="nt">-Itcc-0</span>.9.27/ <span class="nt">-o</span> main
+</code></pre></div></div>
+
+<p>Of course a large number of linker errors persisted, but I knew that all function declarations were somewhere in the source files corresponding to those headers.</p>
+
+<h4 id="bringing-it-into-the-customos">Bringing it into the CustomOS</h4>
+
+<p>From there I brought the code into the CustomOS.</p>
+
+<p>For every missing symbol in the linker step I had to locate the code and build the respective source files.</p>
+
+<p><code class="language-plaintext highlighter-rouge">stdio_impl.c</code> was an interesting one. Musl expects the stdio functions to be implemented by the user.</p>
+
+<p>This is also the location where the file handling functions fopen/fwrite/etc need to be wired to the FatFS library.</p>
+
+<p>I’ve added two header files full of typedefs and defines to make the CustomOS, Musl and TinyCC work together.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cp </span>lib/libmusl_config.h lib/musl-1.2.5/arch/i386/bits/alltypes.h
+<span class="nb">cp </span>lib/tinycc_config.h lib/tcc-0.9.27/config.h
+</code></pre></div></div>
+
+<h4 id="removing-functionality-to-get-it-to-build-in-the-customos">Removing functionality to get it to build in the CustomOS</h4>
+
+<p>There are quite a few particularly painful functionalities in Musl and TinyCC.</p>
+
+<ul>
+  <li><strong><em>strtol, strtoll, strtoull</em></strong> - that convert strings to different sized integers rely on file handling functions. As established above we need file handling functions to write the compiled code and so there is no way around this for TinyCC to function.</li>
+  <li><strong><em>vfprintf, vsnprintf</em></strong> - are variadic printf functions that write to strings or files. It turns out these can be removed as TinyCC only uses them for its command-line interface that we won’t need.</li>
+  <li><strong><em>strcasecmp, strncmp, etc</em></strong> - have localized variants that require locale_t. This drags in a lot of excess functions. We can strip the localized strings out and comment out where they are used.</li>
+  <li><strong><em>gettimeofday, time_t</em></strong> - in many places time_t is used to measure elapsed time or to use <code class="language-plaintext highlighter-rouge">__time__</code> macros in the C-Code compiled by TinyCC. The time features go all the way down to hardware access. I’ve decided to just disable this.</li>
+  <li><strong><em>wchar_t</em></strong> - the code that handles  string functions also pulls in functions for handling wide chars. That could also be removed.</li>
+  <li><strong><em>pthread</em></strong> - portions of musl had to be commented out or disabled by define to avoid bringing in pthread</li>
+  <li><strong><em>semlock</em></strong> - musl uses pthread in particular for the thread-safe fget/fput implementations. I’ll likely have to re-implement them for use without pthread.</li>
+  <li><strong>locking</strong> - in general, fclose, fflush, puts functions in musl use a FLOCK and FUNLOCK macro. This is not a multi-tasking operating system and I don’t want to implement that functionality, so I had to comment these macros out.</li>
+</ul>
+
+<h4 id="typedefs-and-defines">Typedefs and Defines</h4>
+
+<p>Because musl and tinycc support various CPU architectures many types are set by define or typedef my <code class="language-plaintext highlighter-rouge">configure</code> during build.</p>
+
+<p>Many types from limits.h like <code class="language-plaintext highlighter-rouge">int64_t</code>, <code class="language-plaintext highlighter-rouge">size_t</code>, etc had to be defined in my <code class="language-plaintext highlighter-rouge">libmusl_config.h</code> and  <code class="language-plaintext highlighter-rouge">tinycc_config.h</code>. A lot of defines were also set or unset in order to disable functionality I didn’t want to have to write glue code for.</p>
+
+<h4 id="resolving-missing-symbols">Resolving Missing Symbols</h4>
+
+<p>After getting to the linking step things became easier. At that point it was clear that all functions exist somewhere. I just need to configure my Makefile to build the correct files.</p>
+
+<p>By building and checking the command-line output I can get a list of all missing symbols:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make 2&gt;&amp;1 | <span class="nb">grep</span> <span class="s2">"undefined reference"</span> | <span class="nb">awk</span> <span class="s1">'{ print $5 }'</span> | <span class="nb">sort</span> | <span class="nb">uniq</span>
+
+
+<span class="sb">`</span>atoi<span class="s1">'
+`close'</span>
+<span class="sb">`</span><span class="nb">exit</span><span class="s1">'
+`fclose'</span>
+<span class="sb">`</span>fdopen<span class="s1">'
+`fflush'</span>
+<span class="sb">`</span>fputc<span class="s1">'
+`free'</span>
+<span class="sb">`</span>fwrite<span class="s1">'
+[..]
+</span></code></pre></div></div>
+
+<p>With some more shell magic I can get a list of files where these symbols are likely implemented</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make 2&gt;&amp;1 | <span class="nb">grep</span> <span class="s2">"undefined reference"</span> | <span class="nb">awk</span> <span class="s1">'{ print $5 }'</span> | <span class="nb">sort</span> | <span class="nb">uniq</span> | <span class="nb">awk</span> <span class="s1">'{print substr($0,2,length($0)-2)}'</span> | xargs <span class="nt">-I</span> % sh <span class="nt">-c</span> <span class="s1">'find -name %.c;'</span>
+
+./lib/musl-1.2.5/src/stdlib/atoi.c
+./lib/musl-1.2.5/src/unistd/close.c
+./lib/musl-1.2.5/src/exit/exit.c
+./lib/musl-1.2.5/src/stdio/fclose.c
+./lib/musl-1.2.5/src/stdio/fflush.c
+./lib/musl-1.2.5/src/stdio/fputc.c
+./lib/musl-1.2.5/src/stdio/fputs.c
+./lib/musl-1.2.5/src/malloc/free.c
+<span class="o">[</span>..]
+</code></pre></div></div>
+
+<p>From there I can make a concious decision on whether or not I want to import that functionality and whether I can patch musl to not pull it in.</p>
+
+<p>Functions like <code class="language-plaintext highlighter-rouge">free</code> are tied to malloc and a heap, which I’m actively trying to void.</p>
+
+<p>In musl <code class="language-plaintext highlighter-rouge">close</code>, <code class="language-plaintext highlighter-rouge">fgets</code>, <code class="language-plaintext highlighter-rouge">fputs</code> are implemented via system calls, that work only for Linux, so I need to rewrite or avoid them.</p>
+
+<h3 id="attempt-3---success-with-tccboot">Attempt 3 - Success with tccboot</h3>
+
+<p>At that point I started checking online and in osdev-forums, if anyone had ever put TinyCC into any operating system other than Linux.</p>
+
+<p>The breakthrough moment occured, when I found out about <code class="language-plaintext highlighter-rouge">tccboot</code>. Someone, for fun and giggles, had implemented a tiny x86 boot loader that loads nothing more than TinyCC and then complies the Linux-Kernel on the fly before continuing to boot with it.</p>
+
+<h4 id="significance-of-tccboot-for-this-project">Significance of tccboot for this project</h4>
+
+<p>The significance for what I’m doing is multifold:</p>
+
+<ul>
+  <li>this is a very minimal glue code for TinyCC</li>
+  <li>it brings implementations of most of the functions TinyCC depends on</li>
+  <li>a boot loader is very close to what I’m doing in my CustomOS</li>
+  <li>using this means there is significantly less code to adapt</li>
+</ul>
+
+<p>The art of this code is in selecting the right lean implementations for common functions. tccboot does this. In fact it’s a goldmine of beautiful, simple and bloat-free original implementations by some really famous software developers.</p>
+
+<ul>
+  <li>ctype.c - array of ctypes for binary - ‘92 by Linus Torvalds himself</li>
+  <li>dtoa.c - self-contained double to string conversion that is an absolut bitch to have to implement yourself - ‘91 by David M. Gay from Lucent Technologies</li>
+  <li>malloc.c - a simple drop-in malloc implementation - ‘02 by Doug Lea from the CS department of the State University of New York</li>
+  <li>vsprintf.c - “simple_strtol” , “simple_strtoull” implementation that I had so much trouble with previously - ‘92 by Lars Wirzenius and Linus Torvalds</li>
+  <li>gunzip.c, inflate.c - some really minimalist decompression code that I might use in future - ‘92 by Mark Adler, Hannu Savolainen and Nicolas Pitre</li>
+</ul>
+
+<h4 id="malloc">Malloc</h4>
+
+<p>TinyCC requires a heap and there is no good way around this. A basic heap is not very difficult to implement, but with allocation and deallocation schema, fragmentation and all things considered it can get tricky.</p>
+
+<p>I’m using the malloc implementation that came with tccboot-0.1</p>
+
+<p>Initially I had some trouble getting this setup without the CustomOS locking up. For future reference this is the calling sequence of the first call to malloc:</p>
+
+<div class="mermaid" style="width: 800px">
+graph TD;
+    A(tinycc_interpreter.c - tinycc_run_code) --&gt; B(libtcc.c - tcc_new)
+    B --&gt; C(libtcc.c::tcc_mallocz -- malloc and zero)
+    C --&gt; D(libtcc.c::tcc_malloc)
+    D --&gt; E(malloc.c::Void_t* mALLOc)
+    E --&gt; F(malloc.c::Void_t* sYSMALLOc)
+    F --&gt; G(tinycc_compat.c::void* sbrk)
+    G --&gt; H(moving malloc_ptr pointing to next free position in heap array)
+</div>
+
+<h4 id="glue-code-layer">Glue-Code Layer</h4>
+
+<p>During integration of the TinyCC compiler I ran into a bunch of issues I had to fix.</p>
+
+<ul>
+  <li>a substantial amount of glue code was required to make all the types and functions available</li>
+  <li>some taken from tccboot-0.1, some from musl-1.2.5</li>
+  <li>the aforementioned time_t had to be removed as well as all references to “getenv”, a function to get Linux environment variables</li>
+  <li>there is functionality in TinyCC to set memory pages executable and that functionality had to be removed</li>
+</ul>
+
+<p>In the end I wrapped all the glue code, defines and typedefs that were required into <code class="language-plaintext highlighter-rouge">tinycc_compat.c/.h</code> while <code class="language-plaintext highlighter-rouge">tinycc_interpreter.c/.h</code> contains the code to compile and run C-Code either from file or a hard-coded example application.</p>
+
+<h4 id="example-application">Example Application</h4>
+
+<p>I’ve added the following example application to demonstrate the functionality.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span><span class="n">putchar</span><span class="p">)(</span><span class="kt">char</span><span class="p">);</span>
+
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="nf">name</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="s">"Example Application"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">setPutCharCallback</span><span class="p">(</span><span class="kt">void</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span><span class="n">putchar_</span><span class="p">)(</span><span class="kt">char</span><span class="p">))</span> <span class="p">{</span>
+  <span class="n">putchar</span> <span class="o">=</span> <span class="n">putchar_</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">char</span> <span class="n">c</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"Hello from example application"</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">30</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">putchar</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]);</span>
+  <span class="p">}</span>
+  <span class="k">return</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The CustomOS loads it with TinyCC from a string. It then looks up the symbols <code class="language-plaintext highlighter-rouge">name</code>, <code class="language-plaintext highlighter-rouge">setPutCharCallback</code> and <code class="language-plaintext highlighter-rouge">init</code>`.</p>
+
+<p>From there it will use <code class="language-plaintext highlighter-rouge">name()</code> to get the name and write it to the console via internal functions from the CustomOS.</p>
+
+<p>It then moves on to use <code class="language-plaintext highlighter-rouge">setPutCharCallback(...)</code> in order to pass the address to the “putChar”-function to the application.</p>
+
+<p>Then, by running <code class="language-plaintext highlighter-rouge">init()</code> the application code will write a string to the console using that “putChar”-callback.</p>
+
+<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/compiler-example-application.png" width="35%" />
+
+
+
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/customos-compiler.gif" width="35%" />
+
+
+
+
+<p>Working on this really has you gain a new perspective on the Standard-C-Library we’re normally just users of.</p>
+
+<p>The CustomOS now produces a couple hundred warnings when building. I’ll have to clean that up eventually.</p>
+
+<p>In future the CustomOS can be extended with code from source code that is not directly compiled into the CustomOS kernel. So apart from the large amount of code added this time around, it will stay relatively lean when extending it in the future.</p>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="CustomOS - Pt.10 - Editor & Compiler"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
