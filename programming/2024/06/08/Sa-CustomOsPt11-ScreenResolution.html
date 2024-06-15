@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>CustomOS - Pt.11 - Screen Resolution & User-Space Applications - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="At this point we can increase the screen resolution to 640x480 4 bits-per-pixel and enhance the interface for user-applications to build more interesting software for the CustomOS."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/programming/2024/06/08/Sa-CustomOsPt11-ScreenResolution.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="CustomOS - Pt.11 - Screen Resolution & User-Space Applications - Dennis Salzner" />
+  <meta property="og:description" content="At this point we can increase the screen resolution to 640x480 4 bits-per-pixel and enhance the interface for user-applications to build more interesting sof..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/programming/2024/06/08/Sa-CustomOsPt11-ScreenResolution.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Programming" />
+  <meta property="article:published_time" content="2024-06-08 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-06-08 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-06-08 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="At this point we can increase the screen resolution to 640x480 4 bits-per-pixel and enhance the interface for user-applications to build more interesting software for the CustomOS." />
+  <meta name="twitter:title" content="CustomOS - Pt.11 - Screen Resolution & User-Space Applications - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - CustomOS - Pt.11 - Screen Resolution & User-Space Applications</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">CustomOS - Pt.11 - Screen Resolution & User-Space Applications</div>
+<div class="page-subtitle">Writing a Custom Operating System (CustomOS)</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p><a href="https://github.com/dsalzner/customos/">
+    <img style="position: absolute; top: 0; right: 0; border: 0; height: 100px" src="../../../../images/github-fork-ribbon.png" alt="Fork me on GitHub" />
+</a></p>
+
+<p style="font-size: 60%;" align="right">What</p>
+
+<h2 id="what-we-are-trying-to-achieve">What we are trying to achieve</h2>
+
+<p>At this point we can increase the screen resolution to 640x480 4 bits-per-pixel and enhance the interface for user-applications to build more interesting software for the CustomOS.</p>
+
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-colors.gif" width="45%" />
+
+
+
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#what-we-are-trying-to-achieve" id="markdown-toc-what-we-are-trying-to-achieve">What we are trying to achieve</a></li>
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#screen-resolution" id="markdown-toc-screen-resolution">Screen Resolution</a>    <ul>
+      <li><a href="#colors-and-planes-in-4-bit-per-pixel-modes" id="markdown-toc-colors-and-planes-in-4-bit-per-pixel-modes">Colors and Planes in 4-Bit Per Pixel Modes</a></li>
+      <li><a href="#basic-set-pixel-is-not-efficient-enough" id="markdown-toc-basic-set-pixel-is-not-efficient-enough">Basic Set Pixel is not efficient enough</a></li>
+      <li><a href="#efficient-double-buffering-to-write-to-screen" id="markdown-toc-efficient-double-buffering-to-write-to-screen">Efficient double-buffering to write to screen</a></li>
+    </ul>
+  </li>
+  <li><a href="#user-space-applications-with-graphics-and-keyboard" id="markdown-toc-user-space-applications-with-graphics-and-keyboard">User Space Applications with Graphics and Keyboard</a></li>
+  <li><a href="#fixing-compiler-warnings" id="markdown-toc-fixing-compiler-warnings">Fixing Compiler Warnings</a></li>
+  <li><a href="#network-stack" id="markdown-toc-network-stack">Network Stack</a></li>
+  <li><a href="#future-goals" id="markdown-toc-future-goals">Future Goals</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>With the graphical terminal and keyboard input, Hard Disk I/O and the integrated C compiler we have everything in place to write more interesting software.</p>
+
+<p>I’ve increased the screen resolution from 320x200 to 640x480 pixels to make the CustomOS more pleasant to work with.</p>
+
+<p>In the following I’ll demonstrate how simple games and perhaps a network stack could be added.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="screen-resolution">Screen Resolution</h2>
+
+<p>Until recently I was using VESA mode 13h with 320 x 200 pixels and 8 bit per pixel.
+That mode uses 256 colors and is easy to handle as we can write full bytes to the graphics buffer.</p>
+
+<p>Mode 12h has more screen resolution with 640 x 480 pixels, but uses 4 bit per pixel.
+Each bit is on a single plane that we need to write to.</p>
+
+<h3 id="colors-and-planes-in-4-bit-per-pixel-modes">Colors and Planes in 4-Bit Per Pixel Modes</h3>
+
+<p>The four planes in mode 12h for the 640x480 pixel resolution correspond to the components of color:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="mi">0</span> <span class="o">=</span> <span class="n">blue</span>
+<span class="mi">1</span> <span class="o">=</span> <span class="n">green</span>
+<span class="mi">2</span> <span class="o">=</span> <span class="n">red</span>
+<span class="mi">3</span> <span class="o">=</span> <span class="n">grey</span>
+</code></pre></div></div>
+
+<p>So, for example, if</p>
+
+<ul>
+  <li>0,1 and 2 are set we get white</li>
+  <li>1 and 2 are set we get yellow</li>
+  <li>0 and 1 are set we get cyan</li>
+</ul>
+
+<h3 id="basic-set-pixel-is-not-efficient-enough">Basic Set Pixel is not efficient enough</h3>
+
+<p>For a basic set pixel function, as found in other CustomOSes, we can <code class="language-plaintext highlighter-rouge">select_plane</code>, read the byte and apply a mask
+ as seen in the following code - we can optimize this as seen below:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// -- GitHub mallardtheduck/osdev - src/modules/hwpnp/vga</span>
+<span class="kt">void</span> <span class="nf">select_plane</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">plane</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// -- write_sequencer(Sequencer_Registers::MapMask, (uint8_t)1 &lt;&lt; plane);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x3C4</span><span class="p">,</span> <span class="mh">0x02</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x3C5</span><span class="p">,</span> <span class="p">(</span><span class="kt">uint8_t</span><span class="p">)</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">plane</span><span class="p">);</span>
+  
+  <span class="c1">// -- write_graphics(Graphics_Registers::ReadMapSelect, plane);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x3CE</span><span class="p">,</span> <span class="mh">0x04</span><span class="p">);</span>
+  <span class="n">outportb</span><span class="p">(</span><span class="mh">0x3CF</span><span class="p">,</span> <span class="n">plane</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="c1">// -- GitHub levex/LevOS - kernel/Kernel/VGAdriver.cpp#L795</span>
+<span class="kt">void</span> <span class="nf">graphicsSetPixel</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span> <span class="n">graphicsBuffer</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">x</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">y</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">color</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">screenWidth</span> <span class="o">||</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">screenHeight</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">;</span>
+
+  <span class="kt">unsigned</span> <span class="n">wd_in_bytes</span><span class="p">,</span> <span class="n">off</span><span class="p">,</span> <span class="n">mask</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">pmask</span><span class="p">;</span>
+  <span class="n">wd_in_bytes</span> <span class="o">=</span> <span class="n">screenWidth</span> <span class="o">/</span> <span class="mi">8</span><span class="p">;</span>
+  <span class="n">off</span> <span class="o">=</span> <span class="n">wd_in_bytes</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">x</span> <span class="o">/</span> <span class="mi">8</span><span class="p">;</span>
+  <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&amp;</span> <span class="mi">7</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="n">mask</span> <span class="o">=</span> <span class="mh">0x80</span> <span class="o">&gt;&gt;</span> <span class="n">x</span><span class="p">;</span>
+  <span class="n">pmask</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">p</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">select_plane</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>  
+    <span class="k">if</span><span class="p">(</span><span class="n">pmask</span> <span class="o">&amp;</span> <span class="n">color</span><span class="p">)</span>
+      <span class="o">*</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)(</span><span class="mh">0xA000</span><span class="o">*</span><span class="mi">16</span><span class="o">+</span><span class="n">off</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)((</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="mh">0xA000</span><span class="o">*</span><span class="mi">16</span> <span class="o">+</span> <span class="n">off</span><span class="p">))</span><span class="o">|</span><span class="n">mask</span><span class="p">;</span>
+    <span class="k">else</span>
+      <span class="o">*</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)(</span><span class="mh">0xA000</span><span class="o">*</span><span class="mi">16</span><span class="o">+</span><span class="n">off</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)((</span><span class="kt">unsigned</span> <span class="kt">int</span><span class="p">)</span><span class="mh">0xA000</span><span class="o">*</span><span class="mi">16</span> <span class="o">+</span> <span class="n">off</span><span class="p">))</span><span class="o">&amp;~</span><span class="n">mask</span><span class="p">;</span>
+    <span class="n">pmask</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Updating the entire screen means switching the planes very often. On QEmu this leads to crashes and artifacts.</p>
+
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-640x480px-almost.png" width="35%" />
+
+
+
+
+<h3 id="efficient-double-buffering-to-write-to-screen">Efficient double-buffering to write to screen</h3>
+
+<p>Using the above code directly is slow as it requires reading the byte first, before writing it out. Additionally we need to switch the plane four times.</p>
+
+<p>This means if you want to fill a rectangle you will be running that hundred thousands of times.</p>
+
+<p>To combat this I’m applying simple double buffering. Each plane ‘Blue’, ‘Green’, ‘Red’ and ‘Grey’ are stored in separate internal buffers.</p>
+
+<p>Only when a flushing function, <code class="language-plaintext highlighter-rouge">graphicsFlush</code> is called, do I write the bytes to the graphics buffer. Additionally only the bytes that have been modified will be written.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">char</span> <span class="n">screenBlue</span><span class="p">[</span><span class="mi">640</span><span class="o">*</span><span class="mi">480</span><span class="o">/</span><span class="mi">8</span><span class="p">];</span>
+<span class="kt">char</span> <span class="n">screenGreen</span><span class="p">[</span><span class="mi">640</span><span class="o">*</span><span class="mi">480</span><span class="o">/</span><span class="mi">8</span><span class="p">];</span>
+<span class="kt">char</span> <span class="n">screenRed</span><span class="p">[</span><span class="mi">640</span><span class="o">*</span><span class="mi">480</span><span class="o">/</span><span class="mi">8</span><span class="p">];</span>
+<span class="kt">char</span> <span class="n">screenGrey</span><span class="p">[</span><span class="mi">640</span><span class="o">*</span><span class="mi">480</span><span class="o">/</span><span class="mi">8</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p>Similarly to caching I’ve added a ‘dirty’-flag indicating that the byte should be updated to the final graphics buffer the next time we flush.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bool</span> <span class="n">graphicsBufferDirty</span><span class="p">[</span><span class="mi">640</span><span class="o">*</span><span class="mi">480</span><span class="o">/</span><span class="mi">8</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p>With some refactoring the code turns into this:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">graphicsSetPixel</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">x</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">y</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">color</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="n">screenWidth</span> <span class="o">||</span> <span class="n">y</span> <span class="o">&gt;=</span> <span class="n">screenHeight</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">;</span>
+
+  <span class="n">color</span> <span class="o">=</span> <span class="n">color</span> <span class="o">%</span> <span class="mi">16</span><span class="p">;</span> <span class="c1">// only 4 bits allowed per pixel</span>
+
+  <span class="kt">char</span> <span class="o">*</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">bytePos</span> <span class="o">=</span> <span class="p">(</span><span class="mi">640</span> <span class="o">/</span> <span class="mi">8</span><span class="p">)</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="n">x</span> <span class="o">/</span> <span class="mi">8</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">bitPos</span> <span class="o">=</span> <span class="mh">0x80</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">x</span> <span class="o">%</span> <span class="mi">8</span><span class="p">);</span>
+  <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">colorPlaneMask</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> 
+  
+  <span class="n">bool</span> <span class="n">changed</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+  
+  <span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">p</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="n">screenBlue</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="n">screenGreen</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="n">screenRed</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="n">screenGrey</span><span class="p">;</span>
+
+    <span class="kt">char</span> <span class="n">oldValue</span> <span class="o">=</span> <span class="n">currentScreenPlane</span><span class="p">[</span><span class="n">bytePos</span><span class="p">];</span>
+    
+    <span class="k">if</span><span class="p">(</span><span class="n">colorPlaneMask</span> <span class="o">&amp;</span> <span class="n">color</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// -- bit is set for current plane</span>
+      <span class="n">currentScreenPlane</span><span class="p">[</span><span class="n">bytePos</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldValue</span> <span class="o">|</span> <span class="n">bitPos</span><span class="p">;</span> <span class="c1">// set</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="n">currentScreenPlane</span><span class="p">[</span><span class="n">bytePos</span><span class="p">]</span> <span class="o">=</span> <span class="n">oldValue</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">bitPos</span><span class="p">;</span> <span class="c1">// unset</span>
+    <span class="p">}</span>
+    
+    <span class="k">if</span><span class="p">(</span><span class="n">currentScreenPlane</span><span class="p">[</span><span class="n">bytePos</span><span class="p">]</span> <span class="o">!=</span> <span class="n">oldValue</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">changed</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+    <span class="p">}</span>
+    
+    <span class="n">colorPlaneMask</span> <span class="o">&lt;&lt;=</span> <span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="c1">// -- prepare transfer to graphics buffer</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">changed</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">graphicsBufferDirty</span><span class="p">[</span><span class="n">bytePos</span><span class="p">]</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Notice how the value we need to read <code class="language-plaintext highlighter-rouge">oldValue</code> is taken from the internal buffers and not the hardware buffers.
+I’m using only the internal buffers for the reading as reading from hardware graphics buffers is extremely slow.</p>
+
+<p>The flushing function just writes the bytes out that are marked as ‘dirty’:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">graphicsFlush</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">bytePos</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">bytePos</span> <span class="o">&lt;</span> <span class="mi">640</span><span class="o">*</span><span class="mi">480</span><span class="o">/</span><span class="mi">8</span><span class="p">;</span> <span class="n">bytePos</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">graphicsBufferDirty</span><span class="p">[</span><span class="n">bytePos</span><span class="p">])</span> <span class="p">{</span>
+
+      <span class="kt">char</span> <span class="o">*</span> <span class="n">graphicsBuffer</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="p">)</span><span class="mh">0xA000</span><span class="p">;</span>
+      <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">graphicsBufferBytePos</span> <span class="o">=</span> <span class="mi">40960</span> <span class="o">*</span> <span class="mi">15</span> <span class="o">+</span> <span class="n">bytePos</span><span class="p">;</span> <span class="c1">// -- graphics buffer is at end of 64k</span>
+      <span class="kt">char</span> <span class="o">*</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+      
+      <span class="k">for</span><span class="p">(</span><span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">p</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">p</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">select_plane</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="n">screenBlue</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="n">screenGreen</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="n">screenRed</span><span class="p">;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span> <span class="n">currentScreenPlane</span> <span class="o">=</span> <span class="n">screenGrey</span><span class="p">;</span>
+        
+        <span class="n">graphicsBuffer</span><span class="p">[</span><span class="n">graphicsBufferBytePos</span><span class="p">]</span> <span class="o">=</span> <span class="n">currentScreenPlane</span><span class="p">[</span><span class="n">bytePos</span><span class="p">];</span>
+      <span class="p">}</span>
+      
+      <span class="n">graphicsBufferDirty</span><span class="p">[</span><span class="n">bytePos</span><span class="p">]</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>With that we get fast and properly working 640x480 px 4 bpp mode.</p>
+
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-640x480px-sirpins.gif" width="45%" />
+
+
+
+
+<h2 id="user-space-applications-with-graphics-and-keyboard">User Space Applications with Graphics and Keyboard</h2>
+
+<p>I’ve extended the list of functions that the C-compiler makes available to user space applications.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">setPutChar(character)</code> - write one character to the CustomOS shell</li>
+  <li><code class="language-plaintext highlighter-rouge">setGraphicsSetPixel(x,y,color)</code> - set a single pixel</li>
+  <li><code class="language-plaintext highlighter-rouge">setGraphicsFlush()</code> - flush graphics</li>
+  <li><code class="language-plaintext highlighter-rouge">setExit()</code> - exit back to the CustomOS shell</li>
+</ul>
+
+<p>Additionally, when user space applications are run, the CustomOS will call</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">init()</code> - first call to initialize the user space application</li>
+  <li><code class="language-plaintext highlighter-rouge">update()</code> - if available, will keep the application running and call it approx. every 100ms</li>
+  <li><code class="language-plaintext highlighter-rouge">keyboardDown(key, scancode)</code> - if available and when a key is pressed this function is called on the user space application</li>
+</ul>
+
+<p>That interface is sufficient to write interesting user space applications.</p>
+
+<p>For example this application will draw a moving green line on the screen that can be controlled with the keyboard arrow keys.</p>
+
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-snake.gif" width="35%" />
+
+
+
+
+<p>It’s easy to see how this could be used to write a game like “Snake” that became popular with Nokia smartphones from the 90s.</p>
+
+<h2 id="fixing-compiler-warnings">Fixing Compiler Warnings</h2>
+
+<p>I had accumulated a bunch of smaller bugs and compiler warnings. These are best remedied by simply attempting to use the CustomOS for something remotely productive.</p>
+
+<ul>
+  <li>the buffer sizes for loading files from disk were too small and chunked reads/writes had bugs. Currently I’m just reading/writing byte-wise, which is efficient enough for our use case.</li>
+  <li>Rust expects constants to be in all-caps and variables and functions to be in snake_case notation.</li>
+  <li>there were a bunch of unused variables</li>
+  <li>when transitioning from 8bpp color more to 4bpp some color names and values had to be adjusted.</li>
+  <li>filename strings weren’t always properly null-terminated</li>
+</ul>
+
+<p>Now it builds with only a very small amount of warnings I have yet to fix, but runs very stably.</p>
+
+<h2 id="network-stack">Network Stack</h2>
+
+<p>The built-in C Compiler allows us to run code “natively” on the CPU. This means the same functions that drop down to assembler machine operations, as in the kernel code, can also be used in user space applications to read and write data to/from the PCI bus. From a programming perspective reading and writing to an PCI IDE controller and reading and writing to a PCI network card is not that much different.</p>
+
+<p>I’ve written two user space applications <code class="language-plaintext highlighter-rouge">lspci.c</code> and <code class="language-plaintext highlighter-rouge">net-macaddr.c</code> to demonstrate this. The first lists all PCI devices and detects the IDE-Controller and rtl8139 network card. The second reads the MAC (medium access control) address, also called physical network address, from the card.</p>
+
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-network-2.png" width="35%" />
+
+
+
+
+<p>We can see that reading and writing bytes to the network card from a user space application is easily possible. To send and receive, for instance, web pages via HTTPS-Get-Requests, we’d need to implement a network stack.</p>
+
+<p>This is something I might do another time.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="future-goals">Future Goals</h2>
+
+<p>The kernel I would consider more or less completed. Intentionally the kernel currently handles only:</p>
+
+<ul>
+  <li>booting</li>
+  <li>displaying a shell</li>
+  <li>graphics</li>
+  <li>read/write access to disk</li>
+  <li>editing files and source code</li>
+  <li>and compiling/running that source code, the user-space applications</li>
+</ul>
+
+<p>This is sufficient in order to add additional features solely by user space applications.</p>
+
+<p>A list of features that could be added are:</p>
+
+<p><strong>Memory Protection</strong></p>
+
+<p>Currently the CustomOS crashes, when a erroneous user-space application runs. This would have to be fixed in the kernel itself.</p>
+
+<ul>
+  <li>protect against jumps to invalid memory address</li>
+  <li>stop execution of endless loops with a loop counter or watchdog timer</li>
+</ul>
+
+<p><strong>Running on real hardware/”bare-metal” machine</strong></p>
+
+<p>Modern computers have replaced some of the hardware that I’ve relied on in the QEmu emulation.
+To tun the CustomOS on a real computer I suspect some additional hardware drivers would need to be added.</p>
+
+<ul>
+  <li>Keyboard/Mouse support with USB
+    <ul>
+      <li>currently the CustomOS supports only PS/2</li>
+      <li>PS/2 has been deprecated and replaced with USB on modern computers</li>
+      <li>some older mainboards support a legacy mode for PS/2 compatibility, but I’m not sure how common that will be in the future</li>
+      <li>to be safe we’d need to add some “Human Interface Device” (USB-HID) support</li>
+      <li>porting a library for USB keyboard and mouse support from Arduino could be the easiest approach [5,6]</li>
+    </ul>
+  </li>
+  <li>Disk Input/Output
+    <ul>
+      <li>reading and writing to disk would also have to be revisited</li>
+      <li>modern computers use the “Advanced Host Controller Interface” (AHCI) instead of the old “AT Attachment Packet Interface” (ATAPI)/”Integrated Drive Electronics” (IDE)</li>
+      <li>this is required for modern SATA hard drives</li>
+      <li>of course drivers for AHCI [7] exist that could be ported</li>
+      <li>we’d likely also need to implement “Direct Memory Access” (DMA) for it to work</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Includes</strong></p>
+
+<p>The size of the source code of user space applications are limited</p>
+
+<ul>
+  <li>allow adding other includes from the disk
+    <ul>
+      <li>should be easily doable by adding <code class="language-plaintext highlighter-rouge">f_read</code> from the FatFS library to the compiler.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Threading</strong></p>
+
+<p>For many tasks such as editing and running code in parallel, playing audio while doing something else or a timeout on the network interface, multi-threading would be useful.</p>
+
+<p>Some of these tasks can be circumvented using the PIT (Programmable Interrupt Timer) to trigger a timer interrupt, but proper multi-threading is essential for some tasks.</p>
+
+<ul>
+  <li>allow multi-threading</li>
+</ul>
+
+<p><strong>Network</strong></p>
+
+<p>As mentioned above, a network stack could be interesting.</p>
+
+<ul>
+  <li>Get the Time via NTP</li>
+  <li>A simple TFTP or FTP server
+    <ul>
+      <li>to be able to get files in and out of the CustomOS easily</li>
+    </ul>
+  </li>
+  <li>Send HTTPS GET requests
+    <ul>
+      <li>grab stock market information</li>
+      <li>the current weather</li>
+      <li>control smart home devices on the home network</li>
+    </ul>
+  </li>
+  <li>Gopher
+    <ul>
+      <li>I’ve come across a Gopher implementation in ZealOS (a fork of TempleOS) [4]</li>
+      <li>it’s a clever alternative as Gopher pages are much easier to render than HTML laced with CSS and Java-Script</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Entertainment</strong></p>
+
+<p>There are a few games that could be easily implemented or ported to the CustomOS.</p>
+
+<ul>
+  <li>Breakout
+    <ul>
+      <li>the game where you hit bricks with a ball until all bricks are destroyed</li>
+      <li>is a bit more interesting than pong</li>
+      <li>should be easy to implement perhaps in colors close to the Atari-style color scheme</li>
+    </ul>
+  </li>
+  <li>Asteroids
+    <ul>
+      <li>there is a great implementation in C [1] that uses OpenGL (freeglut)</li>
+      <li>the drawing functions use <code class="language-plaintext highlighter-rouge">glBegin(GL_LINE_LOOP);</code>, <code class="language-plaintext highlighter-rouge">glVertex2f</code>, <code class="language-plaintext highlighter-rouge">glEnd();</code> to draw polygons</li>
+      <li>this could likely be easily ported to the CustomOS</li>
+    </ul>
+  </li>
+  <li>Doom
+    <ul>
+      <li>there are ports called “doom-generic” [2,3]  on GitHub</li>
+      <li>it uses only keyboard input and direct writes to the graphics framebuffer</li>
+      <li>it would be an easy port to the CustomOS</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Productivity</strong></p>
+
+<p>Anything one would use during day-to-day work like proper text editors, drawing applications, spreadsheets could, with considerable effort, be implemented or ported to the CustomOS.</p>
+
+<ul>
+  <li>
+    <p>Image Viewer/Drawing Application</p>
+  </li>
+  <li>
+    <p>Better Text Editor</p>
+    <ul>
+      <li>the current editor is very rudimentary and could be improved.</li>
+      <li>markdown support would be nice</li>
+      <li>and also syntax highlighting</li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Audio</strong></p>
+
+<p>It is probably also possible to implement basic audio by filling sound card buffers.</p>
+
+<p>The CustomOS wouldn’t be able to play anything in the background as long as we don’t have multi-threading, but it should be possible to output PCM buffers to the sound card.</p>
+
+<ul>
+  <li>play PCM buffers on the sound card for alert sounds</li>
+  <li>perhaps add an audio decoding library
+    <ul>
+      <li>a lot of audio codecs have open-source decoders</li>
+      <li>there are also single header implementations on GitHub that can be used</li>
+    </ul>
+  </li>
+</ul>
+
+<p>The bottom line is that anything can, in principle, be added. At some point we end up recreating what larger operating systems do a lot better.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The ability to add user space application makes it very easy to extend the CustomOS with additional features. Entire drivers can be written in user space and can directly access, for instance, the PCI bus.</p>
+
+<p>I have a number of ideas on how to extend the functionality, however this project is becoming more and more time consuming. Adding drivers for a broad range of hardware devices is an uphill battle for a single person, but some basic necessities to run the CustomOS on real hardware would be nice.</p>
+
+<hr />
+
+<pre>
+1] https://github.com/attwoodn/c-asteroids
+2] https://github.com/ozkl/doomgeneric
+3] https://github.com/id-Software/DOOM
+4] https://github.com/Zeal-Operating-System/ZealOS/blob/master/src/Home/Net/Programs/Gopher.ZC
+5] https://github.com/felis/USB_Host_Shield_2.0/blob/master/Usb.cpp
+6] https://github.com/felis/USB_Host_Shield_2.0/blob/master/usbhid.cpp
+7] https://github.com/OS2World/DRV-AHCI/blob/master/src/os2ahci/ahci.c
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="CustomOS - Pt.11 - Screen Resolution & User-Space Applications"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>

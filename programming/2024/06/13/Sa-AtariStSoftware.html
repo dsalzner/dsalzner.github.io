@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Developing Software for the Atari ST - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="With the Atari ST sitting my living room, I get asked from time to time whether I've written software for it. In fact I have and it's not at all difficult. I'll explain the proc..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/programming/2024/06/13/Sa-AtariStSoftware.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Developing Software for the Atari ST - Dennis Salzner" />
+  <meta property="og:description" content="With the Atari ST sitting my living room, I get asked from time to time whether I've written software for it. In fact I have and it's not at all difficult. I..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/programming/2024/06/13/Sa-AtariStSoftware.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Programming" />
+  <meta property="article:published_time" content="2024-06-13 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-06-13 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-06-13 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="With the Atari ST sitting my living room, I get asked from time to time whether I've written software for it. In fact I have and it's not at all difficult. I'll explain the proc..." />
+  <meta name="twitter:title" content="Developing Software for the Atari ST - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Developing Software for the Atari ST</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Developing Software for the Atari ST</div>
+<div class="page-subtitle">Writing software in Basic and C with graphical user interfaces and cross-compiling for the Atari from Linux</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p><a href="https://github.com/dsalzner/customos/">
+    <img style="position: absolute; top: 0; right: 0; border: 0; height: 100px" src="../../../../images/github-fork-ribbon.png" alt="Fork me on GitHub" />
+</a></p>
+
+<p style="font-size: 60%;" align="right">What</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-7.png" width="5%" />
+
+
+
+
+<p>With the Atari ST sitting my living room, I get asked from time to time whether I’ve written software for it. In fact I have and it’s not at all difficult. I’ll explain the process for everyone that has a knack for retro computing like I do.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atarist-windows.gif" width="35%" />
+
+
+
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atari-st-cross-compile.png" width="25%" />
+
+
+
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#emulators" id="markdown-toc-emulators">Emulators</a>    <ul>
+      <li><a href="#installing-an-emulator" id="markdown-toc-installing-an-emulator">Installing an Emulator</a></li>
+      <li><a href="#rom" id="markdown-toc-rom">ROM</a></li>
+      <li><a href="#loading-software" id="markdown-toc-loading-software">Loading Software</a></li>
+    </ul>
+  </li>
+  <li><a href="#compilers-and-interpreters" id="markdown-toc-compilers-and-interpreters">Compilers and Interpreters</a>    <ul>
+      <li><a href="#omikron-basic" id="markdown-toc-omikron-basic">Omikron Basic</a></li>
+      <li><a href="#borland-turbo-c" id="markdown-toc-borland-turbo-c">Borland Turbo C</a></li>
+    </ul>
+  </li>
+  <li><a href="#cross-compiling" id="markdown-toc-cross-compiling">Cross-Compiling</a>    <ul>
+      <li><a href="#setup-cross-compiler" id="markdown-toc-setup-cross-compiler">Setup Cross-Compiler</a></li>
+      <li><a href="#write-some-code" id="markdown-toc-write-some-code">Write some code</a></li>
+      <li><a href="#compile-it" id="markdown-toc-compile-it">Compile it</a></li>
+      <li><a href="#copy-compiled-binary-into-hatari" id="markdown-toc-copy-compiled-binary-into-hatari">Copy compiled binary into Hatari</a></li>
+      <li><a href="#running-the-code" id="markdown-toc-running-the-code">Running the code</a></li>
+    </ul>
+  </li>
+  <li><a href="#graphical-user-interfaces" id="markdown-toc-graphical-user-interfaces">Graphical User Interfaces</a>    <ul>
+      <li><a href="#editors-for-graphical-user-interfaces" id="markdown-toc-editors-for-graphical-user-interfaces">Editors for Graphical User Interfaces</a></li>
+      <li><a href="#creating-windows-with-aes-and-vdi" id="markdown-toc-creating-windows-with-aes-and-vdi">Creating Windows with AES and VDI</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>The Atari ST uses the Motorola 86k processor. It’s 40 years old and differs substantially from modern hardware, but is also a lot easier to program directly.</p>
+
+<p>To make things easier there are a lot of very well functioning emulators for the Atari that allow working on software from your regular PC. The binaries can then be transferred to the real machine afterwards.</p>
+
+<p>Additionally there are options to cross-compile code from Windows or Linux for the Atari ST. The cross-compiled binaries can be tested in that same emulator and later be transferred onto the real machine.</p>
+
+<p>Since the Atari ST came out in ‘85 and we have internet now, we can easily find software ROM images online and can use easier methods to transfer software to the Atari instead of floppy disks like serial cables or SD-cards (see <a href="/retrocomp/2022/02/17/Do-AtariStMegaAcsiSdCard.html">SD-Cards</a>). Writing software on the machine itself has also become much more pleasant with the ability to connect modern peripherals (see <a href="/retrocomp/2023/06/13/Di-AtariStKeyboardMouse.html">Keyboard/Mouse</a> and <a href="/retrocomp/2018/03/01/Do-AtariSTMega.html">VGA Monitors</a>).</p>
+
+<p>I remember writing software for the Atari ST as a kid with Omikron Basic. Later, during my studies, I used Turbo C and have cross-compiled for the Motorola 86k from Linux. For GUI applications there is the “Resource Construction Set” (GEM RCS) that allows drawing user interfaces and exporting them as loadable <em>.c/</em>h sources/headers. I remember writing a small graphical calculator that uses a stack and reverse polish notation to solve algebraic equations, but I’ve lost the source code for it.</p>
+
+<p>There are different options to writing software for the Atari ST. I’ll get into how some of them work below.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="emulators">Emulators</h2>
+
+<p>To quickly try software out it makes sense to install an emulator</p>
+
+<h3 id="installing-an-emulator">Installing an Emulator</h3>
+
+<p>On Ubuntu 23.10 this is easily done by installing Hatari from the official packages repositories.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt install hatari
+</code></pre></div></div>
+
+<p>I’m currently running Hatari v2.4.1</p>
+
+<h3 id="rom">ROM</h3>
+
+<p>Hatari requires a “The Operating System” (TOS) ROM to boot. I’ve tried different versions found online and settled for the german version of TOS 3.06.</p>
+
+<p><strong>TOS 4.92</strong>  (md5: 941baac767269649f92f7918dd5740b8)</p>
+
+<p>Some Versions like TOS 4.92 don’t work for me. Hatari switches to Falcon mode, then crashes</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip tos492.zip
+<span class="nb">sudo cp </span>tos492/Tos492.img /usr/share/hatari/tos.img
+</code></pre></div></div>
+
+<p><strong>TOS 3.06de</strong> (md5: 066f39a7ea5789d5afd59dd7b3104fa6)</p>
+
+<p>Other versione like TOS 3.06de work well. The only downside is that it switches to Atari TT mode, but that usually only means you may need to set a different screen resolution inside TOS.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>unzip tos306de.zip
+<span class="nb">sudo cp </span>tos306de/tos306de.rom /usr/share/hatari/tos.img
+</code></pre></div></div>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-1.png" width="25%" />
+
+
+
+
+<p>The Atari ST Mega I have has only a monochrome monitor, but with more resolution. That can be changed in the settings within TOS.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-2.png" width="25%" />
+
+
+
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-3.png" width="25%" />
+
+
+
+
+<h3 id="loading-software">Loading Software</h3>
+
+<p>Next we will need to load software from Floppy disk images. The F12 will bring up Hatari’s main menu.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-4.png" width="25%" />
+
+
+
+
+<p>From that menu we can select the floppy disk image of, for instance, Omikron Basic (“omkbsc303.st”).</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-5.png" width="25%" />
+
+
+
+
+<p>The floppy disk can then be opened within TOS and “OM-BASIC.PRG” can be launched.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-6.png" width="25%" />
+
+
+
+
+<p>Long loading times and frequent crashes add to the realism. Computing at that day and age was not as stable as it is today.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-7.png" width="5%" />
+
+
+
+
+<p>People seeing this on the screen with the machine completely unresponsive, similar to a bluescreen on Windows, is what coined the term “it bombed”</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-8.png" width="15%" />
+
+
+
+
+<h2 id="compilers-and-interpreters">Compilers and Interpreters</h2>
+
+<p>In order to write code on the Atari we need compilers or at least interpreters. There are a few options.</p>
+
+<h3 id="omikron-basic">Omikron Basic</h3>
+
+<p>Omikron Basic was a very popular interpreter for the BASIC programming language at the time.</p>
+
+<p>It’s the first programming language I’ve programmed in and so I know first hand that it’s very easy to learn.</p>
+
+<p>I don’t have a working copy of the interpreter, but the manual accompanying the software is available to read online at the internet archive [1].</p>
+
+<p>Seeing the book I vaguely remember the syntax. As a kid I would write hard-coded text adventures similar to this (untested, consider it pseudo-code):</p>
+
+<pre><code class="language-basic">00 K$="0"
+01 PRINT "A person stands in a room. There is a desk and a door. On the desk there is a key. What would you like to do?"
+02 INPUT "1) try to open the door, 2) pick up the key";A$
+03 IF A$="1" THEN
+04   IF K$="0" THEN
+05     PRINT "The door appears to be locked"
+06     GOTO 01
+07   ELSE
+08     PRINT "The door opens. You are now in Room 2"
+09     GOTO 15
+10   ENDIF
+11 ELSE
+12   PRINT "The key is now in your pocket"
+13   K$="1"
+14 ENDIF
+15 PRINT "You have entered room 2"
+</code></pre>
+
+<h3 id="borland-turbo-c">Borland Turbo C</h3>
+
+<p>The Turbo C compiler is better suited for serious development on the Atari.</p>
+
+<p><strong>Turbo C for Atari ST v2.0 (1990)(Borland)(Disk 1 of 3)</strong> (md5sum: 2ef0301356fae5535c2622bc6ddd180d)</p>
+
+<p>To run it, within Hatari, I insert the disk image in drive A. Additionally I create a blank disk image in the floppy disk menu and insert that into drive B. This is where we can store our code.</p>
+
+<p>After launching Turbo C we can create a new file in the Menu under “File -&gt; New”.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-turbo-c-1.png" width="25%" />
+
+
+
+
+<p>When writing C-Code <code class="language-plaintext highlighter-rouge">void main() {</code> in German TOS with a german keyboard layout you might encounter a problem with curly braces. The key isn’t properly mapped in Hatari. Fortunately is a known issue [2] and there is a way around this.</p>
+
+<p>for opening curly bracies</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">[Right Alt] + [Right Shift] + [Ö]</code></li>
+</ul>
+
+<p>for closing curly braces type</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">[Right Alt] + [Right Shift] + [Ä]</code></li>
+</ul>
+
+<p>for a backslash</p>
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">[Right Alt] + [Right Shift] + [Ü]</code></li>
+</ul>
+
+<p>For saving <code class="language-plaintext highlighter-rouge">[CRTL] + [S]</code> actually works the same as in most applications today.</p>
+
+<p>Not thate under “Compiler” you can manually compile and assemble, but it is quicker to run code by using “Project” -&gt; “Run”. That will automatically save first, then compile and run.</p>
+
+<p>The following code will work.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-turbo-c-2.png" width="25%" />
+
+
+
+
+<p>Note that</p>
+<ul>
+  <li>the standard library was already called <code class="language-plaintext highlighter-rouge">stdio.c</code> in the 80s</li>
+  <li>the main function should return a ‘0’ return code, otherwise Turbo C will assume an error.</li>
+  <li>and with <code class="language-plaintext highlighter-rouge">getchar()</code> I’m making sure the console stays open so we can see what we have printed to the screen.</li>
+</ul>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-turbo-c-3.png" width="25%" />
+
+
+
+
+<h2 id="cross-compiling">Cross-Compiling</h2>
+
+<p>Being able to write software on the Atari like it’s 1985 is nice. Writing software in an emulator is already a lot more convenient. But the best way to write software is on a modern operating system, cross-compile it and then run it on either the emulator or the real Atari.</p>
+
+<p>A cross-compile toolchain for m86k-atari exists ready-made [3]. The approach to building such a toolchain is similar to what I’ve done for my CustomOS (see <a href="/programming/2021/12/11/Sa-CustomOsPt1-CrossCompiler.html">Cross-Compiler for the CustomOS</a>).</p>
+
+<p>The “m68k-atari-mint cross-tools” adds the tools to produce compatible binaries for the Atari ST.</p>
+
+<h3 id="setup-cross-compiler">Setup Cross-Compiler</h3>
+
+<p>There are even ready made packages in apt for Ubuntu [4].</p>
+
+<p>On my Ubuntu 23.10:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>add-apt-repository ppa:vriviere/ppa
+<span class="nb">sudo </span>apt <span class="nb">install </span>cross-mint-essential
+</code></pre></div></div>
+
+<h3 id="write-some-code">Write some code</h3>
+
+<p>Similar to the example above we can write:</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"cross-compile test</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+  <span class="n">getchar</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="compile-it">Compile it</h3>
+
+<p>Compiling is the same as with the regular gcc compiler.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>m68k-atari-mint-gcc test.c <span class="nt">-o</span> test.prg
+</code></pre></div></div>
+
+<h3 id="copy-compiled-binary-into-hatari">Copy compiled binary into Hatari</h3>
+
+<p>Now we need to transfer that binary to Hatari to read. Luckily the Hatari emulator makes this super convenient.</p>
+
+<p>Under hard disks in Hatari there is an option “GEMDOS drive”.</p>
+
+<p>There we can map a folder from our host operating system into the Atari ST TOS.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-map-folder-1.png" width="25%" />
+
+
+
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-map-folder-2.png" width="35%" />
+
+
+
+
+<h3 id="running-the-code">Running the code</h3>
+
+<p>By clicking on the binary we can run it and see our message being printed at the top of the screen.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atari-st-cross-compile.png" width="25%" />
+
+
+
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="graphical-user-interfaces">Graphical User Interfaces</h2>
+
+<p>With “Application Environment Services” (AES) and “Virtual Device Interface” (VDI) we can build multi-window applications such as this code I wrote some time around June 2011.</p>
+
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atarist-windows.gif" width="25%" />
+
+
+
+
+<p>I have a vivid memory of having extended that code to a full-blown calculator using “reverse polish notation” [5] under the hood to solve algebraic equations, but I can’t find the code anymore. Maybe it was all a dream.</p>
+
+<p>Either way GUI programming on Atari ST is not that much different as it is today.</p>
+
+<h3 id="editors-for-graphical-user-interfaces">Editors for Graphical User Interfaces</h3>
+
+<p>The aforementioned “Resource Construction Set” (GEM RCS) can be used to draw a user interface. The generated code from that editor can then be included into your own code.</p>
+
+<p>Usually, even today with large application frameworks such as Qt, the user interface editors (like QtCreator) are generally not perfectly reliable and developers usually drop down to custom code here and there anyway. We then end up with a hard to maintain mix and are often better off just writing the entire GUI from scratch - though these UI editors may be helpful when working in a cross-functional team with low/no-code team members like designers.</p>
+
+<p>I usually prefer writing UIs in procedural-style.</p>
+
+<h3 id="creating-windows-with-aes-and-vdi">Creating Windows with AES and VDI</h3>
+
+<p>To write a simple multi-windows UI for TOS we first need to include the required headers and set some defines. Note that these defines are in a predefined order that are expected by the libraries we’re using.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;aes.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;vdi.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span>
+<span class="cp">#define DESK 0
+#define W_KIND NAME|CLOSER|FULLER|MOVER|SIZER 
+#define EV_KIND MU_MESAG|MU_TIMER|MU_KEYBD
+</span>
+<span class="k">typedef</span> <span class="k">enum</span> <span class="p">{</span>
+  <span class="n">FALSE</span><span class="p">,</span>
+  <span class="n">TRUE</span>
+<span class="p">}</span> <span class="n">boolean</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>For handling the window we’ll need <code class="language-plaintext highlighter-rouge">close</code>, <code class="language-plaintext highlighter-rouge">draw</code>, <code class="language-plaintext highlighter-rouge">(handle) event</code> and <code class="language-plaintext highlighter-rouge">resize</code> functions that do what their names imply.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">boolean</span> <span class="nf">window_init</span><span class="p">();</span>
+<span class="kt">void</span> <span class="nf">window_close</span><span class="p">(</span><span class="kt">int</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">window_draw</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+<span class="kt">void</span> <span class="nf">window_event</span><span class="p">();</span>
+<span class="kt">void</span> <span class="nf">window_resize</span><span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">,</span> <span class="kt">int</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Some variable to keep track of current state</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">boolean</span> <span class="n">fertig</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+<span class="kt">int</span> <span class="n">window_handle</span><span class="p">;</span>
+<span class="n">boolean</span> <span class="n">window_fullscreen</span><span class="p">;</span>
+<span class="kt">int</span> <span class="n">window_x</span><span class="p">,</span> <span class="n">window_y</span><span class="p">,</span> <span class="n">window_w</span><span class="p">,</span> <span class="n">window_h</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>A main loop that handles keyboard and mouse events.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">event</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">mouse_x</span><span class="p">,</span> <span class="n">mouse_y</span><span class="p">,</span> <span class="n">mouse_button</span><span class="p">,</span> <span class="n">mouse_state</span><span class="p">,</span> <span class="n">mouse_click</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">keyboard_code</span><span class="p">;</span>
+  
+  <span class="n">printf</span><span class="p">(</span><span class="s">"Guten Tag!"</span><span class="p">);</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="n">window_init</span><span class="p">()</span> <span class="o">==</span> <span class="n">FALSE</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Open window failed"</span><span class="p">);</span>
+	  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">while</span><span class="p">(</span><span class="n">fertig</span> <span class="o">==</span> <span class="n">FALSE</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// -- mouse event timer (1000ms)</span>
+    <span class="n">event</span> <span class="o">=</span> <span class="n">evnt_multi</span><span class="p">(</span>
+      <span class="n">EV_KIND</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+      <span class="n">npuffer</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mouse_x</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mouse_y</span><span class="p">,</span>
+      <span class="o">&amp;</span><span class="n">mouse_button</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mouse_state</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">keyboard_code</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mouse_click</span><span class="p">);</span>
+  
+    <span class="c1">// -- start drawing</span>
+    <span class="n">wind_update</span><span class="p">(</span><span class="n">BEG_UPDATE</span><span class="p">);</span>
+    
+    <span class="k">if</span><span class="p">(</span><span class="n">event</span> <span class="o">&amp;</span> <span class="n">MU_MESAG</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">WM_REDRAW</span> <span class="o">&amp;&amp;</span> <span class="n">WM_NEWTOP</span> <span class="o">&gt;=</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+        <span class="n">window_event</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">event</span> <span class="o">&amp;</span> <span class="n">MU_TIMER</span><span class="p">)</span> <span class="p">{</span>
+          <span class="c1">// -- one second passed</span>
+        <span class="p">}</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">event</span> <span class="o">&amp;</span> <span class="n">MU_KEYBD</span><span class="p">)</span> <span class="p">{</span> 
+          <span class="c1">// -- keyboard event</span>
+        <span class="p">}</span>
+      <span class="p">}</span> 
+    <span class="p">}</span>
+    <span class="c1">// -- handle events</span>
+    <span class="n">wind_update</span><span class="p">(</span><span class="n">END_UPDATE</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>a function that creates a window</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">boolean</span> <span class="nf">window_init</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">nwindow</span><span class="p">,</span> <span class="n">xdesk</span><span class="p">,</span> <span class="n">ydesk</span><span class="p">,</span> <span class="n">wdesk</span><span class="p">,</span> <span class="n">hdesk</span><span class="p">;</span>
+  <span class="n">wind_get</span><span class="p">(</span><span class="n">DESK</span><span class="p">,</span> <span class="n">WF_WORKXYWH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">xdesk</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">ydesk</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">wdesk</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hdesk</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">((</span><span class="n">nwindow</span> <span class="o">=</span> <span class="n">wind_create</span><span class="p">(</span><span class="n">W_KIND</span><span class="p">,</span> <span class="n">xdesk</span><span class="p">,</span> <span class="n">ydesk</span><span class="p">,</span> <span class="n">wdesk</span><span class="p">,</span> <span class="n">hdesk</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Failed opening window"</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">FALSE</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="c1">// -- turn mouse off</span>
+  <span class="n">graf_mouse</span><span class="p">(</span><span class="n">M_OFF</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span> 
+
+  <span class="n">wind_set</span><span class="p">(</span><span class="n">nwindow</span><span class="p">,</span> <span class="n">WF_NAME</span><span class="p">,</span> <span class="s">"Beispiel"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="n">wind_open</span><span class="p">(</span><span class="n">nwindow</span><span class="p">,</span> <span class="n">wdesk</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">hdesk</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span> <span class="n">wdesk</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">hdesk</span> <span class="o">/</span> <span class="mi">3</span><span class="p">);</span>
+  
+  <span class="n">wind_get</span><span class="p">(</span><span class="n">nwindow</span><span class="p">,</span> <span class="n">WF_WORKXYWH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_x</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_y</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_w</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_h</span><span class="p">);</span>
+  <span class="n">window_handle</span> <span class="o">=</span> <span class="n">nwindow</span><span class="p">;</span>
+  <span class="n">window_fullscreen</span> <span class="o">=</span> <span class="n">FALSE</span><span class="p">;</span>
+  
+  <span class="c1">// -- turn mouse on</span>
+  <span class="n">graf_mouse</span><span class="p">(</span><span class="n">M_ON</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  
+  <span class="c1">// -- set cursor to arrow (instead of bee)</span>
+  <span class="n">graf_mouse</span><span class="p">(</span><span class="n">ARROW</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+    
+  <span class="k">return</span> <span class="n">TRUE</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>one that closes a window</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">window_close</span><span class="p">(</span><span class="kt">int</span> <span class="n">window_id</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">;</span>
+  <span class="n">wind_get</span><span class="p">(</span><span class="n">window_id</span><span class="p">,</span> <span class="n">WF_CURRXYWH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">x</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">y</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">w</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">h</span><span class="p">);</span>
+  <span class="n">graf_shrinkbox</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">);</span>
+  <span class="n">wind_close</span><span class="p">(</span><span class="n">window_id</span><span class="p">);</span>
+  <span class="n">wind_delete</span><span class="p">(</span><span class="n">window_id</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>resizes a window</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">window_resize</span><span class="p">(</span><span class="kt">int</span> <span class="n">window_id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">w</span><span class="p">,</span> <span class="kt">int</span> <span class="n">h</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">wind_set</span><span class="p">(</span><span class="n">window_id</span><span class="p">,</span> <span class="n">WF_CURRXYWH</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">);</span>
+  <span class="n">wind_get</span><span class="p">(</span><span class="n">window_id</span><span class="p">,</span> <span class="n">WF_WORKXYWH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_x</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_y</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_w</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_h</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>draws the window contents (empty implementation here)</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">window_draw</span><span class="p">(</span><span class="kt">int</span> <span class="n">window_id</span><span class="p">,</span> <span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">w</span><span class="p">,</span> <span class="kt">int</span> <span class="n">h</span><span class="p">)</span> <span class="p">{</span> <span class="p">}</span>
+</code></pre></div></div>
+
+<p>and the window event loop that triggers <code class="language-plaintext highlighter-rouge">window_draw</code> and <code class="language-plaintext highlighter-rouge">window_resize</code> as expected.</p>
+
+<div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">window_event</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">switch</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="n">WM_REDRAW</span><span class="p">:</span>
+      <span class="n">window_draw</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">7</span><span class="p">]);</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">WM_CLOSED</span><span class="p">:</span>
+      <span class="n">window_close</span><span class="p">(</span><span class="n">window_handle</span><span class="p">);</span>
+      <span class="n">fertig</span> <span class="o">=</span> <span class="n">TRUE</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">WM_MOVED</span><span class="p">:</span>
+    <span class="k">case</span> <span class="n">WM_SIZED</span><span class="p">:</span>
+      <span class="n">window_resize</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">7</span><span class="p">]);</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">WM_TOPPED</span><span class="p">:</span>
+    <span class="k">case</span> <span class="n">WM_NEWTOP</span><span class="p">:</span>
+      <span class="n">wind_set</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">WF_TOP</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+      <span class="n">wind_get</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">WF_WORKXYWH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_x</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_y</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_w</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_h</span><span class="p">);</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="n">WM_FULLED</span><span class="p">:</span>
+      <span class="k">if</span><span class="p">((</span><span class="n">window_fullscreen</span> <span class="o">^=</span> <span class="n">TRUE</span><span class="p">))</span>
+        <span class="n">wind_get</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">WF_FULLXYWH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">7</span><span class="p">]);</span>
+      <span class="k">else</span>
+        <span class="n">wind_get</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">WF_PREVXYWH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="o">&amp;</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">7</span><span class="p">]);</span>
+        
+      <span class="n">wind_get</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">WF_WORKXYWH</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_x</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_y</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_w</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window_h</span><span class="p">);</span>
+      
+      <span class="n">window_resize</span><span class="p">(</span><span class="n">npuffer</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">6</span><span class="p">],</span> <span class="n">npuffer</span><span class="p">[</span><span class="mi">7</span><span class="p">]);</span>
+    <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Developing software for Atari ST is actually easier nowadays, than it was in the past.</p>
+
+<p>There are many reasons for this. We now have…</p>
+
+<ul>
+  <li>easy access to many compilers and software</li>
+  <li>much more reliable and cheaper storage systems</li>
+  <li>emulators that can be used to much more quickly test and debug the software we write</li>
+  <li>emulatulation with more memory and disk space than the original Atari ever had</li>
+  <li>computers with much more screen resolution and better multi-tasking abilities</li>
+  <li>improved peripherals - better keyboards and mice</li>
+  <li>much quicker compilers and much more verbose cross-compile chains</li>
+  <li>source code management like Git repos to keep track of changes and diff between code</li>
+  <li>access to now open-sourced Atari ST software that can be found all over GitHub by looking for function signatures</li>
+  <li>and for me, personally, much more knowledge of software development, than I had in the past.</li>
+</ul>
+
+<p>All of that makes it much more enjoyable and easy to write software for the Atari ST.</p>
+
+<hr />
+
+<pre>
+1] https://archive.org/details/OMIKRON_BASIC_Interpreter_v3.5_German_1991/mode/2up
+2] https://github.com/jeremyramin/terminal-plus/issues/137
+3] http://vincent.riviere.free.fr/soft/m68k-atari-mint/
+4] http://vincent.riviere.free.fr/soft/m68k-atari-mint/ubuntu.php
+5] https://en.wikipedia.org/wiki/Reverse_Polish_notation
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Developing Software for the Atari ST"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
