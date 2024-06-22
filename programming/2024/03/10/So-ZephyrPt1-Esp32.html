@@ -97,11 +97,11 @@ It’s focus is on IoT devices such as tooth brushes, smart watches, IoT gateway
       <li><a href="#create-a-new-project-get-dependencies" id="markdown-toc-create-a-new-project-get-dependencies">Create a new project, get dependencies</a></li>
       <li><a href="#check-board-configurations" id="markdown-toc-check-board-configurations">Check Board configurations</a></li>
       <li><a href="#overlay-for-esp32cam" id="markdown-toc-overlay-for-esp32cam">Overlay for Esp32Cam</a></li>
-      <li><a href="#adapt-code-to-blink-the-flash-led-of-the-esp32cam" id="markdown-toc-adapt-code-to-blink-the-flash-led-of-the-esp32cam">Adapt Code to blink the Flash LED of the Esp32Cam</a></li>
+      <li><a href="#adapt-code-to-blink-the-flash-led-of-the-esp32-cam" id="markdown-toc-adapt-code-to-blink-the-flash-led-of-the-esp32-cam">Adapt Code to blink the Flash LED of the ESP32-Cam</a></li>
       <li><a href="#build-dependencies" id="markdown-toc-build-dependencies">Build Dependencies</a>        <ul>
-          <li><a href="#install-minimal-sdk-cmake-configuration-and-toolchain" id="markdown-toc-install-minimal-sdk-cmake-configuration-and-toolchain">Install Minimal SDK, CMake Configuration and Toolchain</a></li>
-          <li><a href="#install-host-tools" id="markdown-toc-install-host-tools">Install Host Tools</a></li>
-          <li><a href="#missing-ninja" id="markdown-toc-missing-ninja">Missing Ninja</a></li>
+          <li><a href="#install-minimal-sdk-cmake-configuration-and-toolchain" id="markdown-toc-install-minimal-sdk-cmake-configuration-and-toolchain">Install minimal SDK, CMake configuration and toolchain</a></li>
+          <li><a href="#install-hosttools" id="markdown-toc-install-hosttools">Install hosttools</a></li>
+          <li><a href="#missing-ninja-build-tool" id="markdown-toc-missing-ninja-build-tool">Missing ninja build tool</a></li>
           <li><a href="#moving-directories" id="markdown-toc-moving-directories">Moving directories</a></li>
           <li><a href="#deprecation-warnings" id="markdown-toc-deprecation-warnings">Deprecation Warnings</a></li>
           <li><a href="#additional-build-requirements" id="markdown-toc-additional-build-requirements">Additional Build Requirements</a></li>
@@ -119,19 +119,19 @@ It’s focus is on IoT devices such as tooth brushes, smart watches, IoT gateway
 
 <p style="font-size: 60%;" align="right">When</p>
 
-<p>I’ve been using Esp32-Cam modules to monitor my 3D printer and CNC mill that are located in another room.</p>
+<p>I’ve been using ESP32-Cam modules to monitor my 3D printer and CNC mill that are located in another room.</p>
 
 <p>For this the sample code provided with the espressif SDK [3] was sufficient.</p>
 
-<p>The video stream can be received with FFmpeg and OBS-Studio, but for this I couldn’t get the sample code working. It seems to send a broken MJPEG-stream. No player I had was able to play it apart from the Webbrowser via the web interface provided by the sample. Someone at Microsoft wrote an alternative firmware [4] that provides an RTSP-stream. That worked out of the box.</p>
+<p>The video stream can be received with FFmpeg and OBS-Studio, but for this I couldn’t get the sample code working. It seems to send a broken MJPEG-stream. No player I had was able to play it apart from the Web browser via the web interface provided by the sample. Someone at Microsoft wrote an alternative firmware [4] that provides an RTSP-stream. That worked out of the box.</p>
 
 <p style="font-size: 60%;" align="right">Why</p>
 
-<p>Zephyr officially supports some of the Expressif boards. As they’re easily acquired, cheap boards with two ARM cores they’re and ideal for experimenting with Zepyhr [2].</p>
+<p>Zephyr officially supports some of the Espressif boards. As they’re easily acquired, cheap boards with two ARM cores they’re and ideal for experimenting with Zepyhr [2].</p>
 
 <p style="font-size: 60%;" align="right">Background</p>
 
-<p>The ESP32 chip is a 32bit micro-controller from Espressif with two cores that can clock in a range between 160 to 240 MHz. They have built-in Wifi, Bluetooth, UARTs, I2C, CAN interfaces. The Esp32-Cam boards have connectors that support cheap ov2640 camera modules.</p>
+<p>The ESP32 chip is a 32-bit micro-controller from Espressif with two cores that can clock in a range between 160 to 240 MHz. They have built-in WiFi, Bluetooth, UARTs, I2C, CAN interfaces. The ESP32-Cam boards have connectors that support cheap ov2640 camera modules.</p>
 
 <p style="font-size: 60%;" align="right">How</p>
 
@@ -141,7 +141,7 @@ It’s focus is on IoT devices such as tooth brushes, smart watches, IoT gateway
 
 <h2 id="esp32cam-arduino-configuration">Esp32Cam Arduino Configuration</h2>
 
-<p>Starting out it makes sense to first flash the official sample from Espressif via the Arduion IDE.</p>
+<p>Starting out it makes sense to first flash the official sample from Espressif via the Arduino IDE.</p>
 
 <p>The configuration do this is as follows.</p>
 
@@ -151,16 +151,16 @@ It’s focus is on IoT devices such as tooth brushes, smart watches, IoT gateway
 
 <h2 id="wiring-for-flashing">Wiring for Flashing</h2>
 
-<p>In order to flash Esp32-Cam boards you need to connect a USB-to-TTL adapter like the FTDI FT232.</p>
+<p>In order to flash ESP32-Cam boards you need to connect a USB-to-TTL adapter like the FTDI FT232.</p>
 
 <p><img src="../../../../images/2024-03-10-So-ZephyrPt1-Esp32/espcam-flash.jpg" width="25%" /></p>
 
 <h2 id="test-with-official-sample-code">Test with official Sample Code</h2>
 
-<p>With the board manager configured and the chip connected to the computer via the Rs232 you can flash the sample firmware.
-In the Arduino IDE you can select the “CameraWebServer” under File -&gt; Examples -&gt; Esp32 -&gt; Camera -&gt; CameraWebServer</p>
+<p>With the board manager configured and the chip connected to the computer via the RS232 you can flash the sample firmware.
+In the Arduino IDE you can select the “CameraWebServer” under File -&gt; Examples -&gt; ESP32 -&gt; Camera -&gt; CameraWebServer</p>
 
-<p>With the camera module connected and the webinterace opened we can see the image from the camera in the browser.</p>
+<p>With the camera module connected and the web interface opened we can see the image from the camera in the browser.</p>
 
 <p><img src="../../../../images/2024-03-10-So-ZephyrPt1-Esp32/esp32webinterface.png" width="25%" /></p>
 
@@ -182,9 +182,9 @@ mpv http://192.168.2.138/mjpeg/1
 
 <h2 id="heat">Heat</h2>
 
-<p>However the boards develop substantial heat. The case from Thinigverse [6] I had 3D printed melted after using the camera for a few hours destroying not only the case, but also the plastic of the camera focus.</p>
+<p>However the boards develop substantial heat. The case from Thingiverse [6] I had 3D printed melted after using the camera for a few hours destroying not only the case, but also the plastic of the camera focus.</p>
 
-<p>I’m not sure how much heat is required to ignite the 3D printing filament. PLA is typically printed at 180 Degrees Celcius. So that’s the approximate temperature the camera must have reached in order to deform the plastic.</p>
+<p>I’m not sure how much heat is required to ignite the 3D printing filament. PLA is typically printed at 180 Degrees Celsius. So that’s the approximate temperature the camera must have reached in order to deform the plastic.</p>
 
 <p><img src="../../../../images/2024-03-10-So-ZephyrPt1-Esp32/esp32case1.jpg" width="15%" /></p>
 
@@ -194,7 +194,7 @@ mpv http://192.168.2.138/mjpeg/1
 
 <h1 id="zephyr">Zephyr</h1>
 
-<p>With the Esp32Cam confirmed to be fully functioning we can move to setting up a Zephyr build environment.</p>
+<p>With the ESP32-Cam confirmed to be fully functioning we can move to setting up a Zephyr build environment.</p>
 
 <p>I’ll use a newly installed machine (running Debian 12 “bookworm”) to develop on, so I can be sure I don’t miss any dependencies that were still on the system from before.</p>
 
@@ -215,7 +215,7 @@ pip <span class="nb">install </span>west
 
 <h2 id="debian-pip-warnings">Debian Pip Warnings</h2>
 
-<p>Newer pip on Debian has an “externally managed” warnign when installing libraries globally such as west.</p>
+<p>Newer pip on Debian has an “externally managed” warning when installing libraries globally such as west.</p>
 
 <p>Keeping that blocked may or not make sense depending on environment. A simple hack around this is:</p>
 
@@ -261,9 +261,9 @@ yd_esp32
 
 <h2 id="overlay-for-esp32cam">Overlay for Esp32Cam</h2>
 
-<p>According to [7] the “esp32_devkitc_wroom” board is very similar to the Esp32Cam.</p>
+<p>According to [7] the “esp32_devkitc_wroom” board is very similar to the ESP32-Cam.</p>
 
-<p>So, in order to add support for the Esp32-Board, we can add an “overlay” in the sample code directory. I’m using the code mentioned posted in that GitHub Issue.</p>
+<p>So, in order to add support for the ESP32-Board, we can add an “overlay” in the sample code directory. I’m using the code mentioned posted in that GitHub Issue.</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> <span class="nv">$HOME</span>/zephyr/zephyr/samples/basic/blinky/boards/
 vim <span class="nv">$HOME</span>/zephyr/zephyr/samples/basic/blinky/boards/esp32_devkitc_wroom.overlay
@@ -283,7 +283,7 @@ vim <span class="nv">$HOME</span>/zephyr/zephyr/samples/basic/blinky/boards/esp3
 <span class="p">};</span>
 </code></pre></div></div>
 
-<h2 id="adapt-code-to-blink-the-flash-led-of-the-esp32cam">Adapt Code to blink the Flash LED of the Esp32Cam</h2>
+<h2 id="adapt-code-to-blink-the-flash-led-of-the-esp32-cam">Adapt Code to blink the Flash LED of the ESP32-Cam</h2>
 
 <div class="language-c highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
 #include</span> <span class="cpf">&lt;zephyr/kernel.h&gt;</span><span class="cp">
@@ -335,7 +335,7 @@ west build <span class="nt">-p</span> always <span class="nt">-b</span> esp32_de
 
 <p>I’ll try to install only what is needed.</p>
 
-<h3 id="install-minimal-sdk-cmake-configuration-and-toolchain">Install Minimal SDK, CMake Configuration and Toolchain</h3>
+<h3 id="install-minimal-sdk-cmake-configuration-and-toolchain">Install minimal SDK, CMake configuration and toolchain</h3>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$HOME</span>/
 wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_linux-x86_64_minimal.tar.xz
@@ -356,22 +356,22 @@ zephyr-sdk-0.16.5-1/setup.sh
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Install <span class="s1">'xtensa-espressif_esp32_zephyr-elf'</span> toolchain <span class="o">[</span>y/n]? y
 <span class="o">[</span>..]
-Install host tools <span class="o">[</span>y/n]? n
+Install hosttools <span class="o">[</span>y/n]? n
 </code></pre></div></div>
 
-<p>Note I’m not installing the host tools from the minimal SDK as I’ll do that seperately below.</p>
+<p>Note I’m not installing the hosttools from the minimal SDK as I’ll do that separately below.</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Register Zephyr SDK CMake package <span class="o">[</span>y/n]? y
 </code></pre></div></div>
 
-<p>The script places the cmake files in</p>
+<p>The script places the CMake files in</p>
 
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~/.cmake/packages/Zephyr-sdk
 </code></pre></div></div>
 
 <p>The script also downloads and extracts the board toolchain “xtensa-espressif_esp32_zephyr-elf.tar.xz”.</p>
 
-<h3 id="install-host-tools">Install Host Tools</h3>
+<h3 id="install-hosttools">Install hosttools</h3>
 
 <p>The hosttools contain some binaries like QEmu for a row of platforms. We need them in order to be able to run <code class="language-plaintext highlighter-rouge">west debug</code> and similar commands.</p>
 
@@ -393,7 +393,7 @@ wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/ho
 
 <p>that will set up the path variables.</p>
 
-<h3 id="missing-ninja">Missing Ninja</h3>
+<h3 id="missing-ninja-build-tool">Missing ninja build tool</h3>
 
 <p>Zephyr builds using “ninja”. If you don’t have it installed you can get it via apt:</p>
 
@@ -408,7 +408,7 @@ wget https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/ho
 <h3 id="moving-directories">Moving directories</h3>
 
 <p>As an additional note I’ve experimented with moving the Zephyr directory after configuration.
-This leads to errors in “pristine.cmake”. It seems some paths get hardcoded.</p>
+This leads to errors in “pristine.cmake”. It seems some paths get hard coded.</p>
 
 <p>Interestingly there is a commend in that “pristine.cmake” file</p>
 
@@ -433,7 +433,7 @@ This leads to errors in “pristine.cmake”. It seems some paths get hardcoded.
 
 <h2 id="build">Build</h2>
 
-<p>With all that setup we can build flash images for the Esp32.</p>
+<p>With all that setup we can build flash images for the ESP32.</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$HOME</span>/zephyr/zephyr/
 <span class="nb">export </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$HOME</span>/.local/bin/
@@ -474,7 +474,7 @@ crw-rw----+ 1 root dialout 188, 0 Mär 17 10:08 /dev/ttyUSB0
 
 <h2 id="debug">Debug</h2>
 
-<p>You sould see the pins on the FTDI flashing. If we open a serial console with the proper baudrate we see the data being transmitted from the chip</p>
+<p>You should see the pins on the FTDI flashing. If we open a serial console with the proper baud rate we see the data being transmitted from the chip</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>picocom /dev/ttyUSB0 <span class="nt">-b</span> 115200
 </code></pre></div></div>
@@ -485,7 +485,7 @@ crw-rw----+ 1 root dialout 188, 0 Mär 17 10:08 /dev/ttyUSB0
 
 <h1 id="conclusion">Conclusion</h1>
 
-<p>We’ve tested the Esp32-Cam to make sure it works. After that we’ve set up the Zephyr environment, compiled the blinky LED example code and flashed it to the Esp32-Cam board.</p>
+<p>We’ve tested the ESP32-Cam to make sure it works. After that we’ve set up the Zephyr environment, compiled the blinky LED example code and flashed it to the ESP32-Cam board.</p>
 
 <hr />
 

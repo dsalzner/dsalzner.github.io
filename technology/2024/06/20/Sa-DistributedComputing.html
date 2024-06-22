@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Distributed Computing - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="Distributed computing is becoming more and more relevant in various fields. The following is an overview of technologies and algorithms that have stood out to me."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/technology/2024/06/20/Sa-DistributedComputing.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Distributed Computing - Dennis Salzner" />
+  <meta property="og:description" content="Distributed computing is becoming more and more relevant in various fields. The following is an overview of technologies and algorithms that have stood out t..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/technology/2024/06/20/Sa-DistributedComputing.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Technology" />
+  <meta property="article:published_time" content="2024-06-20 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-06-20 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-06-20 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Distributed computing is becoming more and more relevant in various fields. The following is an overview of technologies and algorithms that have stood out to me." />
+  <meta name="twitter:title" content="Distributed Computing - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Distributed Computing</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Distributed Computing</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>Distributed computing is becoming more and more relevant in various fields. The following is an overview of technologies and algorithms that have stood out to me.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#background" id="markdown-toc-background">Background</a>    <ul>
+      <li><a href="#remote-access-tools-and-botnets" id="markdown-toc-remote-access-tools-and-botnets">Remote Access Tools and Botnets</a></li>
+      <li><a href="#kazaa-and-skype" id="markdown-toc-kazaa-and-skype">KaZaA and Skype</a></li>
+      <li><a href="#mainstream-usages" id="markdown-toc-mainstream-usages">Mainstream Usages</a></li>
+      <li><a href="#traditional-clientserver-architectures" id="markdown-toc-traditional-clientserver-architectures">Traditional Client/Server Architectures</a></li>
+      <li><a href="#levels-of-distribution" id="markdown-toc-levels-of-distribution">Levels of Distribution</a></li>
+      <li><a href="#differences-requirements" id="markdown-toc-differences-requirements">Differences Requirements</a></li>
+      <li><a href="#common-challenges-and-limitations-in-theory" id="markdown-toc-common-challenges-and-limitations-in-theory">Common Challenges and Limitations in Theory</a></li>
+    </ul>
+  </li>
+  <li><a href="#technologies" id="markdown-toc-technologies">Technologies</a>    <ul>
+      <li><a href="#containers---to-make-workloads-restartable-gain-parallelism-and-easily-transfer-them-from-node-to-node" id="markdown-toc-containers---to-make-workloads-restartable-gain-parallelism-and-easily-transfer-them-from-node-to-node">Containers - to make workloads restartable, gain parallelism and easily transfer them from node to node</a>        <ul>
+          <li><a href="#docker" id="markdown-toc-docker">Docker</a></li>
+        </ul>
+      </li>
+      <li><a href="#container-orchestration---to-run-and-coordinate-multiple-containers-across-nodes" id="markdown-toc-container-orchestration---to-run-and-coordinate-multiple-containers-across-nodes">Container Orchestration - to run and coordinate multiple containers across nodes</a>        <ul>
+          <li><a href="#kubernetes" id="markdown-toc-kubernetes">Kubernetes</a></li>
+        </ul>
+      </li>
+      <li><a href="#packaging---to-get-the-most-recent-software-into-containers-and-onto-nodes" id="markdown-toc-packaging---to-get-the-most-recent-software-into-containers-and-onto-nodes">Packaging - to get the most recent software into containers and onto nodes</a>        <ul>
+          <li><a href="#apt-yum-cargo-conan-pip" id="markdown-toc-apt-yum-cargo-conan-pip">Apt, Yum, Cargo, Conan, Pip</a></li>
+        </ul>
+      </li>
+      <li><a href="#data-verification---to-check-correctness-of-data" id="markdown-toc-data-verification---to-check-correctness-of-data">Data Verification - to check correctness of data</a>        <ul>
+          <li><a href="#merkle-trees" id="markdown-toc-merkle-trees">Merkle Trees</a></li>
+          <li><a href="#example---git" id="markdown-toc-example---git">Example - Git</a></li>
+          <li><a href="#example---blockchain-bitcoin" id="markdown-toc-example---blockchain-bitcoin">Example - Blockchain, Bitcoin</a></li>
+        </ul>
+      </li>
+      <li><a href="#data-consensus---to-solve-conflicts-and-agree-on-one-version-of-that-data-to-move-forward" id="markdown-toc-data-consensus---to-solve-conflicts-and-agree-on-one-version-of-that-data-to-move-forward">Data Consensus - to solve conflicts and agree on one version of that data to move forward</a>        <ul>
+          <li><a href="#paxos" id="markdown-toc-paxos">Paxos</a></li>
+          <li><a href="#raft" id="markdown-toc-raft">Raft</a></li>
+          <li><a href="#example---etcd" id="markdown-toc-example---etcd">Example - etcd</a></li>
+          <li><a href="#example---nuraft" id="markdown-toc-example---nuraft">Example - nuRaft</a></li>
+          <li><a href="#example---apache-cassandra" id="markdown-toc-example---apache-cassandra">Example - Apache Cassandra</a></li>
+        </ul>
+      </li>
+      <li><a href="#network-traversal---to-be-able-to-form-direct-peer-to-peer-network-connections" id="markdown-toc-network-traversal---to-be-able-to-form-direct-peer-to-peer-network-connections">Network Traversal - to be able to form direct peer-to-peer network connections</a>        <ul>
+          <li><a href="#upnp" id="markdown-toc-upnp">UPnP</a></li>
+          <li><a href="#stun--udp-hole-punching" id="markdown-toc-stun--udp-hole-punching">Stun &amp; UDP Hole-Punching</a></li>
+        </ul>
+      </li>
+      <li><a href="#data-distribution---to-efficiently-replicate-data-onto-the-nodes" id="markdown-toc-data-distribution---to-efficiently-replicate-data-onto-the-nodes">Data Distribution - to efficiently replicate data onto the nodes</a>        <ul>
+          <li><a href="#gossip-protocol" id="markdown-toc-gossip-protocol">Gossip Protocol</a></li>
+          <li><a href="#chord" id="markdown-toc-chord">Chord</a></li>
+          <li><a href="#example---skype" id="markdown-toc-example---skype">Example - Skype</a></li>
+        </ul>
+      </li>
+      <li><a href="#data-structure" id="markdown-toc-data-structure">Data Structure</a>        <ul>
+          <li><a href="#json" id="markdown-toc-json">JSON</a></li>
+          <li><a href="#protobuf-serialisation" id="markdown-toc-protobuf-serialisation">Protobuf Serialisation</a></li>
+        </ul>
+      </li>
+      <li><a href="#communication-protocols" id="markdown-toc-communication-protocols">Communication Protocols</a>        <ul>
+          <li><a href="#rest-api-endpoints" id="markdown-toc-rest-api-endpoints">REST API Endpoints</a></li>
+          <li><a href="#remote-procedure-call" id="markdown-toc-remote-procedure-call">Remote-Procedure-Call</a></li>
+          <li><a href="#example---grpc-w-protobuf" id="markdown-toc-example---grpc-w-protobuf">Example - gRPC w/ Protobuf</a></li>
+          <li><a href="#example---mpi" id="markdown-toc-example---mpi">Example - MPI</a></li>
+        </ul>
+      </li>
+      <li><a href="#data-protection" id="markdown-toc-data-protection">Data Protection</a>        <ul>
+          <li><a href="#http-over-tls" id="markdown-toc-http-over-tls">HTTP-over-TLS</a></li>
+          <li><a href="#certificates" id="markdown-toc-certificates">Certificates</a></li>
+          <li><a href="#public-key-cryptography" id="markdown-toc-public-key-cryptography">Public-key cryptography</a></li>
+          <li><a href="#example---ssh" id="markdown-toc-example---ssh">Example - SSH</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="background">Background</h2>
+
+<p>Decentralized computing, apart from the Internet itself, and true decentralized peer-to-peer have emerged in universities and were probably first used large-scale for mostly nefarious purposes like Botnets and copyright infringement, but also for anonymously dumping cryptocurrency Ponzi-schemes [10] on the public that have the ability to destabilize small economies.</p>
+
+<p>But in the meantime it has also become a pillar of modern computing with highly useful use cases in resilient web backend infrastructures, censorship free internet, distributed IoT sensor networks and even satellite communication.</p>
+
+<p>Decentralized computing often has a significantly disruptive aspect to it.</p>
+
+<h3 id="remote-access-tools-and-botnets">Remote Access Tools and Botnets</h3>
+
+<p>When I first came in contact with distributed computing it was when writing Remote Access Tools in Visual Basic to play pranks on my classmates in school - of course always with their consent. The inspiration must have come from code on Planet-Source-Code.com [10]. Controlling physical devices or controlling other computers has always been intriguing. Generally learning about computer networks and writing network software was an interesting challenge and gives a kid a significant feeling of empowerment.</p>
+
+<p>A network direct connection is easy to track back to the attacker, so it becomes interesting to bounce the communication off of intermediate nodes. Commonly the ICQ Messenger was used for RAT servers to tell the client of the attacker, that they were online and with which IP address they could be reached.</p>
+
+<p>The next level of escalation was to have web interfaces, written in PHP, the language of choice back then, to collect the alive messages from the nodes.
+Instead of connecting at all it may be much more covert to either chat with the RAT via ICQ or use that web interface hosted on some bulletproof hosting to also send commands and receive the responses.</p>
+
+<p>Alternatively, even today, the Internet Relay Chat is also used for that purpose.</p>
+
+<p>It would be even better if the nodes didn’t rely on some central service, but instead would talk to each other.</p>
+
+<p>At this point we stop speaking of RATs, but call them bots and multiple bots form botnets.</p>
+
+<p>There is significant financial incentive for nefarious actors to run botnets, which is why we are seeing so many of them. A large scale botnet can take down entire networks by Distributed-Denial-Of-Service attacks to manipulate stock markets, it can send spam mails, collect user credentials and so forth. They also run large scale password guessing/brute-force attacks on servers (see <a href="/security/2024/03/24/So-SshHoneypotPt1-BruteforceAttacks.html">brute-force attacks on my server</a>).</p>
+
+<h3 id="kazaa-and-skype">KaZaA and Skype</h3>
+
+<p>Roughly around that time KaZaA, the peer-to-peer file sharing network and Skype, an internet telephony network came about. Both originated from the same developers.</p>
+
+<p>For the longest time telecommunication provides had charged insane fees for long-distance calls. In part, of course, to offset the cost of infrastructure, but in part also in seek of profit.</p>
+
+<p>With Skype it became possible to have affordable long-distance phone calls. Either from Skype-Client to Skype-Client via the Internet or by relay stations to land lines.</p>
+
+<p>This kind of technology was extremely unpopular with the telecommunication providers, as peer-to-peer file sharing was unpopular with the music industry and so I believe it wouldn’t have survived, if it hadn’t been almost entirely decentralized and hard to take down.</p>
+
+<h3 id="mainstream-usages">Mainstream Usages</h3>
+
+<p>In the meantime there are vast use cases for distributed computing whether for</p>
+
+<ul>
+  <li>decentralized <strong>peer-to-peer</strong> services that resist take-down for
+    <ul>
+      <li>internet telephony (e.g. <em>Skype</em>)</li>
+      <li>file-sharing (e.g. <em>Bit-Torrent</em>, <em>KaZaA</em>, <em>Gnutella</em>)</li>
+      <li>distributed ledgers for blockchain crypto currencies (e.g. <em>Bitcoin</em>)</li>
+      <li>censorship-free internet (e.g. InterPlanetary File System (<em>IPFS</em>))</li>
+    </ul>
+  </li>
+  <li><strong>distributed networks</strong> of IoT devices
+    <ul>
+      <li>mesh networks (e.g. <em>LoraWAN</em>)</li>
+      <li>IoT power metering (e.g. for the <em>smart grid</em>)</li>
+    </ul>
+  </li>
+  <li><strong>backend infrastructures</strong> of large <em>web infrastructures</em>
+    <ul>
+      <li>container orchestration (e.g. <em>Docker</em> with <em>Cassandra</em>)</li>
+      <li>consistent distributed storage/data replication and consensus algorithms (e.g. <em>Paxos</em>, <em>Raft</em>, <em>etcd</em>)</li>
+    </ul>
+  </li>
+  <li><strong>distributed mobile apps</strong></li>
+  <li><strong>federated clouds</strong> (e.g. <em>Diaspora</em>, <em>Mastodon</em>)</li>
+</ul>
+
+<h3 id="traditional-clientserver-architectures">Traditional Client/Server Architectures</h3>
+
+<p>Traditionally, in the most simple case, in computer networking you would have a central server and multiple clients connecting to that server.</p>
+
+<p>This has downside that the server could go down. That could be frustrating to the users at best or detrimental for an online business.</p>
+
+<h3 id="levels-of-distribution">Levels of Distribution</h3>
+
+<p>That problem can be combated by distributing the service over multiple replica nodes.</p>
+
+<p>The level of distribution can vary</p>
+
+<ul>
+  <li>a fully decentralized peer-to-peer network has no single central server
+    <ul>
+      <li>each node runs the same exact code</li>
+      <li>the nodes all have either the same role and send data to one another (e.g. Gossip Protocol [1])</li>
+      <li>they could also take on different roles like “follower” or “leader” via a distributed election scheme (e.g. Raft Consensus algorithm [2])</li>
+    </ul>
+  </li>
+  <li>a federated cloud has multiple servers that synchronize with each other from time to time
+    <ul>
+      <li>some social networks use this approach (e.g. Diaspora [3], Mastodon [4])</li>
+    </ul>
+  </li>
+  <li>a master slave architecture may have a centralized controlling instance, but have the databases and compute nodes distributed
+    <ul>
+      <li>in CI/CD for running multiple nodes for more build speed (e.g. Jenkins master and worker nodes, GitHub Runners)</li>
+      <li>in backend web infrastructures for fault-tolerance
+        <ul>
+          <li>this is often used with micro-services that are run in containers (e.g. Docker)</li>
+          <li>and distributed onto worker nodes by a central server (e.g. Kubernetes Master [5])</li>
+          <li>such that they can be redistributed and rebooted to achieve high availablility</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>in mesh networks of IoT devices, in space and the internet itself
+    <ul>
+      <li>where messages should reach a peer and can be bounced off of other nodes or relay stations (e.g. routers)</li>
+      <li>swarm communication across spacecraft and satellites (“Inter-Spacecraft Communication” [9])</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="differences-requirements">Differences Requirements</h3>
+
+<p>The requirements on the distributed differ substantially</p>
+
+<ul>
+  <li>in fully decentralized peer-to-peer
+    <ul>
+      <li>there needs to be protection against nefarious actors (e.g. proof-of-work for Bitcoin [6])</li>
+    </ul>
+  </li>
+  <li>in IoT mesh networks and satellite communication
+    <ul>
+      <li>the round-trip times can be substantial</li>
+      <li>packets frequently get lost</li>
+      <li>through-put can be a lot lower</li>
+    </ul>
+  </li>
+  <li>whereas in CI/CD
+    <ul>
+      <li>a failing build node can just be restarted generally without any issues</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="common-challenges-and-limitations-in-theory">Common Challenges and Limitations in Theory</h3>
+
+<p>Where orchestrating and rebooting nodes is generally not a big problem, the issues arise with consistent data synchronization.</p>
+
+<p>For most rational databases we speak of “transactions” that should for fill the ACID criteria [7]. Interestingly the ACID model was developed by Härder and Reuter from the University of Kaiserslautern and Heidelberg, who have close ties to the Professor I learned about implementation of Databases at the University of Erlangen-Nürnberg.</p>
+
+<p>In simplified terms:</p>
+
+<ul>
+  <li><strong><em>atomicity</em></strong> - transactions either occurs fully or not a all</li>
+  <li><strong><em>consistency</em></strong> - transactions can only bring the database from one consistent state to another</li>
+  <li><strong><em>isolation</em></strong> - transactions don’t have side effects and can be  run concurrently</li>
+  <li><strong><em>durability</em></strong> - transactions that have been committed to the database are also there in future</li>
+</ul>
+
+<p>For a distributed data store we additionally need</p>
+
+<ul>
+  <li><strong><em>consistency</em></strong> - a read at any node always retrieves the most recent data</li>
+  <li><strong><em>availability</em></strong> - there is always at least on node that can return the data</li>
+  <li><strong><em>partition tolerance</em></strong> - even if a subset of nodes are cut off, the above criteria is still fulfilled</li>
+</ul>
+
+<p>Unfortunately the CAP theorem [8] shows that a distributed data storage can only ever guarantee two of those three criteria.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="technologies">Technologies</h2>
+
+<p>With that preamble for motivation, let’s look into the current landscape of technologies and what aspects of distributed computing they attempt to solve.</p>
+
+<h3 id="containers---to-make-workloads-restartable-gain-parallelism-and-easily-transfer-them-from-node-to-node">Containers - to make workloads restartable, gain parallelism and easily transfer them from node to node</h3>
+
+<p>Self-contained containerized applications that can be easily started and stopped on hosts are a important in large corporate infrastructures to achieve fault-tolerance.</p>
+
+<h4 id="docker">Docker</h4>
+
+<p>Often unpopular due to miss-use as a build environment setup tool or build tool, it provides a platform abstraction by reproducible text-based recipes that create Docker containers. To get software onto the build environment, be it bare-metal or containerized, it makes sense to add use a package manager (see below) to pull the software in an organized way instead of downloading (<code class="language-plaintext highlighter-rouge">wget</code>) from the Docker-Recipe.</p>
+
+<h3 id="container-orchestration---to-run-and-coordinate-multiple-containers-across-nodes">Container Orchestration - to run and coordinate multiple containers across nodes</h3>
+
+<p>If we want to run multiple containers, e.g. Docker containers, and want to automatically reboot or redistribute these containers among a cloud of nodes we need an orchestration system.</p>
+
+<h4 id="kubernetes">Kubernetes</h4>
+
+<p>Kubernetes is an option for this. It automatically distributes Containers over notes.</p>
+
+<h3 id="packaging---to-get-the-most-recent-software-into-containers-and-onto-nodes">Packaging - to get the most recent software into containers and onto nodes</h3>
+
+<p>A package manager serves to get software onto machines or into containers. Typically combined with caching. This is an important pillar to get useful software onto nodes.</p>
+
+<h4 id="apt-yum-cargo-conan-pip">Apt, Yum, Cargo, Conan, Pip</h4>
+
+<ul>
+  <li>for Linux we have the “apt” and “yum” package mangers and their packaging formats *.deb and *.rpm to install software on Linux computers.</li>
+  <li>programming languages have package managers like Rust with Cargo, Pythons with it’s “pip” package manager and *.pypi packages, C++ Conan recipes and *tar.gz packages</li>
+</ul>
+
+<p>The reason I bring them up is because an online apt and yum repository is in a sense a federated cloud. Many universities, internet service providers and large corporations have FTP and HTTP servers that synchronies among themselves to provide endpoints for the package managers to retrieve packages from.</p>
+
+<h3 id="data-verification---to-check-correctness-of-data">Data Verification - to check correctness of data</h3>
+
+<p>With multiple nodes and data distributed and shared among the nodes, there needs to be data verification. This is an important step towards synchronization.</p>
+
+<h4 id="merkle-trees">Merkle Trees</h4>
+
+<p>In computer science a tree is a data structure with nodes, where each node connects to a set of other nodes.</p>
+
+<p>A Hash function is a large, typically 256-bit, number that is computed from contents and is designed to make collisions - a collision occurs, when two different contents yield the same hash - highly unlikely.</p>
+
+<p>In Merkle trees every parent node contains the hash of it’s children. It is used both Git and Bitcoin, as well as the Inter-planetary File System (IPFS) and Apache Cassandra use Merkle trees [11] to guarantee consistent data by efficient allowing verification of data.</p>
+
+<p>By recomputing the hash of a parent node from its children and comparing it any node in a network can verify the correctness of the data and it is often sufficient to only look at the top n-nodes and only act further, when an inconsistency is detected.</p>
+
+<h4 id="example---git">Example - Git</h4>
+
+<p>Git is a distributed source code management system that is the backbone of almost all software development.
+It has quickly ousted other solutions like CVS, mercurial, SVN and MS SourceSafe.</p>
+
+<p>With Git every developer has a “checkout” of the code repository and can make his changes offline. Afterwards changes are committed and, when online, the repositories of other developers are synchronized.</p>
+
+<p>It uses Merkle trees [11] and as such there is debate on whether or not Git, that appeared in 2005, is not already in essence a blockchain like Bitcoin that first appeared in 2009.</p>
+
+<p>The Git commit history can be seen as a distributed log file.</p>
+
+<h4 id="example---blockchain-bitcoin">Example - Blockchain, Bitcoin</h4>
+
+<p>Cryptocurrencies like Bitcoin also have to tackle the challenge of peer-to-peer distributing a log, in this case a ledger of financial transactions.</p>
+
+<h3 id="data-consensus---to-solve-conflicts-and-agree-on-one-version-of-that-data-to-move-forward">Data Consensus - to solve conflicts and agree on one version of that data to move forward</h3>
+
+<p>With multiple verified sets of the data spanned across the nodes we need to achieve “consensus” on which set of data is the correct version to continue with.</p>
+
+<h4 id="paxos">Paxos</h4>
+
+<p>Paxos is an algorithm proposed in a paper from 1980 that seems to be the first attempt at solving the consensus problem with a solution similar to elections in democratic parliaments.</p>
+
+<h4 id="raft">Raft</h4>
+
+<p>Raft can be seen as a simplification of Paxos. Here nodes can take on the role of “leader” or “follower”. New leaders get elected, when followers disappear. Extra precaution has to be taken, when the network partitions, because then two leaders could be elected at the same time. For this there is a “term” system that counts the current term. So when the network partitions come back together the leader with the higher term number is selected as the overall leader.
+There are two excellent videos on YouTube about this, an overview [20] and details with more details from a developer of the Go implementation [21].</p>
+
+<h4 id="example---etcd">Example - etcd</h4>
+
+<p>etcd, from the Linux “/etc” configuration directory and “d” for daemon is software from OpenCore that uses Raft underneath. It synchronizes configuration files across multiple nodes.</p>
+
+<h4 id="example---nuraft">Example - nuRaft</h4>
+
+<p>There is a C++ implementation from eBay of Raft called nuRaft [22]. It has an excellent example implementation of a distributed calculator [23] that serves as inspiration for all sorts of projects.</p>
+
+<h4 id="example---apache-cassandra">Example - Apache Cassandra</h4>
+
+<p>Apache Cassandra is a distributed NoSQL-Database similar to Dynamo and Google’s BigTable. The later is specifically designed to handle Web caches for the Google search engine [24].</p>
+
+<h3 id="network-traversal---to-be-able-to-form-direct-peer-to-peer-network-connections">Network Traversal - to be able to form direct peer-to-peer network connections</h3>
+
+<p>In order for distributed nodes to be able to communicate with each other we need network traversal schemes. In corporate networks switched Networks or VPN connections connecting infrastructures are used. For customer applications we need NAT traversal to be able to connect from private networks to the public internet. There are different options here.</p>
+
+<h4 id="upnp">UPnP</h4>
+
+<p>Routers with UPnP enabled allow software running behind the router to open public facing network ports.</p>
+
+<h4 id="stun--udp-hole-punching">Stun &amp; UDP Hole-Punching</h4>
+
+<p>An intriguing aspect of the Skype telephony protocol is how it was consistently able to connect even through private networks without UPnP and without prior exposed ports.</p>
+
+<p>The trick here is what became known as STUN.</p>
+
+<p>Through, for example, an unblocked HTTP internet connection to a STUN server a UDP connection between two peers is coordinated.</p>
+
+<p>Now UDP, in contrast to TCP, has the property that a router cannot tell if a package is an initial request or a response to a request. So if both Peer’s send a few UDP packages to one another from both sides of the router or firewall, they can “punch” a “hole” through it. The routers on both sides will expect responses and will leave the ports opened for some time. The software can then perform direct bidirectional peer-to-peer communication even though both nodes are in private networks.</p>
+
+<h3 id="data-distribution---to-efficiently-replicate-data-onto-the-nodes">Data Distribution - to efficiently replicate data onto the nodes</h3>
+
+<p>With multiple nodes and data distributed and shared among the nodes, there also needs to be a distribution scheme - when to send what data where - ideally minimizing excess communication.</p>
+
+<h4 id="gossip-protocol">Gossip Protocol</h4>
+
+<p>With distributed nodes and the ability to verify the correctness of data we are missing an option replicate data onto our nodes.</p>
+
+<p>An naive approach is to use the Gossip Protocol [12]. It is also called “epidemic protocol”, because it randomly spreads information in all directions in the hope that after some time all nodes will have heard and we arrive at a consistent state.</p>
+
+<p>From what I see in the code of early Bitcoin implementation [13] it used a Gossip/Epidemic approach to spreading the Merkle Tree distributed ledger (verification needed).</p>
+
+<h4 id="chord">Chord</h4>
+
+<p>A more efficient algorithm than the gossip protocol, that is also a distributed hash table, was presented as Chord [14] in a paper from 2001.</p>
+
+<p>Chord orders the nodes of the network in a circle and defines which nodes must synchronize with which subset of other nodes in order to achieve a high availability.</p>
+
+<p>It reduces the inefficient high number of data transfers in the Gossip protocol and found use in Gnutella and Bittorrent [14].</p>
+
+<h4 id="example---skype">Example - Skype</h4>
+
+<p>Apart from the UDP hole-punching Skype, being the first peer-to-peer telephony protocol, is also a very interesting case study. It is proprietary, but there are many papers analyzing it’s behavior, the “super nodes” and such. In 2011 some source code has been leaked [19].</p>
+
+<h3 id="data-structure">Data Structure</h3>
+
+<p>To transfer data between nodes we need data schemas and protocols.</p>
+
+<h4 id="json">JSON</h4>
+
+<p>Currently JSON or XML is commonly used for the data model.</p>
+
+<h4 id="protobuf-serialisation">Protobuf Serialisation</h4>
+
+<p>To serialize data in across different nodes in a network that may have different CPU architectures (big-endian/litte-endian), we need robust serialisation. Protobuf is a set of libraries for a large number of programming languages that allows serializing objects to store them or send them over the network.</p>
+
+<h3 id="communication-protocols">Communication Protocols</h3>
+
+<p>We also need communication protocols, or, the format of the bitstream that is sent from one computer node in a network to another.</p>
+
+<h4 id="rest-api-endpoints">REST API Endpoints</h4>
+
+<p>Here “Representational State Transfer” (REST) is often used. Invented in ‘94 it mandates some key properties</p>
+
+<p>In simplified terms:</p>
+
+<ul>
+  <li>client-server - multiple clients talk to a server</li>
+  <li>stateless - the server is not required to keep a state that would consume memory on its side</li>
+  <li>cachable - following the definition of a function, for the same set of parameters the same output is expected. This is important to effectively cache requests.</li>
+  <li>unified interface - the interface is independent of the underlying architecture. To be able to keep it stable and compatible.</li>
+  <li>layered - the client does not need to be aware which backend server is handling his request</li>
+</ul>
+
+<h4 id="remote-procedure-call">Remote-Procedure-Call</h4>
+
+<p>Often, in distributed systems, we want to call a function/procedure on a different node. There exist libraries that facilitate these “remote procedure calls”.</p>
+
+<h4 id="example---grpc-w-protobuf">Example - gRPC w/ Protobuf</h4>
+
+<p>With gRPC, that uses Protobuf underneath, we gain remote procedure calls much like “Network OLE” or “Distributed Component Object Model” (DCOM) [25]. The ability to run a function, as if it were local, but have it run, over the network, on another node.</p>
+
+<h4 id="example---mpi">Example - MPI</h4>
+
+<p>In scientific computing, for so-called “Beowulf Clusters” (term from the 90’s), the “Message Passing Interface” (MPI) is commonly used.</p>
+
+<p>The Quantum Chemistry Software Gaussian, for example, has an extension “G09 with Linda”, now “TCP Linda 9”, to run on compute  clusters, that uses MPI underneath as a remote procedure call interface.</p>
+
+<h3 id="data-protection">Data Protection</h3>
+
+<p>If we’re going over the internet and have critical information we may seek to protect the date from eavesdropping.</p>
+
+<p>There are two aspects to this:</p>
+
+<ul>
+  <li>encryption - to make sure no unauthorized actors can read the data</li>
+  <li>certificates - to make sure the data was sent from the correct origin and note injected by an attacker (man-in-the-middle) [26].</li>
+</ul>
+
+<h4 id="http-over-tls">HTTP-over-TLS</h4>
+
+<p>To handle encryption a common methods is HTTP-over-TLS or HTTPs. Most of the internet nowadays uses <code class="language-plaintext highlighter-rouge">https://</code> connections. Here a certificates that are signed from a root authority are used to validate the true identity of the parties involved in the connection.</p>
+
+<h4 id="certificates">Certificates</h4>
+
+<p>Certificates are used to safely identify a client with the server. Otherwise the system may become susceptible to man-in-the-middle attacks [26].</p>
+
+<h4 id="public-key-cryptography">Public-key cryptography</h4>
+
+<p>Additionally, often data has to be encrypted in order to prevent eavesdropping.</p>
+
+<p>A way to do this is to generate key pairs “private” and “public”-key.</p>
+
+<ul>
+  <li>in asymmetric encryption if User A encrypts the data with User B’s public key, then only User B’s private key can be used to decrypt it.</li>
+</ul>
+
+<p>That is already useful, but still susceptible brute-forcing to attacks.</p>
+
+<ul>
+  <li>Deffie-Hellmann Key exchange goes further
+    <ul>
+      <li>the own private key, combined with the other nodes public key is used together to generate a shared secret.</li>
+      <li>on the other side the same approach is used to come to that same shared secret.</li>
+      <li>from there on that shared secret as a password for the data to encrypt</li>
+      <li>the process can be improved by using additional “Salting” to increase the key lengths and randomize the keys more</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="example---ssh">Example - SSH</h4>
+
+<p>SSH supports a variety of Key-Exchange algorithms</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-Q</span> kex
+
+diffie-hellman-group1-sha1
+diffie-hellman-group14-sha1
+diffie-hellman-group14-sha256
+diffie-hellman-group16-sha512
+diffie-hellman-group18-sha512
+diffie-hellman-group-exchange-sha1
+diffie-hellman-group-exchange-sha256
+ecdh-sha2-nistp256
+ecdh-sha2-nistp384
+ecdh-sha2-nistp521
+curve25519-sha256
+curve25519-sha256@libssh.org
+sntrup761x25519-sha512@openssh.com
+</code></pre></div></div>
+
+<p>and chiphers</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh <span class="nt">-Q</span> cipher
+
+3des-cbc
+aes128-cbc
+aes192-cbc
+aes256-cbc
+aes128-ctr
+aes192-ctr
+aes256-ctr
+aes128-gcm@openssh.com
+aes256-gcm@openssh.com
+chacha20-poly1305@openssh.com
+</code></pre></div></div>
+
+<p>Sometimes, when security vulnerabilities are found, they are removed.</p>
+
+<p>This has happened with</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>arcfour
+arcfour128
+arcfour256
+</code></pre></div></div>
+
+<p>They are then classified as “weak ciphers” by OpenSSH and need to be explicitely enabled with, e.g. <code class="language-plaintext highlighter-rouge">'ssh -c arcfour128</code>`.</p>
+
+<p>This occurs for instance when you’re running an unsafe router with an old version of OpenWRT [27].</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Distributed computing is a topic I’ve come into contact with in multiple angles</p>
+
+<ul>
+  <li>Routers flashed with home-brew software,</li>
+  <li>Beowulf clusters for distributed computing,</li>
+  <li>Multiplayer games I’ve written with Flask and Socket.IO during the pandemic,</li>
+  <li>out of an interest for Blockchain Technologies,</li>
+  <li>Web-Assembly,</li>
+  <li>Home Cloud, NextCloud, Git, SSH, etc…</li>
+  <li>CI/CD, Cloud service providers, CDNs and Kubernetes in my professional career</li>
+</ul>
+
+<p>There are only few very large-scale infrastructures world-wide with a significant enough size to require redundancy and fail-over. Additionally many large corporations run their own custom software. We can of course run our own simulated environments using the open-source projects and experiment with, for example Netflix’ “Chaos Monkey” to randomly shoot down micro-services, and see how a simulated network reacts.</p>
+
+<hr />
+
+<pre>
+1] https://en.wikipedia.org/wiki/Gossip_protocol
+2] https://en.wikipedia.org/wiki/Raft_(algorithm)
+3] https://en.wikipedia.org/wiki/Diaspora_(social_network)
+4] https://de.wikipedia.org/wiki/Mastodon_(Soziales_Netzwerk)
+5] https://de.wikipedia.org/wiki/Kubernetes
+6] https://en.wikipedia.org/wiki/Proof_of_work
+7] https://en.wikipedia.org/wiki/ACID
+8] https://en.wikipedia.org/wiki/CAP_theorem
+9] https://ntrs.nasa.gov/citations/20170009051
+10] https://en.wikipedia.org/wiki/Pyramid_scheme
+11] https://en.wikipedia.org/wiki/Merkle_tree
+12] https://en.wikipedia.org/wiki/Gossip_protocol
+13] https://github.com/bitcoin/bitcoin/commit/4405b78d6059e536c36974088a8ed4d9f0f29898
+14] https://en.wikipedia.org/wiki/Chord_(peer-to-peer)
+15] https://en.wikipedia.org/wiki/Kademlia
+16] https://en.wikipedia.org/wiki/Skype_protocol
+17] "Baset, Schulzrinne - An Analysis of the Skype Peer-to-Peer Internet Telephony Protocol" - https://arxiv.org/abs/cs/0412017v1
+18] https://en.wikipedia.org/wiki/STUN
+19] https://www.techspot.com/news/44093-skype-protocol-reverse-engineered-source-posted-online.html
+20] https://www.youtube.com/watch?v=ZyqAbQkpeUo
+21] https://www.youtube.com/watch?v=ro2fU8_mr2w
+22] https://github.com/eBay/NuRaft/tree/master
+23] https://github.com/eBay/NuRaft/blob/master/examples/calculator/calc_server.cxx
+24] https://de.wikipedia.org/wiki/Bigtable
+25] https://de.wikipedia.org/wiki/Distributed_Component_Object_Model
+26] https://en.wikipedia.org/wiki/Man-in-the-middle_attack
+27] https://de.wikipedia.org/wiki/OpenWrt
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Distributed Computing"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
