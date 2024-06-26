@@ -77,9 +77,6 @@
 
 <img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-colors.gif" width="45%" />
 
-
-
-
 <p style="font-size: 60%;" align="right">Contents</p>
 
 <h2 id="contents">Contents</h2>
@@ -183,9 +180,6 @@ Each bit is on a single plane that we need to write to.</p>
 
 <img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-640x480px-almost.png" width="35%" />
 
-
-
-
 <h3 id="efficient-double-buffering-to-write-to-screen">Efficient double-buffering to write to screen</h3>
 
 <p>Using the above code directly is slow as it requires reading the byte first, before writing it out. Additionally we need to switch the plane four times.</p>
@@ -283,9 +277,6 @@ I’m using only the internal buffers for the reading as reading from hardware g
 
 <img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-640x480px-sirpins.gif" width="45%" />
 
-
-
-
 <h2 id="user-space-applications-with-graphics-and-keyboard">User Space Applications with Graphics and Keyboard</h2>
 
 <p>I’ve extended the list of functions that the C-compiler makes available to user space applications.</p>
@@ -311,9 +302,6 @@ I’m using only the internal buffers for the reading as reading from hardware g
 
 <img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-snake.gif" width="35%" />
 
-
-
-
 <p>It’s easy to see how this could be used to write a game like “Snake” that became popular with Nokia smartphones from the 90s.</p>
 
 <h2 id="fixing-compiler-warnings">Fixing Compiler Warnings</h2>
@@ -337,9 +325,6 @@ I’m using only the internal buffers for the reading as reading from hardware g
 <p>I’ve written two user space applications <code class="language-plaintext highlighter-rouge">lspci.c</code> and <code class="language-plaintext highlighter-rouge">net-macaddr.c</code> to demonstrate this. The first lists all PCI devices and detects the IDE-Controller and rtl8139 network card. The second reads the MAC (medium access control) address, also called physical network address, from the card.</p>
 
 <img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-network-2.png" width="35%" />
-
-
-
 
 <p>We can see that reading and writing bytes to the network card from a user space application is easily possible. To send and receive, for instance, web pages via HTTPS-Get-Requests, we’d need to implement a network stack.</p>
 
