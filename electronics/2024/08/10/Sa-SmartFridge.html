@@ -300,11 +300,29 @@ web_server:
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>esphome run kuehlschrank.yaml
 </code></pre></div></div>
 
-<p>The documentation of EspHome is a bit hard to navigate, but eventually I found out that, when enabling “api” and “web_server” there is a nice minimalist web interface.</p>
+<p>I found that</p>
+<ul>
+  <li>the <code class="language-plaintext highlighter-rouge">compile</code> command didn’t work</li>
+  <li><code class="language-plaintext highlighter-rouge">run</code> installs some required dependencies automatically</li>
+  <li>when esphome is still running you can modify the *.yaml and it will be auto-updated via the over-the-air updates, which is a cool feature.</li>
+</ul>
 
-<p>EspHome somehow generated UUIDs for the sensors. This means the address is not the 1-Wire sensor adress, but the EspHome firmware prints all found 1-Wire devices to the log, so you can find the address easily.</p>
+<p>The documentation of EspHome is a bit hard to navigate, but eventually I found out that, when enabling “api” and “web_server” with “version: 3” there is a nice minimalist web interface.</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/esphome.jpg" width="20%" />
+
+<p>EspHome seems to generate UUIDs for the sensors. This means the address is not the 1-Wire sensor adress, but the EspHome firmware prints all found 1-Wire devices to the log, so you can find the EspHome address there.</p>
 
 <p>Additionally, and this is a big benefit of EspHome, it implements Over-The-Air-Updates. This means you can change configurations on the fly from your computer without disconnecting the sensors and hooking them up to USB.</p>
+
+<p>You can also get the sensor values via the Rest-API</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl http://kuehlschrank.local/sensor/kuehlfach
+<span class="o">{</span><span class="s2">"id"</span>:<span class="s2">"sensor-kuehlfach"</span>,<span class="s2">"value"</span>:12.8125,<span class="s2">"state"</span>:<span class="s2">"12.8 °C"</span><span class="o">}</span>
+
+curl http://kuehlschrank.local/sensor/eisfach
+<span class="o">{</span><span class="s2">"id"</span>:<span class="s2">"sensor-eisfach"</span>,<span class="s2">"value"</span>:-20.4375,<span class="s2">"state"</span>:<span class="s2">"-20.4 °C"</span><span class="o">}</span>
+</code></pre></div></div>
 
 <p>The code is much more bloated than my own code, no telegram bot, but a web interface and a rest api. I now rely on a Raspberry Pi to grab the data, store it in a database and create graphs that are sent to Telegram via Python code on the Raspberry Pi.</p>
 
@@ -312,9 +330,9 @@ web_server:
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>The fridge has been working for almost a year now after the fix. The temperature sensors make sure we’re get warned in case somethinh fails.</p>
+<p>The fridge has been working for almost a year now after the fix. The temperature sensors make sure we’re get warned in case something fails.</p>
 
-<p>I’m making small steps towards a properly setup smart home. In the early 2000s I had a very complex DIY 1-Wire Bus smart home. Since then I’ve been very pragmatic about my smart home. Always trying to avoid single points of failure and keeping it cheap and reusable. It is currently a mix of sensors and actuators from various manufactures and DIY solutions without any unified interface - that would be a single point of failure.</p>
+<p>I’m making small steps towards a better configured smart home. In the early 2000s I had a very complex DIY 1-Wire Bus smart home. Since then I’ve been very pragmatic. I’ve tried to avoid single points of failure and keep things cheap and reusable. It is currently a mix of sensors and actuators from various manufactures and DIY solutions without any unified interface - as that would be a single point of failure.</p>
 
 <p>Currently I’m running</p>
 
@@ -322,9 +340,9 @@ web_server:
   <li>Philips Hue for lighting</li>
   <li>with Osram Smart Plug that are Hue compatible</li>
   <li>FritzDect 200 smart plugs for energy monitoring</li>
-  <li>that I’m also using to control pumps on the balcony for irrigation of the growing beds - there is no feedback with the plant soil sensors, but neither is there, when it rains.</li>
+  <li>the same smart plugs are also in use to control pumps on the balcony for irrigation of the growing beds - there is no feedback with the plant soil sensors, but neither is there, when it rains.</li>
   <li>half a dozen of FritzDect 301 for time-based heating controls</li>
-  <li>and my own esp32/esp8266 DIY boards for the refridgerator, water heater monitoring and plant soil moisture monitoring. Some send Telegram messages, some use EspHome and have the readings collected from a Python script running on a Raspberry Pi.</li>
+  <li>and esp32/esp8266 DIY boards for the refridgerator, water heater monitoring and plant soil moisture monitoring. Some send Telegram messages, some use EspHome and have the readings collected from a Python script running on a Raspberry Pi.</li>
 </ul>
 
 <p>All in all the refridgerator repair has been a success and it goes to show how smart home technology and IoT sensors can make monitoring flacky devices to make sure they work properly more easily possible than it has been in the past.</p>
