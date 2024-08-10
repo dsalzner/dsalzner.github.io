@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Smart Fridge - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="Our fridge broke down. I took it apart, debugged the issue and added some smart home temperature sensors to be sure it works reliably after the repair."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/08/10/Sa-SmartFridge.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Smart Fridge - Dennis Salzner" />
+  <meta property="og:description" content="Our fridge broke down. I took it apart, debugged the issue and added some smart home temperature sensors to be sure it works reliably after the repair." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2024/08/10/Sa-SmartFridge.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Electronics" />
+  <meta property="article:published_time" content="2024-08-10 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-08-10 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-08-10 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Our fridge broke down. I took it apart, debugged the issue and added some smart home temperature sensors to be sure it works reliably after the repair." />
+  <meta name="twitter:title" content="Smart Fridge - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Smart Fridge</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Smart Fridge</div>
+<div class="page-subtitle">Fixing a Bosch Refridgerator and adding Smart Home temperature sensing</div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge10.jpg" width="30%" />
+
+<p>Our fridge broke down. I took it apart, debugged the issue and added some smart home temperature sensors to be sure it works reliably after the repair.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#situation" id="markdown-toc-situation">Situation</a></li>
+  <li><a href="#how-refridgerators-work" id="markdown-toc-how-refridgerators-work">How refridgerators work</a>    <ul>
+      <li><a href="#the-issue" id="markdown-toc-the-issue">The Issue</a></li>
+      <li><a href="#the-fix" id="markdown-toc-the-fix">The Fix</a></li>
+    </ul>
+  </li>
+  <li><a href="#adding-sensors" id="markdown-toc-adding-sensors">Adding Sensors</a>    <ul>
+      <li><a href="#electronics" id="markdown-toc-electronics">Electronics</a></li>
+      <li><a href="#software" id="markdown-toc-software">Software</a></li>
+      <li><a href="#my-tried-and-proven-telegram-approach" id="markdown-toc-my-tried-and-proven-telegram-approach">My tried and proven Telegram approach</a></li>
+      <li><a href="#considering-shelly-sensors" id="markdown-toc-considering-shelly-sensors">Considering Shelly Sensors</a></li>
+      <li><a href="#esphome-standalone-and-homeassistant" id="markdown-toc-esphome-standalone-and-homeassistant">EspHome standalone and HomeAssistant</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="situation">Situation</h2>
+
+<p>We have an old fridge. It’s a Bosch kgn33x48. We’ve had it for about 12 years. Up until March 2023 it worked flawlessly, but then the cooling compartment reached room temperature and everything melted. Confusingly the freezer remained cool, but the cooling compartment above reached room temperature. It seems this is a common issue with these devices. Most people probably just throw the whole machine out. I’ll show below that fixing this isn’t hard.</p>
+
+<p>Interestingly the freezer got even cooler than usual and the fridge, normally a no-frost fridge, iced up really quickly.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="how-refridgerators-work">How refridgerators work</h2>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge1.jpg" width="30%" />
+
+<p>Now getting rid of a fridge is a bit of a logistical nightmare, I don’t like throwing things out, didn’t want shell out the money for a new fridge and was curious why this happens - so I debugged the issue.</p>
+
+<p>In order to fix the issue I’ve taken almost the whole machine apart and can now explain how these devices work.</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge2.jpg" width="30%" />
+
+<p>Along the way I learned how these cooler/freezer-combo machines work. It turns out there is a compressor in the bottom back of the fridge. As with any cooling device, it compresses gas (the coolant). The gas is pumped through to the inside of the fridge, where it expands and causes the cooling effect.</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge3.jpg" width="30%" />
+
+<p>For the “no-frost” feature there is actually an electric heater inside the freezer compartment alongside the grills where the coolant expands. You can see this in the image: the top fins are connected to the pipes where the coolant expands.</p>
+
+<p>The bottom pipes are for the heating. Inside is essentially a wire, like in an old light bulb, a toaster or a water boiler, but that emits heat when powered.</p>
+
+<p>The heat is used to melt off the ice from the coolant fins in order for the device to run more efficiently. If it didn’t have that no-frost/heating feature, then the fins would ice up, essentially thermically isolating the coolant from the contents of the freezer. The fridge would consume a lot of energy and not cool properly anymore.</p>
+
+<p>Older devices had to be manually defrosted once a year or so. Modern devices run for years without any user action required.</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge4.jpg" width="30%" />
+
+<p>In the back there is a small opening where the melded ice can flow into a tray above the compressor. The compressor produces heat - the heat pumped out of the freezer plus some mechanical loss of the compressor. The tray is placed such that the water in the tray will vaporize automatically, when the compressor runs.</p>
+
+<h3 id="the-issue">The Issue</h3>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge7.jpg" width="30%" />
+
+<p>After many temperature measurments, testing the heating element, the freezer being cool, the compressor working I couldn’t find the issue at first.</p>
+
+<p>Within a week or so it would ice up again and some of our food would be spoiled.</p>
+
+<p>It turns out I had missed an important piece. Well two important issues actually.</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge5.jpg" width="30%" />
+
+<p>The first is in the way the cooler compartment gets cooled. The cooler compartment does not have its own compressor. Cooling there happens by a small fan that blows air from the freezer compartment to the cooler compartment. There is a small air conduit behind layers of plastic and foam in the back of the fridge. The noise from this fan got more and more audible in recent years</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge6.jpg" width="30%" />
+
+<p>What happend here is that the door seals got weak. Ambient air got into the freezer causing it to ice up. Eventually the fan that transfers the cool air from the freezer to the cooling compartment also iced up.</p>
+
+<p>That is what caused the issue. Additionally that hole in the back to transfer the melted ice to the tray in the back also iced up.</p>
+
+<p>Defrosting the device all the way into these air and liquid conduits takes much more time than you’d expect - especially due to the heavy isolation. And so each time we defrosted we didn’t defrost long enough to get these pipes cleared.</p>
+
+<h3 id="the-fix">The Fix</h3>
+
+<p>After the third or fourth attempt at fixing the thing, each time pulling our half of antarctica, …</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge8.jpg" width="30%" />
+
+<p>and connecting tubes to pour boiling water directly into these iced up conduits</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge9.jpg" width="30%" />
+
+<p>the fridge worked flawlessly again and has for about  year now.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<h2 id="adding-sensors">Adding Sensors</h2>
+
+<p>After and during this endeavour I had to make sure our food doesn’t get spoiled without knowing about it. If the contents of the fridge melt and then freeze again we might not be able to tell. If we consume the spoiled food we might get ourselves a nasty food poisoning.</p>
+
+<p>With that in mind it was clear we need temperature sensors.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h3 id="electronics">Electronics</h3>
+
+<p>For the electronics I choose the easy route with components I already had:</p>
+
+<ul>
+  <li>pre-calibrated digital 1-Wire ds18b20 temperature sensors</li>
+  <li>Wemos D1 Mini ESP-8266 Dev-Board</li>
+  <li>Smartphone charger for power</li>
+</ul>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge11.jpg" width="40%" />
+
+<p>The temperature sensors I’ve had since 2012 or so, from when I had a custom DIY wired Smart Home based on the 1-Wire Bus.</p>
+
+<p>Back then I choose to use old rj12 telephone cabling in a ring-topology around the appartment to connect the sensors and actuators to.</p>
+
+<p>Still today I use the same 1-Wire temperature sensors in RJ12 couplings or, as in this case, with the temperature sensor branched out on a long wire that I can pass through a window or into a freezer, like here.</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge12.jpg" width="30%" />
+
+<p>The wiring is extemly simple. Vcc to Vcc, Gnd to Gnc, Data to Pin D4 (GPIO 2). I didn’t even bother to add a 4,7k Ohm resistor as suggested by the Dallas/Maxim documentation.</p>
+
+<p>The Wemos D1 Mini is powerful enough to simulate a 1-Wire Bus Master in software. This works fine for 1-5 temperature sensors.</p>
+
+<h3 id="software">Software</h3>
+
+<p>With the hardware out of the way, we need the software.</p>
+
+<h3 id="my-tried-and-proven-telegram-approach">My tried and proven Telegram approach</h3>
+
+<p>Initially, and for the past year or so, for the software, I went with the exact same approach as for my soil moisture sensors (see <a href="/electronics/2024/02/18/So-PlantSoilMoistureSensor.html">Plant Soil Moisture Sensors</a>).</p>
+
+<p>A 150 lines of Arduino C-Code using the “ESP8266WiFi”, “UniversalTelegramBot”, “OneWire”/”DallasTemperature” modules to spawn a Telegram Bot.</p>
+
+<p>Every thirty minutes or so it spams us with chat messages to our Telegram clients, conveniently onto our mobile phones. The chat history is sufficient to be know whether our food defrosted. This approach is simple, safe, I don’t have to open any ports, don’t need a server running 24/7. It gets the job done and doesn’t have a single point of failure.</p>
+
+<p>If I wanted to make a graph of the values, though, I’d have to copy the messages over from the Telegram chat to a comma-separated *.csv-file and use something like LibreOffice Calc, GnuPlot or Python with MatplotLib to create the graph.</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge13.jpg" width="20%" />
+
+<h3 id="considering-shelly-sensors">Considering Shelly Sensors</h3>
+
+<p>Recently a company called “Shelly”, headquarted in Bulgaria?, entered the IoT market. A former colleague and friend recently showed me how he wired his entire apparment with Shelly-Sensors and Actuators that are interconnected with Home-Assistant on a Raspberry Pi.</p>
+
+<p>Now I haven’t used them, but it seems they are very fairly priced for a pre-made solution.</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/shelly1.png" width="10%" />
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/shelly2.png" width="10%" />
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/shelly3.png" width="10%" />
+
+<p>You could probably combine a “Shelly Plus” power meter with an add-on board and the same ds18b20 I’m using to get an off-the-shelf solution. It will require cutting up a power cord and should probably be placed in a proper enclosure.</p>
+
+<p>This might even be a bit cheaper, if you want to measure power consumption. It would cost about 20 Eur + 16 Eur + 2x3,50 Eur = 43 Eur currently here in Germany.</p>
+
+<p>I’m currently running an additional FritzDect 200 Smart-Plug I still had around to measure the refridgerator power consumption. It can be bought for around 41 Eur.</p>
+
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fritz1.png" width="10%" />
+
+<h3 id="esphome-standalone-and-homeassistant">EspHome standalone and HomeAssistant</h3>
+
+<p>In order to introduce single points of failure, but more convenience, I’ve tried out the EspHome firmware.</p>
+
+<p>This is a very low-code approach. You need to install esphome.</p>
+
+<p>On my Ubuntu this was sufficient:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>pipx
+pipx <span class="nb">install </span>esphome
+</code></pre></div></div>
+
+<p>There is also a web-based tool.</p>
+
+<p>Then all you need is to setup a *.yaml (can be produced by calling “esphome wizard”) like so:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>esphome:
+  name: kuehlschrank
+
+esp8266:
+  board: d1_mini
+
+logger:
+
+api:
+  password: <span class="s2">""</span>
+
+ota:
+  - platform: esphome
+    password: <span class="s2">""</span>
+
+wifi:
+  ssid: <span class="s2">"&lt;wifi ssid&gt;"</span>
+  password: <span class="s2">"&lt;wifi password&gt;"</span>
+
+  ap:
+    ssid: <span class="s2">"Kuehlschrank Fallback Hotspot"</span>
+    password: <span class="s2">"&lt;...&gt;"</span>
+
+captive_portal:
+
+one_wire:
+  - platform: gpio
+    pin: GPIO02
+
+sensor:
+  - platform: dallas_temp
+    address: 0x&lt;...&gt;
+    name: kuehlfach
+    update_interval: 120s
+  - platform: dallas_temp
+    address: 0x&lt;...&gt;
+    name: eisfach
+    update_interval: 120s
+    
+web_server:
+  port: 80
+  version: 3
+</code></pre></div></div>
+
+<p>In Linux I can then flash that to the chip by running</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>esphome run kuehlschrank.yaml
+</code></pre></div></div>
+
+<p>The documentation of EspHome is a bit hard to navigate, but eventually I found out that, when enabling “api” and “web_server” there is a nice minimalist web interface.</p>
+
+<p>EspHome somehow generated UUIDs for the sensors. This means the address is not the 1-Wire sensor adress, but the EspHome firmware prints all found 1-Wire devices to the log, so you can find the address easily.</p>
+
+<p>Additionally, and this is a big benefit of EspHome, it implements Over-The-Air-Updates. This means you can change configurations on the fly from your computer without disconnecting the sensors and hooking them up to USB.</p>
+
+<p>The code is much more bloated than my own code, no telegram bot, but a web interface and a rest api. I now rely on a Raspberry Pi to grab the data, store it in a database and create graphs that are sent to Telegram via Python code on the Raspberry Pi.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The fridge has been working for almost a year now after the fix. The temperature sensors make sure we’re get warned in case somethinh fails.</p>
+
+<p>I’m making small steps towards a properly setup smart home. In the early 2000s I had a very complex DIY 1-Wire Bus smart home. Since then I’ve been very pragmatic about my smart home. Always trying to avoid single points of failure and keeping it cheap and reusable. It is currently a mix of sensors and actuators from various manufactures and DIY solutions without any unified interface - that would be a single point of failure.</p>
+
+<p>Currently I’m running</p>
+
+<ul>
+  <li>Philips Hue for lighting</li>
+  <li>with Osram Smart Plug that are Hue compatible</li>
+  <li>FritzDect 200 smart plugs for energy monitoring</li>
+  <li>that I’m also using to control pumps on the balcony for irrigation of the growing beds - there is no feedback with the plant soil sensors, but neither is there, when it rains.</li>
+  <li>half a dozen of FritzDect 301 for time-based heating controls</li>
+  <li>and my own esp32/esp8266 DIY boards for the refridgerator, water heater monitoring and plant soil moisture monitoring. Some send Telegram messages, some use EspHome and have the readings collected from a Python script running on a Raspberry Pi.</li>
+</ul>
+
+<p>All in all the refridgerator repair has been a success and it goes to show how smart home technology and IoT sensors can make monitoring flacky devices to make sure they work properly more easily possible than it has been in the past.</p>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Smart Fridge"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
