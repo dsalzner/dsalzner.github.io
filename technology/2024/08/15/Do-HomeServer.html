@@ -1,0 +1,1054 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Home Server - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="My small Raspberry PI Home-Server failed once again after approx. 2 years of operation. This time the SD-Card literally burned up. I'll reinstall it, document the process and sh..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/technology/2024/08/15/Do-HomeServer.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Home Server - Dennis Salzner" />
+  <meta property="og:description" content="My small Raspberry PI Home-Server failed once again after approx. 2 years of operation. This time the SD-Card literally burned up. I'll reinstall it, documen..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/technology/2024/08/15/Do-HomeServer.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Technology" />
+  <meta property="article:published_time" content="2024-08-15 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-08-15 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-08-15 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="My small Raspberry PI Home-Server failed once again after approx. 2 years of operation. This time the SD-Card literally burned up. I'll reinstall it, document the process and sh..." />
+  <meta name="twitter:title" content="Home Server - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Home Server</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Home Server</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<img src="../../../../images/2024-08-15-Do-HomeServer/homeserver.jpg" width="20%" />
+
+<p>My small Raspberry PI Home-Server failed once again after approx. 2 years of operation. This time the SD-Card literally burned up. I’ll reinstall it, document the process and share some insights I’ve had from over a decade of running home servers.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#history" id="markdown-toc-history">History</a></li>
+  <li><a href="#lessons-learned-regarding-maintainance---what-i-dont-use-anymore" id="markdown-toc-lessons-learned-regarding-maintainance---what-i-dont-use-anymore">Lessons learned regarding maintainance - What I don’t use anymore</a>    <ul>
+      <li><a href="#matrix-chat-server" id="markdown-toc-matrix-chat-server">Matrix Chat Server</a></li>
+      <li><a href="#wordpress" id="markdown-toc-wordpress">Wordpress</a></li>
+      <li><a href="#docker" id="markdown-toc-docker">Docker</a></li>
+      <li><a href="#video-disk-recorder-vdr" id="markdown-toc-video-disk-recorder-vdr">Video Disk Recorder, VDR</a></li>
+      <li><a href="#openhab--homeassistant--nodered" id="markdown-toc-openhab--homeassistant--nodered">OpenHAB / HomeAssistant / Node.RED</a></li>
+      <li><a href="#grafana" id="markdown-toc-grafana">Grafana</a></li>
+      <li><a href="#pi-hole" id="markdown-toc-pi-hole">Pi-Hole</a></li>
+    </ul>
+  </li>
+  <li><a href="#stability" id="markdown-toc-stability">Stability</a>    <ul>
+      <li><a href="#avoid-sd-cards" id="markdown-toc-avoid-sd-cards">Avoid SD-Cards</a></li>
+      <li><a href="#get-proper-usb-power-bricks" id="markdown-toc-get-proper-usb-power-bricks">Get proper USB power bricks</a></li>
+    </ul>
+  </li>
+  <li><a href="#configuration---for-what-i-do-use" id="markdown-toc-configuration---for-what-i-do-use">Configuration - for what I do use</a>    <ul>
+      <li><a href="#device" id="markdown-toc-device">Device</a>        <ul>
+          <li><a href="#flashing" id="markdown-toc-flashing">Flashing</a></li>
+          <li><a href="#configuring" id="markdown-toc-configuring">Configuring</a></li>
+          <li><a href="#power-on-and-connect" id="markdown-toc-power-on-and-connect">Power on and connect</a></li>
+          <li><a href="#install-tools" id="markdown-toc-install-tools">Install tools</a></li>
+        </ul>
+      </li>
+      <li><a href="#synchronised-office" id="markdown-toc-synchronised-office">Synchronised Office</a>        <ul>
+          <li><a href="#apache2" id="markdown-toc-apache2">Apache2</a></li>
+          <li><a href="#nextcloud" id="markdown-toc-nextcloud">NextCloud</a></li>
+          <li><a href="#mariadb" id="markdown-toc-mariadb">MariaDB</a></li>
+        </ul>
+      </li>
+      <li><a href="#access" id="markdown-toc-access">Access</a>        <ul>
+          <li><a href="#ssl-certificates" id="markdown-toc-ssl-certificates">SSL certificates</a>            <ul>
+              <li><a href="#optional-real-ssl-certificate" id="markdown-toc-optional-real-ssl-certificate">(optional) real SSL Certificate</a></li>
+              <li><a href="#self-signed-certificate" id="markdown-toc-self-signed-certificate">Self-Signed Certificate</a></li>
+            </ul>
+          </li>
+          <li><a href="#https" id="markdown-toc-https">HTTPs</a></li>
+          <li><a href="#dyndns" id="markdown-toc-dyndns">DynDNS</a></li>
+        </ul>
+      </li>
+      <li><a href="#nextcloud-trusted-domain-errors" id="markdown-toc-nextcloud-trusted-domain-errors">NextCloud Trusted Domain Errors</a></li>
+      <li><a href="#extras" id="markdown-toc-extras">Extras</a>        <ul>
+          <li><a href="#nextcloudcalendar-phone-davx5simple-calendar" id="markdown-toc-nextcloudcalendar-phone-davx5simple-calendar">NextCloud/Calendar, Phone: DavX5/Simple Calendar</a></li>
+          <li><a href="#nextcloudcospend-phone-moneybuster" id="markdown-toc-nextcloudcospend-phone-moneybuster">NextCloud/Cospend, Phone: MoneyBuster</a></li>
+        </ul>
+      </li>
+      <li><a href="#smart-home" id="markdown-toc-smart-home">Smart-Home</a>        <ul>
+          <li><a href="#python-scripts-for-off-the-shelf-smarthome-hubs-hue-fritzdect-victronos-and-diy-esphome" id="markdown-toc-python-scripts-for-off-the-shelf-smarthome-hubs-hue-fritzdect-victronos-and-diy-esphome">Python scripts for off-the-shelf Smarthome hubs: Hue, FritzDect, VictronOS and DIY EspHome</a>            <ul>
+              <li><a href="#control-lights-with-the-philips-hue" id="markdown-toc-control-lights-with-the-philips-hue">Control lights with the Philips Hue</a></li>
+              <li><a href="#temperature-readings-from-fritzdect-sensors" id="markdown-toc-temperature-readings-from-fritzdect-sensors">Temperature Readings from FritzDect Sensors</a></li>
+              <li><a href="#esphome-refridgerator-sensor" id="markdown-toc-esphome-refridgerator-sensor">EspHome Refridgerator Sensor</a></li>
+              <li><a href="#victronos-photovoltaic-system" id="markdown-toc-victronos-photovoltaic-system">VictronOS Photovoltaic System</a></li>
+            </ul>
+          </li>
+          <li><a href="#termux-on-phones" id="markdown-toc-termux-on-phones">Termux on Phones</a></li>
+          <li><a href="#influxdb" id="markdown-toc-influxdb">InfluxDB</a></li>
+          <li><a href="#python-scripts-for-data-collection" id="markdown-toc-python-scripts-for-data-collection">Python Scripts for data collection</a></li>
+          <li><a href="#python-scripts-for-graphing" id="markdown-toc-python-scripts-for-graphing">Python Scripts for graphing</a></li>
+          <li><a href="#optional-displayfluxboxbrowser-kiosk-mode-or-conky" id="markdown-toc-optional-displayfluxboxbrowser-kiosk-mode-or-conky">(Optional) Display/Fluxbox/Browser Kiosk-Mode or Conky</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="history">History</h2>
+
+<p>I’ve been running servers for well over two decades now.</p>
+
+<p>Currently my home server is a simple single board computer with very light weight workloads: Synchronising calendars, synchronising finances, some file sharing, smarthome sensor data logging and plotting graphs. I’ve moved by web page hosting elsewhere and have omitted most other services that were high on maintainance and not so useful after all.</p>
+
+<p>One of the first ones was an old Windows machine running Microsoft’s Web-Server, the “Internet Information Services” (IIS).
+This was around 2001 and it got littered with viruses at a rate you would not believe.</p>
+
+<p>I’ve run Linux with Apache-Webservers during my student days on an old Acer Extensa 2900 LMi laptop.</p>
+
+<p>During the “home-theatre pc” (HTPC) hype I was running first an Asus e350 board with 6 S-Ata ports and later an Asus j3455 for HDMI output. On the later, during the beginining of the Covid pandemic, out of boredom and seeking to learn new technologies, I went all out and installed some twenty Docker services.</p>
+
+<p>Upon realising I’m consuming about 60 W continiously and that that amounts to serveral hundred Eur anually in electricity fees I stepped down to a Raspberry Pi 3B+.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="lessons-learned-regarding-maintainance---what-i-dont-use-anymore">Lessons learned regarding maintainance - What I don’t use anymore</h2>
+
+<p>There is no better way than home servers to shoot yourself in the foot with maintainance effort. Here are some things I’ve used in the past that I now dodge.</p>
+
+<p>I try to be pragmatic, avoid single-points of failure, use easily recreatable standard configurations and take as many sources of issues out of the equation as possible.</p>
+
+<h3 id="matrix-chat-server">Matrix Chat Server</h3>
+
+<p>Remember the days when you simply had an MSN/Windows Messenger installed? Then perhaps additionally ICQ Messenger and some others.</p>
+
+<p>At the time there were universal chat clients like Trilian and Pidgin. These were extensible with plugins. Most chat services supported XMPP the “universal messaging standard” [1]. You could have one chat application to communicate on multiple char services.</p>
+
+<p>That went away when companies started trying to retain users on their platforms. We now have WhatsApp, Facebook Messenger, Telegram, Apple iMessage and so forth. The only way to use them is by installing the official smartphome apps and/or/in combination with their poorly designed web interfaces. No interoperability what so ever.</p>
+
+<p>So some years ago I thought it would be great to get back to one unified chat application in order to not have to install all these data gathering messengers on my phone.</p>
+
+<p>The only half way viable option is running a Matrix-Server [2].</p>
+
+<p>The Matrix-Server is one Chat-Server you run. You can connect to it via client apps on your phone such as “Element” [3]. And in order for Matrix to access, for example, your WhatsApp messages you need to run:</p>
+
+<ul>
+  <li>the matrix server</li>
+  <li>the element app on your phone</li>
+  <li>the matrix-whatsapp-“puppeting bridge” that connects to the whatsapp web interface</li>
+  <li>whatsapp in an android emulator</li>
+  <li>and in order to connect the web interface you need get a QR code into WhatsApp running in the Android emulator, e.g. by a simulated web cam.</li>
+  <li>an additional phone with a sim-card as WhatsApp requires a valid phone number</li>
+</ul>
+
+<p>You then get</p>
+
+<ul>
+  <li>a crazy unstable convolution of services</li>
+  <li>insane maintainance effort</li>
+  <li>routine incompatibilities</li>
+  <li>connection dropouts</li>
+  <li>no way to cancel whatsapp calls, incompatibilities with sent files, emojis, etc</li>
+  <li>frequent android emulator crashes</li>
+</ul>
+
+<p>There is no single thing I’ve wasted more time with to get running and then abandoned all together.</p>
+
+<p><strong>In short:</strong> use E-Mail, Phone, SMS or get people to move to Jabber - someone has to make the first step.</p>
+
+<h3 id="wordpress">Wordpress</h3>
+
+<p>I’ve had web pages since the 2000s. Back then, in the Web 1.0, we would write an *.html-page and push it to an FTP-Server. With dynamic web pages, “Asynchronous JavaScript transfer” (AJAX) and the advent of Web 2.0 some things went overboard.</p>
+
+<p>When I started blogging more frequently I was persuaded into running a Wordpress instance instead of static webpages.</p>
+
+<p>These wordpress instances</p>
+
+<ul>
+  <li>require you have more expensive web hosting than for static web pages. Because they will run *.php files</li>
+  <li>are constantly outdated</li>
+  <li>use a metric ton of plugins that are maintaned by few and frequently become incompatible</li>
+  <li>are hard to backup due to the sql databases on the backend that they use for more performance</li>
+  <li>still run extremly slow due to rendering the page for every single visiting</li>
+  <li>require more disk space, more bandwith, more server performance</li>
+  <li>you should probably run an additional caching web proxy to take load off of the wordpress server</li>
+</ul>
+
+<p>In short wordpress is totally over-engineered for any sort of personal blog.</p>
+
+<p>After giving up on blogging due to the convoluted interface and the frequent issues I moved back to *.html-pages and then to static page generators like jekyll.</p>
+
+<p>When my webhosting increased prices once again I quit the contract and moved my page to GitHub-page. Since then</p>
+
+<ul>
+  <li>free web hosting with GitHub</li>
+  <li>no more plug-in/update issues</li>
+  <li>no security vulnerabilities</li>
+  <li>hardly any downtime</li>
+  <li>fast page loads</li>
+  <li>easily write new posts in markdown instead of in that strange rich text editor in the browser.</li>
+  <li>properly back them up in Git versioning and diff-compare them</li>
+</ul>
+
+<p>All of these wordpress plugins maintained by single people around the world for instance to add syntax highlighting or analytics to WordPress that you can just add to your page by simply copying a 10 line snippet of HTML/JavaScript into your pages. Using the convoluted WordPress for that - do you really want ot be that guy?</p>
+
+<p><strong>In short:</strong> Write *.html or use a static-page generator like Jekyll instead. Host on “dumb” servers, GitHub pages or similar.</p>
+
+<h3 id="docker">Docker</h3>
+
+<p>Docker is a controversial one. I’ve used Docker for about a decade now (it was introduced in 2013). There are definitely sensible use-cases - your own personal home server probably isn’t.</p>
+
+<p>Let me breakdown what Docker promises to do for you:</p>
+
+<ul>
+  <li>a) make reinstalling services easier through scripting and reproducability</li>
+  <li>b) make running services “more safe” by isolation</li>
+  <li>c) and the ability to reset the container</li>
+  <li>d) a community effort in maintaining these Dockerfile scripts</li>
+  <li>e) …?</li>
+</ul>
+
+<p>To this I say</p>
+
+<ul>
+  <li>a) Reproducability can be achieved by (ansible) scripts or proper copy-and-pastable documentation. Unless you like old versions forever, never want to improve anything, you’ll eventually have incompatibilities nevertheless.</li>
+  <li>b) A Docker container can be hacked even more easily due to old versions and provides full root inside the container, which can be used to wreck havok on your network. Also: it’s your home server, so who cares? And Docker does nothing different than combining Linux isolation best pracitices. We have SELinux, cgroups, user names, chmod, chroot, …</li>
+  <li>c) more like an additional unnessesary community dependance - with a lot less documentation than the underlying services would have had</li>
+  <li>d) …so a lack of persistance is now a feature. In practice your containers will be running 24/7. As soon as you reboot them they’ll fail and require substantial debugging effort - most of the time.</li>
+  <li>e) you won’t learn how the underlying stuff actually works unless your stuff doesn’t work - it won’t - and then you’re fixing the issues in a much more convoluted setup than if you were running on bare metal.</li>
+</ul>
+
+<p>Here is what it adds:</p>
+
+<ul>
+  <li>for the simplest use cases upwards of 5 gigabytes of disk space usage. If you’re editting and rerunning Dockerfiles you’ll fill your hard disk at a mindblowing rate.</li>
+  <li>because you’re basically installing entire libraries from other operating systems for compatibility that the Dockerfile is inheriting from</li>
+  <li>multiple copies of the same web servers, because each Dockerfile brings it’s own lighttpd/apached/nginx along</li>
+  <li>you then need a reverse proxy, probably another nginx, to make it all appear under the same domain and port</li>
+  <li>additional trouble of port forwards and volume mounts. Confusion in the configuration files.</li>
+  <li>access of configurations and logs only by entering and exiting running containers</li>
+  <li>services inside Docker containers generally run with full root</li>
+  <li>by nature of Docker outdated software versions</li>
+  <li>configurations of your servers in the Dockerfile made by someone you’ve never heard of</li>
+  <li>frequent incompatibilities when that docker container changes</li>
+</ul>
+
+<p>Let me elaborate further:</p>
+
+<ul>
+  <li>
+    <p>A classic bug is when you’re running “docker-compose”: So you’ve got everything set up running great. Then after a year or so someone trips your power cord. You reboot and, since you probably forgot to lock the hashes in your docker-compose.yml on all of your docker images, the first thing that happens is docker will update all containers. Incompatibilities will be introduced simultaniously to 3 of 5 containers and you’re left debugging for the rest of the day or week.</p>
+  </li>
+  <li>
+    <p>Also fun are parsing bugs in the Dockerfile variables: Ever had a password with an apostrophe? Good luck debuggin the heaps of poorly written Bash scripts used in theat Docker container.</p>
+  </li>
+  <li>
+    <p>or missing features all together that you have to add into those Dockerfile-scripts</p>
+  </li>
+</ul>
+
+<p><strong>In short:</strong> Trust me, just run servers on bare-metal.</p>
+
+<h3 id="video-disk-recorder-vdr">Video Disk Recorder, VDR</h3>
+
+<p>When linear television became less and less watchable due to more and more advertisements - there’s a pattern here: capitalists in seek of profits are destroying so much - I set up a hard disk recorder.</p>
+
+<p>The “Video Disk Recorder” (VDR) connected to a DVB-S2 USB satellite reciver (Hauppauge, TechniSat, …) would record scheduled shows onto a large array of hard disks.</p>
+
+<p>This worked well, but has draw backs</p>
+
+<ul>
+  <li>need to run a powerful server with large hard disks consuming a lot of power 24/7</li>
+  <li>bad weather conditions would block satellite reception</li>
+  <li>if you wanted to watch tv in parallel you needed a Twin-LNB</li>
+  <li>we had a satellite dish on our balcony</li>
+  <li>the disk space would run out quickly. I’d have to edit out advertisements and compress the videos.</li>
+</ul>
+
+<p>Nowadays I just</p>
+
+<ul>
+  <li>use a Telestar DigiBit Sat2IP device that provides the satellite television feed on my network</li>
+  <li>then I watch with either VLC on PC, Laptops, Phones or on the television using our Nokia AndroidTV streaming box and VLC running there</li>
+  <li>I don’t bother with recording it. Generally we hardly watch that ad-riddled garbage anymore and resort to paid streaming services or DVDs/Blu-Rays we borrow at the local library or buy from from online stores.</li>
+</ul>
+
+<p><strong>In short:</strong> Linear TV is dead. Use ad-free paid streaming. Get optical Media.</p>
+
+<h3 id="openhab--homeassistant--nodered">OpenHAB / HomeAssistant / Node.RED</h3>
+
+<p>For smart home control and interfaces it may seem like there is no way around OpenHAB or HomeAssistant and you have to make your choice: either convoluted broken Java or convoluted broken Node.JS. Both consuming so much RAM they won’t even run properly on a 1 GB Raspberry Pi 3B+.</p>
+
+<p>Often underestimated with smart home technology is what I call “what you’re used to” factor - closely related to the “woman acceptance factor” (WAF).</p>
+
+<p>My OpenHAB installation failed to frequently we went back to just using the Philips Hue physical buttons or the Philips Hue App. Even after fixing the OpenHAB instance we were just so used to hitting the button or opening that Hue-App, that we didn’t use OpenHAB even if it did run.</p>
+
+<p>It just wasn’t worth the effort of maintaining.</p>
+
+<p>What do Smart-Home automations promise</p>
+
+<ul>
+  <li>a) a unified interface of all your devices</li>
+  <li>b) freely configurable automations</li>
+  <li>c) control from all over the world</li>
+  <li>d) more ease of use</li>
+</ul>
+
+<p>Regarding this I found that</p>
+
+<ul>
+  <li>a) we don’t need a single interface. We need to our control lights. For basic automation I can use Python scripts that connect to the various smart home device hubs that run on our computers/phones in Termux. If I need to plot a graph of something I can use a Python script.</li>
+  <li>b) things like irrigation pumps are time-controlled and configured once. I don’t need a feedback loop between soil moisture and my lighting. If I did I write a custom script Python for that that runs in crontab on my server.</li>
+  <li>d) in my experience these systems introduce a single-point of failure and high maintainance effort</li>
+</ul>
+
+<p>As mentioned above for advanced use-cases you can even have Python scripts reading and writing to your Smarthome device hubs via REST-APIs. I’m doing this for the FritzBox, Philips Hue Lighting, my VictronOS Solar controller and Bosch Smarthome Heating controls. There are heaps of example code for this on the internet.</p>
+
+<p><strong>In short:</strong> These are by defintion single points of failure. Don’t run this buggy resource hogging high-maintainance stuff. Just use the manufacturer apps and physical buttons. Don’t run too many different smarthome systems. If you need clever automations write a custom 10-20 line Python script to do it.</p>
+
+<h3 id="grafana">Grafana</h3>
+
+<p>An interesting use-case for home-servers and smart home systems is to do data logging and then visualize that data. For instance, if you want to visualize the temperature curve of your refridgerator.</p>
+
+<p>Now for some reason we are led to believe we need complicated micro-services to do this.</p>
+
+<p>My graphs are produced by just 19 lines of Python code as you’ll see below. They write images to the web server directory (<code class="language-plaintext highlighter-rouge">/var/www/</code>) to make the graphs accessable from any web browser on my network. Such code can either be run by a web server hook or by routenly by an entry in the Linux crontab.</p>
+
+<p>You can easily go overboard in configuring the plot to you liking. There are heaps of Matplotlib example available online.</p>
+
+<p><strong>In short:</strong> Write simple plotting scripts in Python or similar. Make them accessable by writing them into your web server root directory. You’ll learn more, have more customisation, less frustrations, less dependencies and will consume less resources on your server.</p>
+
+<h3 id="pi-hole">Pi-Hole</h3>
+
+<p>The Pi-Hole ad-blocker is a great piece of software. Yet I’ve also abandoned it for one simple reason: If it fails, and it will, then you’re home internet will go down. It’s another one of those “single points of failure”. And if you’re on an important video call for a job application or work, you’d feel really dumb, if it fails and you get disconnected.</p>
+
+<p>I’ve found that it is of no help, when I’m outside of my home, as I generally don’t VPN into my home network to surf the internet - there would be a significant performance toll on that.</p>
+
+<p>The easierst solution, with a similar effect, is to run “ublock origin” addons across all your devices. It’s also easier to temporarily disable, when a web page doesn’t work properly due to an blocker.</p>
+
+<p>Unless you have you run your own company and you’re blocking ads for your employees, it really doesn’t make too much sense to have a centralized ad blocker. Also there are privacy concerns: I don’t want to see the domain names of pages my friends are accessing on home Wifi.</p>
+
+<p>It is advantagous for those TV streaming sticks where you can’t install an ad blocker, though.</p>
+
+<p><strong>In short:</strong> Just use the free and open-source browser addon uBlock Origin.</p>
+
+<h2 id="stability">Stability</h2>
+
+<p>Of course full-size servers are many times more reliable, but they are also much more expensive and consume much more power. So, in residential settings, we have to make due with single board computers such as the Raspberry PI. Over the years I’ve found fixed for some of the most common stability issues with Rasberry PIs in 24/7 operation.</p>
+
+<h3 id="avoid-sd-cards">Avoid SD-Cards</h3>
+
+<p>I’ve had three or four SD cards either not work at all or burn up within a few years in Raspberry PIs.</p>
+
+<p>Then I learned that Raspberry PI 3B+ and most models onward can boot from USB-Sticks. USB-Sticks are less compact, produce less heat and can tolerate more write cycles.</p>
+
+<p>Linux generally, unless configured otherwise, will write a lot of log messages to disk. This causes the SD-cards to either get filled or eventually break down completly from the wear.</p>
+
+<p>There’s also the option to omit all persistance and write only to memory with an ```rpi-config`` option. I think this is what my VictronOS solar controller is doing. But it’s inconvenient.</p>
+
+<p><strong>In short:</strong> Don’t use Micro SD-Cards. Use USB-Sticks or USB-SSDs instead. The Raspberry Pi 3B+ can boot off of them.</p>
+
+<h3 id="get-proper-usb-power-bricks">Get proper USB power bricks</h3>
+
+<p>If there’s one constant with RaspberryPI’s it’s “undervoltage detected” errors.</p>
+
+<p>I’ve yet to find a power brick that doesn’t occasionally cause these issues.</p>
+
+<p>But what you can do is use a USB-C charger cable from something beefy like a laptop. That should be able to maintain a stable voltage.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="configuration---for-what-i-do-use">Configuration - for what I do use</h2>
+
+<p>So that brings me to my current home server configuration. I’ve reinstalled it yesterday. It can be up and running within a day.</p>
+
+<h3 id="device">Device</h3>
+
+<p>I’m using the Raspberry Pi 3B+.</p>
+
+<h4 id="flashing">Flashing</h4>
+
+<p>I use the Raspberry PI Imager on Ubuntu to write “Rasbian Lite (64-Bit)” to a USB-Stick. It’s a Debian Buster that runs headless.</p>
+
+<h4 id="configuring">Configuring</h4>
+
+<p>As my server runs headless, the easiest way to configure it is by editing the files on the usb stick.</p>
+
+<p>To enable the SSH server on boot</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>bootfs
+<span class="nb">sudo touch </span>ssh
+</code></pre></div></div>
+
+<p>To enable wifi</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>vim rootfs/etc/wpa_supplicant.conf
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">country</span><span class="o">=</span>DE
+<span class="nv">ctrl_interface</span><span class="o">=</span><span class="nv">DIR</span><span class="o">=</span>/var/run/wpa_supplicant <span class="nv">GROUP</span><span class="o">=</span>netdev
+<span class="nv">network</span><span class="o">={</span>
+    <span class="nv">ssid</span><span class="o">=</span><span class="s2">"&lt;wifi ssid&gt;"</span>
+    <span class="nv">psk</span><span class="o">=</span><span class="s2">"&lt;wifi password&gt;"</span>
+    <span class="nv">key_mgmt</span><span class="o">=</span>WPA-PSK
+<span class="o">}</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>vim rootfs/etc/network/interfaces
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>allow-hotplug wlan0
+iface wlan0 inet dhcp
+wpa-ssid <span class="s2">"&lt;wifi ssid&gt;"</span>
+wpa-psk <span class="s2">"&lt;wifi password&gt;"</span>
+</code></pre></div></div>
+
+<h4 id="power-on-and-connect">Power on and connect</h4>
+
+<p>Insert the USB-stick to the rasp pi, power it on and connect with</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ssh root@&lt;raspberrypi-ipaddress&gt;
+</code></pre></div></div>
+
+<p>You can look the IP-Address up on your Wifi-Router. Rasbian has a default password.</p>
+
+<p>I advise to change it.</p>
+
+<h4 id="install-tools">Install tools</h4>
+
+<p>I really only need a vim text editor with proper mouse copy/paste for now.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt update
+<span class="nb">sudo </span>apt <span class="nb">install </span>vim
+<span class="nb">echo</span> <span class="s2">"set mouse-=a"</span> <span class="o">&gt;&gt;</span> <span class="nv">$HOME</span>/.vimrc
+<span class="nb">echo</span> <span class="s2">"set mouse-=a"</span> | <span class="nb">sudo tee</span> <span class="nt">-a</span> /root/.vimrc
+</code></pre></div></div>
+
+<h3 id="synchronised-office">Synchronised Office</h3>
+
+<p>Next I have some services I install for my use to sychronise calendars, expenses and files.</p>
+
+<h4 id="apache2">Apache2</h4>
+
+<p>Install the Webserver</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>apache2
+<span class="nb">sudo </span>apt-get <span class="nb">install </span>php <span class="c"># installs php8.2</span>
+</code></pre></div></div>
+
+<h4 id="nextcloud">NextCloud</h4>
+
+<p>Install NextCloud into that Webserver</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> /var/www/html
+<span class="nb">sudo </span>wget https://download.nextcloud.com/server/releases/latest.tar.bz2
+<span class="nb">tar</span> <span class="nt">-xvf</span> latest.tar.bz2
+<span class="nb">sudo chown</span> <span class="nt">-R</span> www-data:www-data /var/www/html/nextcloud
+</code></pre></div></div>
+
+<p>NextCloud needs some PHP modules</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>php-<span class="o">{</span>fpm,gd,mysql,curl,xml,zip,intl,mbstring,bz2,ldap,apcu,bcmath,gmp,imagick,igbinary,cli,common,opcache,readline,imagick<span class="o">}</span> 
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart apache2
+<span class="nb">sudo </span>systemctl <span class="nb">enable </span>apache2 
+</code></pre></div></div>
+
+<p>Nextcloud should be accessable under <code class="language-plaintext highlighter-rouge">http://raspberrypi-ipaddress&gt;/nextcloud</code>. Don’t configure it yet.</p>
+
+<p>For best practices clear that Apache2 index page. Nobody needs to know what you are running.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">""</span> | <span class="nb">sudo tee</span> /var/www/html/index.html
+</code></pre></div></div>
+
+<h4 id="mariadb">MariaDB</h4>
+
+<p>Nextcloud can use SqlLite which saves the database to a file. This runs extremly slow. It’s best to install a MySql-Server</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>mariadb-server
+
+<span class="nb">sudo </span>systemctl start mariadb
+<span class="nb">sudo </span>systemctl <span class="nb">enable </span>mariadb
+</code></pre></div></div>
+
+<p>Then configure it</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>mysql <span class="nt">-uroot</span>
+
+CREATE USER <span class="s1">'nextclouduser'</span>@<span class="s1">'localhost'</span> IDENTIFIED BY <span class="s1">'&lt;nextcloud-password&gt;'</span><span class="p">;</span>
+CREATE DATABASE IF NOT EXISTS nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci<span class="p">;</span>
+GRANT ALL PRIVILEGES on nextcloud.<span class="k">*</span> to <span class="s1">'nextclouduser'</span>@<span class="s1">'localhost'</span><span class="p">;</span>
+
+quit<span class="p">;</span>
+</code></pre></div></div>
+
+<p>You can then open <code class="language-plaintext highlighter-rouge">http://raspberrypi-ipaddress&gt;/nextcloud</code> and configure those same credentials.</p>
+
+<h3 id="access">Access</h3>
+
+<p>So far we have NextCloud running with the MySQL database.</p>
+
+<p>But for more security we need to configure HTTPS and certificates. We need a Dynamic DNS service to make sure the server can be found on the internet even if your internet service provider changes your external IP-Address.</p>
+
+<h4 id="ssl-certificates">SSL certificates</h4>
+
+<p>For HTTPS to work we need a certificate.</p>
+
+<h5 id="optional-real-ssl-certificate">(optional) real SSL Certificate</h5>
+
+<p>You don’t need  a real SSL certificate for your home server, if it’s just you and close friends using it. They can just accept your self-signed certificate. But if you have paid for domain hosting service you can use it to get a real SSL certificate.</p>
+
+<p>If you have a domain hosting service such as inwx.de you can get a real SSL certificate from it.</p>
+
+<p>For this we use the <code class="language-plaintext highlighter-rouge">acme.sh</code> scripts</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget <span class="nt">-O</span> - https://get.acme.sh | sh
+
+<span class="nb">export </span><span class="nv">INWX_User</span><span class="o">=</span><span class="s2">"&lt;your inwx user&gt;"</span>
+<span class="nb">export </span><span class="nv">INWX_Password</span><span class="o">=</span><span class="s2">"&lt;inwx token for that domain&gt;"</span>
+
+<span class="nv">$HOME</span>/.acme.sh/acme.sh <span class="nt">--register-account</span> <span class="nt">-m</span> &lt;your e-mail&gt;
+<span class="nv">$HOME</span>/.acme.sh/acme.sh <span class="nt">--issue</span> <span class="nt">--dns</span> dns_inwx <span class="nt">-d</span> &lt;your domain&gt;
+</code></pre></div></div>
+
+<p>You’ll find the <code class="language-plaintext highlighter-rouge">acme.sh</code> script will have automatically added an entry to your <code class="language-plaintext highlighter-rouge">crontab</code> to keep things updated automatically.</p>
+
+<p>If all works you now have certificate files in</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$HOME</span>/.acme.sh/&lt;your domain&gt;/&lt;your domain&gt;<span class="o">{</span>.crt,.key, ...<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Currently the acme.sh script seems to have some compatibility issue with inwx.</p>
+
+<h5 id="self-signed-certificate">Self-Signed Certificate</h5>
+
+<p>After the n-th time of debugging issues with SSL certificates and compatibility issues between the <code class="language-plaintext highlighter-rouge">acme.sh</code> and inwx.de domain hosting service, I just self-sign the certificates for my home server.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>openssl req <span class="nt">-x509</span> <span class="nt">-nodes</span> <span class="nt">-days</span> 365 <span class="nt">-newkey</span> rsa:2048 <span class="nt">-keyout</span> /etc/ssl/private/apache-selfsigned.key <span class="nt">-out</span> /etc/ssl/certs/apache-selfsigned.crt
+</code></pre></div></div>
+
+<p>You can leave most fields blank. For our use case these fields are only good for making your users more able to recognize whether the certificate is legitimate. For the Common Name (FQDN) I use the domain name.</p>
+
+<p>The only drawback is that your devices will prompt you whether they should accept that self-signed certificate.</p>
+
+<h4 id="https">HTTPs</h4>
+
+<p>To enable HTTPS on your Webserver with that self-signed certificate</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/apache2/sites-available/default-ssl.conf
+
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&gt;</span>VirtualHost <span class="k">*</span>:8443&gt;
+  ServerName &lt;your domain&gt;
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/html
+  ErrorLog <span class="k">${</span><span class="nv">APACHE_LOG_DIR</span><span class="k">}</span>/error.log
+  CustomLog <span class="k">${</span><span class="nv">APACHE_LOG_DIR</span><span class="k">}</span>/access.log combined
+	SSLEngine on
+	SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
+	SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
+&lt;/VirtualHost&gt;
+</code></pre></div></div>
+
+<p>and since I use a non-standard port and like to have Apache running only on IPv4 I change</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim /etc/apache2/ports.conf
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Listen 80
+
+&lt;IfModule ssl_module&gt;
+	Listen 0.0.0.0:8443
+&lt;/IfModule&gt;
+
+&lt;IfModule mod_gnutls.c&gt;
+	Listen 0.0.0.0:8443
+&lt;/IfModule&gt;
+</code></pre></div></div>
+
+<p>Not the <code class="language-plaintext highlighter-rouge">0.0.0.0:</code> makes sure the server runs on IPv4 only and noth IPv4 and IPv6.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>a2enmod ssl
+<span class="nb">sudo </span>a2ensite default-ssl.conf
+<span class="nb">sudo </span>service apache2 restart
+</code></pre></div></div>
+
+<h4 id="dyndns">DynDNS</h4>
+
+<p>Now you have HTTPS running and can more or less safely open the Port 8443 on your router.</p>
+
+<p>But since your internet service provider is probably changing your external IP-Address from time to time we need to setup a DynDNS service.</p>
+
+<p>I use inwx for this too</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>ddclient
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>vim /etc/ddclient.conf
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">protocol</span><span class="o">=</span>dyndns2
+<span class="nv">use</span><span class="o">=</span>web <span class="nv">web</span><span class="o">=</span>checkip.dyndns.org
+<span class="nv">server</span><span class="o">=</span>dyndns.inwx.com
+<span class="nv">login</span><span class="o">=</span>&lt;login&gt;
+<span class="nv">password</span><span class="o">=</span><span class="s1">'&lt;token password&gt;'</span>
+&lt;domain name&gt;
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart ddclient
+<span class="nb">sudo </span>systemctl <span class="nb">enable </span>ddclient
+</code></pre></div></div>
+
+<p>Now your server should be accessable from anywhere on earth by</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://&lt;your domain&gt;:8443/
+</code></pre></div></div>
+
+<h3 id="nextcloud-trusted-domain-errors">NextCloud Trusted Domain Errors</h3>
+
+<p>You NextCloud instance won’t accept any logins unless you make a change to the config.php.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>vim /var/www/html/nextcloud/config/config.php
+</code></pre></div></div>
+
+<p>In my case I had to add entry “1” and write the domain name there (without https and port number).</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  array <span class="o">(</span>
+    0 <span class="o">=&gt;</span> <span class="s1">'&lt;internal ip address&gt;'</span>,
+    1 <span class="o">=&gt;</span> <span class="s1">'&lt;your domain&gt;'</span>,
+  <span class="o">)</span>,
+</code></pre></div></div>
+
+<h3 id="extras">Extras</h3>
+
+<p>From there I set up to features I’ve found indespensible. Synchronised calendar and expense tracking.</p>
+
+<h4 id="nextcloudcalendar-phone-davx5simple-calendar">NextCloud/Calendar, Phone: DavX5/Simple Calendar</h4>
+
+<p>For a synchronised calandar:</p>
+
+<p>In Nextcloud web:</p>
+
+<ul>
+  <li>add your users to NextCloud</li>
+  <li>install the “Calendar” addon</li>
+  <li>add a calendar named “common” or whatever</li>
+</ul>
+
+<p>On your Android Phones:</p>
+
+<ul>
+  <li>install the NextCloud App and connect it, using the URL <code class="language-plaintext highlighter-rouge">https://&lt;your domain&gt;:8443/nextcloud/</code></li>
+  <li>install DavX5 (best from f-droid App-Store)</li>
+  <li>DAVx5 &gt;4.3.9 has added more convenience to connect to nextcloud instances</li>
+  <li>install “Simple Calendar” (com.simplemobiletools.calendar)</li>
+  <li>in DavX5 synchonize, in Simple Calendar select the calandards to display</li>
+</ul>
+
+<p>On your PCs running Thunderbird add the calendar link:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://&lt;your domain name&gt;:8443/remote.php/dav/calendars/&lt;your username&gt;/&lt;calandar name, e.g common&gt;/
+</code></pre></div></div>
+
+<p>If you need to transfer calendar entries from a different provider or a previous installation</p>
+
+<ul>
+  <li>export to *.ics from the Simple Calendar App</li>
+  <li>then import that *.ics to the other calendar</li>
+  <li>DavX5 and NextCloud will take care of the rest</li>
+</ul>
+
+<h4 id="nextcloudcospend-phone-moneybuster">NextCloud/Cospend, Phone: MoneyBuster</h4>
+
+<p>For synchronised expense tracking similar to “Tricount”, but self-hosted we use the Cospend Addon on NextCloud and the MoneyBuster-App on our phones.</p>
+
+<p>In NextCloud Web:</p>
+
+<ul>
+  <li>install the “Cospend” addon. It’s in the “organisation” category.</li>
+  <li>create a new project</li>
+</ul>
+
+<p>In the MoneyBuster-App:</p>
+
+<ul>
+  <li>add a project by scanning the QR-Code from NextCloud Web under “share”</li>
+</ul>
+
+<p>If you need to transfer entries from a previous installation:</p>
+
+<ul>
+  <li>you can select the old project in MoneyBuster and export to *.csv</li>
+  <li>then copy that *.csv onto NextCloud and reimport it there from Cospend. The format is compatible.</li>
+</ul>
+
+<h3 id="smart-home">Smart-Home</h3>
+
+<p>That brings me to my gimmicky Smart-Home features.</p>
+
+<h4 id="python-scripts-for-off-the-shelf-smarthome-hubs-hue-fritzdect-victronos-and-diy-esphome">Python scripts for off-the-shelf Smarthome hubs: Hue, FritzDect, VictronOS and DIY EspHome</h4>
+
+<p>To retrieve temperature readings and control actuactors across the various smart home systems I have, I generally resort to simple Python scripts.</p>
+
+<h5 id="control-lights-with-the-philips-hue">Control lights with the Philips Hue</h5>
+
+<p>A specific lamp can be controlled by a shell script like this one:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">requests</span>
+<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="sh">"</span><span class="s">bridge_address</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;hue bridge ip address&gt;</span><span class="sh">"</span><span class="p">,</span>
+  <span class="sh">"</span><span class="s">token</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;user access token&gt;</span><span class="sh">"</span><span class="p">,</span>
+  <span class="sh">"</span><span class="s">light_id</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;light id&gt;</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">put</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">bridge_address</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/api/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">token</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/lights/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">light_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/state</span><span class="sh">'</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="sh">"</span><span class="s"> {</span><span class="se">\"</span><span class="s">on</span><span class="se">\"</span><span class="s">:true}</span><span class="sh">"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>All you need is to get the username token from the Hue Bridge Api and configure it accordingly.</p>
+
+<h5 id="temperature-readings-from-fritzdect-sensors">Temperature Readings from FritzDect Sensors</h5>
+
+<p>FritzBox-Routers have DECT modules integrated originally for wireless telephony, but there is a lineup of smart home sensors and actuators using the technology. The benefit is not having to run another Hub, if you already have a Fritzbox router. The drawback is that the smarthome devices frequently run the batteries dry to to the energy consumption of the DECT.</p>
+
+<p>The FritzBox uses a challenge/reponse for authentication. To get temperature readings we can run:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">import</span> <span class="n">requests</span>
+<span class="kn">import</span> <span class="n">xmltodict</span>
+<span class="kn">import</span> <span class="n">hashlib</span>
+
+<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="sh">"</span><span class="s">fritzbox_host</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;fritzbox ip-address&gt;</span><span class="sh">"</span><span class="p">,</span>
+      <span class="sh">"</span><span class="s">fritzbox_user</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;fritzbox username&gt;</span><span class="sh">"</span><span class="p">,</span>
+      <span class="sh">"</span><span class="s">fritzbox_pass</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;fritzbox password&gt;</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># -- get challenge
+</span><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_host</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/login_sid.lua</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">dict_data</span> <span class="o">=</span> <span class="n">xmltodict</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">content</span><span class="p">)</span>
+<span class="n">challenge</span> <span class="o">=</span> <span class="n">dict_data</span><span class="p">[</span><span class="sh">"</span><span class="s">SessionInfo</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">Challenge</span><span class="sh">"</span><span class="p">]</span>
+
+<span class="c1"># -- post response
+</span><span class="n">response</span> <span class="o">=</span> <span class="n">hashlib</span><span class="p">.</span><span class="nf">md5</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="si">{</span><span class="n">challenge</span><span class="si">}</span><span class="s">-</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_pass</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="sh">'</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="sh">'</span><span class="s">utf-16le</span><span class="sh">'</span><span class="p">)).</span><span class="nf">hexdigest</span><span class="p">()</span>
+
+<span class="c1"># -- get session id
+</span><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_host</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/login_sid.lua</span><span class="sh">'</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="sh">"</span><span class="s">username</span><span class="sh">"</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_user</span><span class="sh">"</span><span class="p">],</span>
+  <span class="sh">"</span><span class="s">response</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">challenge</span><span class="si">}</span><span class="s">-</span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="sh">"</span>
+<span class="p">})</span>
+<span class="n">dict_data</span> <span class="o">=</span> <span class="n">xmltodict</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">content</span><span class="p">)</span>
+<span class="n">sid</span> <span class="o">=</span> <span class="n">dict_data</span><span class="p">[</span><span class="sh">"</span><span class="s">SessionInfo</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">SID</span><span class="sh">"</span><span class="p">]</span>
+
+<span class="c1"># -- get device list
+</span><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_host</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/webservices/homeautoswitch.lua?sid=</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s">&amp;switchcmd=getdevicelistinfos</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">dict_data</span> <span class="o">=</span> <span class="n">xmltodict</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">content</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">device_info</span> <span class="ow">in</span> <span class="n">dict_data</span><span class="p">[</span><span class="sh">"</span><span class="s">devicelist</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">device</span><span class="sh">"</span><span class="p">]:</span>
+  <span class="k">if</span> <span class="sh">"</span><span class="s">hkr</span><span class="sh">"</span> <span class="ow">in</span> <span class="n">device_info</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">hkr</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">tist</span><span class="sh">"</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="n">measurement_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span> <span class="p">:</span> <span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">@identifier</span><span class="sh">"</span><span class="p">],</span>
+        <span class="sh">"</span><span class="s">device_name</span><span class="sh">"</span> <span class="p">:</span> <span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">name</span><span class="sh">"</span><span class="p">],</span>
+        <span class="sh">"</span><span class="s">temp_current</span><span class="sh">"</span> <span class="p">:</span> <span class="nf">int</span><span class="p">(</span><span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">hkr</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">tist</span><span class="sh">"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">temp_target</span><span class="sh">"</span> <span class="p">:</span> <span class="nf">int</span><span class="p">(</span><span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">hkr</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">tsoll</span><span class="sh">"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="p">}</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">measurement_dict</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>The script will output, for instance</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span><span class="s1">'device_id'</span>: <span class="s1">'&lt;device id&gt;'</span>, <span class="s1">'device_name'</span>: <span class="s1">'&lt;device name&gt;'</span>, <span class="s1">'temp_current'</span>: 30.5, <span class="s1">'temp_target'</span>: 32.0<span class="o">}</span>
+</code></pre></div></div>
+
+<h5 id="esphome-refridgerator-sensor">EspHome Refridgerator Sensor</h5>
+
+<p>My fridge has a Wemos D1 Mini with temperature sensors connected to it (see <a href="/electronics/2024/08/10/Sa-SmartFridge.html">Smart Fridge</a>).</p>
+
+<p>Another simple Python script gets temperature readings from it.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">requests</span>
+
+<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="sh">"</span><span class="s">ip_address</span><span class="sh">"</span> <span class="p">:</span><span class="sh">"</span><span class="s">&lt;esphome ip address&gt;</span><span class="sh">"</span>
+  <span class="sh">"</span><span class="s">sensor_tag</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;sensor name&gt;</span><span class="sh">"</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">ip_address</span><span class="si">}</span><span class="s">/sensor/</span><span class="si">{</span><span class="n">sensor_tag</span><span class="si">}</span><span class="sh">'</span>
+<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{})</span>
+<span class="n">value</span> <span class="o">=</span> <span class="n">resp</span><span class="p">.</span><span class="nf">json</span><span class="p">()[</span><span class="sh">"</span><span class="s">value</span><span class="sh">"</span><span class="p">]</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h5 id="victronos-photovoltaic-system">VictronOS Photovoltaic System</h5>
+
+<p>To get readings from my photovoltaics system I’ve enabled mqtt on the Victron OS.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>paho-mqtt
+</code></pre></div></div>
+
+<p>The following script subscribes to the MQTT service, waits for each message to be received and then exits.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">json</span>
+<span class="kn">import</span> <span class="n">paho.mqtt.client</span> <span class="k">as</span> <span class="n">mqtt</span> <span class="c1"># pip install paho-mqtt
+</span>
+<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;victron device id&gt;</span><span class="sh">"</span><span class="p">,</span>
+  <span class="sh">"</span><span class="s">ip_address</span><span class="sh">"</span> <span class="p">:</span><span class="sh">"</span><span class="s">&lt;victron ip address&gt;</span><span class="sh">"</span>
+<span class="p">}</span>
+
+<span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">topics</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="sa">f</span><span class="sh">'</span><span class="s">N/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/system/0/Dc/Battery/Soc</span><span class="sh">'</span> <span class="p">:</span> <span class="sh">"</span><span class="s">solar_charge</span><span class="sh">"</span><span class="p">,</span>
+  <span class="sa">f</span><span class="sh">'</span><span class="s">N/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/system/0/Dc/Pv/Power</span><span class="sh">'</span> <span class="p">:</span> <span class="sh">"</span><span class="s">solar_power</span><span class="sh">"</span><span class="p">,</span>
+  <span class="sa">f</span><span class="sh">'</span><span class="s">N/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/system/0/Ac/Consumption/L1/Power</span><span class="sh">'</span> <span class="p">:</span> <span class="sh">"</span><span class="s">inverter_power</span><span class="sh">"</span><span class="p">,</span>
+  <span class="sa">f</span><span class="sh">'</span><span class="s">N/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/system/0/Dc/Battery/Current</span><span class="sh">'</span> <span class="p">:</span> <span class="sh">"</span><span class="s">battery_current</span><span class="sh">"</span>
+<span class="p">}</span>
+
+<span class="k">def</span> <span class="nf">on_connect</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
+  <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">topics</span><span class="p">.</span><span class="nf">keys</span><span class="p">():</span>
+    <span class="n">values</span><span class="p">[</span><span class="n">topic</span><span class="p">]</span> <span class="o">=</span> <span class="sh">"</span><span class="s">n/a</span><span class="sh">"</span>
+    <span class="n">client</span><span class="p">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+  <span class="n">values</span><span class="p">[</span><span class="n">msg</span><span class="p">.</span><span class="n">topic</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">payload</span><span class="p">)[</span><span class="sh">"</span><span class="s">value</span><span class="sh">"</span><span class="p">]</span>
+
+  <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">photovoltaics_</span><span class="si">{</span><span class="n">topics</span><span class="p">[</span><span class="n">msg</span><span class="p">.</span><span class="n">topic</span><span class="p">]</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">values</span><span class="p">[</span><span class="n">msg</span><span class="p">.</span><span class="n">topic</span><span class="p">]</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
+
+  <span class="n">done</span> <span class="o">=</span> <span class="bp">True</span>
+  <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="sh">"</span><span class="s">n/a</span><span class="sh">"</span><span class="p">:</span>
+      <span class="n">done</span> <span class="o">=</span> <span class="bp">False</span>
+  <span class="k">if</span> <span class="n">done</span><span class="p">:</span>  
+    <span class="nf">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">mqtt</span><span class="p">.</span><span class="nc">Client</span><span class="p">()</span>
+<span class="n">client</span><span class="p">.</span><span class="n">on_connect</span> <span class="o">=</span> <span class="n">on_connect</span>
+<span class="n">client</span><span class="p">.</span><span class="n">on_message</span> <span class="o">=</span> <span class="n">on_message</span>
+<span class="n">client</span><span class="p">.</span><span class="nf">connect</span><span class="p">(</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">ip_address</span><span class="sh">"</span><span class="p">],</span> <span class="mi">1883</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+<span class="n">ret</span><span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">publish</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">R/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/keepalive</span><span class="sh">'</span><span class="p">,</span><span class="sh">""</span><span class="p">)</span>
+<span class="n">client</span><span class="p">.</span><span class="nf">loop_forever</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>yielding for example:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>photovoltaics_inverter_power: 275.5200182724002
+photovoltaics_battery_current: 0.8999999761581421
+photovoltaics_solar_charge: 17
+photovoltaics_solar_power: 355.6560182037356
+</code></pre></div></div>
+
+<h4 id="termux-on-phones">Termux on Phones</h4>
+
+<p>With termux, the “Android terminal emulator and Linux environment app”, we can run the same Python scripts on our Android phones.</p>
+
+<p>The termux-widget App makes it possible to run the scripts from a menu directly from the home screen.</p>
+
+<img src="../../../../images/2024-08-15-Do-HomeServer/termux.jpg" width="20%" />
+
+<p>The best part is that the phone will directly connect to the respective smart home bridges. There is no single point of failure.</p>
+
+<h4 id="influxdb">InfluxDB</h4>
+
+<p>With all those sensor readings how do we store them, so we can make graphs later on?</p>
+
+<p>For this I’ve installed InfluxDB. A time-series database specifically for sensor values.
+It seems to be running something similar to MySql with a retention time setting underneath, so you might get waray with just using the MySql we installed earlier.</p>
+
+<p>To install InfluxDB:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>influxdb influxdb-client
+</code></pre></div></div>
+
+<p>and then create a database with in</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>influx <span class="nt">-host</span> <span class="s1">'localhost'</span> <span class="nt">-port</span> <span class="s1">'8086'</span>
+
+create database home
+<span class="nb">exit</span>
+</code></pre></div></div>
+
+<p>With that setup we can try to write and read values:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-i</span> <span class="nt">-XPOST</span> http://&lt;rasp pi server ip&gt;:8086/write?db<span class="o">=</span>home <span class="nt">--data-binary</span> <span class="s2">"test,tag=1 value=91"</span>
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-i</span> <span class="nt">-G</span> <span class="s1">'http://&lt;rasp pi server ip&gt;:8086/query?db=home'</span> <span class="nt">--data-urlencode</span> <span class="s1">'q=SELECT * FROM "test"'</span>
+</code></pre></div></div>
+
+<h4 id="python-scripts-for-data-collection">Python Scripts for data collection</h4>
+
+<p>To write entries to InfluxDB from the Python scripts you can install the influxdb python package</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>apt <span class="nb">install </span>python3-pip
+pip <span class="nb">install </span>influxdb
+</code></pre></div></div>
+
+<p>if you  get an “externally managed” error from pip, at your own risk, you can do</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo mv</span> /usr/lib/python3.11/EXTERNALLY-MANAGED /usr/lib/python3.11/EXTERNALLY-MANAGED.old
+</code></pre></div></div>
+
+<p>and then simply use a function like this one:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">influxdb</span> <span class="kn">import</span> <span class="n">InfluxDBClient</span>
+ 
+<span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="n">measurement</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+  <span class="n">loginEvents</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="sh">"</span><span class="s">measurement</span><span class="sh">"</span> <span class="p">:</span> <span class="n">measurement</span><span class="p">,</span>
+      <span class="sh">"</span><span class="s">fields</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">value</span><span class="sh">"</span><span class="p">:</span> <span class="n">value</span>
+      <span class="p">}</span>       
+    <span class="p">}</span>
+  <span class="p">]</span>
+  <span class="nf">print</span><span class="p">(</span><span class="n">loginEvents</span><span class="p">)</span>
+  <span class="n">dbClient</span> <span class="o">=</span> <span class="nc">InfluxDBClient</span><span class="p">(</span><span class="sh">'</span><span class="s">&lt;rasp pi server ip&gt;</span><span class="sh">'</span><span class="p">,</span> <span class="mi">8086</span><span class="p">,</span> <span class="sh">'</span><span class="s">root</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">root</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">home</span><span class="sh">'</span><span class="p">)</span>
+  <span class="n">dbClient</span><span class="p">.</span><span class="nf">create_database</span><span class="p">(</span><span class="sh">'</span><span class="s">home</span><span class="sh">'</span><span class="p">)</span>
+  <span class="n">dbClient</span><span class="p">.</span><span class="nf">write_points</span><span class="p">(</span><span class="n">loginEvents</span><span class="p">)</span>
+  
+<span class="nf">addValue</span><span class="p">(</span><span class="sh">"</span><span class="s">testvalue</span><span class="sh">"</span><span class="p">,</span> <span class="mf">10.2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="python-scripts-for-graphing">Python Scripts for graphing</h4>
+
+<p>With the sensor readings in InfluxDB we can simply query them, put them into pandas data frames and plot them.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
+<span class="kn">from</span> <span class="n">influxdb</span> <span class="kn">import</span> <span class="n">InfluxDBClient</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+
+<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="sh">"</span><span class="s">field</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;field to plot&gt;</span><span class="sh">"</span><span class="p">,</span>
+  <span class="sh">"</span><span class="s">influxdb_ip_address</span><span class="sh">"</span> <span class="p">:</span><span class="sh">"</span><span class="s">&lt;IP address of RaspberryPi/InfluxDB Server&gt;</span><span class="sh">"</span><span class="p">,</span>
+  <span class="sh">"</span><span class="s">influxdb_port</span><span class="sh">"</span> <span class="p">:</span> <span class="mi">8086</span><span class="p">,</span>
+  <span class="sh">"</span><span class="s">duration</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;duration, e.g. 12h&gt;</span><span class="sh">"</span>
+<span class="p">}</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="nc">InfluxDBClient</span><span class="p">(</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">influxdb_ip_address</span><span class="sh">"</span><span class="p">],</span> <span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">influxdb_port</span><span class="sh">"</span><span class="p">],</span> <span class="sh">'</span><span class="s">root</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">root</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">home</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">q</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">'</span><span class="s">select * from </span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">field</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s"> where time &gt; now()-</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">duration</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">;</span><span class="sh">'</span>
+<span class="n">loginRecords</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">query</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+<span class="n">resultInList</span> <span class="o">=</span> <span class="n">loginRecords</span><span class="p">.</span><span class="nf">get_points</span><span class="p">(</span><span class="n">measurement</span><span class="o">=</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">field</span><span class="sh">"</span><span class="p">])</span>
+<span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">loginRecords</span><span class="p">.</span><span class="nf">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">time</span><span class="sh">'</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="sh">'</span><span class="s">time</span><span class="sh">'</span><span class="p">],</span> <span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">field</span><span class="sh">"</span><span class="p">]:</span> <span class="n">p</span><span class="p">[</span><span class="sh">'</span><span class="s">value</span><span class="sh">'</span><span class="p">]}</span>
+        <span class="n">entries</span> <span class="o">+=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="nf">set_index</span><span class="p">(</span><span class="sh">'</span><span class="s">time</span><span class="sh">'</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+<span class="n">df</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">)</span> <span class="c1">#, errors='coerce')
+</span><span class="n">df</span><span class="p">.</span><span class="nf">plot</span><span class="p">()</span>
+<span class="n">plt</span><span class="p">.</span><span class="nf">savefig</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">plot_</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">field</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">_</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">duration</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">.png</span><span class="sh">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>which will yield</p>
+
+<img src="../../../../images/2024-08-15-Do-HomeServer/fridge-plot.jpg" width="40%" />
+
+<p>Running this script either by web hook or regularly by <code class="language-plaintext highlighter-rouge">crontab</code> and storing the image in web server directory under</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/var/www/
+</code></pre></div></div>
+
+<p>with or without an additional *.html page that includes them makes for an easy dashboard on your webserver.</p>
+
+<h4 id="optional-displayfluxboxbrowser-kiosk-mode-or-conky">(Optional) Display/Fluxbox/Browser Kiosk-Mode or Conky</h4>
+
+<p>If you have display connected to the Raspberry Pi, like I do, then it might make sense to display some of the data on it.</p>
+
+<p>For this you can install Fluxbox, a minimalist desktop environment. It can run shell and Python scripts and display what they return. It even has some basic graphing abilities.</p>
+
+<p>I’ve been running the same conky configuration file on my Raspberry Pi and on my Desktop computers.</p>
+
+<p>Alternatively you can run a browser fullscreen in “kiosk-mode” and point it at the page displaying the graphs. A “meta-refresh” tag in the *.html can make it automatically refresh every few seconds. Or jquery asynchronous JavaScript can update from within the page.</p>
+
+<p>Both is out of scope of this blog post.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I’ve become more and more pragmatic about my home server and smart home system over the years. While things like chat servers, ad-blockers and relevision services have not survived, others like a synchronised calandar and expense tracking have.</p>
+
+<p>For my smart home I use custom Python scripts. The current setup is a lot easier to setup and maintain. There is no need to install large complex “platforms”. If you’re able to do some basic programming, you can write a versatile set of custom python scripts that can do anything within reason for your smart home.</p>
+
+<p>It will consume less resources, require less maintainance and will generally run more reliably.</p>
+
+<hr />
+
+<pre>
+1] https://www.rfc-editor.org/rfc/rfc6120
+2] https://matrix.org/
+3] https://play.google.com/store/apps/details?id=im.vector.app
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Home Server"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
