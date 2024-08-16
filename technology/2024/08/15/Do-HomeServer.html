@@ -65,7 +65,11 @@
 <div class="page-seperator"></div>
 
 <div class="post-content" itemprop="articleBody">
-    <p style="font-size: 60%;" align="right">What</p>
+    <p><a href="https://github.com/dsalzner/suckless-smarthome/">
+    <img style="position: absolute; top: 0; right: 0; border: 0; height: 100px" src="../../../../images/github-fork-ribbon.png" alt="Fork me on GitHub" />
+</a></p>
+
+<p style="font-size: 60%;" align="right">What</p>
 
 <img src="../../../../images/2024-08-15-Do-HomeServer/homeserver.jpg" width="20%" />
 
@@ -328,13 +332,11 @@ This was around 2001 and it got littered with viruses at a rate you would not be
 
 <h3 id="openhab--homeassistant--nodered">OpenHAB / HomeAssistant / Node.RED</h3>
 
-<p>For smart home control and interfaces it may seem like there is no way around OpenHAB or HomeAssistant and you have to make your choice: either convoluted broken Java or convoluted broken Node.JS. Both consuming so much RAM they won’t even run properly on a 1 GB Raspberry Pi 3B+.</p>
+<p>For smart home control and interfaces it may seem like there is no way around OpenHAB, HomeAssistant, ioBroker, etc…  They all tend to become very complex over time and riddled with incompatibilities in the smarthome device bindings. Often they consume so much RAM they won’t even run on a 1 GB Raspberry Pi 3B+.</p>
 
-<p>Often underestimated with smart home technology is what I call “what you’re used to” factor - closely related to the “woman acceptance factor” (WAF).</p>
+<p>My OpenHAB installation failed so frequently we went back to just using the Philips Hue physical buttons or the Philips Hue App. Even after fixing the OpenHAB instance we were just so used to hitting the physical button or opening that Hue-App, that we didn’t use OpenHAB even if it did run.</p>
 
-<p>My OpenHAB installation failed to frequently we went back to just using the Philips Hue physical buttons or the Philips Hue App. Even after fixing the OpenHAB instance we were just so used to hitting the button or opening that Hue-App, that we didn’t use OpenHAB even if it did run.</p>
-
-<p>It just wasn’t worth the effort of maintaining.</p>
+<p>It just wasn’t worth the effort of maintaining - at least not for lighting contol.</p>
 
 <p>What do Smart-Home automations promise</p>
 
@@ -350,7 +352,8 @@ This was around 2001 and it got littered with viruses at a rate you would not be
 <ul>
   <li>a) we don’t need a single interface. We need to our control lights. For basic automation I can use Python scripts that connect to the various smart home device hubs that run on our computers/phones in Termux. If I need to plot a graph of something I can use a Python script.</li>
   <li>b) things like irrigation pumps are time-controlled and configured once. I don’t need a feedback loop between soil moisture and my lighting. If I did I write a custom script Python for that that runs in crontab on my server.</li>
-  <li>d) in my experience these systems introduce a single-point of failure and high maintainance effort</li>
+  <li>c) access from all over the world invites intruders</li>
+  <li>d) in my experience these systems introduce a single-point of failure and require a high maintainance effort</li>
 </ul>
 
 <p>As mentioned above for advanced use-cases you can even have Python scripts reading and writing to your Smarthome device hubs via REST-APIs. I’m doing this for the FritzBox, Philips Hue Lighting, my VictronOS Solar controller and Bosch Smarthome Heating controls. There are heaps of example code for this on the internet.</p>
@@ -735,6 +738,10 @@ quit<span class="p">;</span>
   <li>then copy that *.csv onto NextCloud and reimport it there from Cospend. The format is compatible.</li>
 </ul>
 
+<p><a href="https://github.com/dsalzner/suckless-smarthome/">
+    <img style="float: right; border: 0; height: 100px" src="../../../../images/github-fork-ribbon.png" alt="Fork me on GitHub" />
+</a></p>
+
 <h3 id="smart-home">Smart-Home</h3>
 
 <p>That brings me to my gimmicky Smart-Home features.</p>
@@ -743,17 +750,13 @@ quit<span class="p">;</span>
 
 <p>To retrieve temperature readings and control actuactors across the various smart home systems I have, I generally resort to simple Python scripts.</p>
 
+<p>I’ve released them as “suckless-smarthome” on my GitHub (see <a href="https://github.com/dsalzner/suckless-smarthome/">here</a>).</p>
+
 <h5 id="control-lights-with-the-philips-hue">Control lights with the Philips Hue</h5>
 
-<p>A specific lamp can be controlled by a shell script like this one:</p>
+<p>A specific lamp can be controlled by a script like this one:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">requests</span>
-<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="sh">"</span><span class="s">bridge_address</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;hue bridge ip address&gt;</span><span class="sh">"</span><span class="p">,</span>
-  <span class="sh">"</span><span class="s">token</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;user access token&gt;</span><span class="sh">"</span><span class="p">,</span>
-  <span class="sh">"</span><span class="s">light_id</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;light id&gt;</span><span class="sh">"</span><span class="p">,</span>
-<span class="p">}</span>
-<span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">put</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">bridge_address</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/api/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">token</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/lights/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">light_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/state</span><span class="sh">'</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span><span class="sh">"</span><span class="s"> {</span><span class="se">\"</span><span class="s">on</span><span class="se">\"</span><span class="s">:true}</span><span class="sh">"</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">python3</span> <span class="n">philips_hue</span><span class="p">.</span><span class="n">py</span> <span class="o">--</span><span class="n">action</span> <span class="n">getstate</span> <span class="o">--</span><span class="n">device</span> <span class="n">Lamp</span>
 </code></pre></div></div>
 
 <p>All you need is to get the username token from the Hue Bridge Api and configure it accordingly.</p>
@@ -762,53 +765,16 @@ quit<span class="p">;</span>
 
 <p>FritzBox-Routers have DECT modules integrated originally for wireless telephony, but there is a lineup of smart home sensors and actuators using the technology. The benefit is not having to run another Hub, if you already have a Fritzbox router. The drawback is that the smarthome devices frequently run the batteries dry to to the energy consumption of the DECT.</p>
 
-<p>The FritzBox uses a challenge/reponse for authentication. To get temperature readings we can run:</p>
+<p>The FritzBox uses a challenge/reponse for authentication. I’ve implemented this in my suckless-smarthome scripts:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
-<span class="kn">import</span> <span class="n">requests</span>
-<span class="kn">import</span> <span class="n">xmltodict</span>
-<span class="kn">import</span> <span class="n">hashlib</span>
+<p>To get temperature readings we can run:</p>
 
-<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="sh">"</span><span class="s">fritzbox_host</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;fritzbox ip-address&gt;</span><span class="sh">"</span><span class="p">,</span>
-      <span class="sh">"</span><span class="s">fritzbox_user</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;fritzbox username&gt;</span><span class="sh">"</span><span class="p">,</span>
-      <span class="sh">"</span><span class="s">fritzbox_pass</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;fritzbox password&gt;</span><span class="sh">"</span><span class="p">,</span>
-<span class="p">}</span>
-
-<span class="c1"># -- get challenge
-</span><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_host</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/login_sid.lua</span><span class="sh">'</span><span class="p">)</span>
-<span class="n">dict_data</span> <span class="o">=</span> <span class="n">xmltodict</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">content</span><span class="p">)</span>
-<span class="n">challenge</span> <span class="o">=</span> <span class="n">dict_data</span><span class="p">[</span><span class="sh">"</span><span class="s">SessionInfo</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">Challenge</span><span class="sh">"</span><span class="p">]</span>
-
-<span class="c1"># -- post response
-</span><span class="n">response</span> <span class="o">=</span> <span class="n">hashlib</span><span class="p">.</span><span class="nf">md5</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="si">{</span><span class="n">challenge</span><span class="si">}</span><span class="s">-</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_pass</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="sh">'</span><span class="p">.</span><span class="nf">encode</span><span class="p">(</span><span class="sh">'</span><span class="s">utf-16le</span><span class="sh">'</span><span class="p">)).</span><span class="nf">hexdigest</span><span class="p">()</span>
-
-<span class="c1"># -- get session id
-</span><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_host</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/login_sid.lua</span><span class="sh">'</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="sh">"</span><span class="s">username</span><span class="sh">"</span><span class="p">:</span> <span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_user</span><span class="sh">"</span><span class="p">],</span>
-  <span class="sh">"</span><span class="s">response</span><span class="sh">"</span><span class="p">:</span> <span class="sa">f</span><span class="sh">"</span><span class="si">{</span><span class="n">challenge</span><span class="si">}</span><span class="s">-</span><span class="si">{</span><span class="n">response</span><span class="si">}</span><span class="sh">"</span>
-<span class="p">})</span>
-<span class="n">dict_data</span> <span class="o">=</span> <span class="n">xmltodict</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">content</span><span class="p">)</span>
-<span class="n">sid</span> <span class="o">=</span> <span class="n">dict_data</span><span class="p">[</span><span class="sh">"</span><span class="s">SessionInfo</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">SID</span><span class="sh">"</span><span class="p">]</span>
-
-<span class="c1"># -- get device list
-</span><span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">fritzbox_host</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/webservices/homeautoswitch.lua?sid=</span><span class="si">{</span><span class="n">sid</span><span class="si">}</span><span class="s">&amp;switchcmd=getdevicelistinfos</span><span class="sh">'</span><span class="p">)</span>
-<span class="n">dict_data</span> <span class="o">=</span> <span class="n">xmltodict</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">content</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">device_info</span> <span class="ow">in</span> <span class="n">dict_data</span><span class="p">[</span><span class="sh">"</span><span class="s">devicelist</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">device</span><span class="sh">"</span><span class="p">]:</span>
-  <span class="k">if</span> <span class="sh">"</span><span class="s">hkr</span><span class="sh">"</span> <span class="ow">in</span> <span class="n">device_info</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">hkr</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">tist</span><span class="sh">"</span><span class="p">]</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-    <span class="n">measurement_dict</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span> <span class="p">:</span> <span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">@identifier</span><span class="sh">"</span><span class="p">],</span>
-        <span class="sh">"</span><span class="s">device_name</span><span class="sh">"</span> <span class="p">:</span> <span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">name</span><span class="sh">"</span><span class="p">],</span>
-        <span class="sh">"</span><span class="s">temp_current</span><span class="sh">"</span> <span class="p">:</span> <span class="nf">int</span><span class="p">(</span><span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">hkr</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">tist</span><span class="sh">"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">,</span>
-        <span class="sh">"</span><span class="s">temp_target</span><span class="sh">"</span> <span class="p">:</span> <span class="nf">int</span><span class="p">(</span><span class="n">device_info</span><span class="p">[</span><span class="sh">"</span><span class="s">hkr</span><span class="sh">"</span><span class="p">][</span><span class="sh">"</span><span class="s">tsoll</span><span class="sh">"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.5</span>
-    <span class="p">}</span>
-    <span class="nf">print</span><span class="p">(</span><span class="n">measurement_dict</span><span class="p">)</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 fritz_dect.py <span class="nt">--action</span> gettemperature <span class="nt">--device</span> livingroom-socket
 </code></pre></div></div>
 
 <p>The script will output, for instance</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span><span class="s1">'device_id'</span>: <span class="s1">'&lt;device id&gt;'</span>, <span class="s1">'device_name'</span>: <span class="s1">'&lt;device name&gt;'</span>, <span class="s1">'temp_current'</span>: 30.5, <span class="s1">'temp_target'</span>: 32.0<span class="o">}</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>27.5
 </code></pre></div></div>
 
 <h5 id="esphome-refridgerator-sensor">EspHome Refridgerator Sensor</h5>
@@ -817,17 +783,12 @@ quit<span class="p">;</span>
 
 <p>Another simple Python script gets temperature readings from it.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">requests</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 esphome.py <span class="nt">--action</span> getvalue <span class="nt">--device</span> refridgerator-freezer
+</code></pre></div></div>
 
-<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="sh">"</span><span class="s">ip_address</span><span class="sh">"</span> <span class="p">:</span><span class="sh">"</span><span class="s">&lt;esphome ip address&gt;</span><span class="sh">"</span>
-  <span class="sh">"</span><span class="s">sensor_tag</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;sensor name&gt;</span><span class="sh">"</span><span class="p">,</span>
-<span class="p">}</span>
+<p>yields</p>
 
-<span class="n">url</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">'</span><span class="s">http://</span><span class="si">{</span><span class="n">ip_address</span><span class="si">}</span><span class="s">/sensor/</span><span class="si">{</span><span class="n">sensor_tag</span><span class="si">}</span><span class="sh">'</span>
-<span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">{})</span>
-<span class="n">value</span> <span class="o">=</span> <span class="n">resp</span><span class="p">.</span><span class="nf">json</span><span class="p">()[</span><span class="sh">"</span><span class="s">value</span><span class="sh">"</span><span class="p">]</span>
-<span class="nf">print</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>10.9375
 </code></pre></div></div>
 
 <h5 id="victronos-photovoltaic-system">VictronOS Photovoltaic System</h5>
@@ -837,55 +798,14 @@ quit<span class="p">;</span>
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip <span class="nb">install </span>paho-mqtt
 </code></pre></div></div>
 
-<p>The following script subscribes to the MQTT service, waits for each message to be received and then exits.</p>
+<p>I also have a script that subscribes to the MQTT service, waits for each message to be received and then exits.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">json</span>
-<span class="kn">import</span> <span class="n">paho.mqtt.client</span> <span class="k">as</span> <span class="n">mqtt</span> <span class="c1"># pip install paho-mqtt
-</span>
-<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;victron device id&gt;</span><span class="sh">"</span><span class="p">,</span>
-  <span class="sh">"</span><span class="s">ip_address</span><span class="sh">"</span> <span class="p">:</span><span class="sh">"</span><span class="s">&lt;victron ip address&gt;</span><span class="sh">"</span>
-<span class="p">}</span>
-
-<span class="n">values</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">topics</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="sa">f</span><span class="sh">'</span><span class="s">N/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/system/0/Dc/Battery/Soc</span><span class="sh">'</span> <span class="p">:</span> <span class="sh">"</span><span class="s">solar_charge</span><span class="sh">"</span><span class="p">,</span>
-  <span class="sa">f</span><span class="sh">'</span><span class="s">N/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/system/0/Dc/Pv/Power</span><span class="sh">'</span> <span class="p">:</span> <span class="sh">"</span><span class="s">solar_power</span><span class="sh">"</span><span class="p">,</span>
-  <span class="sa">f</span><span class="sh">'</span><span class="s">N/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/system/0/Ac/Consumption/L1/Power</span><span class="sh">'</span> <span class="p">:</span> <span class="sh">"</span><span class="s">inverter_power</span><span class="sh">"</span><span class="p">,</span>
-  <span class="sa">f</span><span class="sh">'</span><span class="s">N/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/system/0/Dc/Battery/Current</span><span class="sh">'</span> <span class="p">:</span> <span class="sh">"</span><span class="s">battery_current</span><span class="sh">"</span>
-<span class="p">}</span>
-
-<span class="k">def</span> <span class="nf">on_connect</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="n">rc</span><span class="p">):</span>
-  <span class="k">for</span> <span class="n">topic</span> <span class="ow">in</span> <span class="n">topics</span><span class="p">.</span><span class="nf">keys</span><span class="p">():</span>
-    <span class="n">values</span><span class="p">[</span><span class="n">topic</span><span class="p">]</span> <span class="o">=</span> <span class="sh">"</span><span class="s">n/a</span><span class="sh">"</span>
-    <span class="n">client</span><span class="p">.</span><span class="nf">subscribe</span><span class="p">(</span><span class="n">topic</span><span class="p">)</span>
-
-<span class="k">def</span> <span class="nf">on_message</span><span class="p">(</span><span class="n">client</span><span class="p">,</span> <span class="n">userdata</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
-  <span class="n">values</span><span class="p">[</span><span class="n">msg</span><span class="p">.</span><span class="n">topic</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">payload</span><span class="p">)[</span><span class="sh">"</span><span class="s">value</span><span class="sh">"</span><span class="p">]</span>
-
-  <span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">photovoltaics_</span><span class="si">{</span><span class="n">topics</span><span class="p">[</span><span class="n">msg</span><span class="p">.</span><span class="n">topic</span><span class="p">]</span><span class="si">}</span><span class="s">: </span><span class="si">{</span><span class="n">values</span><span class="p">[</span><span class="n">msg</span><span class="p">.</span><span class="n">topic</span><span class="p">]</span><span class="si">}</span><span class="sh">'</span><span class="p">)</span>
-
-  <span class="n">done</span> <span class="o">=</span> <span class="bp">True</span>
-  <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">values</span><span class="p">:</span>
-    <span class="k">if</span> <span class="n">values</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">==</span> <span class="sh">"</span><span class="s">n/a</span><span class="sh">"</span><span class="p">:</span>
-      <span class="n">done</span> <span class="o">=</span> <span class="bp">False</span>
-  <span class="k">if</span> <span class="n">done</span><span class="p">:</span>  
-    <span class="nf">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-<span class="n">client</span> <span class="o">=</span> <span class="n">mqtt</span><span class="p">.</span><span class="nc">Client</span><span class="p">()</span>
-<span class="n">client</span><span class="p">.</span><span class="n">on_connect</span> <span class="o">=</span> <span class="n">on_connect</span>
-<span class="n">client</span><span class="p">.</span><span class="n">on_message</span> <span class="o">=</span> <span class="n">on_message</span>
-<span class="n">client</span><span class="p">.</span><span class="nf">connect</span><span class="p">(</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">ip_address</span><span class="sh">"</span><span class="p">],</span> <span class="mi">1883</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
-<span class="n">ret</span><span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">publish</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">R/</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">device_id</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">/keepalive</span><span class="sh">'</span><span class="p">,</span><span class="sh">""</span><span class="p">)</span>
-<span class="n">client</span><span class="p">.</span><span class="nf">loop_forever</span><span class="p">()</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">python3</span> <span class="n">victron</span><span class="p">.</span><span class="n">py</span> <span class="o">--</span><span class="n">action</span> <span class="n">getinverterpower</span>
 </code></pre></div></div>
 
 <p>yielding for example:</p>
 
-<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>photovoltaics_inverter_power: 275.5200182724002
-photovoltaics_battery_current: 0.8999999761581421
-photovoltaics_solar_charge: 17
-photovoltaics_solar_power: 355.6560182037356
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>206.87
 </code></pre></div></div>
 
 <h4 id="termux-on-phones">Termux on Phones</h4>
@@ -939,55 +859,16 @@ pip <span class="nb">install </span>influxdb
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo mv</span> /usr/lib/python3.11/EXTERNALLY-MANAGED /usr/lib/python3.11/EXTERNALLY-MANAGED.old
 </code></pre></div></div>
 
-<p>and then simply use a function like this one:</p>
+<p>and then simply use the suckless-smarthome script like this:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">influxdb</span> <span class="kn">import</span> <span class="n">InfluxDBClient</span>
- 
-<span class="k">def</span> <span class="nf">addValue</span><span class="p">(</span><span class="n">measurement</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-  <span class="n">loginEvents</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="p">{</span><span class="sh">"</span><span class="s">measurement</span><span class="sh">"</span> <span class="p">:</span> <span class="n">measurement</span><span class="p">,</span>
-      <span class="sh">"</span><span class="s">fields</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
-        <span class="sh">"</span><span class="s">value</span><span class="sh">"</span><span class="p">:</span> <span class="n">value</span>
-      <span class="p">}</span>       
-    <span class="p">}</span>
-  <span class="p">]</span>
-  <span class="nf">print</span><span class="p">(</span><span class="n">loginEvents</span><span class="p">)</span>
-  <span class="n">dbClient</span> <span class="o">=</span> <span class="nc">InfluxDBClient</span><span class="p">(</span><span class="sh">'</span><span class="s">&lt;rasp pi server ip&gt;</span><span class="sh">'</span><span class="p">,</span> <span class="mi">8086</span><span class="p">,</span> <span class="sh">'</span><span class="s">root</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">root</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">home</span><span class="sh">'</span><span class="p">)</span>
-  <span class="n">dbClient</span><span class="p">.</span><span class="nf">create_database</span><span class="p">(</span><span class="sh">'</span><span class="s">home</span><span class="sh">'</span><span class="p">)</span>
-  <span class="n">dbClient</span><span class="p">.</span><span class="nf">write_points</span><span class="p">(</span><span class="n">loginEvents</span><span class="p">)</span>
-  
-<span class="nf">addValue</span><span class="p">(</span><span class="sh">"</span><span class="s">testvalue</span><span class="sh">"</span><span class="p">,</span> <span class="mf">10.2</span><span class="p">)</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 influx.py <span class="nt">--action</span> addvalue <span class="nt">--device</span> <span class="nb">test</span> <span class="nt">--value</span> 2
 </code></pre></div></div>
 
 <h4 id="python-scripts-for-graphing">Python Scripts for graphing</h4>
 
-<p>With the sensor readings in InfluxDB we can simply query them, put them into pandas data frames and plot them.</p>
+<p>With the sensor readings in InfluxDB we can simply query them, put them into pandas data frames and plot them with the <code class="language-plaintext highlighter-rouge">graph.py</code> script:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">pandas</span> <span class="k">as</span> <span class="n">pd</span>
-<span class="kn">from</span> <span class="n">influxdb</span> <span class="kn">import</span> <span class="n">InfluxDBClient</span>
-<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-
-<span class="n">config_dict</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="sh">"</span><span class="s">field</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;field to plot&gt;</span><span class="sh">"</span><span class="p">,</span>
-  <span class="sh">"</span><span class="s">influxdb_ip_address</span><span class="sh">"</span> <span class="p">:</span><span class="sh">"</span><span class="s">&lt;IP address of RaspberryPi/InfluxDB Server&gt;</span><span class="sh">"</span><span class="p">,</span>
-  <span class="sh">"</span><span class="s">influxdb_port</span><span class="sh">"</span> <span class="p">:</span> <span class="mi">8086</span><span class="p">,</span>
-  <span class="sh">"</span><span class="s">duration</span><span class="sh">"</span> <span class="p">:</span> <span class="sh">"</span><span class="s">&lt;duration, e.g. 12h&gt;</span><span class="sh">"</span>
-<span class="p">}</span>
-
-<span class="n">client</span> <span class="o">=</span> <span class="nc">InfluxDBClient</span><span class="p">(</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">influxdb_ip_address</span><span class="sh">"</span><span class="p">],</span> <span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">influxdb_port</span><span class="sh">"</span><span class="p">],</span> <span class="sh">'</span><span class="s">root</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">root</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">home</span><span class="sh">'</span><span class="p">)</span>
-<span class="n">q</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">'</span><span class="s">select * from </span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">field</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s"> where time &gt; now()-</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">duration</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">;</span><span class="sh">'</span>
-<span class="n">loginRecords</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="nf">query</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
-<span class="n">resultInList</span> <span class="o">=</span> <span class="n">loginRecords</span><span class="p">.</span><span class="nf">get_points</span><span class="p">(</span><span class="n">measurement</span><span class="o">=</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">field</span><span class="sh">"</span><span class="p">])</span>
-<span class="n">entries</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">loginRecords</span><span class="p">.</span><span class="nf">items</span><span class="p">():</span>
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">v</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="sh">'</span><span class="s">time</span><span class="sh">'</span><span class="p">:</span> <span class="n">p</span><span class="p">[</span><span class="sh">'</span><span class="s">time</span><span class="sh">'</span><span class="p">],</span> <span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">field</span><span class="sh">"</span><span class="p">]:</span> <span class="n">p</span><span class="p">[</span><span class="sh">'</span><span class="s">value</span><span class="sh">'</span><span class="p">]}</span>
-        <span class="n">entries</span> <span class="o">+=</span> <span class="p">[</span><span class="n">data</span><span class="p">]</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nc">DataFrame</span><span class="p">(</span><span class="n">entries</span><span class="p">)</span>
-<span class="n">df</span><span class="p">.</span><span class="nf">set_index</span><span class="p">(</span><span class="sh">'</span><span class="s">time</span><span class="sh">'</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
-<span class="n">df</span><span class="p">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="p">.</span><span class="nf">to_datetime</span><span class="p">(</span><span class="n">df</span><span class="p">.</span><span class="n">index</span><span class="p">)</span> <span class="c1">#, errors='coerce')
-</span><span class="n">df</span><span class="p">.</span><span class="nf">plot</span><span class="p">()</span>
-<span class="n">plt</span><span class="p">.</span><span class="nf">savefig</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="s">plot_</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">field</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">_</span><span class="si">{</span><span class="n">config_dict</span><span class="p">[</span><span class="sh">"</span><span class="s">duration</span><span class="sh">"</span><span class="p">]</span><span class="si">}</span><span class="s">.png</span><span class="sh">'</span><span class="p">)</span>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 graph.py <span class="nt">--action</span> graph <span class="nt">--device</span> <span class="nb">test</span> <span class="nt">--duration</span> 8h
 </code></pre></div></div>
 
 <p>which will yield</p>
