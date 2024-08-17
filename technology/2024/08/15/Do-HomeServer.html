@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   
-  <title>Home Server - Dennis Salzner</title>
+  <title>Home Server & Smart Home - Dennis Salzner</title>
   
   
   <!-- search engine -->
@@ -12,7 +12,7 @@
   <link rel="canonical" href="https://www.dennissalzner.de/technology/2024/08/15/Do-HomeServer.html">
   <meta property="og:locale" content="en_EN" />
   <meta property="og:type" content="article" />
-  <meta property="og:title" content="Home Server - Dennis Salzner" />
+  <meta property="og:title" content="Home Server & Smart Home - Dennis Salzner" />
   <meta property="og:description" content="My small Raspberry PI Home-Server failed once again after approx. 2 years of operation. This time the SD-Card literally burned up. I'll reinstall it, documen..." />
   <meta property="og:url" content="https://www.dennissalzner.de/technology/2024/08/15/Do-HomeServer.html" />
   <meta property="og:site_name" content="Dennis Salzner" />
@@ -23,7 +23,7 @@
   <meta property="og:image" content="" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:description" content="My small Raspberry PI Home-Server failed once again after approx. 2 years of operation. This time the SD-Card literally burned up. I'll reinstall it, document the process and sh..." />
-  <meta name="twitter:title" content="Home Server - Dennis Salzner" />
+  <meta name="twitter:title" content="Home Server & Smart Home - Dennis Salzner" />
   <meta name="twitter:image" content="" />
 
   <!-- syntax highlighting in code snippets -->
@@ -57,10 +57,10 @@
     <div style="margin: 32px;">
     
 
-<h1>Dennis Salzner - Home Server</h1>
+<h1>Dennis Salzner - Home Server & Smart Home</h1>
 <p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
 
-<div class="page-title">Home Server</div>
+<div class="page-title">Home Server & Smart Home</div>
 <div class="page-subtitle"></div>
 <div class="page-seperator"></div>
 
@@ -89,6 +89,7 @@
       <li><a href="#openhab--homeassistant--nodered" id="markdown-toc-openhab--homeassistant--nodered">OpenHAB / HomeAssistant / Node.RED</a></li>
       <li><a href="#grafana" id="markdown-toc-grafana">Grafana</a></li>
       <li><a href="#pi-hole" id="markdown-toc-pi-hole">Pi-Hole</a></li>
+      <li><a href="#guacamole" id="markdown-toc-guacamole">Guacamole</a></li>
     </ul>
   </li>
   <li><a href="#stability" id="markdown-toc-stability">Stability</a>    <ul>
@@ -135,6 +136,7 @@
             </ul>
           </li>
           <li><a href="#termux-on-phones" id="markdown-toc-termux-on-phones">Termux on Phones</a></li>
+          <li><a href="#gnomeargos-on-desktopslaptops" id="markdown-toc-gnomeargos-on-desktopslaptops">Gnome/Argos on Desktops/Laptops</a></li>
           <li><a href="#influxdb" id="markdown-toc-influxdb">InfluxDB</a></li>
           <li><a href="#python-scripts-for-data-collection" id="markdown-toc-python-scripts-for-data-collection">Python Scripts for data collection</a></li>
           <li><a href="#python-scripts-for-graphing" id="markdown-toc-python-scripts-for-graphing">Python Scripts for graphing</a></li>
@@ -385,6 +387,16 @@ This was around 2001 and it got littered with viruses at a rate you would not be
 <p>It is advantagous for those TV streaming sticks where you can’t install an ad blocker, though.</p>
 
 <p><strong>In short:</strong> Just use the free and open-source browser addon uBlock Origin.</p>
+
+<h3 id="guacamole">Guacamole</h3>
+
+<p>Apache Guacamole [4] is a really cool remote desktop gateway.  Guacamole runs its own Apache Tomcat server. You configure your web server to reverse proxy to it. Then you can log in with a web browser from anywhere in the world and open remote desktop or VNC connections to devices on your home network. This is great, if you have want to be able to come back to your graphical user interface from anywhere.</p>
+
+<p>The draw back is that it lags and consumes a lot of bandwidth. It’s also a security vulnerability. With graphical interaction there is also no good option for logging user action and so you won’t be able to tell what an intruder did, if he gets access.</p>
+
+<p>While this makes sense in some corporate scenarios, for your home server and if you’re used to Linux it’s much more easier, faster and safer to just control your servers via SSH. SSH has optional X11 forwarding built-in, if you really need to view your Linux desktop.</p>
+
+<p><strong>In short:</strong> use SSH or purpose-built web interfaces to control home servers instead</p>
 
 <h2 id="stability">Stability</h2>
 
@@ -818,6 +830,16 @@ quit<span class="p">;</span>
 
 <p>The best part is that the phone will directly connect to the respective smart home bridges. There is no single point of failure.</p>
 
+<h4 id="gnomeargos-on-desktopslaptops">Gnome/Argos on Desktops/Laptops</h4>
+
+<p>If you have you have the argos-Extension running on Gnome, you can control your devices directly from it by setting up calls to the Python scripts.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">echo</span> <span class="s2">"television-off | bash='</span><span class="nv">$SUCKLESS_SMARTHOME</span><span class="s2">/philips_hue.py --action setoff --device Television'"</span>
+<span class="nb">echo</span> <span class="s2">"television-on | bash='</span><span class="nv">$SUCKLESS_SMARTHOME</span><span class="s2">/philips_hue.py --action seton --device Television'"</span>
+</code></pre></div></div>
+
+<img src="../../../../images/2024-08-15-Do-HomeServer/argos.png" width="20%" />
+
 <h4 id="influxdb">InfluxDB</h4>
 
 <p>With all those sensor readings how do we store them, so we can make graphs later on?</p>
@@ -873,7 +895,7 @@ pip <span class="nb">install </span>influxdb
 
 <p>which will yield</p>
 
-<img src="../../../../images/2024-08-15-Do-HomeServer/fridge-plot.jpg" width="40%" />
+<img src="../../../../images/2024-08-15-Do-HomeServer/fridge-plot.png" width="40%" />
 
 <p>Running this script either by web hook or regularly by <code class="language-plaintext highlighter-rouge">crontab</code> and storing the image in web server directory under</p>
 
@@ -910,13 +932,14 @@ pip <span class="nb">install </span>influxdb
 1] https://www.rfc-editor.org/rfc/rfc6120
 2] https://matrix.org/
 3] https://play.google.com/store/apps/details?id=im.vector.app
+4] https://guacamole.apache.org/
 </pre>
 
 </div>
 
 <script src="https://utteranc.es/client.js"
   repo="dsalzner/dsalzner.github.io"
-	issue-term="Home Server"
+	issue-term="Home Server & Smart Home"
 	theme="boxy-light"
 	crossorigin="anonymous"
 	async>
