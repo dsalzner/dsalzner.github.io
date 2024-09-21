@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Software Defined Radio & Building Antennas - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="Amateur radio and software defined radio is a big field with a lot to learn. It touches on various fields of technology from voice communication, but also digital transmission f..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/09/12/Do-SoftwareDefinedRadio.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Software Defined Radio & Building Antennas - Dennis Salzner" />
+  <meta property="og:description" content="Amateur radio and software defined radio is a big field with a lot to learn. It touches on various fields of technology from voice communication, but also di..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2024/09/12/Do-SoftwareDefinedRadio.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Electronics" />
+  <meta property="article:published_time" content="2024-09-12 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-09-12 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-09-12 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Amateur radio and software defined radio is a big field with a lot to learn. It touches on various fields of technology from voice communication, but also digital transmission f..." />
+  <meta name="twitter:title" content="Software Defined Radio & Building Antennas - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Software Defined Radio & Building Antennas</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Software Defined Radio & Building Antennas</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>Amateur radio and software defined radio is a big field with a lot to learn. It touches on various fields of technology from voice communication, but also digital transmission for WiFi, Smart Home and IoT. As such I’ve come into contact with it from various angles from time to time. The following summarizes what I’ve learned about receivers, antennas, connectors, cables, useful software and some signals I’ve received.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#history" id="markdown-toc-history">History</a>    <ul>
+      <li><a href="#wireless-lan-wifi" id="markdown-toc-wireless-lan-wifi">Wireless LAN (WiFI)</a></li>
+      <li><a href="#homemade-wifi-antennas" id="markdown-toc-homemade-wifi-antennas">Homemade Wifi Antennas</a></li>
+      <li><a href="#software-defined-radio" id="markdown-toc-software-defined-radio">Software Defined Radio</a></li>
+    </ul>
+  </li>
+  <li><a href="#frequencies" id="markdown-toc-frequencies">Frequencies</a>    <ul>
+      <li><a href="#legality-of-transmissions" id="markdown-toc-legality-of-transmissions">Legality of Transmissions</a></li>
+      <li><a href="#tuning-to-frequency" id="markdown-toc-tuning-to-frequency">Tuning to Frequency</a></li>
+      <li><a href="#digital-broadcasts-and-encryption" id="markdown-toc-digital-broadcasts-and-encryption">Digital broadcasts and encryption</a></li>
+      <li><a href="#easily-receivable-frequencies" id="markdown-toc-easily-receivable-frequencies">Easily Receivable Frequencies</a>        <ul>
+          <li><a href="#wifi" id="markdown-toc-wifi">WiFi</a></li>
+          <li><a href="#fm-radio" id="markdown-toc-fm-radio">FM Radio</a></li>
+          <li><a href="#dvb-t" id="markdown-toc-dvb-t">DVB-T</a></li>
+          <li><a href="#airport-broadcasts" id="markdown-toc-airport-broadcasts">Airport Broadcasts</a></li>
+          <li><a href="#citizens-band-radio" id="markdown-toc-citizens-band-radio">Citizens Band Radio</a></li>
+          <li><a href="#ads-b" id="markdown-toc-ads-b">ADS-B</a></li>
+          <li><a href="#additional" id="markdown-toc-additional">Additional</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#hardware" id="markdown-toc-hardware">Hardware</a>    <ul>
+      <li><a href="#receivers" id="markdown-toc-receivers">Receivers</a></li>
+      <li><a href="#antennas" id="markdown-toc-antennas">Antennas</a>        <ul>
+          <li><a href="#antenna-types" id="markdown-toc-antenna-types">Antenna Types</a>            <ul>
+              <li><a href="#stock-wifi-antennas" id="markdown-toc-stock-wifi-antennas">Stock Wifi Antennas</a></li>
+              <li><a href="#wifi-cantenna" id="markdown-toc-wifi-cantenna">Wifi-Cantenna</a></li>
+              <li><a href="#wifi-pringles-cantenna" id="markdown-toc-wifi-pringles-cantenna">Wifi Pringles Cantenna</a></li>
+              <li><a href="#stock-antenna-of-the-rtl2832-usb-dongle" id="markdown-toc-stock-antenna-of-the-rtl2832-usb-dongle">Stock Antenna of the RTL2832 USB Dongle</a></li>
+              <li><a href="#citizens-band-antenna" id="markdown-toc-citizens-band-antenna">Citizens Band Antenna</a></li>
+              <li><a href="#yagi-antenna" id="markdown-toc-yagi-antenna">Yagi Antenna</a></li>
+              <li><a href="#di-pole-antenna" id="markdown-toc-di-pole-antenna">Di-Pole Antenna</a></li>
+              <li><a href="#colinear-antenna" id="markdown-toc-colinear-antenna">Colinear Antenna</a></li>
+              <li><a href="#parabolic-antenna" id="markdown-toc-parabolic-antenna">Parabolic Antenna</a></li>
+            </ul>
+          </li>
+          <li><a href="#calculations" id="markdown-toc-calculations">Calculations</a></li>
+        </ul>
+      </li>
+      <li><a href="#polarisation" id="markdown-toc-polarisation">Polarisation</a></li>
+      <li><a href="#wiring" id="markdown-toc-wiring">Wiring</a>        <ul>
+          <li><a href="#connectors" id="markdown-toc-connectors">Connectors</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#software" id="markdown-toc-software">Software</a>    <ul>
+      <li><a href="#airodump-ng" id="markdown-toc-airodump-ng">airodump-ng</a></li>
+      <li><a href="#sdr-and-modified-driver" id="markdown-toc-sdr-and-modified-driver">SDR# and modified driver</a>        <ul>
+          <li><a href="#patching-the-driver" id="markdown-toc-patching-the-driver">Patching the driver</a></li>
+        </ul>
+      </li>
+      <li><a href="#websdr" id="markdown-toc-websdr">WebSDR</a>        <ul>
+          <li><a href="#configuring-openwebrx" id="markdown-toc-configuring-openwebrx">Configuring OpenWebRX</a></li>
+        </ul>
+      </li>
+      <li><a href="#online-websdr" id="markdown-toc-online-websdr">Online WebSDR</a></li>
+      <li><a href="#recording" id="markdown-toc-recording">Recording</a></li>
+    </ul>
+  </li>
+  <li><a href="#received-signals" id="markdown-toc-received-signals">Received Signals</a>    <ul>
+      <li><a href="#around-2016" id="markdown-toc-around-2016">around 2016</a></li>
+      <li><a href="#2024-08-25" id="markdown-toc-2024-08-25">2024-08-25</a>        <ul>
+          <li><a href="#100-to-300-mhz---inaudibledigital-signals" id="markdown-toc-100-to-300-mhz---inaudibledigital-signals">100 to 300 MHz - Inaudible/Digital Signals</a></li>
+          <li><a href="#102-mhz---fm-radio" id="markdown-toc-102-mhz---fm-radio">102 MHz - FM Radio</a></li>
+          <li><a href="#150-mhz---esoteric-medical-equipment" id="markdown-toc-150-mhz---esoteric-medical-equipment">150 MHz - Esoteric Medical Equipment</a></li>
+          <li><a href="#122670000-hz---airport" id="markdown-toc-122670000-hz---airport">122,670,000 Hz - Airport</a></li>
+          <li><a href="#224016400-hz---walkie-talkies-on-citizens-band" id="markdown-toc-224016400-hz---walkie-talkies-on-citizens-band">224,016,400 Hz - Walkie Talkies on Citizens Band</a></li>
+        </ul>
+      </li>
+      <li><a href="#2024-08-29" id="markdown-toc-2024-08-29">2024-08-29</a>        <ul>
+          <li><a href="#26985500-hz---music-on-citizens-band" id="markdown-toc-26985500-hz---music-on-citizens-band">26,985,500 Hz - Music on Citizens Band</a></li>
+          <li><a href="#30114727-hz---more-music" id="markdown-toc-30114727-hz---more-music">30,114,727 Hz - more Music</a></li>
+          <li><a href="#26893000-hz---real-ham-radio-voice-signal" id="markdown-toc-26893000-hz---real-ham-radio-voice-signal">26,893,000 Hz - real HAM radio voice signal</a></li>
+          <li><a href="#27784000-hz---more-voice-communication" id="markdown-toc-27784000-hz---more-voice-communication">27,784,000 Hz - more voice communication</a></li>
+          <li><a href="#27783280-hz---more-radio" id="markdown-toc-27783280-hz---more-radio">27,783,280 Hz - more radio</a></li>
+        </ul>
+      </li>
+      <li><a href="#2024-08-30" id="markdown-toc-2024-08-30">2024-08-30</a>        <ul>
+          <li><a href="#268929-mhz" id="markdown-toc-268929-mhz">26,8929 MHz</a></li>
+        </ul>
+      </li>
+      <li><a href="#2024-09-01" id="markdown-toc-2024-09-01">2024-09-01</a>        <ul>
+          <li><a href="#269743-mhz---voice-communication" id="markdown-toc-269743-mhz---voice-communication">26,9743 MHz - voice communication</a></li>
+          <li><a href="#269743-mhz---voice-communication-1" id="markdown-toc-269743-mhz---voice-communication-1">26,9743 MHz - voice communication</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="history">History</h2>
+
+<p>My first touchpoint with amateur radio has been building custom antennas for Wifi. That sparked a later interest in Software Defined Radio, when personal computers became powerful enough to handle the through-put. Cheap receivers came to market and that made software defined radio easily accessable.</p>
+
+<h3 id="wireless-lan-wifi">Wireless LAN (WiFI)</h3>
+
+<p>According to a page on the history of WiFi [7], WiFi hat its mass adoption 1999 (802.11b) to 2003 (802.11g) and was then extended in 2012 (802.11a).</p>
+
+<p>It very quickly became widespread. Finding wireless access points became somewhat of a hobby for some. This has brought some interesting antenna designs to widespread attention.</p>
+
+<h3 id="homemade-wifi-antennas">Homemade Wifi Antennas</h3>
+
+<p>In order to increase range of your WiFi devices you can build custom antennas. Building such antennas has been an entry point to amateur radio and ham radio for me.</p>
+
+<p>I most probably first heard about the “Pringles Cantenna” in an early online tv show “The Broken” [5] on a now defunct network called “Revision3” some time in the 90s.</p>
+
+<p>It was in an episode of this series that they showcased “Wardriving” [4]. Wardriving is driving around in your car with Wifi-Antennas and trying to pick-up beacons from wireless access points and putting them on a map. In order to increase range they built custom so-called “Cantennas” which are Antennas made from common house-hold supplies like Pringles cans.</p>
+
+<p>Naturally I had to build such an antenna, but it took me until ‘09 to get back to the subject and build it properly.
+In the meantime I had acquired a Netgear wg511t that I immediatly broke trying to solder an external antenna connection to it and then an Alfa Networks RTL8187 card with external antenna connection and better drivers. Eventually I found out, from a different tv show Hak5 [6], that you could buy “Fonera” Wifi routers and flash a minimialist Linux for routers, OpenWRT, to it and run the war driving tools directly on the router. That was 15 years ago in 2008.</p>
+
+<h3 id="software-defined-radio">Software Defined Radio</h3>
+
+<p>The term “Software Defined Radio” seems to be first mentioned on the internet [1] in ‘98. The idea is to not build a radio per purpose and do all the signal analysis in hardware, but rather push the raw signals into a computer and do the analysis entirely in software. This has significant adavantages in terms of flexibility and reduced cost of the receiver, but computers had to become powerful enough to handle the load first.</p>
+
+<p>After a large gap more papers were published in ‘06. It seems WebSDR.org, a network of software defined radios that can be accessed via the internet from anywhere in the world came about around ‘08. The GUI Software Sdr# for Windows and Linux was moved to GitHub from Google-Code in ‘11 according to the GitHub History. Support for RTL2832 USB dongles seems to have been added July 2012.</p>
+
+<p>With the RTL2832 USB dongles, intended for DVB-T television reception, a large wireless spectrum (25 to 1760 MHz) can be received when running a modified driver software. The receivers cost only around 20 to 35 Eur. This made it really easy for hobbyists to get into software defined radio.</p>
+
+<p>I bought my RTL2832 around ‘16. Conincidentially DVB-T television reception was shut down in March 2017 in many German cities. DVB-T2 was then rolled out until 2019. DVB-T2 supporrts PayTV and many channels require decoding cards. Since the same channels can be received for free via DVB-S, the satellite reception, it hasn’t been adopted by customers. By 2030 DVB-T2 will probably be shutdown.</p>
+
+<p>I asume part of the price drops in RTL2832 USB dongles is due to adoption rates not being as high as expected, but also the receivers covering a broad range of singles and being built into many receiving devices making for good margins in production. When combining the RTL2832 and R820T2 you can even receive 100 KHz to 1.7 GHz [8].</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="frequencies">Frequencies</h2>
+
+<p>Depening on use case different frequencies are used. Wikipedia has great image of the electromagnetic spectrum.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/spectrum.png" width="30%" />
+
+<p><br /><small>(Image taken from [10])</small></p>
+
+<p>What a lot of people don’t realize is that everything around us is part of the electronicmagnetic sprectrum. Warmth we feel is Infra-Red (IR). Things we see are visible light. Noise we hear.</p>
+
+<p>There are also signals that we our sensory organs are not able to pick-up. For these areas we may have radios to translate them into the ranges we can hear e.g. an FM-Radio translates FM Radio signals at 87.5 to 108 MHz to audible sounds we humans can hear.</p>
+
+<h3 id="legality-of-transmissions">Legality of Transmissions</h3>
+
+<p>In order to transmit at certain frequencies and at certain intensities you need to be a licensed radio operator.</p>
+
+<p>But for only passively receiving signals you don’t need the license.</p>
+
+<h3 id="tuning-to-frequency">Tuning to Frequency</h3>
+
+<p>Your Radio receiver may be able to tune to a large range of frequencies, but each Antenna is built for a specific frequency range. This means other frequencies may also be receivable, but are significantly damped. The frequencies the antenna is build for will have the best change to pass-through to the receiver.</p>
+
+<p>So ideally we have multiple antennas for each frequency range we want to receive.</p>
+
+<h3 id="digital-broadcasts-and-encryption">Digital broadcasts and encryption</h3>
+
+<p>Nowadays many signals are digital and may also be encrypted and/or compressed. This means you will receive binary streams that are hard to make sense of. Tools like GnuRadio can be setup to decode such signals, but this is very teadious.</p>
+
+<p>There are cases where people have succeeded in decoding the signals of local public transportation services to get the schedule, but it is usually easier to just use the internet API that most public transportation services offer.</p>
+
+<p>There are however a few transmissions we still can easily receive. Cheap unencrypted walkie talkies, radio, public broadcast transmissions from nearby airports, citizens band voice communication to name a few.</p>
+
+<h3 id="easily-receivable-frequencies">Easily Receivable Frequencies</h3>
+
+<p>Even tough many signals are digital, publically undocumented encrypted or compressed, there are many signals we can easily receive and make sense of.</p>
+
+<h4 id="wifi">WiFi</h4>
+
+<p>Wireless LAN or WiFI and its standards 802.11 b/g/n/ac/ax generally transmit in the 2,4 GHz or 5 GHz frequency range.</p>
+
+<p>These signals are very high through-out, require a complete Wireless and TCP/IP stack to decode and are out-of-range of a cheap software defined radio, but we have WiFi routers and USB Wifi-Receivers.</p>
+
+<p>I mention WiFi, the RTL2832 receiver and software-defined-radio together, because building antennas for Wifi is not much different than building antennas to receive different fequency ranges with Software-defined-radios.</p>
+
+<p>WiFi signals are usually encrypted, but the beacons aren’t and so you can locate and identify Wifi-Routers.</p>
+
+<h4 id="fm-radio">FM Radio</h4>
+
+<p>FM radio transmits between 87.5 to 108 MHz in most countries. This can be easily received with the RTL2832 USB dongles and can serve as a quick test for the receiver.</p>
+
+<h4 id="dvb-t">DVB-T</h4>
+
+<p>“Digital Video Broadcasting Terrestrial” (DVB-T) which is what the RTL2832 USB dongles were made for uses frequencies between 698 MHz and 786 MHz.</p>
+
+<p>Receiving and decoding them is best done with the software provided with the dongles or VLC.</p>
+
+<p>The channel 49 is on 698 MHz and the last channel, channel 60 is transmitted on 786 MHz. Unfortunately most transmissions have been shut down here in Germany.</p>
+
+<h4 id="airport-broadcasts">Airport Broadcasts</h4>
+
+<p>I’ve received signals from an airport on roughly 122 MHz. It’s a nice party trick to say you can receive airport transmissions.</p>
+
+<p>These signals are from the “Automatic Terminal Information Service” [11]. There is a continious voice transmission on the current weather conditions and the runways.</p>
+
+<h4 id="citizens-band-radio">Citizens Band Radio</h4>
+
+<p>Citizens Band Radio or “CB-Funk” has a frequency range of 26,565 MHz to 27,405 MHz for 80 channels. Here you can receive truck drivers and cab drivers informing each other about traffic jams, but also larger construction sites seem to communicate on this channel.</p>
+
+<p>It an be interesting to listen in and try to figure out from where the transmission originated by looking up, for instance, the street names they mention.</p>
+
+<h4 id="ads-b">ADS-B</h4>
+
+<p>A digital transmission that can easily be received is “Automatic Dependent Surveillance - Broadcast” (ADS-B). These are digital signals broadcasted unencrypted by nearby aircraft to inform of their flight number, position and travelling direction.</p>
+
+<p>It can be interesting to receive these signals in oder to know where aircraft flying overhead are headed to.</p>
+
+<h4 id="additional">Additional</h4>
+
+<p>Additionally there are many defunct weather satellites that are still transmitting. Some of which are streaming low-resolution black and white footage back to earth.</p>
+
+<p>The International Space Station (ISS) sometimes offers HAM radio sessions where they talk to HAM radio operators, often schools and universities, but also hobbyists. They transmit at 145.800 MHz FM. In order to receive signals you need a large antenna and you can only receive as they are passing overhead - the ISS travels quickly.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="hardware">Hardware</h2>
+
+<p>In order to receive signals we need a reciever, cabling and an antenna. There are many options.</p>
+
+<h3 id="receivers">Receivers</h3>
+
+<p>For different parts of the spectrum we need different receivers. The RTL2832 handles 25 to 1760 MHz. Wifi 802.11g is in the 2.4 GHz. 802.11a transmits at 5 GHz.</p>
+
+<p>Additionally for Wifi reception we typically use purpose build Wifi receivers to handle the high through-put.</p>
+
+<p>The RTL2832 on the other hand is more suited to voice transmissions, citizens band radio, more broadly HAM radio, aircraft ADS-B information, FM radio reception and of course DVB-T television reception.</p>
+
+<p>There’s not much inside the rtl2832 reciever as most of the signal handling is done in software on the computer.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/rtl2832.jpg" width="30%" />
+
+<h3 id="antennas">Antennas</h3>
+
+<p>Whats interesting with most antennas is that most don’t actively “do” anything. They merely are merely tuned to specific frequency ranges and due to this filter out unwanted signals. They can be directional so you can aim the antenna in different direction to figure out from where a signal came from and to further filter out unwanted signals from other directions.</p>
+
+<h4 id="antenna-types">Antenna Types</h4>
+
+<p>There are a large number of different antenna designs. Some are directonal - they can be aimed in one direction. Some are omni-directional - they receive signals from all sides.</p>
+
+<p>Most DIY Wifi Antennas are designs for 2.4 GHz reception. These are to be used with a Wifi-Receiver that has electronics to also handle the Wifi signal.</p>
+
+<p>DIY Antennas build for Software-Defined-Radio will be somwhere in the range of a Software-Defined-Radio receiver, so typically somewhere between 25 to 1760 MHz and depending on what range is of interest.</p>
+
+<h5 id="stock-wifi-antennas">Stock Wifi Antennas</h5>
+
+<p>WiFi-Equipement typically comes with small antennas. These are omni-directional are fine for residential use.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-equipment.jpg" width="40%" />
+
+<p><small>(Some of my old 2.4 GHz Wifi-Equipment and Antennas)</small></p>
+
+<p>Many Wifi-Devices have RP-SMA connectors to which you can connect other antennas.</p>
+
+<h5 id="wifi-cantenna">Wifi-Cantenna</h5>
+
+<p>For fining WiFI signals or receiving over long ranges it’s better to have a directional antenna. The Wifi-Cantenna is a directional DIY Antenna that is just a can with a wire inside. There are many guides online on how to build them [12].</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-cantenna.png" width="30%" />
+
+<p><small>(Image taken from [9])</small></p>
+
+<p>The antenna has an RG316 “N Female Connectors” connector.</p>
+
+<h5 id="wifi-pringles-cantenna">Wifi Pringles Cantenna</h5>
+
+<p>The Pringles-Cantenna, like the one I’ve built some time around ‘09/’10 is a bit more complicated. I built this following a guide I found online. It has a threaded rod and aluminium tube spacers with washers inside at a specific distance to better filter the signal.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-pringles-cantenna-1.jpg" width="20%" />
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-pringles-cantenna-2.jpg" width="20%" />
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-pringles-cantenna-3.jpg" width="20%" />
+
+<p>To build such an antenna you need</p>
+
+<ul>
+  <li>a threaded rod,</li>
+  <li>aluminium tube spacers - at specific length for 2.4 GHz,</li>
+  <li>washers,</li>
+  <li>an antenna connector,</li>
+  <li>some household electical wire - at specific length for 2.4 GHz,</li>
+  <li>some soldering for the connector,</li>
+  <li>two nuts to hold it together,</li>
+  <li>some card board</li>
+  <li>and a Pringles can that conveniently has an adequate diameter.</li>
+</ul>
+
+<p>The spacers are made from aluminum tube and, together with the washers are pushed over the threaded rod and fastended with the nut. The card board keeps the rod centered.</p>
+
+<p>In order to build this acurately you should use a pipe cutter. This helps geting perfectly straight cuts of the aluminium tube for the spacers.</p>
+
+<h5 id="stock-antenna-of-the-rtl2832-usb-dongle">Stock Antenna of the RTL2832 USB Dongle</h5>
+
+<p>The RTL2832 dongles come with a cheap antenna sufficient for DVB-T reception and FM radio, but not so much else.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/realtek-sdr.jpg" width="30%" />
+
+<p>The connector is an MCX-Plug.</p>
+
+<h5 id="citizens-band-antenna">Citizens Band Antenna</h5>
+
+<p>For Citizens Band, 27 MHz, 11-Meter-Band I purchased an antenna built for mounting on trucks.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/cb-antenna.jpg" width="30%" />
+
+<p>It has a male PL Plug (UHF Plug).</p>
+
+<h5 id="yagi-antenna">Yagi Antenna</h5>
+
+<p>The Yagi antenna design is commonly seen on TV receiver antennas mounted on house roofs. It’s  easy to build DIY antennas following this design.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/yagi-tv-antenna.png" width="20%" />
+
+<p><small>(Image taken from [13])</small></p>
+
+<h5 id="di-pole-antenna">Di-Pole Antenna</h5>
+
+<p>DI-Pole Anteannas are just two wires bent in opposing directions</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/antenna-diplole.jpg" width="20%" />
+
+<p><small>(Image taken from [14])</small></p>
+
+<h5 id="colinear-antenna">Colinear Antenna</h5>
+
+<p>A Colinear Antennas can be built of Coax-Wire where for each segment of specific length, the shield is soldered to the core of the next segment and vise-versa.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/colinear.png" width="20%" />
+
+<p><small>(Image taken from [15])</small></p>
+
+<h5 id="parabolic-antenna">Parabolic Antenna</h5>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/satellite-dish.png" width="20%" />
+
+<p><small>(Image taken from [17])</small></p>
+
+<h4 id="calculations">Calculations</h4>
+
+<p>When building antennas we need to tune the antenna to the specific frequency range we want to receive.</p>
+
+<p>There are many calculators online for the various types of antenna to tell you the exact dimensions of each part in order to build an antenna for that specific frequency.</p>
+
+<h3 id="polarisation">Polarisation</h3>
+
+<p>Most antennas can be oriented horizontally or vertically. In case of the dishes ofteb both polarisations can be received accoring to how the “low-noise downconverter” (LNB), at the tip of the dish is configured by the receiver.</p>
+
+<h3 id="wiring">Wiring</h3>
+
+<p>Most antennas are connected with some sort of coax-cable. Co-Axial means there is a core and a shielding around it. This best prevents cross-talk from other signals.</p>
+
+<p>These cables come in 50 Ohms - typically for amateuer radio - and 75 Ohms - typically for television broadcast.</p>
+
+<p>There is a great video on YouTube on why amateur radio cables use 50 Ohms [16]. The bottom line is that it is a compromise between high-power, high-voltage and low-attenuation.</p>
+
+<p>For receiving - for example your television set - 75 Ohms is better, for also transmitting 50 Ohms is better.</p>
+
+<h4 id="connectors">Connectors</h4>
+
+<p>There is a whole row of different connectors to conside with radio equipement. The reason is that equipement comes from different industries with different standards. So you’ll need a collection of adapters. But keep in mind: the fewer adapters in your connection the less signal loss.</p>
+
+<p>For the DIY Wifi Antennas - WiFi uses RP-SMA instead of SMA (the difference is the side on which the pin in the center is)</p>
+
+<ul>
+  <li>Wifi-Devices generally use Female RP-SMA</li>
+  <li>the Wifi-Antennas have Male RP-SMA Plugs</li>
+  <li>for custom built Antennas its advisasble to use RG316 Flange mount attached “N Female Connectors”</li>
+  <li>to connect to the WiFi radio you need a “pigtail” adapter from RG316 to RP-SMA</li>
+</ul>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/pigtail-ntype-rpsma.jpg" width="20%" />
+
+<p>For connecting to the RTL-SDR</p>
+
+<ul>
+  <li>a “pigtail” adapter from the male MCX to female SMA</li>
+</ul>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/mcx-to-sma.jpg" width="20%" />
+
+<p>For the Citizens Band Antenna</p>
+
+<ul>
+  <li>a female PL socket (UHF socket) to SMA (not RP-SMA)</li>
+</ul>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/pl-plug-sma.jpg" width="10%" />
+
+<p>For DIY Antennas of other frequency ranges</p>
+
+<ul>
+  <li>here I use male PL259 UHF plugs like the Citizens Band antenna</li>
+</ul>
+
+<h2 id="software">Software</h2>
+
+<p>For the software we can use the regulare software for the equipement, when using it as intended.</p>
+
+<p>But if you want to use the RTL2832 receivers in other frequency ranges and look at the raw signals, you need different software.</p>
+
+<p>Similarly, if you want to see the Wifi beacons received by your Wifi-Antenna, you need software that can  display it.</p>
+
+<h3 id="airodump-ng">airodump-ng</h3>
+
+<p>Airodump-Ng is a Linux command-line tool that can be found online. On supported Wifi cards it can show the physical addresses (SSIDs) of the access points nearby that are transmitting beacons or data.</p>
+
+<h3 id="sdr-and-modified-driver">SDR# and modified driver</h3>
+
+<p>A convenient software for getting started with the RTL2832 is SDR-Sharp (SDR#) [18]. It has been around for some time and displays a nice diagramm where you can visually see where a signal was received.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-sharp.png" width="60%" />
+
+<p>I used to have it running on Linux, but the installation on Windows is much easier.</p>
+
+<h4 id="patching-the-driver">Patching the driver</h4>
+
+<p>In order to use the RTL2832 one Windows you need to use a patched driver.</p>
+
+<p>For this run the “install-rtlsdr.bat” scrip that comes with SdrSharp.
+It will make “zadig.exe “available”</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-01.png" width="30%" />
+
+<p>The Zadig USB driver tool can then be used to switch the driver for the RTL2832 to “WinUSB”.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-02.png" width="30%" />
+
+<p>You can then select the receiver in SdrSharp.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-03.png" width="30%" />
+
+<h3 id="websdr">WebSDR</h3>
+
+<p>A common problem with antennas is the distance to the receiver. Ideally you’d like to sit at your computer controlling the Software-defined-radio, but the antenna needs to be up on the roof. This means there are long cables involved that increase the loss of the signal.</p>
+
+<p>WebSDR solved this entirely for me: It provides a web interface for the receiver. I can now use a laptop or a Raspberry PI running headless with WebSDR installed near the antenna - keeping loss to a minimum - and bring that single to my computer via the LAN connection. With this I can then control and receive signals from anywhere on my network or even the internet. Additionally it runs on Linux and the Browser to access it can run on anything - even your Android phone.</p>
+
+<p>There are even WebSDR radios of other people on the internet that you can connect to and use. In order to listen to frequencies you don’t have a receiver or suitable antenna for or in order to compare their reception with yours.</p>
+
+<p>Common Software for WebSDR is OpenWebRX [19]. You can quickly install it with Docker. Here docker makes sense, because this application is a bit tricky to set up and there’s hardly any customization you’ll need to the software.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/openwebrx.png" width="50%" />
+
+<h4 id="configuring-openwebrx">Configuring OpenWebRX</h4>
+
+<p>In or der to run WebSDR with Docker you can run</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>docker run <span class="nt">--name</span> sdr <span class="nt">--device</span> /dev/bus/usb <span class="nt">-p</span> 8073:8073 <span class="nt">-v</span> ./openwebrx/settings:/var/lib/openwebrx jketterl/openwebrx:stable
+</code></pre></div></div>
+
+<p>Then access it via</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://127.0.0.1:8073
+</code></pre></div></div>
+
+<p>from your browser.</p>
+
+<p>OpenWebRX needs to be configured to  different “Profiles” specifying the reciver to be used and the frequency range to tune to.
+Setting this up via configuration file is a bit tedious. Calculating the values is as well.</p>
+
+<p>The receiver can only tune to a small range of the signal. So if you want to have a whole set of profiles to cover a broader range you need to configure a profile for each individually.</p>
+
+<p>There’s a tool on Github “openwebrx-profiles_gen” that can help with this</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/SP5D/openwebrx-profiles_gen
+</code></pre></div></div>
+
+<p>You can the nrun, for exmaple</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python3 openwebrx-profiles_gen.py 87.5MHz 108.0MHz 2.4MHz
+</code></pre></div></div>
+
+<p>and it will give you a set of values to create profiles with</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>{'87.5-89.9MHz': {'name': '87.5-89.9MHz', 
+'center_freq': 88700000, 'rf_gain': 'auto', 'samp_rate': 2000000, 'start_freq': 88700000, 'start_mod': 'am'},
+
+'89.9-92.3MHz': {'name': '89.9-92.3MHz', 
+'center_freq': 91100000, 'rf_gain': 'auto', 'samp_rate': 2000000, 'start_freq': 91100000, 'start_mod': 'am'},
+
+'92.3-94.7MHz': {'name': '92.3-94.7MHz', 
+'center_freq': 93500000, 'rf_gain': 'auto', 'samp_rate': 2000000, 'start_freq': 93500000, 'start_mod': 'am'}, 
+
+'94.7-97.1MHz': {'name': '94.7-97.1MHz', 
+'center_freq': 95900000, 'rf_gain': 'auto', 'samp_rate': 2000000, 'start_freq': 95900000, 'start_mod': 'am'},
+
+'97.1-99.5MHz': {'name': '97.1-99.5MHz', 
+'center_freq': 98300000, 'rf_gain': 'auto', 'samp_rate': 2000000, 'start_freq': 98300000, 'start_mod': 'am'},
+
+'99.5-101.9MHz': {'name': '99.5-101.9MHz', 
+'center_freq': 100700000, 'rf_gain': 'auto', 'samp_rate': 2000000, 'start_freq': 100700000, 'start_mod': 'am'},
+
+'101.9-104.3MHz': {'name': '101.9-104.3MHz', 
+'center_freq': 103100000, 'rf_gain': 'auto', 'samp_rate': 2000000, 'start_freq': 103100000, 'start_mod': 'am'},
+
+'104.3-106.7MHz': {'name': '104.3-106.7MHz', 
+'center_freq': 105500000, 'rf_gain': 'auto', 'samp_rate': 2000000, 'start_freq': 105500000, 'start_mod': 'am'},
+
+'106.7-108MHz': {'name': '106.7-108MHz', 
+'center_freq': 107300000, 'rf_gain': 'auto', 'samp_rate': 2000000, 'start_freq': 107300000, 'start_mod': 'am'}}
+}}}
+
+</code></pre></div></div>
+
+<p>These are easiest added on the Web-Interface in the Settings menu. There you can also configure what receiver to use.</p>
+
+<h3 id="online-websdr">Online WebSDR</h3>
+
+<p>There is a list at websdr.org [20] of other WebSDR instances that were made available on the internet. You can access these websdr instances, just like a local instance, from your browser and listen to signals received at various places on earth.</p>
+
+<h3 id="recording">Recording</h3>
+
+<p>In or der to keep track of signals I’ve recieved I usually make screenshots and then use the audio recording tool “Audacity” to record.</p>
+
+<p>On Ubuntu Linux I had to install Audacity properly from the apt-Repositories instead of the snap packages in order for Audacity to see the PulseAudio devices.
+Then, in “pavucontrol”, I set the Audicity recording input to “monitor” to be able to record what was heard.</p>
+
+<p>As an alternative your could capture your screen and audio with ObsStudio.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="received-signals">Received Signals</h2>
+
+<p>I’ll share some signals I’ve received and their frequencies. The recordings are cut to the interesting sections, but I’ve left some of the noise in the recordings.</p>
+
+<p><strong>Caution</strong> some of these recordings have a lot of noise and can be very loud.</p>
+
+<h3 id="around-2016">around 2016</h3>
+
+<p>I bought my rtl-sdr around 2016. Signals I recieved with the antenna provided were</p>
+
+<ul>
+  <li>FM Radio</li>
+  <li>Airport broadcasts around 122 and 126 MHz with weather and runway information from the “Automatic Terminal Information Service” mentioned above</li>
+</ul>
+
+<h3 id="2024-08-25">2024-08-25</h3>
+
+<p>Coming back to SDR in August this year I picked up various digital signals and chirps, but also audible signals. I used SDR-Sharp on Windows as a starting point. Some days later I received better equipment (antennas and adapters) and installed WebSDR to be able to use Linux, control the radio from the browser and have a shorter cable run from the receiver to the antenna as described above.</p>
+
+<h4 id="100-to-300-mhz---inaudibledigital-signals">100 to 300 MHz - Inaudible/Digital Signals</h4>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-1.png" width="30%" />
+
+<p>Similarly at 
+115,200 MHz
+124,996 MHz
+142,220 MHz
+144,000 MHz
+148,490 MHz</p>
+
+<p>A strange signal at 179,800 MHz</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-2.png" width="30%" />
+
+<p>Some signals are distributed over a range.</p>
+
+<p>158,400 MHz</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-3.png" width="30%" />
+
+<p>333,325 MHz</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-4.png" width="30%" />
+
+<p>Some have equi-distant patterns</p>
+
+<p>234,100 MHz
+304,000 MHz</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-5.png" width="30%" />
+
+<p>289,317 MHz</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-6.png" width="30%" />
+
+<h4 id="102-mhz---fm-radio">102 MHz - FM Radio</h4>
+
+<p>FM Radio signals are easy to spot and tune to. They have strong signals and are unencrpyted analog audio. This can be useful to test the receiver.</p>
+
+<p>We can clearly see what an analog audio signal looks like in the diagram.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-7.png" width="30%" />
+
+<h4 id="150-mhz---esoteric-medical-equipment">150 MHz - Esoteric Medical Equipment</h4>
+
+<p>I received an interesting signal at 150 MHz. It was a continious click.</p>
+
+<p>My assumption is that this is from a esoteric (Psuedo-)Medical device for “Befeldung”. Apparently a guy named “Dieter Broers” claims exposing patients to 150 MHz signals would heal them.</p>
+
+<p>He was awarded the “Goldenes Brett vorm Kopf” (“The Golden Blockhead”) negative prize, in the category for alternative medicine and esoterics in 2022 [21].</p>
+
+<p>Either somebody in my neighbourhood seems to believe in this or I’ve missinterpreted the signal and source is actually something else.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-8.png" width="10%" />
+
+<h4 id="122670000-hz---airport">122,670,000 Hz - Airport</h4>
+
+<p>Of course I also picked up transmission from the airport “Automatic Terminal Information Service” and was able to hear weather and runway information.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-9.png" width="20%" />
+
+<h4 id="224016400-hz---walkie-talkies-on-citizens-band">224,016,400 Hz - Walkie Talkies on Citizens Band</h4>
+
+<p>That day of playing with the software defined radio concluded with signals from a Walkie Talkie.</p>
+
+<p>on 224,016,400 MHz Wide-FM</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-10.png" width="20%" />
+
+<p>Someone speaking in a very franconian accent that the other party should “be happy he didn’t carry everything upstairs” and then concluding that “he is going to grab some coffee”.</p>
+
+<audio controls>
+  <source src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-10.ogg" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
+
+<p>It’s nice to actually have picked up something audible.</p>
+
+<h3 id="2024-08-29">2024-08-29</h3>
+
+<p>After my experiments on August 25th I ordered an Citizens Band Antenna for the 11-Meter-Band (see above) and tried it out.</p>
+
+<p>At the time I had to jam a tiny bit of wire between by SMA-connectctor and RP-SMA-cable for maximum cable length - I had missed the memo on the difference between SMA and RP-SMA. The whole setup was janky, but worked. I ordered better adapters, but they were in the mail.</p>
+
+<p>I tried to receive some Walkie Talkie transmissions and set the antenna high up over my roofs rain gutter and had some first successes with the new antenna.</p>
+
+<h4 id="26985500-hz---music-on-citizens-band">26,985,500 Hz - Music on Citizens Band</h4>
+
+<p>Some music was playing on 26,985,500 MHz</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-1.png" width="20%" />
+
+<p>It was very hard to tune to and a lot of noise was received.</p>
+
+<audio controls>
+  <source src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-1.ogg" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
+
+<p>Probably this some leakage or reflection from local radio station or a (malfunctioning) cheap car FM transmitter.</p>
+
+<p>Or maybe somebody fell asleep on the “transmit” button of his CB Radio while listening to music.</p>
+
+<h4 id="30114727-hz---more-music">30,114,727 Hz - more Music</h4>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-2.png" width="20%" />
+
+<p>Another such radio transmission on 30 MHz.</p>
+
+<audio controls>
+  <source src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-2.ogg" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
+
+<h4 id="26893000-hz---real-ham-radio-voice-signal">26,893,000 Hz - real HAM radio voice signal</h4>
+
+<p>I was eventually sucessful and received a clearly audible signal.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-3.png" width="40%" />
+
+<p>Someone clearly says, in a local accent, “Amateur-Radio meeting at the train bridge”.</p>
+
+<audio controls>
+  <source src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-3.ogg" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
+
+<p>Unfortunately I couldn’t find out which train bridge is meant, but it was very motivating to have received a first audible signal from other amateur radio hobbyists.</p>
+
+<h4 id="27784000-hz---more-voice-communication">27,784,000 Hz - more voice communication</h4>
+
+<p>There was more audio, but unfortunately it stopped right before I could record anything. This might have been another radio station signal though.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-4.png" width="40%" />
+
+<p>A big issue is that I can only monitor a relatively narrow band with my receiver and it’s easy to miss an interesting transmission.</p>
+
+<h4 id="27783280-hz---more-radio">27,783,280 Hz - more radio</h4>
+
+<p>On a freuqency a bit lower there was in fact another signal originally from a radio station.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-5.png" width="40%" />
+
+<p>I’m still confused why I’m receiving radio on 27 MHz, but it could be cross-talk in the receiver or a bounced signal.</p>
+
+<audio controls>
+  <source src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-5.ogg" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
+
+<h3 id="2024-08-30">2024-08-30</h3>
+
+<p>Now using WebSDR running headless on a Linux laptop very close to the larger CB antenna located on my roof, I picked up another signal, but was more busy configuring WebSDR. I knew a better adapter - to replace my jammed-in wire on the RP-SMA/SMA connectors - for my CB antenna was in the mail, so I wanted to wait for it before continuing.</p>
+
+<h4 id="268929-mhz">26,8929 MHz</h4>
+
+<p>Some barely audible transmission.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-30-1.png" width="10%" />
+
+<p>It is clear that it is some voice transmission.</p>
+
+<audio controls>
+  <source src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-30-1.ogg" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
+
+<p>When the janky improvised antenna connection works it sounds much better.</p>
+
+<audio controls>
+  <source src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-30-1_2.ogg" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
+
+<p>Somebody saying “that’s fine, that’s how it should be. It was worked out fine” - probably construction workers or truck drivers.</p>
+
+<h3 id="2024-09-01">2024-09-01</h3>
+
+<p>Some days later I received a better adapter to connect the antenna with less loss to the radio and picked up some more signals.</p>
+
+<p>I was excited to see how well the WebSDR software works and how well my new antenna picks up audio transmissions with the better adapter.</p>
+
+<h4 id="269743-mhz---voice-communication">26,9743 MHz - voice communication</h4>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-09-01-1.png" width="30%" />
+
+<p>Some people, either amateur radio enthusiasts, cab drivers or construction workers having a chat and then saying goodbye.</p>
+
+<audio controls>
+  <source src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-09-01-1.ogg" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
+
+<h4 id="269743-mhz---voice-communication-1">26,9743 MHz - voice communication</h4>
+
+<p>Some strange transmission of someone reading a book or so.</p>
+
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-09-01-2.png" width="30%" />
+
+<p>First I though I picked up somebodies cheap unencrypted babyphone while he’s reading a book to his kids, but it seems to be someones memoirs from the 1930s or so and more like a tape playing.</p>
+
+<audio controls>
+  <source src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-09-01-2.ogg" type="audio/ogg">
+Your browser does not support the audio element.
+</audio>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>There is some fun to be had with software defined radio.</p>
+
+<p>Of course the real uses are a bit limited. I can scan frequencies for interesting signals. I can’t transmit though, so there is no communicating back and forth. Apart from that most signals nowadays are digital, compressed and/or encrypted. There is no real point in data transmission via software defined radios, as we already have WiFi, LoraWAN, 868-MHz and similar sender/receivers.</p>
+
+<p>It gets more and more challenging when trying to pick up signals from weather satellites or the internation space station, that pass the receiver location quickly.</p>
+
+<p>Picking up signals from transmission from as far away as possible can be a hobby for some.</p>
+
+<p>I might try to build and antenna for ADS-B in order to receive flight numbers, position and heading direction from aircraft flying over head. I’d also be interested in what my water meter is transmitting to the public services company, but those transmissions are encrypted.</p>
+
+<hr />
+
+<pre>
+1] https://www.oldestsearch.com/
+2] https://github.com/cgommel/sdrsharp
+3] https://www.cablefree.net/wireless-technology/history-of-wifi-technology/
+4] https://de.wikipedia.org/wiki/Wardriving
+5] https://archive.org/details/thebroken_h264
+6] https://www.youtube.com/watch?v=wNIf-qdVGsw, Hak5 Episode 405, Windows USB Booting, Fon Hacking
+7] https://www.cablefree.net/wireless-technology/history-of-wifi-technology/
+8] https://de.aliexpress.com/i/32620378522.html
+9] https://developingtelecoms.com/telecom-technology/telecom-devices-platforms/1767-an-antenna-and-a-tin-can-enter-the-cantenna.html
+10] https://en.wikipedia.org/wiki/Electromagnetic_spectrum#/media/File:Electromagnetic-Spectrum.svg
+11] https://www.dl2fbo.de/flugfunk-frequenzen/
+12] https://offgridworld.com/how-to-build-a-tin-can-wifi-antenna-for-5/
+13] https://en.wikipedia.org/wiki/Yagi%E2%80%93Uda_antenna#/media/File:Yagi_TV_antenna_1954.png
+14] https://en.wikipedia.org/wiki/Dipole_antenna
+15] https://www.everythingrf.com/community/what-is-a-collinear-antenna
+16] https://www.youtube.com/watch?v=I-OnQZJv35I - YouTube: "David Casler Ask Dave - Why is Coax 50 Ohms?"
+17] https://de.wikipedia.org/wiki/Parabolantenne
+18] https://www.rtl-sdr.com/rtl-sdr-quick-start-guide/sdrsharpdownload/
+19] https://github.com/ha7ilm/openwebrx
+20] http://websdr.org/
+21] https://de.wikipedia.org/wiki/Goldenes_Brett_vorm_Kopf
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Software Defined Radio & Building Antennas"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
