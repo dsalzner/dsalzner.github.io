@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Robot - Pt.1 - Lidar - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="For quite some time I've wanted to purchase a 360 lidar for one of my robots. They give the robot the ability to measure distances of obsticles surrounding it. 360 lidars are co..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/09/21/Sa-RobotPt1Lidar.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Robot - Pt.1 - Lidar - Dennis Salzner" />
+  <meta property="og:description" content="For quite some time I've wanted to purchase a 360 lidar for one of my robots. They give the robot the ability to measure distances of obsticles surrounding i..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2024/09/21/Sa-RobotPt1Lidar.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Electronics" />
+  <meta property="article:published_time" content="2024-09-21 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-09-21 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-09-21 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="For quite some time I've wanted to purchase a 360 lidar for one of my robots. They give the robot the ability to measure distances of obsticles surrounding it. 360 lidars are co..." />
+  <meta name="twitter:title" content="Robot - Pt.1 - Lidar - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Robot - Pt.1 - Lidar</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Robot - Pt.1 - Lidar</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>For quite some time I’ve wanted to purchase a 360 lidar for one of my robots. They give the robot the ability to measure distances of obsticles surrounding it. 360 lidars are commonly used on robotic vacuums, but have been available for hobbyists for some time. I just couldn’t justify the price for hobbyist projects. Recently the ‘YouYeeToo’ / ‘WayPonDev’ / ‘LDRobot’ ‘FHL-LD20’ or ‘D200 Lidar Kit’ came to by attention. It costs only 48 Eur. Let’s see, if I can get it to work. If the signal is clean enough we can try Simultaneous Localization and Mapping.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-5-decayoption.png" width="20%" />
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#background" id="markdown-toc-background">Background</a>    <ul>
+      <li><a href="#lidar" id="markdown-toc-lidar">Lidar</a></li>
+      <li><a href="#simultaneous-localization-and-mapping" id="markdown-toc-simultaneous-localization-and-mapping">Simultaneous Localization and Mapping</a></li>
+      <li><a href="#lidar-device" id="markdown-toc-lidar-device">Lidar Device</a></li>
+    </ul>
+  </li>
+  <li><a href="#setup" id="markdown-toc-setup">Setup</a>    <ul>
+      <li><a href="#hardware" id="markdown-toc-hardware">Hardware</a>        <ul>
+          <li><a href="#connections" id="markdown-toc-connections">Connections</a></li>
+          <li><a href="#wiring" id="markdown-toc-wiring">Wiring</a></li>
+          <li><a href="#powering-from-the-usb-port" id="markdown-toc-powering-from-the-usb-port">Powering from the USB-Port</a></li>
+          <li><a href="#baudrate" id="markdown-toc-baudrate">Baudrate</a></li>
+          <li><a href="#serial-connection" id="markdown-toc-serial-connection">Serial Connection</a></li>
+          <li><a href="#protocol" id="markdown-toc-protocol">Protocol</a></li>
+        </ul>
+      </li>
+      <li><a href="#software" id="markdown-toc-software">Software</a>        <ul>
+          <li><a href="#brief-thoughts-on-an-own-implementation" id="markdown-toc-brief-thoughts-on-an-own-implementation">Brief thoughts on an own implementation</a></li>
+          <li><a href="#robotic-operating-system" id="markdown-toc-robotic-operating-system">Robotic Operating System</a>            <ul>
+              <li><a href="#background-on-ros" id="markdown-toc-background-on-ros">Background on ROS</a></li>
+              <li><a href="#experience-with-the-kinect-2" id="markdown-toc-experience-with-the-kinect-2">Experience with the Kinect 2</a></li>
+              <li><a href="#different-ros-versions" id="markdown-toc-different-ros-versions">Different ROS Versions</a></li>
+              <li><a href="#considerations-with-frameworks-and-microcontrollers" id="markdown-toc-considerations-with-frameworks-and-microcontrollers">Considerations with Frameworks and Microcontrollers</a></li>
+            </ul>
+          </li>
+          <li><a href="#overview" id="markdown-toc-overview">Overview</a></li>
+          <li><a href="#setting-up-ros-in-docker" id="markdown-toc-setting-up-ros-in-docker">Setting up ROS in Docker</a>            <ul>
+              <li><a href="#dockerfile---startsh-script" id="markdown-toc-dockerfile---startsh-script">Dockerfile - start.sh script</a></li>
+              <li><a href="#additional-consoles---entersh-script" id="markdown-toc-additional-consoles---entersh-script">Additional Consoles - enter.sh script</a></li>
+            </ul>
+          </li>
+          <li><a href="#setting-up-the-lidar-ros2-bridge" id="markdown-toc-setting-up-the-lidar-ros2-bridge">Setting up the Lidar ROS2 Bridge</a>            <ul>
+              <li><a href="#download-the-bridge-software" id="markdown-toc-download-the-bridge-software">Download the Bridge Software</a></li>
+              <li><a href="#running-the-bridge" id="markdown-toc-running-the-bridge">Running the Bridge</a></li>
+              <li><a href="#running-the-visualisation" id="markdown-toc-running-the-visualisation">Running the visualisation</a></li>
+            </ul>
+          </li>
+          <li><a href="#usage" id="markdown-toc-usage">Usage</a></li>
+        </ul>
+      </li>
+      <li><a href="#debugging" id="markdown-toc-debugging">Debugging</a>        <ul>
+          <li><a href="#testing-x11-forward" id="markdown-toc-testing-x11-forward">Testing X11 forward</a></li>
+          <li><a href="#testing-the-serial-connection" id="markdown-toc-testing-the-serial-connection">Testing the serial connection</a></li>
+          <li><a href="#test-with-the-sdk-own-software" id="markdown-toc-test-with-the-sdk-own-software">Test with the SDK, own Software</a></li>
+          <li><a href="#communication-is-abnormal" id="markdown-toc-communication-is-abnormal">“Communication is abnormal”</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#results" id="markdown-toc-results">Results</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>After seeing cheaper models and price drops appear on an online shop I deciced to to order one and see how far approx. 50 Eur can go.</p>
+
+<p>This will be a project for this winter. The first step will be to get it connected, then have a look at the data quality, plot the output and then try a SLAM algorithm.</p>
+
+<p>In order to not have to implement everything from scratch I’ll attempt with the new version 2 of the “Robotic Operating System”.</p>
+
+<p>If this works out I’ll add the Lidar to an existing modified robot vacuum I was working on some years ago</p>
+
+<ul>
+  <li>2015: a radio controlled car modified to be controlled via Wifi. Uses a USB-Webcam and a Raspberry Pi 2B (<a href="/old/2015-11-13-Fr-WifiCar.html">see Wifi-Car</a>)</li>
+  <li>2018: CNC milling a base-plate for electronics on a cheap DirtDevil Spider vacuum robot  (<a href="/electronics/2018/07/12/Do-CncMilling.html">see CNC milling</a>)</li>
+  <li>2018: operating it by WiFi connection with a Wemos D1 mini WiFi board (<a href="/electronics/2018/07/09/Mo-VacuumBot.html">see Vacuum Bot</a>)</li>
+</ul>
+
+<p>The Raspberry PI consumed too much power and was too unstable. The Wemos D1 mini on the robot vacuum works well to control the motors and detect the impact at the front bumpers, but didn’t have a camera feed and isn’t easily integratable with the robotic operating system (ROS). Adding an old mobile phone to stream a camera image doesn’t feel nicely integrated and drains the batteries.</p>
+
+<p>In the meantime we have the Esp32-Cam boards that have a camera on-board. If I can run ros-micro on it and connect motor controls lidar and odometry I’d have a full-fledged robot that can be used with the mapping algorithms running on a more powerful computer in ROS.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="background">Background</h2>
+
+<p>But first some background on Lidar, the device I have and SLAM.</p>
+
+<h3 id="lidar">Lidar</h3>
+
+<p>Lidar stands for “Light detection and ranging”. In these cheap 2D 360 Degree lidars there is:</p>
+
+<ul>
+  <li>a laser pointer</li>
+  <li>and some detection device that detects the intensity of the reflected light.</li>
+</ul>
+
+<p>The laser pointer and detection is rotated by DC motor. The angular position is calculated by interruptions of a light barrier.</p>
+
+<p>A weakness of these devices is that they can easily be fooled by reflective surfaces like mirrors, but also glossy surfaces of furnature and of course windows - typically balcony doors, which start at the height the lidar may be operating.</p>
+
+<p>This alone will only provide the robot with information of obsticle distances surrounding it.</p>
+
+<h3 id="simultaneous-localization-and-mapping">Simultaneous Localization and Mapping</h3>
+
+<p>If we stich multiple such scans together we end up with a map of the environment surrounding the robot and its position within it. This is called “Simultaneous Localization and Mapping” (SLAM). It continiously monitors the incomming data and stiches it together as the robot moves, we can map the surroundings and know the position of the robot within those surroudings.</p>
+
+<p>Often also wheel rotary encoders are used to better estimate the movement of the robot as additional information to the often noisy lidar data.</p>
+
+<h3 id="lidar-device">Lidar Device</h3>
+
+<p>The cheap Lidar device I ordered comes with multiple brands on the box and a paper inside.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-1.jpg" width="20%" />
+
+<p>Inside the box is the lidar itself, an USB-TTL with the cheap CP2102 (not an FTDI) and a thin wire.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-2.jpg" width="20%" />
+
+<p>On the box it says what this lidar should be capable of.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-3.jpg" width="20%" />
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="setup">Setup</h2>
+
+<p>After unboxing it I will see, if I can get it to function.</p>
+
+<h3 id="hardware">Hardware</h3>
+
+<p>On the hardware-side we need to connect the electronics, set up a serial and have a look at the serial protocol the lidar uses.</p>
+
+<h4 id="connections">Connections</h4>
+
+<p>First we need to connect the lidar to the USB-TTL converter.</p>
+
+<h4 id="wiring">Wiring</h4>
+
+<p>I don’t trust the color coding of the cable and there’s no documentation in the box of the Lidar. Luckily there is a pinout diagram given in the documentation on the manufactureres webpage [1].</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/pinout.png" width="20%" />
+
+<p>According to this the wire colours are als follows</p>
+
+<ul>
+  <li>left most, red = RX</li>
+  <li>green = GND</li>
+  <li>white = TX</li>
+  <li>right mos, black = VCC</li>
+</ul>
+
+<p>And so the colours are in fact counter-intuitive.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/connect.jpg" width="20%" />
+
+<h4 id="powering-from-the-usb-port">Powering from the USB-Port</h4>
+
+<p>The working voltage is specified as 5V and smaller 1 A starting current, 300 mA working current.</p>
+
+<p>the maximum load I found online</p>
+
+<ul>
+  <li>500 mA in USB 2.0</li>
+  <li>900 mA in USB 3.0</li>
+</ul>
+
+<p>So we should be able to connect it directly to the USB TTL, but we might draw a bit more power than supported.</p>
+
+<h4 id="baudrate">Baudrate</h4>
+
+<p>Baud rates can be anything from 110, 150, 300, 1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800 to 921600. With 9600 being the most common.
+The baudrate is 230400 as per documentation is relatively high.</p>
+
+<h4 id="serial-connection">Serial Connection</h4>
+
+<p>I’ve come to apprieciate the simplicity of <code class="language-plaintext highlighter-rouge">picocom</code> over other tools to receive  data from serial ports.</p>
+
+<p>Upon connecting the USB-TTL with lidar attached to the computer it immediatly spins up and the USB-TTL shows up in <code class="language-plaintext highlighter-rouge">dmesg</code></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo dmesg | grep tty
+[ 9041.924343] usb 1-3: cp210x converter now attached to ttyUSB0
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>picocom <span class="nt">-b</span> 230400 /dev/ttyUSB0
+</code></pre></div></div>
+
+<p>In the console we receive data, but it’s not human-readble.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/serial-1.png" width="20%" />
+
+<h4 id="protocol">Protocol</h4>
+
+<p>The protocol the YouYeeToo FHL-LD20 is documented on their Wiki-Page.</p>
+
+<p>The data is not human readble, because it is binary. The details are in the documentation [1]</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/protocol-1.png" width="40%" />
+
+<p><br /><small>(Screenshot of documentation from [1])</small></p>
+
+<p>The protocol is explained in writing</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/protocol-2.png" width="40%" />
+
+<p><br /><small>(Screenshot of documentation from [1])</small></p>
+
+<p>and there is C example code given</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/protocol-3.png" width="40%" />
+
+<p><br /><small>(Screenshot of documentation from [1])</small></p>
+
+<p>So each time a 0x54 is received a new packet is started. A packet contains a start angle and a sequence of measurements followed by timestamp and crc for error correction.</p>
+
+<h3 id="software">Software</h3>
+
+<p>To do something with the data stream received from the Lidar we need software.</p>
+
+<h4 id="brief-thoughts-on-an-own-implementation">Brief thoughts on an own implementation</h4>
+
+<p>With the protocol details and a basic implementation given in the provided SDK, we could write our own software.</p>
+
+<p>Others have struggeled with this particular lidar [3]. Note that other lidars, like the RPLidar [2], seem to follow a different protocol with 0xA5 and 0x5A being the sync bytes instead of 0x54.</p>
+
+<p>In Python we could receive serial data like so:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ser</span> <span class="o">=</span> <span class="n">serial</span><span class="p">.</span><span class="nc">Serial</span><span class="p">(</span><span class="err">‘</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">ttyUSB0</span><span class="err">’</span> <span class="p">,</span> <span class="mi">230400</span> <span class="p">,</span> <span class="n">stopbits</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ser</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>We could then decode the binary with <code class="language-plaintext highlighter-rouge">struct.unpack</code> similar to what I’ve done in the past for decoding the binary format for Command and Conquer Replays (see <a href="/gamemods/2023/11/25/Sa-DecodingCommandAndConquerReplays.html">Decoding Command and Conquer replays</a>.</p>
+
+<p>The data is given as distances per angle. Essentially “polar coordinates”. With some trigonometry we could convert that to cartesian coordinate space and plot it with MatplotLib from Python.</p>
+
+<p>Since the lidar only sends a portion of its surrounding per packet, we’d need to implement some sort of “decaying” of the points to keep them on the screen for some time.</p>
+
+<p>That would provide use with software that can draw the surroundings.</p>
+
+<h4 id="robotic-operating-system">Robotic Operating System</h4>
+
+<p>The “Robotic Operating System” (ROS) recolves around a publish-subscriber concept. Serveral “bridges” can receive data from driver software and publish them into “topics” in ROS. These “topics” can then be received by the visualisation and algorithms in ROS.</p>
+
+<h5 id="background-on-ros">Background on ROS</h5>
+
+<p>ROS is the go-to operating system for robots. It provides solid abstractions for most use-cases. Many implementations of algorithms in the scientific community are written for ROS. This makes a lot of bleeding-edge algorithms available for the robot hobbyist, but also means that getting it running can be tedious.</p>
+
+<h5 id="experience-with-the-kinect-2">Experience with the Kinect 2</h5>
+
+<p>I’ve used the “Robotic Operating System” (ROS) version 1 in the past for a modified Kinect 2 depth sensor. This was probably a particularly difficult use-case. It never worked very stably, but I learned a lot about how ROS operates.</p>
+
+<p>I remember libfreenect2-drivers, the iai_kinect2 bridge to get data into ROS, rtabmap to show a 3D map and dealing with docker for compatibility on my unsupportes operating system, hardware accelerated graphics, libusb driver issues.</p>
+
+<p>This 2D only 360-Lidar that uses only serial communication should be much easier to integrate.</p>
+
+<h5 id="different-ros-versions">Different ROS Versions</h5>
+
+<p>There are currently two common major versions of ROS. ROS 1 and ROS 2.</p>
+
+<p>If you see tools like <code class="language-plaintext highlighter-rouge">ros run</code> and <code class="language-plaintext highlighter-rouge">catkin_make</code> that is probably ROS 1.</p>
+
+<p>If you see <code class="language-plaintext highlighter-rouge">colcon build</code> and <code class="language-plaintext highlighter-rouge">ros2 launch</code> that is probably ROS 2.</p>
+
+<p>There are also bridges to connect the two.</p>
+
+<p>The older ROS has more algorithms. The newer ROS is a bit easier to use and more streamlined.</p>
+
+<p>For the new ROS they’ve more or less agreed on a standard way of naming topics so that some modules can run plug-and-play without reconfiguring much.</p>
+
+<p>Of course there are also different versions of ROS 1 and ROS 2. The newest version may have some deal-breaking feature not supported that you may eventually need, but so far ROS 2 “foxy” seems to support the features I need.</p>
+
+<h5 id="considerations-with-frameworks-and-microcontrollers">Considerations with Frameworks and Microcontrollers</h5>
+
+<p>ROS comes with a reduced version “ros-micro” that can be compiled for moderately powerful micro-controllers.</p>
+
+<p>The issues with such frameworks - be it Arduino, Zephyr or ROS - is that they are expected to be run alone on the target hardware.</p>
+
+<p>In particular for my robot I’d need:</p>
+
+<ul>
+  <li>Arduino for the Esp32Cam drivers</li>
+  <li>Zephyr would be nice for I2C communication</li>
+  <li>and ROS to get sensor data to the computer and into the ROS instance running SLAM there</li>
+</ul>
+
+<p>Of course the software can’t be built together and would interfere with one another. Frameworks are really not meant to be combined.</p>
+
+<p>To circumvent this I will probably keep my robot free of ROS and just write my own custom TCP-handler to send the serial communication to the computer. A custom built ROS-bridge will then receive that TCP data and pass it into ROS as if it were coming directly from the serial connection.</p>
+
+<h4 id="overview">Overview</h4>
+
+<p>ROS uses a publish-subscriber system. This means you will be running multiple consoles at the same time.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-ros-overview.png" width="60%" />
+
+<p>I’m running Docker on my Host-System to provide a compatible abstraction to ROS. ROS typically isn’t compatible with the most recent Linux distributions. A native installation of a compatible version of a common Linux distribution is of course preferred, but for 2D lidars we can get away with using Docker.</p>
+
+<p>Inside the Docker-Container I’ll run ROS with the Lidar-Bridge and Visualisation.</p>
+
+<p>In order to get Serial communication to ROS and a view of the software out, I’ll need to setup Docker cleverly. For this I’ve prepared some shell-scripts.</p>
+
+<h4 id="setting-up-ros-in-docker">Setting up ROS in Docker</h4>
+
+<p>To get a reproducable ROS configuration and run ROS on a compatible operating system, we need to set up a Docker container.</p>
+
+<h5 id="dockerfile---startsh-script">Dockerfile - start.sh script</h5>
+
+<p>For this I create a Dockerfile</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vim <span class="nv">$HOME</span>/lidar/docker/Dockerfile
+</code></pre></div></div>
+
+<p>and add</p>
+
+<div class="language-Dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> ubuntu:20.04</span>
+
+<span class="c"># -- set apt-get non-interactive </span>
+<span class="k">ENV</span><span class="s"> DEBIAN_FRONTEND=noninteractive </span>
+
+<span class="c"># -- get dependencies</span>
+<span class="k">RUN </span>apt-get update <span class="nt">-qy</span>
+<span class="k">RUN </span>apt-get <span class="nt">-y</span> <span class="nb">install </span>wget vim curl
+
+<span class="k">RUN </span>apt-get <span class="nt">-y</span> <span class="nb">install </span>software-properties-common
+<span class="k">RUN </span>add-apt-repository universe
+
+<span class="c"># -- configure ROS apt-get repo</span>
+<span class="k">RUN </span>curl <span class="nt">-sSL</span> https://raw.githubusercontent.com/ros/rosdistro/master/ros.key <span class="nt">-o</span> /usr/share/keyrings/ros-archive-keyring.gpg
+<span class="k">RUN </span><span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"deb [arch=</span><span class="si">$(</span>dpkg <span class="nt">--print-architecture</span><span class="si">)</span><span class="s2"> </span><span class="se">\
+</span><span class="s2">signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] </span><span class="se">\
+</span><span class="s2">http://packages.ros.org/ros2/ubuntu </span><span class="si">$(</span><span class="nb">.</span> /etc/os-release <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="nv">$UBUNTU_CODENAME</span><span class="si">)</span><span class="s2"> main"</span> <span class="se">\
+</span>| <span class="nb">tee</span> /etc/apt/sources.list.d/ros2.list <span class="o">&gt;</span> /dev/null
+
+<span class="c"># -- install ROS</span>
+<span class="k">RUN </span>apt-get update
+<span class="k">RUN </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> ros-foxy-desktop python3-argcomplete python3-colcon-common-extensions
+
+<span class="c"># -- install slam toolbox</span>
+<span class="k">RUN </span>apt-get <span class="nb">install</span> <span class="nt">-y</span> ros-foxy-slam-toolbox
+</code></pre></div></div>
+
+<p>To build it, I run</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$HOME</span>/lidar/
+<span class="nb">sudo </span>docker build <span class="nt">-t</span> ros-lidar docker/
+</code></pre></div></div>
+
+<p>To be able to run it easily later on, in a script <code class="language-plaintext highlighter-rouge">$HOME/lidar/start.sh</code> I put</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="nb">sudo </span>docker run <span class="nt">--rm</span> <span class="nt">--name</span> ros-lidar <span class="se">\</span>
+  <span class="nt">--net</span><span class="o">=</span>host <span class="se">\</span>
+  <span class="nt">--env</span><span class="o">=</span><span class="s2">"DISPLAY"</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"/tmp/.X11-unix:/tmp/.X11-unix:rw"</span> <span class="se">\</span>
+  <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/.Xauthority:/root/.Xauthority:rw"</span> <span class="se">\</span>
+  <span class="nt">--device</span><span class="o">=</span>/dev/ttyUSB0 <span class="nt">--volume</span><span class="o">=</span><span class="s2">"</span><span class="nv">$HOME</span><span class="s2">/lidar/res/:/root/src/"</span> <span class="se">\</span>
+  <span class="nt">-it</span> ros-lidar /bin/bash
+</code></pre></div></div>
+
+<p>Docker needs a few parameters:</p>
+
+<ul>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">-rm</code> makes sure the container is cleared and runs clean each time. It doesn’t keep state, but this makes it easier to keep control of the configuration. For persistant changes I adapt the Dockerfile or the shell scripts I run within the container.</p>
+  </li>
+  <li>
+    <p><code class="language-plaintext highlighter-rouge">--name ros-lidar</code> sets a name for the running container. Otherwise Docker will generated new names and you’d have to look them up all the time.</p>
+  </li>
+  <li>in order for the container to access the display of the host operating system
+    <ul>
+      <li><code class="language-plaintext highlighter-rouge">--net=host</code> makes sure the container can access the local area network of the host machine. This is important for displaying software via X11 we run in the container.</li>
+      <li><code class="language-plaintext highlighter-rouge">--env="DISPLAY"</code> maps the <code class="language-plaintext highlighter-rouge">DISPLAY</code> environment-variables (typically <code class="language-plaintext highlighter-rouge">=0.0</code>) in the Docker container, so applications know on which display to show</li>
+      <li><code class="language-plaintext highlighter-rouge">--volume="/tmp/.X11-unix:/tmp/.X11-unix:rw"</code> provides the container access with the X11-instance running on the host system in order to access the display</li>
+      <li><code class="language-plaintext highlighter-rouge">--volume="$HOME/.Xauthority:/root/.Xauthority:rw"</code> to give the container permission to access the X11 instance</li>
+    </ul>
+  </li>
+  <li><code class="language-plaintext highlighter-rouge">-device=/dev/ttyUSB0</code> to share the serial connection</li>
+  <li><code class="language-plaintext highlighter-rouge">--volume="$HOME/lidar/res/:/root/src/"</code> maps a directory into the container in which we can place the software and scripts</li>
+  <li><code class="language-plaintext highlighter-rouge">-it ros-lidar /bin/bash</code> runs the image named “ros-lidar” in interactive mode with the bash shell</li>
+</ul>
+
+<p>To start the container run</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$HOME</span>/lidar/start.sh
+</code></pre></div></div>
+
+<p>It will drop me into a shell in which Docker is available.</p>
+
+<p>To make the ROS environment available in the terminal run</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> /opt/ros/foxy/setup.bash
+</code></pre></div></div>
+
+<p>and tools like <code class="language-plaintext highlighter-rouge">colcon</code> should be available.</p>
+
+<h5 id="additional-consoles---entersh-script">Additional Consoles - enter.sh script</h5>
+
+<p>As we’ll be running multiple ROS applications we will need multiple consoles.</p>
+
+<p>To open an additional console on the running container I created another script</p>
+
+<p>In <code class="language-plaintext highlighter-rouge">$HOME/lidar/enter.sh</code> I put:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+docker <span class="nb">exec</span> <span class="nt">-it</span> ros-lidar bash
+</code></pre></div></div>
+
+<h4 id="setting-up-the-lidar-ros2-bridge">Setting up the Lidar ROS2 Bridge</h4>
+
+<p>Next we need the driver for the Lidar.</p>
+
+<h5 id="download-the-bridge-software">Download the Bridge Software</h5>
+
+<p>There are multiple sources</p>
+
+<ul>
+  <li>Google Drive</li>
+  <li>Gitea</li>
+  <li>Github</li>
+</ul>
+
+<p>and also multiple versions</p>
+
+<ul>
+  <li>ldlidar_sl_ros2</li>
+  <li>ldlidar_stl_ros2-3.0.3</li>
+  <li>ldlidar_sl_sdk</li>
+</ul>
+
+<p>After some investigation I found out I need the archives with <code class="language-plaintext highlighter-rouge">ros2</code> in the name</p>
+
+<ul>
+  <li>the “<em>stl</em>” versions contain launch scripts <code class="language-plaintext highlighter-rouge">*.ld19.launch.py</code> for the ld19. It works with the ld20.</li>
+  <li>the “<em>sl</em>” seems to be older and contains only launch scripts for the <code class="language-plaintext highlighter-rouge">ld14</code> that will not work with the ld20.</li>
+</ul>
+
+<p>Additionally there is a separate SDK package</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ldlidar_sl_sdk</code></li>
+</ul>
+
+<p>It contains only the driver written in C++ without the ROS2 bindings.</p>
+
+<p>So I settled for <code class="language-plaintext highlighter-rouge">ldlidar_stl_ros2-3.0.3</code> and checked that out to my <code class="language-plaintext highlighter-rouge">$HOME/lidar/res/</code> folder that will be mapped into the Docker container.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd</span> <span class="nv">$HOME</span>/lidar/res/
+git clone https://github.com/ldrobotSensorTeam/ldlidar_stl_ros2.git
+<span class="nb">cd </span>ldlidar_stl_ros2/
+git checkout v3.0.3
+</code></pre></div></div>
+
+<h5 id="running-the-bridge">Running the Bridge</h5>
+
+<p>For inside the Docker-Container and on the first console, I have a script <code class="language-plaintext highlighter-rouge">$HOME/lidar/res/init.sh</code></p>
+
+<p>I put this script in the <code class="language-plaintext highlighter-rouge">$HOME/lidar/res/</code>-directory so it is automatically mapped into the  docker container.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="nb">rm</span> <span class="nt">-rf</span> /root/ldlidar_ros2_ws
+<span class="nb">cd</span> /root/ldlidar_ros2_ws/
+
+<span class="nb">cp</span> <span class="nt">-R</span> /root/src/ldlidar_stl_ros2-3.0.3 /root/ldlidar_ros2_ws
+
+<span class="nb">source</span> /opt/ros/foxy/setup.bash <span class="c"># -- make ROS environment available</span>
+colcon build <span class="c"># -- compile module</span>
+
+<span class="nb">cd</span> /root/ldlidar_ros2_ws
+<span class="nb">source install</span>/local_setup.bash <span class="c"># -- make compiled module available</span>
+
+<span class="nb">cd</span> /root/ldlidar_ros2_ws/launch
+ros2 launch ldlidar_stl_ros2 ld19.launch.py <span class="c"># -- launch bridge</span>
+</code></pre></div></div>
+
+<p>It first deletes the current workspace and copies a fresh copy over.</p>
+
+<p>It then proceeds to compile and launch the bridge.</p>
+
+<p>To run the script in the docker container:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash /root/src/init.sh
+</code></pre></div></div>
+
+<h5 id="running-the-visualisation">Running the visualisation</h5>
+
+<p>In <code class="language-plaintext highlighter-rouge">$HOME/lidar/res/view.sh</code> I put the script to start the visualisation</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="nb">cd</span> /root/ldlidar_ros2_ws/
+
+<span class="nb">source</span> /opt/ros/foxy/setup.bash <span class="c"># -- make ROS environment available</span>
+<span class="nb">source install</span>/local_setup.bash <span class="c"># -- make compiled module available</span>
+
+ros2 launch ldlidar_stl_ros2 viewer_ld19.launch.py <span class="c"># --launch viewer</span>
+</code></pre></div></div>
+
+<p>It can be run in the docker container by</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash /root/src/view.sh
+</code></pre></div></div>
+
+<p>and should open the screen on your host manchine.</p>
+
+<h4 id="usage">Usage</h4>
+
+<p>With the above set up we can run</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$HOME</span>/lidar/start.sh
+</code></pre></div></div>
+
+<p>to run the container and get the first console</p>
+
+<p>Inside we can run</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>bash /root/src/init.sh
+</code></pre></div></div>
+
+<p>to start the bridge.</p>
+
+<p>Then, while keeping that running, on a second console we can enter the container again</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$HOME</span>/lidar/enter.sh
+</code></pre></div></div>
+
+<p>and run the visualisation</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$HOME</span>/lidar/view.sh
+</code></pre></div></div>
+
+<h3 id="debugging">Debugging</h3>
+
+<p>With the complexity comes the number of ways things can break.</p>
+
+<h4 id="testing-x11-forward">Testing X11 forward</h4>
+
+<p>I’m using X11 as a display server and not Wayland. I don’t know, if this would work with wayland.</p>
+
+<p>In order to check, if the docker container can display applications on your host operating system you can run</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nt">-y</span> <span class="nb">install </span>x11-apps
+xeyes
+</code></pre></div></div>
+
+<p>If it doesn’t work, make sure you check the docker parameters regarding X11 forwarding.</p>
+
+<h4 id="testing-the-serial-connection">Testing the serial connection</h4>
+
+<p>If not locked to a specific port, the USB-TTL serial adapter may connect to a new port <code class="language-plaintext highlighter-rouge">/dev/ttyUSB0</code>, <code class="language-plaintext highlighter-rouge">/dev/ttyUSB1</code>, …</p>
+
+<p>Locking it to a specific port via udev is not a good option, because then it will fail in-case the old port is blocked. That can be even more annoying.</p>
+
+<p>In order to verify that data is reaching the docker container you can run picocom</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>apt <span class="nt">-y</span> <span class="nb">install </span>picocom
+picocom <span class="nt">-b</span> 230400 /dev/ttyUSB0
+</code></pre></div></div>
+
+<p>To exit picocom on the keyboard do</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[CTRL]+[A] then [CTRL]+[X]
+</code></pre></div></div>
+
+<h4 id="test-with-the-sdk-own-software">Test with the SDK, own Software</h4>
+
+<p>This wasn’t necessary for me, but you can try the <code class="language-plaintext highlighter-rouge">ldlidar_stl_sdk</code> instead of the ROS2 bridge first and see if that works.</p>
+
+<p>It has a basic visualisation that should show the 2D point cloud.</p>
+
+<p>Alternatively you could write a Python-Script to decode the protocol (see above).</p>
+
+<h4 id="communication-is-abnormal">“Communication is abnormal”</h4>
+
+<p>In the beginning I had</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[ldlidar_publisher_ld14]: ldlidar communication is abnormal
+</code></pre></div></div>
+
+<p>when running the ROS 2 Bridge.</p>
+
+<p>This was resolved when switching to a newer Lidar driver with support for LD19 that also works with the LD20.</p>
+
+<h2 id="results">Results</h2>
+
+<p>The visualization of the incomming data in RViz gives an impression of the quality of the sensor.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-1.jpg" width="40%" />
+
+<p>Each frame only contains a portion of the entire range.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-2.jpg" width="40%" />
+
+<p>So as a quick hack - there is a better way to do this - I took multiple screenshots with the RViz in focus and stacked them in Gimp by setting the background transparent via “color to alpha”.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while </span><span class="nb">true</span><span class="p">;</span> <span class="k">do </span>scrot <span class="nt">-u</span> <span class="s2">"</span><span class="si">$(</span><span class="nb">date</span><span class="si">)</span><span class="s2">"</span>.jpg<span class="p">;</span> <span class="nb">sleep </span>0.5<span class="p">;</span> <span class="k">done</span>
+</code></pre></div></div>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-3-stacked.png" width="40%" />
+
+<p>With an actual floor plan we can see the points lining up. Note that there is furnature in the way making the points in the lidar scan apprear closer than the walls in the floor plan.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-4-groundtruth.png" width="40%" />
+
+<p>There is an option in RViz “Decay Time” which does this better. It keeps the points on the screen for some time. Setting it to 3 seconds yielded this.</p>
+
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-5-decayoption.png" width="40%" />
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The results look promising. A SLAM algorithm would also add an additional layer of averaging and most algorithms also use wheel odometry to improve the mapping. First experiments with SLAM already show I’ll probably need an odometry (wheel rotation counter) sensor as well or the SLAM algorithms won’t function.</p>
+
+<p>With the lidar and odometry data in ROS it should be possible to try various SLAM algorithms.</p>
+
+<p>To run the lidar off of the Esp32-Cam micro-controller on the robot I’ll need to either devise an own protocol to transfer the data into ROS running on the computer or use ROS-micro on the chip. ROS-micro is based on FreeRTOS so it should be possible to port anything I need with acceptable effort.</p>
+
+<p>I’ll have to see, if I can get the lidar, odometry, camera and motion controls onto the Esp32-Cam properly. Using ROS on the robot means it will not function without a backend running on a computer, but for advanced computationally expensive use cases there probably is no good way around this anyway.</p>
+
+<hr />
+
+<pre>
+1] https://wiki.youyeetoo.com/en/Lidar/LD20
+2] https://github.com/Roboticia/RPLidar/blob/master/rplidar.py
+3] https://forum.youyeetoo.com/t/ld19-process-the-signal-from-the-lidar-directly/507/6
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Robot - Pt.1 - Lidar"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
