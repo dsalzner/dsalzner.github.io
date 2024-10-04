@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Robot - Pt.2 - Rework - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="In order to accomodate for the Lidar, for which the SLAM algorithms in turn require wheel odometry data and the ESP32-CAM in order to provide a video stream, I had to rework muc..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/09/27/Fr-RobotPt2Rework.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Robot - Pt.2 - Rework - Dennis Salzner" />
+  <meta property="og:description" content="In order to accomodate for the Lidar, for which the SLAM algorithms in turn require wheel odometry data and the ESP32-CAM in order to provide a video stream,..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2024/09/27/Fr-RobotPt2Rework.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Electronics" />
+  <meta property="article:published_time" content="2024-09-27 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-09-27 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-09-27 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="In order to accomodate for the Lidar, for which the SLAM algorithms in turn require wheel odometry data and the ESP32-CAM in order to provide a video stream, I had to rework muc..." />
+  <meta name="twitter:title" content="Robot - Pt.2 - Rework - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Robot - Pt.2 - Rework</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Robot - Pt.2 - Rework</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>In order to accomodate for the Lidar, for which the SLAM algorithms in turn require wheel odometry data and the ESP32-CAM in order to provide a video stream, I had to rework much of the robot from 2018. I repositioned the electronics, swapped the main controller and rewired components to commincate via I2C making the robot more easily extensible.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/robot-drive.gif" width="30%" />
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09_2.jpg" width="40%" />
+
+<p>I found that the "Simultaneous Localization and Mapping" (SLAM) algorithms implemented in the "Robotic Operating System" (ROS) will not function properly without wheel odometry data. Also since transitioning from the ESP8266-based Wemos D1 Mini to an ESP32-CAM that provides more processing power and a camera, I had less I/O pins available. So I took the time to completly overhaul the electronics of the robot to use I2C for control of the actuators and reading of sensors. This greatly simplifies the design and makes debugging issues easier.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#electronics" id="markdown-toc-electronics">Electronics</a>    <ul>
+      <li><a href="#switching-to-i2c" id="markdown-toc-switching-to-i2c">Switching to I2C</a></li>
+      <li><a href="#esp32-cam-for-video" id="markdown-toc-esp32-cam-for-video">Esp32-Cam for Video</a></li>
+      <li><a href="#repositioning" id="markdown-toc-repositioning">Repositioning</a></li>
+      <li><a href="#full-electronics-build" id="markdown-toc-full-electronics-build">Full electronics build</a></li>
+      <li><a href="#busbar" id="markdown-toc-busbar">BusBar</a></li>
+    </ul>
+  </li>
+  <li><a href="#software" id="markdown-toc-software">Software</a>    <ul>
+      <li><a href="#control-via-json-http-requests" id="markdown-toc-control-via-json-http-requests">Control via JSON HTTP-requests</a></li>
+      <li><a href="#user-interface" id="markdown-toc-user-interface">User Interface</a></li>
+      <li><a href="#ros-micro" id="markdown-toc-ros-micro">ROS micro</a></li>
+      <li><a href="#motor-wiper-and-vacuum-controls-and-bumper-sensor-via-i2c-gpio-expander" id="markdown-toc-motor-wiper-and-vacuum-controls-and-bumper-sensor-via-i2c-gpio-expander">Motor, Wiper and Vacuum controls and Bumper sensor via I2C GPIO Expander</a></li>
+      <li><a href="#video-stream-and-controls-at-the-same-time-and-the-async-webserver" id="markdown-toc-video-stream-and-controls-at-the-same-time-and-the-async-webserver">Video Stream and Controls at the same time and the Async Webserver</a></li>
+    </ul>
+  </li>
+  <li><a href="#hardware" id="markdown-toc-hardware">Hardware</a>    <ul>
+      <li><a href="#camera-pan-and-tilt" id="markdown-toc-camera-pan-and-tilt">Camera Pan and Tilt</a></li>
+      <li><a href="#wheel-odometry" id="markdown-toc-wheel-odometry">Wheel Odometry</a></li>
+      <li><a href="#batteries" id="markdown-toc-batteries">Batteries</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>The modified DirtDevil spider robot is a project I’ve only been working on from time to time. There is of course no real use apart from learning any playing and so I frequently have to prioritize other things higher.</p>
+
+<p>Around 2018 when I had the original DirtDevil vacuum robot and decided to modifiy it, I removed all the original electronics and added an L297 motor controller board that was directly connected to the Wemos D1 Mini Wifi-chip.</p>
+
+<p>An lightbarrier was added to detect the front-bumper. This was fed directly into the micro-controller.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2018-07.jpg" width="30%" />
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="electronics">Electronics</h2>
+
+<p>For the electronics I made some significant changes in order to make the robot easier to maintain and to make it easier to add more sensors and actuators.</p>
+
+<h3 id="switching-to-i2c">Switching to I2C</h3>
+
+<p>I realized the electronics would become complicated, when I’d add more sensors and actuators it wouldn’t scale with everything directly connected to the main micro-controller.</p>
+
+<p>The solution here is to have an on-board I2C bus. That way I can read and write bytes by addressable I2C ICs and can have clean wire runs to the main microcontroller. I also won’t run out of I/O pins on the micro-controller and can more easily switch components or debug individual sensors or actuators.</p>
+
+<h3 id="esp32-cam-for-video">Esp32-Cam for Video</h3>
+
+<p>Additionally I wanted a video feed. This is solved in an energy efficient way by switching from the Wemos D1 Mini to the ESP32-Cam. It can control the robot and offer a video stream from a single board that doesn’t consume much energy. Hence I’ll have a much longer battery run time.</p>
+
+<h3 id="repositioning">Repositioning</h3>
+
+<p>So in order to prepare for switching to the I2C components I had to re-arrange the electronics. This began some time in 2024 when I cut the perf boards and glued them down to the CNC milled wooden board.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-xx.jpg" width="30%" />
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h3 id="full-electronics-build">Full electronics build</h3>
+
+<p>After soldering all the other sensor and actuator and adding them the board looked like this:</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09.jpg" width="30%" />
+
+<p>We now have</p>
+
+<ul>
+  <li>an ESP32-CAM in the front as the main micro-controller and camera</li>
+  <li>two small 9g servo motors to pan and tilt the camera and micro-controller with it</li>
+  <li>an I2C bus bar in the center that is the only connection of the micro-controller to the rest of the electronics</li>
+  <li>and a all sensors and actuators connect to that bus bar</li>
+</ul>
+
+<p>The sensors are</p>
+
+<ul>
+  <li>front bumper connected to an I2C gpio expander</li>
+  <li>two I2C counters connected to the wheel rotary encoders</li>
+  <li>and an I2C compass</li>
+</ul>
+
+<p>For the actuators</p>
+
+<ul>
+  <li>an ULN2003 transistor array connected to the I2C gpio expander for right brush, left brush and vacuum</li>
+  <li>and an L297 motor driver board connected to that same I2C gpio expander for directional control of the left and right motors</li>
+  <li>a I2C servo control board is on-board as well in order to control the pan and tilt motors of the camera.</li>
+</ul>
+
+<p>For energy</p>
+
+<ul>
+  <li>I’m still using the 18650-cells with a battery protection board inside a small separeted junction box</li>
+  <li>the L297 has a 5V 7805-regulator that I’m additionally using for the 5V electornics</li>
+</ul>
+
+<p>In total the electronics now look like this:</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/schematic-overview.png" width="70%" />
+
+<h3 id="busbar">BusBar</h3>
+
+<p>Note that all sensors and actuators are connected via the same bus-bar in the center. This makes removing, replacing and debugging a lot easier and reduces the number of connections I need to the main ESP32-Cam microcontroller.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/busbar1.jpg" width="30%" />
+
+<p>For this I just soldered four large pin-arrays to a board keeping two holes distance so that wires can easily be attached and removed without shorting.</p>
+
+<p>The four lanes are for 5V+ Vcc, GNC, I2C SCL and I2C SDA.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/busbar2.jpg" width="30%" />
+
+<p>With this I can very easily add and remove I2C devices from the bus, measure signals and cleanly wire everything.</p>
+
+<h2 id="software">Software</h2>
+
+<p>The software more or less stayed the same, but was extended.</p>
+
+<h3 id="control-via-json-http-requests">Control via JSON HTTP-requests</h3>
+
+<p>In 2018 I was already able to control the robot via HTTP-Requests.</p>
+
+<p>The software revolves around</p>
+
+<ul>
+  <li>having everything in a key-value store for the state.</li>
+  <li>sensors are routinely checked and updated to the store.</li>
+  <li>the actuators are routinely aligned to the values in the store.</li>
+  <li>the store can be serialized to JSON string and presented via the web server</li>
+  <li>and it can be modified by HTTP-POST containing the key and the new value to be given</li>
+</ul>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/software.png" width="30%" />
+
+<p>This gives us the ability to read the state of the robot and control it by simple HTTP requests.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl http://&lt;robot-ip&gt;/get
+</code></pre></div></div>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"uptime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"18"</span><span class="p">,</span><span class="w"> 
+
+  </span><span class="nl">"compass_x"</span><span class="p">:</span><span class="w"> </span><span class="s2">"65000"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"compass_y"</span><span class="p">:</span><span class="w"> </span><span class="s2">"65000"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"compass_z"</span><span class="p">:</span><span class="w"> </span><span class="s2">"65000"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"bumper"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
+
+  </span><span class="nl">"motorLeft"</span><span class="p">:</span><span class="w"> </span><span class="s2">"off"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"motorRight"</span><span class="p">:</span><span class="w"> </span><span class="s2">"off"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"wiperLeft"</span><span class="p">:</span><span class="w"> </span><span class="s2">"off"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"wiperRight"</span><span class="p">:</span><span class="w"> </span><span class="s2">"off"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"vacuum"</span><span class="p">:</span><span class="w"> </span><span class="s2">"off"</span><span class="p">,</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>It can be controlled by setting the state on the actuator keys:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-d</span> <span class="s1">'{ "motorLeft" : "fwd"}'</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="nt">-X</span> POST http://&lt;robot-ip&gt;/post
+curl <span class="nt">-d</span> <span class="s1">'{ "motorRight" : "fwd"}'</span> <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="nt">-X</span> POST http://&lt;robot-ip&gt;/post
+</code></pre></div></div>
+
+<h3 id="user-interface">User Interface</h3>
+
+<p>The same Python controller tool I used back then can still be used to drive the robot.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/python-controller.png" width="10%" />
+
+<p>A (currently unfinished) web interface hosted directly from the ESP32-cam can also be used to read sensor data and in future control the robot from any device on the same Wifi network with a web browser.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/webinterface.jpg" width="30%" />
+
+<h3 id="ros-micro">ROS micro</h3>
+
+<p>I gave running ROS micro on the robot serious consideration. This would make integrating wheel odemetry and the Lidar with ROS slam algorithms easier.</p>
+
+<p>The downside is that the robot will not function standalone anymore and I’d be at the mercy of ROS developers regarding compatibility of their APIs.</p>
+
+<p>Instead I chose to keep the robot ROS-free for now. I can still have ROS running on a PC with custom bridges that grab the data from my robots HTTP-REST interface and translate them into ROS packets.</p>
+
+<p>For the Lidar I’ll need to either decode and bundle measurements into JSON or provide a TCP socket on the ESP32-CAM that just relays the serial data from the Lidar via Wifi to the PC and into a custom ROS bridge running there.</p>
+
+<p>It’s not the most convenient setup, but shouldn’t be too hard to acomplish.</p>
+
+<h3 id="motor-wiper-and-vacuum-controls-and-bumper-sensor-via-i2c-gpio-expander">Motor, Wiper and Vacuum controls and Bumper sensor via I2C GPIO Expander</h3>
+
+<p>Controlling the pcf8574 I2C GPIO expander is quite easy, but drove me crazy at first. I had used the wrong I2C address, because somehow most examples online use 0x20 or 0x40 as a base address. My chip uses 0x38 as it’s base address for reading.</p>
+
+<p>I found this out by adding an I2C scanner snippet found online that just loops over all possible 127 I2C addresses and outputs the ones of devices found on the I2C bus. It’s a nice feature to keep in the software to be able to detect whether I2C devices are properly connected.</p>
+
+<p>Once I had that settled and added two 10k pull-up resistors to SCL and SDA to be safe, it worked fine.</p>
+
+<h3 id="video-stream-and-controls-at-the-same-time-and-the-async-webserver">Video Stream and Controls at the same time and the Async Webserver</h3>
+
+<p>Streaming video and controlling the robot at the same time with the ESP32-CAM brought some unexpected issues.</p>
+
+<p>The example ESP32-CAM example code for camera streaming uses a continious MJPEG-stream. The issue is that when the ESP32-CAM is busy compressing and responding with the JPEG images it can’t do much else.</p>
+
+<p>On a more powerful system we might solve this with threading, but since the ESP32 has only two cores the benefit would also be limited.</p>
+
+<p>A solution I tried was to use the Async-Webserver Arduino Package [1] for the ESP32. An async webserver is a bit more cleverly engineered in order to accomodate for multiple web requests at the same time. I don’t know if this would have helped here, because the ESP32 is completly 100% busy compressing and responding with images. The Async-Webserver would have to interject handling of other requests in between streaming responses. Perhaps it does.</p>
+
+<p>I gave up on the Async-Webserver tough, because even after patching multiple defines to fix “previously defined” errors [2] and rewriting my web request handler codes for compatibility, I couldn’t figure out how to stream the MJPEG as before. I had also run into heaps of errors regarding the included mbedtls for SSL connections that seems to be incompatible with the ESP32 [3]. I wasn’t intending to use, but couldn’t easily disable it either. After all the patching I was left with possibly unstable broken code I’d have to maintain myself in the future.</p>
+
+<p>My solution now is to have a timer in the *.html-page that simply requests frame by frame. When clicking on a button to control the robot it briefly stops requesting frames in order to give the ESP32 time to handle the control commands instead. The video image will stop briefly, but that doesn’t matter for my use case. Note that I’m only planing to ever have one client at a time connected, but if I did ever need to handle more clients, I could do that as well with a proxy that sits between the robot and the multiple clients. It could briefly block image requests, when control commands are on the way.</p>
+
+<h2 id="hardware">Hardware</h2>
+
+<p>Apart from electronics changes and software extensions I needed to add additional actuators and sensors.</p>
+
+<h3 id="camera-pan-and-tilt">Camera Pan and Tilt</h3>
+
+<p>The main camera on the ESP32-Cam can now be rotated by two small servo motors for pan and tilt.</p>
+
+<p>The motors are simply glued to eachother and onto the perf board of the ESP32-Cam and the small wooden plate connected to the chassis in the front of the robot.</p>
+
+<p>The electronics are simple: a ready-made I2C servo motor controller provides ports for 16 servo motors. This means I have the option to connect more servo motors for other tasks.</p>
+
+<p>I may need to add additional voltage regulators in the future to drive more of them at the same time.</p>
+
+<p>In order to move the servos smoothly I’ll probably add the Arduino ramp library to smoothly accelerate and decellerate the servos [4].</p>
+
+<h3 id="wheel-odometry">Wheel Odometry</h3>
+
+<p>Wheel Odometry proved a bit challenging. I’ll explain the wheel odometry in a follow up (<a href="/electronics/2024/09/28/Sa-RobotPt3Odometry.html">see Wheel Odometry</a>).</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/wheel1.jpg" width="20%" />
+
+<h3 id="batteries">Batteries</h3>
+
+<p>Originally I had intended to use 18650 cells from an old laptop, as I have in the past. These require a Battery-Protection-Circuit for safety as 18650 cells can potentially catch fire when shorted.
+This battery protection circuit is causing a lot of trouble. It locks up and just blocks all electicity entirely. Sometimes it resets a day later, sometimes it doesn’t</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/charging.jpg" width="20%" />
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09.jpg" width="20%" />
+
+<p>So instead I put a standard USB power bank on the robot. This worked well enough that I’m considering switching to the powerbank all together. It’s safer and lighter.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/powerbank.jpg" width="20%" />
+
+<p>In the image below I needed to add a counter-weight - a handle from an older server case - to keep the robot from falling backwards. Some time later I’ve printed some holders to properly fix the battery bank above the rest of the electronics.</p>
+
+<p>The downside with using USB power banks for robots is that, without opening the power back and soldering a wire to the internal battery pack, I won’t be able to get a raw voltage reading from the battery cell in order to determine the charge level. The powerbank only outputs fixed voltages until completely drained. Adding such a wire is feasible though.</p>
+
+<p>In my case I had a power bank that can also output 9V or 12V. This is a requirement to properly drive these motors that would normally run on 14.4V.</p>
+
+<p>The advantage of the power bank approach is that I might be able to wirelessly charge with one of these USB wireless charging smartphone adapters.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/wireless-charge.png" width="20%" />
+
+<p>That way it would be possible to have a loading bay the robot can drive onto in order to charge. It wouldn’t require being perfectly positioned to charge either. I suspect it would only charge very slowly though.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I now have a more future-proof hardware and electronics design. It adds the wheel odometry sensors that I need in order to use the Lidar with the SLAM algorithms in ROS. For this I’ve made the decision to keep the robot itself ROS-free, but use the HTTP-JSON interface I already have to connect a custom ROS bridge.</p>
+
+<p>So far I’m in the process of testing the electronics and adjusting the software. So far it looks promising.</p>
+
+<hr />
+
+<pre>
+1] https://github.com/me-no-dev/ESPAsyncWebServer#body-data-handling
+2] https://stackoverflow.com/questions/75043892/i-am-facing-http-get-conflicts-with-a-previous-declaration-error-with-the-wifi
+3] https://github.com/me-no-dev/ESPAsyncWebServer/issues/1147
+4] https://www.arduino.cc/reference/en/libraries/ramp/
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Robot - Pt.2 - Rework"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>

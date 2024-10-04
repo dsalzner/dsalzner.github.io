@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Robot - Pt.3 - Wheel Odometry - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="In order to add wheel odometry I made additions hardware, electronics and software. For the hardware I needed to add a wheel encoder disk to the motor axles. This was 3D printed..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/09/28/Sa-RobotPt3Odometry.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Robot - Pt.3 - Wheel Odometry - Dennis Salzner" />
+  <meta property="og:description" content="In order to add wheel odometry I made additions hardware, electronics and software. For the hardware I needed to add a wheel encoder disk to the motor axles...." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2024/09/28/Sa-RobotPt3Odometry.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Electronics" />
+  <meta property="article:published_time" content="2024-09-28 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2024-09-28 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2024-09-28 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="In order to add wheel odometry I made additions hardware, electronics and software. For the hardware I needed to add a wheel encoder disk to the motor axles. This was 3D printed..." />
+  <meta name="twitter:title" content="Robot - Pt.3 - Wheel Odometry - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Robot - Pt.3 - Wheel Odometry</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Robot - Pt.3 - Wheel Odometry</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>In order to add wheel odometry I made additions hardware, electronics and software. For the hardware I needed to add a wheel encoder disk to the motor axles. This was 3D printed. As for the electronics, in order to pickup interruptions of that encoder disk, I needed to position a light barrier such that it doesn’t jam the moving parts. For the software I had to get that PCF8583 I2C realtime clock chip to work as an impulse counter.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel8.jpg" width="30%" />
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debugging.jpg" width="20%" />
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#wheel-odometry" id="markdown-toc-wheel-odometry">Wheel Odometry</a>    <ul>
+      <li><a href="#prebuilt-motors-with-encoders" id="markdown-toc-prebuilt-motors-with-encoders">Prebuilt motors with encoders</a></li>
+      <li><a href="#magnetic-switches" id="markdown-toc-magnetic-switches">Magnetic Switches</a></li>
+      <li><a href="#optical-encoder-wheel" id="markdown-toc-optical-encoder-wheel">Optical Encoder Wheel</a></li>
+    </ul>
+  </li>
+  <li><a href="#hardware" id="markdown-toc-hardware">Hardware</a>    <ul>
+      <li><a href="#the-wheel-assembly" id="markdown-toc-the-wheel-assembly">The wheel assembly</a></li>
+      <li><a href="#encoder-wheel" id="markdown-toc-encoder-wheel">Encoder wheel</a></li>
+      <li><a href="#assembly" id="markdown-toc-assembly">Assembly</a></li>
+    </ul>
+  </li>
+  <li><a href="#electronics" id="markdown-toc-electronics">Electronics</a>    <ul>
+      <li><a href="#first-attempt-directly-connecting-the-light-barrier" id="markdown-toc-first-attempt-directly-connecting-the-light-barrier">First attempt directly connecting the light barrier</a></li>
+      <li><a href="#smaller-issues" id="markdown-toc-smaller-issues">Smaller issues</a></li>
+      <li><a href="#debugging" id="markdown-toc-debugging">Debugging</a></li>
+      <li><a href="#adding-debouncing" id="markdown-toc-adding-debouncing">Adding debouncing</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="wheel-odometry">Wheel Odometry</h2>
+
+<p>Since most SLAM algorithms in ROS can’t function reliably without wheel rotation data, I took the challenge to modify the motors to add wheel rotation sensors.</p>
+
+<p>The DirtDevel Spider has modular wheel assemblies that can be easily removed by loosening a cover on the bottom of the robot.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel1.jpg" width="20%" />
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h3 id="prebuilt-motors-with-encoders">Prebuilt motors with encoders</h3>
+
+<p>There are motors on the market with gearboxes that have built-in encoders. I’m more in favor of coming up with my own solution though, because</p>
+
+<ul>
+  <li>such a motor with encoder probably wouldn’t fit into my existing robot</li>
+  <li>it would mean buying more motors and, for other projects, not being able to use my assortment of DC motors that I’ve been salvaging for decades</li>
+  <li>there’s a lot less to learn</li>
+  <li>it’s also more expensive</li>
+</ul>
+
+<p>Additionally I have to admit I didn’t think custom building rotary encoders would end up this tedious.</p>
+
+<p>However part of it was related to software and electronics and hence issues I would have run into either way.</p>
+
+<h3 id="magnetic-switches">Magnetic Switches</h3>
+
+<p>The first idea I had was to glue a magnet into the spokes of the wheel and use a magnetic switch to measure full wheel rotations.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2.jpg" width="20%" />
+
+<p>However this approach is inaccurate and can only measure full rotations. I had to come up with something better.</p>
+
+<h3 id="optical-encoder-wheel">Optical Encoder Wheel</h3>
+
+<p>A much better solution is to use an encoder wheel an a small light barrier. Adding this proved a bit challenging.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="hardware">Hardware</h2>
+
+<p>For the optical encoder wheel approach we need to get an encoder disk on a moving part inside or on the axle of the motor transmission.</p>
+
+<h3 id="the-wheel-assembly">The wheel assembly</h3>
+
+<p>So I opened the wheel assembly of the robot and had a look at where I could realistically place an encoder wheel and light barrier.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel3.jpg" width="20%" />
+
+<p>There is hardly any space inside the gear box.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel5.jpg" width="20%" />
+
+<p>The main gear has to great of a width to fit a light barrier over it and that would have probably not worked well due to the teeth of the gear wheel being too small for the light barrier to pickup.</p>
+
+<p>The assembly under neath the main gear is actually a planetary gear setup connected to a worm drive. I found that quite impressive and good to know for the future: Should it ever break I’ll switch those gears.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel4.jpg" width="20%" />
+
+<p>In the end I settled for the main axle as my attack vector.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel6.jpg" width="20%" />
+
+<h3 id="encoder-wheel">Encoder wheel</h3>
+
+<p>It was easy to write a small for-loop in OpenSCAD to generate an encoder wheel. I had to try three different designs until I had one that would fit exactly between wheel and motor assembly without jamming the motor. It’s required to print to .5 millimeter accuracy just at the limit of my Ender 3 Pro 3D printer.</p>
+
+<p>The diameter couldn’t be much more smaller, otherwise the gaps would have to be smaller and - as seen on the smallest wheel. The 1mm gaps are just too small for my printer.</p>
+
+<p>A different, perhaps more accurate, solution could have been to use a regular laser printer to print to transparent overhead projector slides. They are thin and can wobble, but could have been glued to a solid 3D printed disk to make them stable. This is something to keep in mind for the future.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel7.jpg" width="20%" />
+
+<h3 id="assembly">Assembly</h3>
+
+<p>But as can be seen in this picture the 3D printed solution fits just fine. The only concern I have is that dirt might get stuck in the encoder wheel.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel8.jpg" width="20%" />
+
+<p>The light barrier had to be carefully positioned and glued along with its wire to just so get passed the other plastic ridges.</p>
+
+<p>I did have to cut into the plastic a bit to position that light barrier.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel9.jpg" width="20%" />
+
+<p>In the end it fits into the robot wheel bay perfectly.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel10.jpg" width="20%" />
+
+<h2 id="electronics">Electronics</h2>
+
+<p>In order to use my custom rotary wheel encoders - one on each of the two wheels - I needed a way to get the count of light barrier interruptions into the ESP32 microcontroller.</p>
+
+<p>Since I’m setting up all the electronics with I2C, I used an PCF8583 real-time clock as an impulse counter. A small micro-controller would have been cheaper and could of handled the debouncing issues I encountered much better, but then I’d have to write additional software for it, potentially with more energy consumption, developing, debugging, flashing, pin connectors for that and a much less clean solution over all.</p>
+
+<h3 id="first-attempt-directly-connecting-the-light-barrier">First attempt directly connecting the light barrier</h3>
+
+<p>My first attempt was just a small board connected to the light barrier on one end and to the I2C bus on the other end. For this I used a 10k and a 220 Ohm resistor on Diode+ and Emitter+ of the light barrier to pull up to 5V+. The counter chip connects to between the Diode+ and the 10k pull-up resistor. Diode- and Emitter- are connected to GND.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel11.jpg" width="20%" />
+
+<h3 id="smaller-issues">Smaller issues</h3>
+
+<p>I ran into some smaller issues.</p>
+
+<ul>
+  <li>it seems there are not so many people using the PCF8583 as an impulse counter in general</li>
+  <li>the PCF8583 requires carefully setting registers at initialisation to make it function not as a clock, but as an impulse counter</li>
+  <li>after issues with the initialisation sequence, the only ready-made code I could find is 6 years old and on GitHub [1]</li>
+  <li>it seems to be based on [2] and both have a “Wire.begin()” in the constructor that interfered with by other I2C code and completly blocked the I2C bus for all devices when used. It took some time to find that error.</li>
+  <li>the datasheet states the OSCO “Oscillator Output” (OSCO) is to be used for impulse counting. I don’t know if there is something else wrong with my circuit, but for me it seems to only work with “Oscillator Input” (OSCI) which also sounds more reasonable.</li>
+</ul>
+
+<p>Either way after some of trial and error I was able to get it to count.</p>
+
+<h3 id="debugging">Debugging</h3>
+
+<p>In order to debug these issues I eventually even pulled out the oscilloscope to verify my light barrier circuit was working properly. For this I had to wire the light barrier part of the circuit on a bread board.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debugging.jpg" width="30%" />
+
+<p>My circuit worked fine. At that point I was fairly sure I was just missing some signal debouncing.</p>
+
+<h3 id="adding-debouncing">Adding debouncing</h3>
+
+<p>Without debouncing the chip counts anything from 50 to 70 times per light barrier interruption due to a bouncing of the input signal.</p>
+
+<p>This is common with any mechanical contracts be it metal plates coming into contact for example when humans interact with a button, magnets passing a sensor or, as in this case, light barriers.</p>
+
+<p>The signal tends to “flicker” and the remedy for this is either software debouncing with a timeout or in hardware, a solution could be having a capacitor slowly charging and dischanging along with the input signal, smearing it, in order to make the signal rise and fall more evenly. Additionally one might add a schmitt-trigger or analog comparator to give a clean digital signal that is either ‘1’ or ‘0’.</p>
+
+<p>Software debouncing wouldn’t have been possible as I can’t reprogram the PCF8583 and so I needed hardware debouncing.</p>
+
+<p>Reading online I found suggestions</p>
+
+<ul>
+  <li>a 100nF capacitor could help. It’s charging/decharging curve would smoothen the signal.</li>
+</ul>
+
+<p>and additionally either</p>
+
+<ul>
+  <li>a schmitt-trigger would trigger only when the there is a transition from high to low or low to high</li>
+  <li>or an LM393 comparator that would give a digital ‘1’ when the signal is above a threshold and ‘0’ otherwise</li>
+</ul>
+
+<p>When searching the LM393 I found that there are actually ready-made Arduino modules for this exact purpose: couting interruptions on an encoder disk with a light barrier.</p>
+
+<p>They contain the LM393, carefully selected capacitors and the resistors for light barriers.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debounce.png" width="15%" />
+
+<p>I immediately bought a pack of these for this and future projects.</p>
+
+<p>Once they arrive I’ll desolder the light barrier on the board and solder in the wires to my own light barriers that are inside the left and right wheel assemblies. The module will then connect to my event counter board. So these boards will sit inbetween the light barrier and inputs the two PCF8583 giving them a clean debounced signal.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>With the wheel odometry the robot will be able to count wheel rotations with high accuracy. The main micro-controller does not have to be involved with the counting via interrupts. Instead the PCF8583 I2C realtime clock takes care of this and the micro-controller can get the current count at any time via the on-board I2C bus.</p>
+
+<p>Having figured this out opens options for a variary of other projects that involve counting events or controlling motors percicely without relying on stepper motors or servo motors.
+We can use the same approach to accurately measure rotation of any motor of any size. This can be used with small DC motors in remote controlled cars, to cordless drill motors all the way to AC washing machine motors.</p>
+
+<hr />
+
+<pre>
+1] https://github.com/xoseperez/pcf8583
+2] https://github.com/edebill/PCF8583
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Robot - Pt.3 - Wheel Odometry"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
