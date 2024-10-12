@@ -69,11 +69,16 @@
 
 <p>In order to accomodate for the Lidar, for which the SLAM algorithms in turn require wheel odometry data and the ESP32-CAM in order to provide a video stream, I had to rework much of the robot from 2018. I repositioned the electronics, swapped the main controller and rewired components to commincate via I2C making the robot more easily extensible.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/robot-drive.gif" width="30%" />
-
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09_2.jpg" width="40%" />
+<div id="movie-area" style="width: 640px; height: 480px;}">&nsbp;</div>
+<script type="text/javascript">
+  $(document).ready(function(){
+    $('#movie-area').html('<iframe src="https://player.vimeo.com/video/1018993738" width="640" height="480" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>');
+  });
+</script>
 
 <p>I found that the "Simultaneous Localization and Mapping" (SLAM) algorithms implemented in the "Robotic Operating System" (ROS) will not function properly without wheel odometry data. Also since transitioning from the ESP8266-based Wemos D1 Mini to an ESP32-CAM that provides more processing power and a camera, I had less I/O pins available. So I took the time to completly overhaul the electronics of the robot to use I2C for control of the actuators and reading of sensors. This greatly simplifies the design and makes debugging issues easier.</p>
+
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09_2.jpg" width="20%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 

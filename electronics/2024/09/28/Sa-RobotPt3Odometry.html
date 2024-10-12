@@ -257,19 +257,77 @@
 
 <p>They contain the LM393, carefully selected capacitors and the resistors for light barriers.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debounce.png" width="15%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debounce.png" width="10%" />
 
 <p>I immediately bought a pack of these for this and future projects.</p>
 
 <p>Once they arrive I’ll desolder the light barrier on the board and solder in the wires to my own light barriers that are inside the left and right wheel assemblies. The module will then connect to my event counter board. So these boards will sit inbetween the light barrier and inputs the two PCF8583 giving them a clean debounced signal.</p>
 
+<p><strong>Update 2024-10-12</strong></p>
+
+<p>The wheel debounce needed some more attention. In order to connect the LM393 rotary counter boards I simply pulled off the plastic cap of the light barrier that comes preinstalled on the boards.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_1.jpg" width="20%" />
+
+<p>This exposes the LED and photodiode. Soldering these boards is a bit tricky probably due to solder resist coating. I found it’s easier to cut the leds of LED and photodiode and solder to them instead.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_2.jpg" width="20%" />
+
+<p>At first the contraption didn’t count wheel rotations at all. So I wired the circuit on a bread board with a separate light barrier.</p>
+
+<p>What’s nice about these LM393 rotary counter boards is that they have two leds. One for operation and one for interruption of the light barrier. As you can see they work fine with my light barriers soldered to them.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_3.jpg" width="20%" />
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_4.jpg" width="20%" />
+
+<p>So the boards seem to be working, the light barrier is compatible and the wiring is correct. So it had to be an unclean signal once again.</p>
+
+<p>So I connected my oscilloscope to see what was happening while I manually interrupt the light barrier.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_5.jpg" width="20%" />
+
+<p>I saw there was still a somewhat unclean signal. So I set up a resistor-capacitor circuit.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_6.jpg" width="20%" />
+
+<p>The idea here is to have a capacitor slowly charge and dischage with the signal thereby evening the signal out.</p>
+
+<p>I used a 1 kOhm resistor. As for the capacitor 10 uF was too large for quick interruptions. 0,47 uF worked perfect for my manual light barrier interruptions. The PCF8583, connected via its OSCI-input (the datasheet falsely states OSCO) properly counted the interruptions. I could repeatidly interrupt 10 times and get exactly 10 as count at the microcontroller.</p>
+
+<p>So I soldered the circuit up and put everything back on the robot. And it didn’t work once again. Next I removed the wheel assembly and experimented some more.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_7.jpg" width="20%" />
+
+<p>Turns out the light barrier did not register the interruptions of the rotating disk. The circuit is correct though, as when pushing a piece of cardboard inbetween the light barrier, it did register interruptions.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_8.jpg" width="20%" />
+
+<p>At that point I quickly learned why encoder disks commonly are black. After painting it black with a standard edding marker, everything worked as expected.</p>
+
+<p>So I put the board back on the robot.</p>
+
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_9.jpg" width="15%" />
+
+<p>And now it counted, but would sometimes still misscount. I found for manual interruptions, even quick ones, the capacitor size is perfect, but for the fast spinning wheel on the robot, the capacitor is still too large.</p>
+
+<p>After building the second wheel encoder circuit board, and leaving out that Resistor-Capacitor circuit entirely, I found it would actually work better without the additional electronics.</p>
+
+<p>I guess I got side-tracked by the other issues and with the issue of the rotary disk not being black. At least I learned a great deal about resistor-capacitor circuits and hardware debouncing. For other scenarios with slower signals e.g. reading the gas meter this circuit (see <a href="/old/2014-11-07-Fr-GasMeterWifi.html">GasMeterWifi</a>) would probably have worked very well - but cores &amp; power weren’t constrainted and so I chose software debouncing instead.</p>
+
+<p>Debouncing in hardware is extremely specific to the application regarding the size of the capacitor.</p>
+
 <p style="font-size: 60%;" align="right">Progress</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>With the wheel odometry the robot will be able to count wheel rotations with high accuracy. The main micro-controller does not have to be involved with the counting via interrupts. Instead the PCF8583 I2C realtime clock takes care of this and the micro-controller can get the current count at any time via the on-board I2C bus.</p>
+<p>With wheel odometry the robot is able to count wheel rotations. The main micro-controller does not have to be involved with the counting via interrupts. Instead the PCF8583 I2C realtime clock takes care of this and the micro-controller can get the current count at any time via the on-board I2C bus.</p>
 
-<p>Having figured this out opens options for a variary of other projects that involve counting events or controlling motors percicely without relying on stepper motors or servo motors.
+<p>As of now I still have some software issues running the two clocks at the same time. They work independantly and have different I2C adresses, as intended, by the setting the adress at their respective A0 pins.</p>
+
+<p>Another interesting aspect I didn’t think of when starting this is that running the wheel in reverse will of course still count as if the wheel was running forward. In order to do proper odometry we need to take the direction in which the motor is turning into account. In software this means, even though I have a spearate chip responsible for counting, I need to syncronously update wheel count before changing directions. Otherwise the wheel incrementations may be considered in the wrong direction.</p>
+
+<p>Having figured out how to use the I2C realtime clocks as counters and the resistor-capacitor circuits with LM393 comparator for debouncing in hardware opens a variary of possibilities for other projects that involve counting events or controlling motors percicely without relying on stepper motors or servo motors.
 We can use the same approach to accurately measure rotation of any motor of any size. This can be used with small DC motors in remote controlled cars, to cordless drill motors all the way to AC washing machine motors.</p>
 
 <hr />
