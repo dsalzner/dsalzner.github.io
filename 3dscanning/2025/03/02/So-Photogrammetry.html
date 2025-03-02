@@ -40,6 +40,10 @@
   <!-- diagramms -->
   <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
 
+  <!-- 3d models -->
+  <script src="https://www.dennissalzner.de/js/stl_viewer.min.js"></script>
+  <script src="https://www.dennissalzner.de/js/stl_viewer_init.js"></script>
+
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
@@ -73,11 +77,17 @@
 
 <p>I’ve experimented with photogrammetry for a couple of days and I’ll share my photography setups, software configurations and findings along the way.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-02-28-212957_781x669_scrot.png" width="35%" />
+<div class="3d-model col-12" data-src="../../../../images/2025-03-02-So-Photogrammetry/elephant.stl" style="width: 500px; height: 300px;
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-153929_738x552_scrot.png" width="30%" />
+"></div>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/MVI_7665-168.jpg" width="15%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-02-28-212957_781x669_scrot.png" width="12%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-153929_738x552_scrot.png" width="10%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" width="10%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -110,6 +120,15 @@
       <li><a href="#crop-image" id="markdown-toc-crop-image">Crop image</a></li>
     </ul>
   </li>
+  <li><a href="#mesh-editing" id="markdown-toc-mesh-editing">Mesh Editing</a>    <ul>
+      <li><a href="#viewing-the-meshes" id="markdown-toc-viewing-the-meshes">Viewing the Meshes</a></li>
+      <li><a href="#cut-off-excess-portions-of-the-mesh" id="markdown-toc-cut-off-excess-portions-of-the-mesh">Cut off excess portions of the Mesh</a></li>
+      <li><a href="#reduce-the-mesh" id="markdown-toc-reduce-the-mesh">Reduce the Mesh</a></li>
+      <li><a href="#export-with-texture" id="markdown-toc-export-with-texture">Export with Texture</a></li>
+      <li><a href="#displaying-on-the-web" id="markdown-toc-displaying-on-the-web">Displaying on the Web</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
 </ul>
 
 </nav>
@@ -438,6 +457,16 @@ The mouse pad is not pushed into the corner, but rather curved to not produce a 
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/lego4-2.jpg" width="20%" />
 
+<p>Using that setup we can see that Meshroom now recognizes the camera locations much better.</p>
+
+<p>We get a full 360 degree Mesh of the elephant. The uneven lighting and reflections make the incomplete and uneven (see mesh above).</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-165507_877x675_scrot.png" width="20%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-175022_801x631_scrot.png" width="20%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-194045_680x547_scrot.png" width="20%" />
+
 <h3 id="4-tv-turn-table">4) TV turn table</h3>
 
 <p>In the meantime I’ve ordered a cheap turntable made for turning television sets from eBay. It hasn’t arrived yet.</p>
@@ -500,9 +529,50 @@ The mouse pad is not pushed into the corner, but rather curved to not produce a 
 
 <p>After theses steps the images are ready to be loaded into Meshroom.</p>
 
+<h2 id="mesh-editing">Mesh Editing</h2>
+
+<p>After we run the Meshroom pipeline we end up with a mesh that may have some points other than the model to be scanned in it, like the turntable surface for instance.
+The mesh is likely also has a very high polygon count and produces large files. We can fix both of these issues with Blender.</p>
+
+<h3 id="viewing-the-meshes">Viewing the Meshes</h3>
+
+<p>Somehow 3D viewers behave strangely. Meshlab frequently crashes on my machine.  g3dviewer doesn’t display meshes half of the time or without texture. f3d is more reliable. Blender is a bit tricky to use.</p>
+
+<p>It seems that the textures in <code class="language-plaintext highlighter-rouge">*.exr</code> format exported by Meshroom are not well supported. Additionally *.mtl files with paths are not supported by some applications. STLs can be ascii or compressed with and without textures and these are supported by some applications, but not others. Large texture resolutions seems to cause problems. Also there are different options for mapping from the mesh to the texture that are supported by some formats and parsers, but not others.</p>
+
+<p>The most reliable format seems to be Wavefront <code class="language-plaintext highlighter-rouge">*.obj</code> with an <code class="language-plaintext highlighter-rouge">*.mtl</code> file point to a 1024x1024 pixel <code class="language-plaintext highlighter-rouge">*.png</code> texture file.</p>
+
+<h3 id="cut-off-excess-portions-of-the-mesh">Cut off excess portions of the Mesh</h3>
+
+<p>We can either use “Custom Bounding Box” on the “Meshing” node or load the Mesh into Blender and edit it there.</p>
+
+<p>In the Post on creating <a href="/gamemods/2023/10/19/So-Sims4Furniture.html">Sims 4 Furniture</a> I’ve detailed how to select and remove portions of the mesh. Blender has a “limit selection to visible” feature that can be toggled in the top right half of the edit mode screen or by pressing [alt]+[z] that is important here. Next we align view to front, side and top and select and remove excess parts of the mesh by pressung [del].</p>
+
+<h3 id="reduce-the-mesh">Reduce the Mesh</h3>
+
+<p>After this we can use the “Decimate” Modifier in Blender. In “Edit Mode” press “a” for select all. Then on the right pan open Tab for “Modifier” (the wrench symbol). Click “Add Modifier” -&gt; “Generate” -&gt; “Decimate”.</p>
+
+<p>Pulling the slider you can see the face count reducing. I’ve reduced from 40278 faces to below 10000 faces in my model. That gave me exported *.obj files that were 1,2 MB or compressed STL files with 534 kb.</p>
+
+<h3 id="export-with-texture">Export with Texture</h3>
+
+<p>The texture become visible in the “Texture Paint” tab. By default Meshroom produces “texture_1001.exr” texture files. You can convert them to png with <code class="language-plaintext highlighter-rouge">convert -resize 1024x texture_1001.exr texture_1001.png</code> then set them on the “Principled BDSF”/”Base Color” as described in my guide on <a href="/3dmodeling/2023/09/23/Sa-3DModeling.html">3D Modeling</a>. Resizing to 1024x reduced the png size from 2 MB to 466 KB and worked fine.</p>
+
+<p>STL doesn’t export with texture. When exporting Wavefront *.obj, Blender additionally writes an *.mtl file with the path to the texture. Since <code class="language-plaintext highlighter-rouge">*.mtl</code> are text files we can edit and replace the <code class="language-plaintext highlighter-rouge">*.exr</code> with <code class="language-plaintext highlighter-rouge">*.png</code> there. Ideally the texture is in the same directory as many 3d viewers don’t expect paths in the *.mtl.</p>
+
+<h3 id="displaying-on-the-web">Displaying on the Web</h3>
+
+<p>Unfortunately using <code class="language-plaintext highlighter-rouge">*.obj</code> + <code class="language-plaintext highlighter-rouge">*.mtl</code> + <code class="language-plaintext highlighter-rouge">*.png</code> means three files and that is not supported by the JavaScript libary ‘viewstl’ [5] that I’m currently using. ‘viewstl’ would support <code class="language-plaintext highlighter-rouge">*.stl</code> with textures, but somehow Blender doesn’t export *.stl with texture such that ‘viewstl’ can display them.</p>
+
+<p>That’s also why in the above 3d viewer I’m just showing the mesh without a texture.</p>
+
 <p style="font-size: 60%;" align="right">Progress</p>
 
-<p>With all of the above I’m continously improving the setup whenever I find time to. It might be interesting to enhance this by getting a projector to project a grid onto the object. I’m not sure how to setup the software yet, but I know this has been done years ago in commercial products such as the “David SLS Scanner”. It seems to have been used in industrial setups. Nowadays industry has likely shifted to handheld scanners upwards of 20k Eur. Such structured light scanning (SLS) setups require space and calibration. Frequently setting everything up, calibrating it and then removing it again would be tedious.</p>
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I’ll probably be improving the setup whenever I find the time to. It might be interesting to enhance this by getting a projector to project a grid onto the object. I’m not sure how to setup the software yet, but I know this has been done years ago in commercial products such as the “David SLS Scanner”. It seems to have been used in industrial setups. Nowadays industry has likely shifted to handheld scanners upwards of 20k Eur. Such structured light scanning (SLS) setups require space and calibration. Frequently setting everything up, calibrating it and then removing it again would be tedious.</p>
+
+<p>If I get this to work better I might be able to make scans for 3D printing. For instance to make brackets for that Nerf gun from a previous post.</p>
 
 <hr />
 
@@ -511,6 +581,7 @@ The mouse pad is not pushed into the corner, but rather curved to not produce a 
 2] https://en.wikipedia.org/wiki/Digital_single-lens_reflex_camera
 3] https://meshroom-manual.readthedocs.io/en/latest/faq/reconstruction-parameters/reconstruction-parameters.html
 4] https://github.com/alicevision/CCTag/tree/develop/markersToPrint
+5] https://github.com/omrips/viewstl
 </pre>
 
 </div>
