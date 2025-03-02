@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>3D Scanning & Photogrammetry - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="In a post from roughly a year ago I wrote about 3D scanning and compared techniques and products on the market at the time. Instead I found that photogrammetry and, by extension..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/3dscanning/2025/03/02/So-Photogrammetry.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="3D Scanning & Photogrammetry - Dennis Salzner" />
+  <meta property="og:description" content="In a post from roughly a year ago I wrote about 3D scanning and compared techniques and products on the market at the time. Instead I found that photogrammet..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/3dscanning/2025/03/02/So-Photogrammetry.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="3DScanning" />
+  <meta property="article:published_time" content="2025-03-02 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2025-03-02 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2025-03-02 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="In a post from roughly a year ago I wrote about 3D scanning and compared techniques and products on the market at the time. Instead I found that photogrammetry and, by extension..." />
+  <meta name="twitter:title" content="3D Scanning & Photogrammetry - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - 3D Scanning & Photogrammetry</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">3D Scanning & Photogrammetry</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>In a post from roughly a year ago I wrote about 3D scanning and compared techniques and products on the market at the time. Instead I found that photogrammetry and, by extension, structured light scanning is much more interesting at the moment.</p>
+
+<p>Commercial scanners  are still rapidly improving and there are price drops by the day. Yet I’ve learned that there is no one type of scanner for all uses and that craming all the processing into a small handheld device for a price point under 1k Eur leads to inevitable limitations.</p>
+
+<p>I’ve experimented with photogrammetry for a couple of days and I’ll share my photography setups, software configurations and findings along the way.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-02-28-212957_781x669_scrot.png" width="35%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-153929_738x552_scrot.png" width="30%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" width="30%" />
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#software" id="markdown-toc-software">Software</a>    <ul>
+      <li><a href="#download" id="markdown-toc-download">Download</a></li>
+      <li><a href="#data-pipleine" id="markdown-toc-data-pipleine">Data Pipleine</a></li>
+      <li><a href="#visualisation" id="markdown-toc-visualisation">Visualisation</a></li>
+      <li><a href="#steps-of-the-pipeline" id="markdown-toc-steps-of-the-pipeline">Steps of the Pipeline</a></li>
+    </ul>
+  </li>
+  <li><a href="#photography-setup" id="markdown-toc-photography-setup">Photography Setup</a>    <ul>
+      <li><a href="#1-the-bicycle-parts-turntable" id="markdown-toc-1-the-bicycle-parts-turntable">1) the bicycle parts turntable</a></li>
+      <li><a href="#2-lego-1" id="markdown-toc-2-lego-1">2) Lego 1</a></li>
+      <li><a href="#2-lego-2" id="markdown-toc-2-lego-2">2) Lego 2</a></li>
+      <li><a href="#3-lego-3" id="markdown-toc-3-lego-3">3) Lego 3</a></li>
+      <li><a href="#3-lego-4" id="markdown-toc-3-lego-4">3) Lego 4</a></li>
+      <li><a href="#4-tv-turn-table" id="markdown-toc-4-tv-turn-table">4) TV turn table</a></li>
+    </ul>
+  </li>
+  <li><a href="#image-capture" id="markdown-toc-image-capture">Image Capture</a>    <ul>
+      <li><a href="#helpful-bash-scripts" id="markdown-toc-helpful-bash-scripts">Helpful Bash scripts</a></li>
+      <li><a href="#extract-every-10th-frame-of-a-video" id="markdown-toc-extract-every-10th-frame-of-a-video">Extract every 10th frame of a video</a></li>
+      <li><a href="#automatic-neural-net-background-removal" id="markdown-toc-automatic-neural-net-background-removal">Automatic neural net background removal</a></li>
+      <li><a href="#crop-image" id="markdown-toc-crop-image">Crop image</a></li>
+    </ul>
+  </li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>3D scaning has many touching points with other fields. Taking measurements during renovations, experimenting with positioning of furnature, extending games with custom 3D models, 3D maps for robot localisation, virtual reality and augmented reality applications, 3D printing and more.</p>
+
+<p>Due to this I’ve been keen on improvements in the technology for a long time and keep going back to experiment from time to time.</p>
+
+<p style="font-size: 60%;" align="right">Why</p>
+
+<p>The more I’ve looked into photogrammetry the more intersting it got. There are a number of topics involved:</p>
+
+<ul>
+  <li>mechanics in camera positioning and turntables</li>
+  <li>electronics, light barriers, to trigger cameras at fixed angles</li>
+  <li>photography best achieved with industrial cameras, digital single-lens reflex camera (DSLRs) [2] or mirror-less cameras for faster triggering</li>
+  <li>effects of lighting, shadows, colors, photography parametes like angle, exposure and lens types.</li>
+  <li>algorithms that relate to optical tracking and the field of robotics like the Scale-invariant feature transform (SiFT) to track motion between shots</li>
+  <li>open-source software like Meshroom that utilize a data-driven pipeline approach with highly configurable state-of-the-art algorithms</li>
+</ul>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p><strong>Working Principle</strong></p>
+
+<p>In photogrammetry we take photos of an object from a large number of varying angles. Similar to software that produced 2d panoramas - and visual robot localisation, and robot tracking for that matter - the 3D reconstruction software will try to find matching features in pairs of images. Using the coordinates of the matching features it can then calculate the relative viewing angles of the cameras that took the images.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-152250_862x574_scrot.png" width="30%" />
+
+<p>Ideally we would have multiple perfectly calibrated cameras that take images from multiple equally-spaced angles at one instant.</p>
+
+<p>In practice we have a lot less cameras, perhaps only a single camera. We simulate multiple cameras by moving the object. Either by hand or by turn table. In that case a single camera will be intentionally treated as multiple destinct cameras at different positions by the algorithms.</p>
+
+<p>If both feature detection and matching is accurate enough, we have enough data to calculate the position of points in 3D space.</p>
+
+<h2 id="software">Software</h2>
+
+<p>“Meshroom” is the current goto open-source software for photogrammetry. At frist glance it seems Blender-level complicated, but it is really easy to use and does the best it can to make complicated and state-of-the-art algorithms involved in photogrammetry accessible.</p>
+
+<h3 id="download">Download</h3>
+
+<p>It can be downloaded from the “AliceVision” [1] webpage and is one of the few software that can be downloaded, extracted and just run on any Linux system with Ubuntu I’ve used in the last 5 years or so. It seems they’ve properly statically linked dependencies it needs into the binaries. Yet its takes only roughly 2 GB of space - nothing compared to most of the Snap or Flatpaks that package entire copies of environments alongside browsers for web-based apps.</p>
+
+<p>On my machine with an NVidia RTX 3060 it even detected NVidia CUDA automatically (you can check this using the ```nvidia-smi`` tool) and used graphics acceleration without any futher configuration whatsoever. Impressive.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://www.fosshub.com/Meshroom.html?dwl<span class="o">=</span>Meshroom-2023.3.0-linux.tar.gz
+<span class="nb">tar</span> <span class="nt">-xvf</span> Meshroom-2023.3.0-linux.tar.gz
+./Meshroom-2023.3.0/Meshroom
+</code></pre></div></div>
+
+<h3 id="data-pipleine">Data Pipleine</h3>
+
+<p>In the application you’ll see the data pipeline.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-115523_1799x298_scrot.png" width="90%" />
+
+<p>The software is used by adding a set of photos, ideally a couple of hundred photos from various angles, and then configuring parameters of each node and then triggering each node one-by-one left-to-right in the pipeline (right mouseclick -&gt; “compute”).</p>
+
+<h3 id="visualisation">Visualisation</h3>
+
+<p>Double-clicking on a node makes the output of that node appear in the 3D viewer in the top right of the Meshroom window.</p>
+
+<p>We can, for instance, double-click on “FeatureExtraction” and then on the three dots below the 3D viewer to visualize the points that the feature extraction detected in the image.</p>
+
+<p>That’s extremly useful when debugging issues when using turn tables related to the “FeatureExtraction” pickung up too much of the stationary background.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-121640_514x737_scrot.png" width="20%" />
+
+<h3 id="steps-of-the-pipeline">Steps of the Pipeline</h3>
+
+<p>A basic understanding of the algorithms involved and how Meshroom applies them is very helpful in troubleshooting. I’ve tried without bothering about the details at first. That didn’t get me very far. Researching more I ended up uncovered so many issues with my camera setup, the settings in the nodes and so on. It really helps to have a basic understanding of each node in the pipeline.</p>
+
+<p>The goal of the pipeline is to take the 2D photographs, run heavy algorithms on them and output a mesh (set of hundred thousands of triangles oriented in 3D space that describe the shape of the object) alongside the texture (the color)</p>
+
+<p>Going through the default pipeline in Meshroom:</p>
+
+<ul>
+  <li><strong>Camera Init</strong>
+    <ul>
+      <li>reads the photos and their respective meta data</li>
+      <li><strong><em>remarks</em></strong>
+        <ul>
+          <li>there is also a video node that can take frames from a video file</li>
+          <li>the node also reads metadata from the images e.g. focal length. It may make sense to make sure we’re not loosing that information in our processing for instance when manually extracting frames from a video.</li>
+          <li>I’ve found image of 1024x width to be a good balance for computation time.</li>
+          <li>if meshing came out properly on the 1024x, we can rerun it over night with higher resolutions.</li>
+          <li>the graphics cards VRAM seems to be the limiting factor for high resolutions, but with high-performance cloud providers used for A.I training and running LLMs you could always buy some compute for something useful like this.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Feature Extraction</strong>
+    <ul>
+      <li>tries to detect features in the individual images</li>
+      <li><strong><em>remarks</em></strong>
+        <ul>
+          <li>default is to “Domain-size pooling Scale-invariant feature transform” (dsp-sift)</li>
+          <li>it is very effective in picking up minute details making it perfect for robot localisation or motion of a camera around an object</li>
+          <li>it’s a little less ideal in turn table scenarios, as it may pick-up the background and conclude the camera is stationary. That will typically make the output mesh unusable as the calculation of the 3D positions will be erroneous.</li>
+          <li>we can additionally stick markers to the turntable. The printable CCTAGs depict circles of varying width and releative radius. If they are clearly seen in each of the images we can enable CCTAG3 [4] in the feature extraction to help match images.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Image Matching</strong>
+    <ul>
+      <li>will find pairs of consequetive images</li>
+      <li>comparing each image to each other image would be computationally heavy and not neccessary in most cases as images are usually shot in sequence</li>
+      <li>hence this nodes can use numbered sequences in the file names “SequentialAndVocabularyTree” and it is set to this by default. “Exhaustive” would compare each image to each other image.</li>
+      <li><strong><em>remarks</em></strong>
+        <ul>
+          <li>I learned the hard way that using a fast spinning turntable and low shutter speed is really bad. It yields numbered shots that are not in order of angle of rotation. That completly throws off the Image Matching node as it asumes the incoming images are in order regarding position.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong>Feature Matching</strong>
+    <ul>
+      <li>this node will then compute the positional differences of the features in image pairs</li>
+    </ul>
+  </li>
+  <li><strong>StructureFromMotion</strong>
+    <ul>
+      <li>here it gets interesting: we now have the features and their relative positions in 2D to one another.</li>
+      <li>with this information we can calculate the viewing angles in 3D for each photo - i.e. the positions of the cameras</li>
+      <li><strong><em>remarks</em></strong>
+        <ul>
+          <li>the visualisation of this is very useful for further debugging issues</li>
+          <li>if we see that the camera angles are not evenly spaced in 360 degrees around the object, then things went catastrophically wrong in the previous nodes</li>
+          <li>inevitably the meshing will produce a shapeless mess (or a so-called “unförmiger brei” (ger.) a “shapeless porridge”)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong><em>PrepareDepthScene</em></strong>, <strong><em>DepthMap</em></strong>, <strong><em>DepthMapFilter</em></strong>
+    <ul>
+      <li>in essense these nodes produce a heatmap of depth, like a relief map for lack of a better word.</li>
+      <li><strong><em>remarks</em></strong>
+        <ul>
+          <li>the “Downscale Factor” can significantly reduce compute time at a loss of quality</li>
+          <li>the “DepthMapFilter” node has a setting “Min Consistant Cameras”. Points will only be considered that are matching in the data from multiple viewing angles. If you have only few images the documentation states it may make sense to lower this and “Min Consistant Cameras Bad Similarity” from 3 and 4 to 2 and 3 respectively [3]</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong><em>Meshing</em></strong>
+    <ul>
+      <li>produces an intermediate mesh</li>
+      <li>we have to filter that mesh in next node</li>
+      <li><strong><em>remarks</em></strong>
+        <ul>
+          <li>we can set “Max Input Points” and “Max Points” here</li>
+          <li>these parameters require a tradeoff: depending on the object we’re scanning we may rather want less outliers and a smooth surface or more detail at the expense of more outliers in the data.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong><em>MeshFiltering</em></strong>
+    <ul>
+      <li>we can then filter mesh triangles</li>
+      <li>the idea here is that triangles with a large area in the mesh are likely due to outliers</li>
+      <li>for instance, because a triangle was stretched far due to one of its points being way out of the range of the object we’re scaning.</li>
+      <li><strong><em>remarks</em></strong>
+        <ul>
+          <li>theses setttings also differ from object to obect we’re scanning and thus requires manual experimentation on each scan</li>
+          <li>luckliy due to the data-driven pipeline/node architecture of Meshroom we can just rerun only the later node without repeating all the computations from previous nodes</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><strong><em>Texturing</em></strong>
+    <ul>
+      <li>the last node will produce the texture for the mesh</li>
+      <li>this will “color” the model</li>
+      <li><strong><em>remarks</em></strong>
+        <ul>
+          <li>Meshroom outputs files to the “MeshroomCache” directory next to the project file</li>
+          <li>for instance to <code class="language-plaintext highlighter-rouge">MeshroomCache/Texturing/&lt;some hash&gt;/texturedMesh.[obj|mtl|exr]</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Challenges</strong></p>
+
+<p>There were are a number of challenges that I’ve painfully experienced.</p>
+
+<p>Most of theses are related to turntables scanning as I don’t have many cameras and wanted to automatically capture as opposed to walking around the object and manually taking 100+ photos.</p>
+
+<p>The problems will manifest in the computed camera positions in Meshroom. IF the camera positions are not accurate, then the resulting mesh will go terribly wrong.</p>
+
+<p>When using turntables we need to fool the algorithms in Meshroom to think the camera is moving and not the prop in a stationary environment.</p>
+
+<ul>
+  <li><strong>Turntable &amp; Positioning</strong>
+    <ul>
+      <li>the first turntable I built was made from wood cut round on a jigsaw with a bicycle chain glued around it to make a giant cog. A drill motor would drive it. It runs way too fast, it woobles.</li>
+      <li>from there I used pieces from an old Lego set and contiously improved on that.</li>
+      <li>smooth motion, a perfectly centered object and a large enough table space so that ideally the camera only captures the object and the rotating table is important.</li>
+    </ul>
+  </li>
+  <li><strong>Picking up the background</strong>
+    <ul>
+      <li>the SIFT algorithms are designed to capture whatever characteristic they can find. If you have a stationary cable behind the table in the image or even the tiniest of holes in a wall that are in focus, the algorithm will conclude the camera was stationary messing up the final mesh.</li>
+    </ul>
+  </li>
+  <li><strong>Object Shadows</strong>
+    <ul>
+      <li>this is particularly true for shadows. As the lamps are in fixed positions the shadows will be as well. Even worse they will be on the turn table.</li>
+      <li>shadows can only be defeated by multiple light sources from multiple angles</li>
+    </ul>
+  </li>
+  <li><strong>Background Shadows</strong>
+    <ul>
+      <li>we also need to get rid of shadows - and also table corners for that matter - behind the turn table</li>
+      <li>ideally we’d have a big open space behind the turn table so that the background is clearly out of focus</li>
+      <li>I’ve used a large matt black mouse pad positioned such that corners are rounded</li>
+    </ul>
+  </li>
+  <li><strong>Reflections</strong>
+    <ul>
+      <li>similarly to shadows, spot light reflections also throw the algorithms off.</li>
+      <li>ideally polarisation filters on the camera lenses and lamps are added to remove the shiny reflections.</li>
+    </ul>
+  </li>
+  <li><strong>Turntable Surface &amp; Reflections</strong>
+    <ul>
+      <li>as my clever girlfriend astutely remarked: the turn table should be black. White surfaces show more reflections.</li>
+      <li>the turntable itself does not need to be perfectly evenly coloured. In fact the opposite is better: adding positional markers like CCTags can help. After all we want to the algoirithms to pick up on the rotation, just not the background, shadows or reflections.</li>
+    </ul>
+  </li>
+  <li><strong>Even spacing and ordering</strong>
+    <ul>
+      <li>it’s extremely important the images are in order and the angles at which they were captured are more or less evenly spaced</li>
+      <li>due to my Canon EOS 550d DLSR low shutter-speed I found that recording videos and taking every 10th frame of the resulting 15 fps 1080p video works better than individual captures.</li>
+      <li>even spacing also makes it much easier to manually remove images that cause outliers by stepping through the images in Meshroom and viewing the computed viewing positions in Meshroom</li>
+    </ul>
+  </li>
+</ul>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="photography-setup">Photography Setup</h2>
+
+<p>Next I’ll show how my photography setup has evolved of the past days.</p>
+
+<p>I will share my capture setups and with the above information we can analyse the pitfalls I’ve encountered with each of them.</p>
+
+<h3 id="1-the-bicycle-parts-turntable">1) the bicycle parts turntable</h3>
+
+<p>As it turns out building proper turn tables is an art.</p>
+
+<p>Sometime October 2023 I set out to build a first turn table base on an idea I had had for a longer time.</p>
+
+<p>This wasn’t indended for photogrammetry and while the approach may work, this version is completly unusable for photogrammetry. The idea was to cut wood as round as possible with a jig saw. Rotating it against a disc sander would have helped, but I didn’t do that at the time. Then run the round plate on coasters. These were 3D printed and utilized ball bearings. It would have been better to have ruber ball bearings, soft wheels from inline skates of even Lego wheels to dampen vibration and noise.</p>
+
+<p>I spray painted it white - <strong><em>white is not an ideal color</em></strong> for photogrammetry due to reflections - see above. Along the edges of the wood I glued a bicycle chain. To turn it into a large cog wheel.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-1.jpg" width="15%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-2.jpg" width="15%" />
+
+<p>A bicycle sprocket attached to an old drill motor turns the table - way <strong><em>too fast</em></strong> for this use case. The motion is also <strong><em>not smooth</em></strong>.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-3.gif" width="30%" />
+
+<h3 id="2-lego-1">2) Lego 1</h3>
+
+<p>The next quick build utilized Lego a worm-gear turns a lego tire. The motor, taken from an early Lego Mindstorms set and the power supply from an early 90s railroad set to power it. Unfortunately the electic cables are beginding to loose their insulation, but they still work.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego1-1.jpg" width="15%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego1-2.jpg" width="15%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego1-3.jpg" width="15%" />
+
+<p>Not great. While Lego is probably the best and easiest way I currently have at hand to build this, the table movement is janky. The table is also too small to fill the full-frame of the camera and I later realized how important that is.</p>
+
+<p>For lighting I used a Beurer “daylight lamp”. That works okayish, but you can see the glate on the object and the shadows due to the light coming from one location.</p>
+
+<h3 id="2-lego-2">2) Lego 2</h3>
+
+<p>To improve on that I’ve place a DVD on the wheel. Then later covered it in kitchen roll to give less reflective surface Meshroom can better pick up on.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego2-1.jpg" width="15%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego2-2.jpg" width="15%" />
+
+<p>Using this I got my first somewhat usable model - albeit only an approximately 120 degree range of fotos from the front was usable without confusing the algorithms - but the motivation was there to continue and enhance this.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-153929_738x552_scrot.png" width="15%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" width="15%" />
+
+<h3 id="3-lego-3">3) Lego 3</h3>
+
+<p>A different part selection helped with a more smooth movement. The table size increased. Instead of a single light source I started using three desk lamps. Including the lamp with the broken base that I’ve replaced with a mason jar. These lamps use small 20-35 W “halogen” light bulbs.</p>
+
+<p>The positioning in the image is not ideal. It’s better to have them shinign light in different angles, but primarily from the front.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-1.jpg" width="15%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-2.jpg" width="15%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-3.jpg" width="15%" />
+
+<h3 id="3-lego-4">3) Lego 4</h3>
+
+<p>I finally arrived at this. I thumbtacked two binder clips to the wall and use them to hold up my maticulously cleaned giant matt black mouse pad.
+The mouse pad is not pushed into the corner, but rather curved to not produce a corner the software could pick up.</p>
+
+<p>The three desk lamps shine light from the front.</p>
+
+<p>I’m using the more heavy wodden round white plate from the first turn table, but place on the lego contraption from before. The weight makes it move mor evenly.</p>
+
+<p>As you can see in the first image the white surface is not ideal. It shows reflections.</p>
+
+<p>The surface of the turn table doesn’t have to be perfectly even - quite the opposite in fact beacuse we want to it to be picked up - but should absorb reflections. To achive this I cut some black cardboard from a show box and placed that on the table.</p>
+
+<p>Additionally I hope the black and white transition is easy to pick up. If not I’ll add the CTAG markers as well, though this requires a more complicated pipeline configuration in Meshroom.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego4-1.jpg" width="20%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego4-2.jpg" width="20%" />
+
+<h3 id="4-tv-turn-table">4) TV turn table</h3>
+
+<p>In the meantime I’ve ordered a cheap turntable made for turning television sets from eBay. It hasn’t arrived yet.</p>
+
+<p>These were quite expensive for some time, but now - probably due to lack of use with modern large and lightweight flatplanel television - they are being sold off for cheap. It can apparantly carry up to 100 kg, which could make it possible to put a person on it which could be interesting.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-tv.png" width="30%" />
+
+<h2 id="image-capture">Image Capture</h2>
+
+<p>I’m using a Canon EOS 550d DSLR camera on a tripod. I record video at 15 fps with the turntable spinning for a full rotation on three heights.</p>
+
+<h3 id="helpful-bash-scripts">Helpful Bash scripts</h3>
+
+<p>After capture I use bash scripts to do some preprocessing along the lines of</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="nv">INP</span><span class="o">=</span><span class="s2">"06/in3"</span>
+<span class="nv">OUT</span><span class="o">=</span><span class="s2">"06/in4"</span>
+
+<span class="k">for </span>FILE <span class="k">in</span> <span class="nv">$INP</span>/<span class="k">*</span>.jpg
+<span class="k">do
+    </span><span class="nv">FILEBASE</span><span class="o">=</span><span class="si">$(</span><span class="nb">basename</span> <span class="k">${</span><span class="nv">FILE</span><span class="p">%.*</span><span class="k">}</span><span class="si">)</span>
+    <span class="nb">echo</span> <span class="nv">$FILEBASE</span>
+    
+    <span class="c"># &lt;&lt;&lt; PAYLOAD HERE &gt;&gt;&gt;</span>
+<span class="k">done</span>
+</code></pre></div></div>
+
+<p>The payload can be any of these:</p>
+
+<h3 id="extract-every-10th-frame-of-a-video">Extract every 10th frame of a video</h3>
+<p>(replace *.jpg with *.MOV in the above script)</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ffmpeg <span class="nt">-i</span> <span class="k">${</span><span class="nv">INP</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.MOV <span class="nt">-vf</span> <span class="s2">"select=not(mod(n</span><span class="se">\,</span><span class="s2">10))"</span> <span class="nt">-vsync</span> vfr <span class="s2">"</span><span class="k">${</span><span class="nv">OUT</span><span class="k">}</span><span class="s2">/</span><span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span><span class="s2">-%03d.jpg"</span>
+</code></pre></div></div>
+
+<h3 id="automatic-neural-net-background-removal">Automatic neural net background removal</h3>
+
+<p>I’ve used this with the earlier Lego turntable contraptions as there was too much background noise in the images.</p>
+
+<p>With a decent setup that keeps shadows and background out of the image, full-frame capture of the table and object this should be required. It’s also a bit error-prone, but an amazing gerneral trick to know.</p>
+
+<p>Keeping the turntable far away from the background and making sure only the object is in focus helps alot with turn table setups.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rembg i <span class="k">${</span><span class="nv">INP</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.jpg <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.png
+</code></pre></div></div>
+
+<h3 id="crop-image">Crop image</h3>
+
+<p>If you’ve captured something stationary on the side somwhere in the background it</p>
+
+<p>The first two numbers are the image width and height. The second and third are offset from left and top respectively.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>convert <span class="k">${</span><span class="nv">INP</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.jpg <span class="nt">-crop</span> 710x710+150+25 <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.jpg
+</code></pre></div></div>
+
+<p>The loss of camera focal length information in the input images is not ideal</p>
+
+<p>After theses steps the images are ready to be loaded into Meshroom.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<p>With all of the above I’m continously improving the setup whenever I find time to. It might be interesting to enhance this by getting a projector to project a grid onto the object. I’m not sure how to setup the software yet, but I know this has been done years ago in commercial products such as the “David SLS Scanner”. It seems to have been used in industrial setups. Nowadays industry has likely shifted to handheld scanners upwards of 20k Eur. Such structured light scanning (SLS) setups require space and calibration. Frequently setting everything up, calibrating it and then removing it again would be tedious.</p>
+
+<hr />
+
+<pre>
+1] https://alicevision.org/#meshroom
+2] https://en.wikipedia.org/wiki/Digital_single-lens_reflex_camera
+3] https://meshroom-manual.readthedocs.io/en/latest/faq/reconstruction-parameters/reconstruction-parameters.html
+4] https://github.com/alicevision/CCTag/tree/develop/markersToPrint
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="3D Scanning & Photogrammetry"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
