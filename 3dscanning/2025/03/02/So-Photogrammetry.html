@@ -40,10 +40,6 @@
   <!-- diagramms -->
   <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
 
-  <!-- 3d models -->
-  <script src="https://www.dennissalzner.de/js/stl_viewer.min.js"></script>
-  <script src="https://www.dennissalzner.de/js/stl_viewer_init.js"></script>
-
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
@@ -77,9 +73,138 @@
 
 <p>I’ve experimented with photogrammetry for a couple of days and I’ll share my photography setups, software configurations and findings along the way.</p>
 
-<div class="3d-model col-12" data-src="../../../../images/2025-03-02-So-Photogrammetry/elephant.stl" style="width: 500px; height: 300px;
 
-"></div>
+<!-- Three.JS Wrapper for displaying 3D models from *.glb files - dennissalzner.de 2025 -->
+
+
+
+<script src="https://www.dennissalzner.de/js/three.js"></script>
+<script src="https://www.dennissalzner.de/js/OrbitControls.js"></script>
+<script src="https://www.dennissalzner.de/js/GLTFLoader.js"></script>
+
+<style>
+#obj{
+    background-color: #fafafa;
+    color: #fff;
+    width: 480px;
+    height: 320px;
+    border:1px solid black;
+}
+</style>
+
+<div id='obj'></div>
+
+<script>
+{
+
+let camera, scene, renderer, controls, clock;
+
+init();
+animate();
+
+function init() {
+
+  // -- camera
+  camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.set( -0.25, 0.22, -0.19 );
+  const quaternion = new THREE.Quaternion(-0.02, 0.5, 0.01, );
+  camera.applyQuaternion(quaternion);
+  camera.quaternion.normalize();
+  camera.lookAt(new THREE.Vector3(0, 3, 0));
+
+  scene = new THREE.Scene();
+
+  // -- light
+  const light2 = new THREE.AmbientLight(0xffffff, 0.5 );
+  scene.add(light2);
+
+
+{
+    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+    lights.position.set( -10, -10, 0 );
+    scene.add( lights );
+}
+
+{
+    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+    lights.position.set( 10, 10, 0 );
+    scene.add( lights );
+}
+
+{
+    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+    lights.position.set( -10, 10, 0 );
+    scene.add( lights );
+}
+
+{
+    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+    lights.position.set( 0, 0, 10 );
+    scene.add( lights );
+}
+
+{
+    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+    lights.position.set( 0, 0, -10 );
+    scene.add( lights );
+}
+
+  // -- model
+  const loader = new THREE.GLTFLoader();
+  loader.load("../../../../images/2025-03-02-So-Photogrammetry/elephant.glb",
+    function(gltf) {
+
+      object = gltf.scene;
+      object.position.x = 0
+      object.position.y = -0.19
+      object.position.z = 0
+
+      scene.add(object);
+
+    },
+    function(xhr) {
+      console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+    function(err) {
+      console.log('an error occurred');
+    }
+  );
+
+  // -- render target
+  container = document.getElementById('obj');
+  renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+  renderer.setSize( container.offsetWidth, container.offsetHeight );
+  container.appendChild( renderer.domElement );
+
+  // -- control
+  controls = new THREE.OrbitControls( camera, renderer.domElement );
+  controls.autoRotate = true;
+
+  // -- clock
+  clock = 0
+}
+
+function animate() {
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
+
+  if(clock > 100) {
+    clock = 0;
+    console.log(camera.quaternion);
+    console.log(camera.position);
+
+    console.log(object.position);
+  }
+  clock++;
+}
+
+}
+</script>
+
+<!-- --- -->
+
+<pre>(Rotate: [Click]+[Drag], Move [Shift]+[Click]+[Drag], Zoom [Mouse Wheel], Touchscreen / Pinch-to-Zoom on mobile)</pre>
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/MVI_7665-168.jpg" width="15%" />
 
@@ -105,12 +230,13 @@
     </ul>
   </li>
   <li><a href="#photography-setup" id="markdown-toc-photography-setup">Photography Setup</a>    <ul>
-      <li><a href="#1-the-bicycle-parts-turntable" id="markdown-toc-1-the-bicycle-parts-turntable">1) the bicycle parts turntable</a></li>
-      <li><a href="#2-lego-1" id="markdown-toc-2-lego-1">2) Lego 1</a></li>
-      <li><a href="#2-lego-2" id="markdown-toc-2-lego-2">2) Lego 2</a></li>
-      <li><a href="#3-lego-3" id="markdown-toc-3-lego-3">3) Lego 3</a></li>
-      <li><a href="#3-lego-4" id="markdown-toc-3-lego-4">3) Lego 4</a></li>
-      <li><a href="#4-tv-turn-table" id="markdown-toc-4-tv-turn-table">4) TV turn table</a></li>
+      <li><a href="#1-bicycle-and-drill-turntable---spins-too-fast" id="markdown-toc-1-bicycle-and-drill-turntable---spins-too-fast">1) bicycle and drill turntable - spins too fast</a></li>
+      <li><a href="#2-small-shaky-lego-turn---too-much-background" id="markdown-toc-2-small-shaky-lego-turn---too-much-background">2) small shaky Lego turn - too much background</a></li>
+      <li><a href="#3-small-lego-turn-table---still-too-much-background" id="markdown-toc-3-small-lego-turn-table---still-too-much-background">3) small Lego turn table - still too much background</a></li>
+      <li><a href="#4-larger-lego-turn-table---still-too-much-background" id="markdown-toc-4-larger-lego-turn-table---still-too-much-background">4) larger Lego turn table - still too much background</a></li>
+      <li><a href="#5-heavy-lego-turn-table-and-black-background---promising" id="markdown-toc-5-heavy-lego-turn-table-and-black-background---promising">5) heavy Lego turn table and black background - promising</a></li>
+      <li><a href="#5-dining-table-setup---best-so-far-but-too-much-reflections" id="markdown-toc-5-dining-table-setup---best-so-far-but-too-much-reflections">5) dining table setup - best so far, but too much reflections</a></li>
+      <li><a href="#6-getting-it-right" id="markdown-toc-6-getting-it-right">6) Getting it right</a></li>
     </ul>
   </li>
   <li><a href="#image-capture" id="markdown-toc-image-capture">Image Capture</a>    <ul>
@@ -118,12 +244,15 @@
       <li><a href="#extract-every-10th-frame-of-a-video" id="markdown-toc-extract-every-10th-frame-of-a-video">Extract every 10th frame of a video</a></li>
       <li><a href="#automatic-neural-net-background-removal" id="markdown-toc-automatic-neural-net-background-removal">Automatic neural net background removal</a></li>
       <li><a href="#crop-image" id="markdown-toc-crop-image">Crop image</a></li>
+      <li><a href="#power-trick" id="markdown-toc-power-trick">Power Trick</a></li>
+      <li><a href="#convert-texture" id="markdown-toc-convert-texture">Convert Texture</a></li>
     </ul>
   </li>
   <li><a href="#mesh-editing" id="markdown-toc-mesh-editing">Mesh Editing</a>    <ul>
       <li><a href="#viewing-the-meshes" id="markdown-toc-viewing-the-meshes">Viewing the Meshes</a></li>
       <li><a href="#cut-off-excess-portions-of-the-mesh" id="markdown-toc-cut-off-excess-portions-of-the-mesh">Cut off excess portions of the Mesh</a></li>
       <li><a href="#reduce-the-mesh" id="markdown-toc-reduce-the-mesh">Reduce the Mesh</a></li>
+      <li><a href="#smoothen-the-mesh" id="markdown-toc-smoothen-the-mesh">Smoothen the Mesh</a></li>
       <li><a href="#export-with-texture" id="markdown-toc-export-with-texture">Export with Texture</a></li>
       <li><a href="#displaying-on-the-web" id="markdown-toc-displaying-on-the-web">Displaying on the Web</a></li>
     </ul>
@@ -348,7 +477,8 @@
     <ul>
       <li>we also need to get rid of shadows - and also table corners for that matter - behind the turn table</li>
       <li>ideally we’d have a big open space behind the turn table so that the background is clearly out of focus</li>
-      <li>I’ve used a large matt black mouse pad positioned such that corners are rounded</li>
+      <li>I’ve used a large matt black mouse pad positioned such that corners are rounded. Black is great as it makes shadows less visible.</li>
+      <li>on the other hand a white surrounding, if perfectly evenly lit, can be advantagous to reflect more light on the object</li>
     </ul>
   </li>
   <li><strong>Reflections</strong>
@@ -359,8 +489,8 @@
   </li>
   <li><strong>Turntable Surface &amp; Reflections</strong>
     <ul>
-      <li>as my clever girlfriend astutely remarked: the turn table should be black. White surfaces show more reflections.</li>
-      <li>the turntable itself does not need to be perfectly evenly coloured. In fact the opposite is better: adding positional markers like CCTags can help. After all we want to the algoirithms to pick up on the rotation, just not the background, shadows or reflections.</li>
+      <li>the turn table should be black as white surfaces show more reflections.</li>
+      <li>the turn table itself does not need to be perfectly evenly coloured. In fact the opposite is better: adding positional markers like CCTags can help. After all we want to the algoirithms to pick up on the rotation, just not the background, shadows or reflections.</li>
     </ul>
   </li>
   <li><strong>Even spacing and ordering</strong>
@@ -380,7 +510,7 @@
 
 <p>I will share my capture setups and with the above information we can analyse the pitfalls I’ve encountered with each of them.</p>
 
-<h3 id="1-the-bicycle-parts-turntable">1) the bicycle parts turntable</h3>
+<h3 id="1-bicycle-and-drill-turntable---spins-too-fast">1) bicycle and drill turntable - spins too fast</h3>
 
 <p>As it turns out building proper turn tables is an art.</p>
 
@@ -398,7 +528,7 @@
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-3.gif" width="30%" />
 
-<h3 id="2-lego-1">2) Lego 1</h3>
+<h3 id="2-small-shaky-lego-turn---too-much-background">2) small shaky Lego turn - too much background</h3>
 
 <p>The next quick build utilized Lego a worm-gear turns a lego tire. The motor, taken from an early Lego Mindstorms set and the power supply from an early 90s railroad set to power it. Unfortunately the electic cables are beginding to loose their insulation, but they still work.</p>
 
@@ -412,7 +542,7 @@
 
 <p>For lighting I used a Beurer “daylight lamp”. That works okayish, but you can see the glate on the object and the shadows due to the light coming from one location.</p>
 
-<h3 id="2-lego-2">2) Lego 2</h3>
+<h3 id="3-small-lego-turn-table---still-too-much-background">3) small Lego turn table - still too much background</h3>
 
 <p>To improve on that I’ve place a DVD on the wheel. Then later covered it in kitchen roll to give less reflective surface Meshroom can better pick up on.</p>
 
@@ -426,7 +556,7 @@
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" width="15%" />
 
-<h3 id="3-lego-3">3) Lego 3</h3>
+<h3 id="4-larger-lego-turn-table---still-too-much-background">4) larger Lego turn table - still too much background</h3>
 
 <p>A different part selection helped with a more smooth movement. The table size increased. Instead of a single light source I started using three desk lamps. Including the lamp with the broken base that I’ve replaced with a mason jar. These lamps use small 20-35 W “halogen” light bulbs.</p>
 
@@ -438,7 +568,7 @@
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-3.jpg" width="15%" />
 
-<h3 id="3-lego-4">3) Lego 4</h3>
+<h3 id="5-heavy-lego-turn-table-and-black-background---promising">5) heavy Lego turn table and black background - promising</h3>
 
 <p>I finally arrived at this. I thumbtacked two binder clips to the wall and use them to hold up my maticulously cleaned giant matt black mouse pad.
 The mouse pad is not pushed into the corner, but rather curved to not produce a corner the software could pick up.</p>
@@ -467,17 +597,71 @@ The mouse pad is not pushed into the corner, but rather curved to not produce a 
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-194045_680x547_scrot.png" width="20%" />
 
-<h3 id="4-tv-turn-table">4) TV turn table</h3>
+<h3 id="5-dining-table-setup---best-so-far-but-too-much-reflections">5) dining table setup - best so far, but too much reflections</h3>
 
-<p>In the meantime I’ve ordered a cheap turntable made for turning television sets from eBay. It hasn’t arrived yet.</p>
+<p>The dining table setup uses a strong LED lamp above the table. I’ve taped some baking/parchment paper to it in order to disperse the light a bit better.
+Two desk lamps from the front help even out shadows. The black cardboard on the turntable hides the rest of the shadows.</p>
+
+<p>Since my mouse pad isn’t perfectly uniform either and the image was overall too dark, I found that a white background that bounces the light back created better results.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250303_183507.jpg" width="10%" />
+
+<p>At first I tried to capture in raw with 1/25, f10, iso1600. A lower aperture is better to keep the background out of focus, but less light arrives at the sensor meaning I need an higher ISO and lower shutter speed. The images turned outr beautifully and the <code class="language-plaintext highlighter-rouge">rembg</code> was able to remove the background almost perfectly.
+Unfortunately the camera shutter is far too slow. I ended up with 75 images and that seems to be far too few for Meshroom to work.</p>
+
+<p>So I went back to shooting video and extracting frames with FFmpeg. This time extracting every 2nd frame (every 10th would have likely been suffienct) and got 2028 images (around 5550 images seems to be sufficent for the elephant).</p>
+
+<p>The images were only cropped without removing the background. I found that, if the images are properly shot and the background isn’t recognized as being fixed, then the additional information of the turntable surface helps Meshroom in calculating the camera positions correctly.
+Later we can cut the turn table out of the resulting mesh during post processing in Blender.</p>
+
+<p>My Ryzen 5 3600 with 32 GB System RAM and RTX 3060 12 GB VRAM took the entire night to calculate the result.</p>
+
+<p>The “minimal 2d motion” option  on the “FeatureMatching” node in Meshroom is fantastic and making sure only evenly spaced camera positons are used, but here the “SequenceMatcher” produced perfect camera locations on the first try.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-03-221400_1563x700_scrot.png" width="30%" />
+
+<p>The resulting mesh was then decimated and cropped in Blender. The texture scaled to 1024px and converted to <code class="language-plaintext highlighter-rouge">*.png</code>. No further fixes were made.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-04-120918_723x526_scrot.png" width="30%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-04-120925_697x530_scrot.png" width="30%" />
+
+<p>We can clearly recognize the elephant, but the light reflections have chipped off parts all over. Especially on the trunk and side.</p>
+
+<p>I’ve elminated background, capture and camera positioning as an issue, but reflections remain. I need better lighting control. Perhaps even polarisation filters to remove light reflections. Additionally elephant may not be ideal as a scaning object due to its reflective surfaces. I read scanning spray or isopropyl alcohol mixed with baby powder may help. The latter would make a mess.</p>
+
+<h3 id="6-getting-it-right">6) Getting it right</h3>
+
+<p>In the meantime I’ve ordered a cheap turntable made for turning television sets from eBay.</p>
 
 <p>These were quite expensive for some time, but now - probably due to lack of use with modern large and lightweight flatplanel television - they are being sold off for cheap. It can apparantly carry up to 100 kg, which could make it possible to put a person on it which could be interesting.</p>
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-tv.png" width="30%" />
 
+<p>Additionally I ordered a small light box. I’m hoping it will be nice and evenly lit with the white surface in the background reflecting much of the light onto the object. And while you can easily build such a thing with a card board box, pieces of paper an some fabric for light dispersion, this thing is foldable and ideal for temperary setups. It also has an integrated controllable ring light. Maybe I’ll be able to produce good photogrammetry results with this out of/in the box.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/photobox.png" width="30%" />
+
+<p>Now the turntable didn’t fit in the lightbox, so I stuck with the Lego turntable and some cardboard.</p>
+
+<ul>
+  <li>the camera needs a considerable distance so that the near and far areas of the object and turn table are clearly in focus</li>
+  <li>the best orientation for the lightbox is with the opened side facing towards the camera, not the camera facing through the ring light in the top as that limits the space for taking shots at different heights</li>
+  <li>I’ve use black cardboard against reflections on the turntable surface, but added painter’s tape and four CCTAGS</li>
+  <li>the ring light up top seems to be ideal for my usecases. There are still light reflections, but they stay more or less evenly spread out on the top of the model during rotation.</li>
+</ul>
+
+<p>The CCTAGs are taken from the AliceVision Git-Repos [4].</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-07-075626_853x778_scrot.png" width="10%" />
+
+<p>The final setup looks like this:</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250307_142357.jpg" width="10%" />
+
 <h2 id="image-capture">Image Capture</h2>
 
-<p>I’m using a Canon EOS 550d DSLR camera on a tripod. I record video at 15 fps with the turntable spinning for a full rotation on three heights.</p>
+<p>I’m using a Canon EOS 550d DSLR camera on a tripod. What worked best so far is to record video at 15 fps with the turntable spinning for a full rotation on three heights.</p>
 
 <h3 id="helpful-bash-scripts">Helpful Bash scripts</h3>
 
@@ -529,6 +713,65 @@ The mouse pad is not pushed into the corner, but rather curved to not produce a 
 
 <p>After theses steps the images are ready to be loaded into Meshroom.</p>
 
+<h3 id="power-trick">Power Trick</h3>
+
+<p>Surprisingly, even with the lightbox setup and images that looked visually perfect, at first Meshroom didn’t recognize the camera positions correctly. Black background alone didn’t help, <code class="language-plaintext highlighter-rouge">rembg</code> alone doesn’t work well on this model as the surface doesn’t have enough features, even with CCTAGs I was getting incorrect camera positions.</p>
+
+<p>Then I had a breakthrough:</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/editing.jpg" width="50%" />
+
+<p>Using the scripts we can first crop most of the non-moving portions of the image as before. We use <code class="language-plaintext highlighter-rouge">rembg</code> to remove the background and get only the elephant. If we take the two images seperatly and cleverly combine them, we get perfect images for Meshroom.</p>
+
+<p>To do this we overlay the elephant without background with a slice of the original image containing the turn table.</p>
+
+<p>This works so well, because now, with these modified images, the majority of features are on the elephant and the turntable. Meshroom ignores the transparent background behind the object in the upper three quarters of the image and focuses on what is relevant.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-07-123648_1912x782_scrot.png" width="30%" />
+
+<p>The script to do this is a simple combination of the above scripts.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+
+<span class="nv">INP</span><span class="o">=</span><span class="s2">"in3"</span>
+<span class="nv">OUT</span><span class="o">=</span><span class="s2">"in4"</span>
+
+<span class="nb">mkdir</span> <span class="nv">$OUT</span>
+<span class="k">for </span>FILE <span class="k">in</span> <span class="nv">$INP</span>/<span class="k">*</span>.jpg
+<span class="k">do
+    </span><span class="nv">FILEBASE</span><span class="o">=</span><span class="si">$(</span><span class="nb">basename</span> <span class="k">${</span><span class="nv">FILE</span><span class="p">%.*</span><span class="k">}</span><span class="si">)</span>
+    <span class="nb">echo</span> <span class="nv">$FILEBASE</span>
+    
+    <span class="c"># -- crop from top, leaving only  table</span>
+    convert <span class="k">${</span><span class="nv">INP</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.jpg <span class="nt">-crop</span> +0+600  <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>_table.jpg
+
+    <span class="c"># -- remove background</span>
+    rembg i <span class="k">${</span><span class="nv">INP</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.jpg <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>_nobg.png 
+  
+    <span class="c"># -- combine the two</span>
+    convert <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>_nobg.png  <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>_table.jpg <span class="nt">-gravity</span> South <span class="nt">-composite</span> <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.png
+
+    <span class="c"># -- cleanup</span>
+    <span class="nb">rm</span> <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>_nobg.png
+    <span class="nb">rm</span> <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>_table.jpg
+
+    <span class="c">#break</span>
+<span class="k">done</span>
+</code></pre></div></div>
+
+<h3 id="convert-texture">Convert Texture</h3>
+
+<p>Meshroom produces rather large textures in <code class="language-plaintext highlighter-rouge">*.exr</code> format. As the textures are mapped with relative coordinates we can scale the texture down freely.</p>
+
+<p>We can convert to 1024x1024px <code class="language-plaintext highlighter-rouge">*.jpg</code>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>convert -resize 1024 texture_1001.exr texture_1001.jpg
+</code></pre></div></div>
+
+<p><strong><em>note</em></strong>: convert produces relatively dark images. Manually converting to <code class="language-plaintext highlighter-rouge">*.jpg</code> with Gimp produces better results.</p>
+
+<p>Then we set that converted texture in Blender on the “material” / “principalized bdsd” / “base color” / “image file” setting after importing the model.</p>
+
 <h2 id="mesh-editing">Mesh Editing</h2>
 
 <p>After we run the Meshroom pipeline we end up with a mesh that may have some points other than the model to be scanned in it, like the turntable surface for instance.
@@ -540,7 +783,7 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>It seems that the textures in <code class="language-plaintext highlighter-rouge">*.exr</code> format exported by Meshroom are not well supported. Additionally *.mtl files with paths are not supported by some applications. STLs can be ascii or compressed with and without textures and these are supported by some applications, but not others. Large texture resolutions seems to cause problems. Also there are different options for mapping from the mesh to the texture that are supported by some formats and parsers, but not others.</p>
 
-<p>The most reliable format seems to be Wavefront <code class="language-plaintext highlighter-rouge">*.obj</code> with an <code class="language-plaintext highlighter-rouge">*.mtl</code> file point to a 1024x1024 pixel <code class="language-plaintext highlighter-rouge">*.png</code> texture file.</p>
+<p>The most reliable format seems to be “glTF” (<code class="language-plaintext highlighter-rouge">*.glb</code>). These files work on most viewers, with textures and also well with Three.JS on the web.</p>
 
 <h3 id="cut-off-excess-portions-of-the-mesh">Cut off excess portions of the Mesh</h3>
 
@@ -554,6 +797,12 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>Pulling the slider you can see the face count reducing. I’ve reduced from 40278 faces to below 10000 faces in my model. That gave me exported *.obj files that were 1,2 MB or compressed STL files with 534 kb.</p>
 
+<h3 id="smoothen-the-mesh">Smoothen the Mesh</h3>
+
+<p>Another great Modifier ist “Smooth”. It can be added the same way as “decimate” with “Add Modifier” -&gt; “Generate” -&gt; “Smooth”.</p>
+
+<p>This greatly improves the visual impression of the models as it removes outliers.</p>
+
 <h3 id="export-with-texture">Export with Texture</h3>
 
 <p>The texture become visible in the “Texture Paint” tab. By default Meshroom produces “texture_1001.exr” texture files. You can convert them to png with <code class="language-plaintext highlighter-rouge">convert -resize 1024x texture_1001.exr texture_1001.png</code> then set them on the “Principled BDSF”/”Base Color” as described in my guide on <a href="/3dmodeling/2023/09/23/Sa-3DModeling.html">3D Modeling</a>. Resizing to 1024x reduced the png size from 2 MB to 466 KB and worked fine.</p>
@@ -562,17 +811,19 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <h3 id="displaying-on-the-web">Displaying on the Web</h3>
 
-<p>Unfortunately using <code class="language-plaintext highlighter-rouge">*.obj</code> + <code class="language-plaintext highlighter-rouge">*.mtl</code> + <code class="language-plaintext highlighter-rouge">*.png</code> means three files and that is not supported by the JavaScript libary ‘viewstl’ [5] that I’m currently using. ‘viewstl’ would support <code class="language-plaintext highlighter-rouge">*.stl</code> with textures, but somehow Blender doesn’t export *.stl with texture such that ‘viewstl’ can display them.</p>
+<p>First I tried <code class="language-plaintext highlighter-rouge">*.stl</code> files with viewstl [5] , but Blender doesn’t export the texture when exporting to <code class="language-plaintext highlighter-rouge">*.stl</code>. Using <code class="language-plaintext highlighter-rouge">*.obj</code> + <code class="language-plaintext highlighter-rouge">*.mtl</code> + <code class="language-plaintext highlighter-rouge">*.png</code> means three files and that is not supported ‘viewstl’.</p>
 
-<p>That’s also why in the above 3d viewer I’m just showing the mesh without a texture.</p>
+<p>After a lot of trial and error I ended up with my own JavaScript wrapper for the Three.JS viewer and exporting to  GLTF (<code class="language-plaintext highlighter-rouge">*.glb</code>). The file can also be shown with textures in the f3d viewer.</p>
+
+<p>The wrapper works works with only three JavaScript includes <code class="language-plaintext highlighter-rouge">GLTFLoader.js</code>, <code class="language-plaintext highlighter-rouge">OrbitControls.js</code> and <code class="language-plaintext highlighter-rouge">three.js</code> and the include for Jekyll.</p>
 
 <p style="font-size: 60%;" align="right">Progress</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<p>I’ll probably be improving the setup whenever I find the time to. It might be interesting to enhance this by getting a projector to project a grid onto the object. I’m not sure how to setup the software yet, but I know this has been done years ago in commercial products such as the “David SLS Scanner”. It seems to have been used in industrial setups. Nowadays industry has likely shifted to handheld scanners upwards of 20k Eur. Such structured light scanning (SLS) setups require space and calibration. Frequently setting everything up, calibrating it and then removing it again would be tedious.</p>
+<p>I’m fairly pleased with the results and I think they’re very reproducable. For small objects that fit into the lightbox this approach takes effort, but the results are likely comparable if not better to the cheap consumer grade 3D scanners.</p>
 
-<p>If I get this to work better I might be able to make scans for 3D printing. For instance to make brackets for that Nerf gun from a previous post.</p>
+<p>I’ll probably be improving the setup further. It might be interesting to enhance this by getting a projector to project a grid onto the object. I’m not sure how to setup the software yet, but I know this has been done years ago in commercial products such as the “David SLS Scanner”. It seems to have been used in industrial setups. Such structured light scanning (SLS) setups require space and calibration. Frequently setting everything up, calibrating it and then removing it again would be tedious.</p>
 
 <hr />
 
