@@ -105,35 +105,52 @@ animate();
 function init() {
 
   // -- camera
+  /*
   camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
   camera.position.set( -0.25, 0.22, -0.19 );
   const quaternion = new THREE.Quaternion(-0.02, 0.5, 0.01, );
   camera.applyQuaternion(quaternion);
   camera.quaternion.normalize();
   camera.lookAt(new THREE.Vector3(0, 3, 0));
+  */
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+  camera.position.z = 0.2;
+  camera.position.y = 0.1;
 
   scene = new THREE.Scene();
+  scene.add(camera);
+
 
   // -- light
-  const light2 = new THREE.AmbientLight(0xffffff, 0.5 );
+
+  const light2 = new THREE.AmbientLight(0xf0f0f0, 1.8 );
   scene.add(light2);
 
+/*
+{
+  const alight = new THREE.AmbientLight(0xf0f0f0, 1)
+  scene.add(alight)
+}*/
+
+
+
 
 {
     lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
-    lights.position.set( -10, -10, 0 );
+    lights.position.set( -1, -1, 0 );
     scene.add( lights );
 }
 
 {
     lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
-    lights.position.set( 10, 10, 0 );
+    lights.position.set( 1, 1, 0 );
     scene.add( lights );
 }
 
 {
     lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
-    lights.position.set( -10, 10, 0 );
+    lights.position.set( -1, 1, 0 );
     scene.add( lights );
 }
 
@@ -145,7 +162,7 @@ function init() {
 
 {
     lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
-    lights.position.set( 0, 0, -10 );
+    lights.position.set( 0, 0, -1);
     scene.add( lights );
 }
 
@@ -156,7 +173,7 @@ function init() {
 
       object = gltf.scene;
       object.position.x = 0
-      object.position.y = -0.19
+      object.position.y = -0.1
       object.position.z = 0
 
       scene.add(object);
@@ -172,13 +189,14 @@ function init() {
 
   // -- render target
   container = document.getElementById('obj');
-  renderer = new THREE.WebGLRenderer( { alpha: true, antialias: true } );
+  renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
   renderer.setSize( container.offsetWidth, container.offsetHeight );
   container.appendChild( renderer.domElement );
 
   // -- control
   controls = new THREE.OrbitControls( camera, renderer.domElement );
   controls.autoRotate = true;
+  controls.autoRotateSpeed *= -1;
 
   // -- clock
   clock = 0
@@ -235,8 +253,9 @@ function animate() {
       <li><a href="#3-small-lego-turn-table---still-too-much-background" id="markdown-toc-3-small-lego-turn-table---still-too-much-background">3) small Lego turn table - still too much background</a></li>
       <li><a href="#4-larger-lego-turn-table---still-too-much-background" id="markdown-toc-4-larger-lego-turn-table---still-too-much-background">4) larger Lego turn table - still too much background</a></li>
       <li><a href="#5-heavy-lego-turn-table-and-black-background---promising" id="markdown-toc-5-heavy-lego-turn-table-and-black-background---promising">5) heavy Lego turn table and black background - promising</a></li>
-      <li><a href="#5-dining-table-setup---best-so-far-but-too-much-reflections" id="markdown-toc-5-dining-table-setup---best-so-far-but-too-much-reflections">5) dining table setup - best so far, but too much reflections</a></li>
-      <li><a href="#6-getting-it-right" id="markdown-toc-6-getting-it-right">6) Getting it right</a></li>
+      <li><a href="#5-dining-table-setup---too-many-reflections" id="markdown-toc-5-dining-table-setup---too-many-reflections">5) dining table setup - too many reflections</a></li>
+      <li><a href="#6-more-experimentation" id="markdown-toc-6-more-experimentation">6) More Experimentation</a></li>
+      <li><a href="#7-best-so-far" id="markdown-toc-7-best-so-far">7) Best so far</a></li>
     </ul>
   </li>
   <li><a href="#image-capture" id="markdown-toc-image-capture">Image Capture</a>    <ul>
@@ -244,16 +263,24 @@ function animate() {
       <li><a href="#extract-every-10th-frame-of-a-video" id="markdown-toc-extract-every-10th-frame-of-a-video">Extract every 10th frame of a video</a></li>
       <li><a href="#automatic-neural-net-background-removal" id="markdown-toc-automatic-neural-net-background-removal">Automatic neural net background removal</a></li>
       <li><a href="#crop-image" id="markdown-toc-crop-image">Crop image</a></li>
-      <li><a href="#power-trick" id="markdown-toc-power-trick">Power Trick</a></li>
+      <li><a href="#manually-remove-bad-images" id="markdown-toc-manually-remove-bad-images">Manually remove bad images</a></li>
+      <li><a href="#a-powerful-trick" id="markdown-toc-a-powerful-trick">A powerful trick</a></li>
       <li><a href="#convert-texture" id="markdown-toc-convert-texture">Convert Texture</a></li>
     </ul>
   </li>
   <li><a href="#mesh-editing" id="markdown-toc-mesh-editing">Mesh Editing</a>    <ul>
-      <li><a href="#viewing-the-meshes" id="markdown-toc-viewing-the-meshes">Viewing the Meshes</a></li>
+      <li><a href="#viewing-the-mesh" id="markdown-toc-viewing-the-mesh">Viewing the Mesh</a></li>
       <li><a href="#cut-off-excess-portions-of-the-mesh" id="markdown-toc-cut-off-excess-portions-of-the-mesh">Cut off excess portions of the Mesh</a></li>
-      <li><a href="#reduce-the-mesh" id="markdown-toc-reduce-the-mesh">Reduce the Mesh</a></li>
+      <li><a href="#rotating-and-centering" id="markdown-toc-rotating-and-centering">Rotating and Centering</a></li>
+      <li><a href="#reduce-the-mesh" id="markdown-toc-reduce-the-mesh">Reduce the Mesh</a>        <ul>
+          <li><a href="#merge-by-distance" id="markdown-toc-merge-by-distance">Merge By Distance</a></li>
+          <li><a href="#decimate" id="markdown-toc-decimate">Decimate</a></li>
+        </ul>
+      </li>
       <li><a href="#smoothen-the-mesh" id="markdown-toc-smoothen-the-mesh">Smoothen the Mesh</a></li>
+      <li><a href="#texture-baking" id="markdown-toc-texture-baking">Texture Baking</a></li>
       <li><a href="#export-with-texture" id="markdown-toc-export-with-texture">Export with Texture</a></li>
+      <li><a href="#viewing-the-exported-mesh" id="markdown-toc-viewing-the-exported-mesh">Viewing the exported Mesh</a></li>
       <li><a href="#displaying-on-the-web" id="markdown-toc-displaying-on-the-web">Displaying on the Web</a></li>
     </ul>
   </li>
@@ -597,7 +624,7 @@ The mouse pad is not pushed into the corner, but rather curved to not produce a 
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-194045_680x547_scrot.png" width="20%" />
 
-<h3 id="5-dining-table-setup---best-so-far-but-too-much-reflections">5) dining table setup - best so far, but too much reflections</h3>
+<h3 id="5-dining-table-setup---too-many-reflections">5) dining table setup - too many reflections</h3>
 
 <p>The dining table setup uses a strong LED lamp above the table. I’ve taped some baking/parchment paper to it in order to disperse the light a bit better.
 Two desk lamps from the front help even out shadows. The black cardboard on the turntable hides the rest of the shadows.</p>
@@ -630,7 +657,7 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <p>I’ve elminated background, capture and camera positioning as an issue, but reflections remain. I need better lighting control. Perhaps even polarisation filters to remove light reflections. Additionally elephant may not be ideal as a scaning object due to its reflective surfaces. I read scanning spray or isopropyl alcohol mixed with baby powder may help. The latter would make a mess.</p>
 
-<h3 id="6-getting-it-right">6) Getting it right</h3>
+<h3 id="6-more-experimentation">6) More Experimentation</h3>
 
 <p>In the meantime I’ve ordered a cheap turntable made for turning television sets from eBay.</p>
 
@@ -655,13 +682,33 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-07-075626_853x778_scrot.png" width="10%" />
 
-<p>The final setup looks like this:</p>
+<p>The setup looks like this:</p>
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250307_142357.jpg" width="10%" />
 
+<h3 id="7-best-so-far">7) Best so far</h3>
+
+<p>The above setup can be further improved. I’ve added two worm gears. The two gears, one with 24 teeth and one with 16 teeth, reduce the speed to a comfortable speed for the camera to catch enough images. According to an online Lego gear ratio calculator [6] the contraption amounts to a total reduction of 960:1. I’m using the old Lego technic motor 5225 from the first Mindstorms kit. It rotates at around 375 RPM [7]. The table travels one full turn roughly every 3 seconds - in reality a bit slower due to the load. The motors have also lost a some power over the years.</p>
+
+<p>When setting the speed to full on the train controller it rotates just slow enough for the EOS 550d camera to take still frames at 3 fps.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250316_111351.jpg" width="20%" />
+
+<p>The camera can easily be triggered by shorting the wires of an old 2.5mm (not common the much more common 3.5mm) headphone cable. That way I don’t need to hold the camera trigger for the entire long rotation.</p>
+
+<p>Doing this yields about 404 images for full rotations on three heights.</p>
+
+<p>For lighting the lower portions of the object I’m using the Beurer daylight lamp from the front. Otherweise, with the higher resolution than when recording video, we would clearly see the uneven lighting.</p>
+
 <h2 id="image-capture">Image Capture</h2>
 
-<p>I’m using a Canon EOS 550d DSLR camera on a tripod. What worked best so far is to record video at 15 fps with the turntable spinning for a full rotation on three heights.</p>
+<p>I’m using a Canon EOS 550d DSLR camera on a tripod. What worked best so far is to record video at 15 fps with the turntable spinning for a full rotation on three heights. Video with lots of frames is beneficial to reconstruct the shape better.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/elephant-from-video.gif" width="30%" />
+
+<p>However the quality of the result texture greatly improves when capturing still images. The EOS 550d can manage roughly 3 fps in continuous shooting. With the turn table on the lowest possible speed and on three heights I get 109 images which is just so enough to reconstruct the elephant, but at a loss of detail in the shape. The resulting quality is much better than in video mode.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/elephant-from-stills.gif" width="30%" />
 
 <h3 id="helpful-bash-scripts">Helpful Bash scripts</h3>
 
@@ -702,18 +749,26 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <h3 id="crop-image">Crop image</h3>
 
-<p>If you’ve captured something stationary on the side somwhere in the background it</p>
+<p>If you’ve captured something stationary on the side somwhere in the background it.</p>
+
+<p>For raw photography we can use Darktable and batch apply cropping to all photos. This works by copying the crop action from the history and then pasting it during image selection.</p>
+
+<p>Alternatively we can automate by cropping with imagemagick.</p>
 
 <p>The first two numbers are the image width and height. The second and third are offset from left and top respectively.</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>convert <span class="k">${</span><span class="nv">INP</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.jpg <span class="nt">-crop</span> 710x710+150+25 <span class="k">${</span><span class="nv">OUT</span><span class="k">}</span>/<span class="k">${</span><span class="nv">FILEBASE</span><span class="k">}</span>.jpg
 </code></pre></div></div>
 
-<p>The loss of camera focal length information in the input images is not ideal</p>
+<p>Ideally we keep the camera focal length information in the input images EXIF information for Meshroom to use.</p>
 
 <p>After theses steps the images are ready to be loaded into Meshroom.</p>
 
-<h3 id="power-trick">Power Trick</h3>
+<h3 id="manually-remove-bad-images">Manually remove bad images</h3>
+
+<p>After completes “Structure from Motion” we can step through the images in the file browser pane and see where the corresponding camera positions were mapped to. It’s easy to recognize when a set of images was computed out of place. It’s often the case that some 10 - 20 of the images are completly off. We can take note of the filenames of these images, remove them, reimport the remaining subset and recompute in Meshroom.</p>
+
+<h3 id="a-powerful-trick">A powerful trick</h3>
 
 <p>Surprisingly, even with the lightbox setup and images that looked visually perfect, at first Meshroom didn’t recognize the camera positions correctly. Black background alone didn’t help, <code class="language-plaintext highlighter-rouge">rembg</code> alone doesn’t work well on this model as the surface doesn’t have enough features, even with CCTAGs I was getting incorrect camera positions.</p>
 
@@ -777,9 +832,9 @@ Later we can cut the turn table out of the resulting mesh during post processing
 <p>After we run the Meshroom pipeline we end up with a mesh that may have some points other than the model to be scanned in it, like the turntable surface for instance.
 The mesh is likely also has a very high polygon count and produces large files. We can fix both of these issues with Blender.</p>
 
-<h3 id="viewing-the-meshes">Viewing the Meshes</h3>
+<h3 id="viewing-the-mesh">Viewing the Mesh</h3>
 
-<p>Somehow 3D viewers behave strangely. Meshlab frequently crashes on my machine.  g3dviewer doesn’t display meshes half of the time or without texture. f3d is more reliable. Blender is a bit tricky to use.</p>
+<p>Some 3D viewers may behave strangely depending on the structure of the files. The 3D editing software Meshlab frequently crashes on my machine.  g3dviewer doesn’t display meshes half of the time or without texture. f3d is more reliable. Blender is a bit tricky to use.</p>
 
 <p>It seems that the textures in <code class="language-plaintext highlighter-rouge">*.exr</code> format exported by Meshroom are not well supported. Additionally *.mtl files with paths are not supported by some applications. STLs can be ascii or compressed with and without textures and these are supported by some applications, but not others. Large texture resolutions seems to cause problems. Also there are different options for mapping from the mesh to the texture that are supported by some formats and parsers, but not others.</p>
 
@@ -787,15 +842,109 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <h3 id="cut-off-excess-portions-of-the-mesh">Cut off excess portions of the Mesh</h3>
 
-<p>We can either use “Custom Bounding Box” on the “Meshing” node or load the Mesh into Blender and edit it there.</p>
+<p>We can either use “Custom Bounding Box” on the “Meshing” node in Meshroom or load the Mesh into Blender and edit it there.</p>
 
 <p>In the Post on creating <a href="/gamemods/2023/10/19/So-Sims4Furniture.html">Sims 4 Furniture</a> I’ve detailed how to select and remove portions of the mesh. Blender has a “limit selection to visible” feature that can be toggled in the top right half of the edit mode screen or by pressing [alt]+[z] that is important here. Next we align view to front, side and top and select and remove excess parts of the mesh by pressung [del].</p>
 
+<p>Meshroom produces three files (mesh, material file and texture) in the <code class="language-plaintext highlighter-rouge">MeshroomCache/&lt;hash&gt;/Texturing</code> directory. If the model is highly detailed you may end up with more than one texture.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-01.png" width="10%" />
+
+<p>We load Blender. I’m using version 4.3.2.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-02.png" width="20%" />
+
+<p>Remove the default cube by pressing [del] and drag and drop the *.obj file to import it.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-03.png" width="20%" />
+
+<p>We can then cycle through front, side and top views</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-04.png" width="20%" />
+
+<p>Select “Edit Mode” in the top left</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-05.png" width="20%" />
+
+<p>Make sure to “toggle x-ray” so that Blender selects not only the points in front.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-06.png" width="20%" />
+
+<p>Next we select the potion to remove.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-07.png" width="20%" />
+
+<p>and delete it by pressing [DEL] or from the menu</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-08.png" width="20%" />
+
+<p>After doing this for all four sides we have the mesh with out the excess.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-09.png" width="20%" />
+
+<h3 id="rotating-and-centering">Rotating and Centering</h3>
+
+<p>It’s likely the mesh is off-center and rotated incorrectly in the coordinate space. To fix this:</p>
+
+<p>Select the entire object by pressig [A] or from the menu</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-01.png" width="20%" />
+
+<p>We can then select move</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-02.png" width="20%" />
+
+<p>and drag the object into position by clicking and pulling on the arrows</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-03.png" width="20%" />
+
+<p>Next we select the rotate tool</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-04.png" width="20%" />
+
+<p>and rotate the object into position my clicking and pulling the circular arrows</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-05.png" width="20%" />
+
 <h3 id="reduce-the-mesh">Reduce the Mesh</h3>
 
-<p>After this we can use the “Decimate” Modifier in Blender. In “Edit Mode” press “a” for select all. Then on the right pan open Tab for “Modifier” (the wrench symbol). Click “Add Modifier” -&gt; “Generate” -&gt; “Decimate”.</p>
+<p>There are two ways I use to reduce a mesh. One way is to use the “decimate” modifier. The other is “Merge By Distance”.</p>
+
+<h4 id="merge-by-distance">Merge By Distance</h4>
+
+<p>To use “merge by distance” select the Mesh (press [A]) in “Edit Mode”. Then from the menue “Mesh” -&gt; “Merge” -&gt; “By Distance”. For the elephant 0.001m worked well.</p>
+
+<p>By setting 0.02 we can make “low-poly” models.</p>
+
+<h4 id="decimate">Decimate</h4>
+
+<p>We can also use the “Decimate” modifier in Blender. In “Edit Mode” press [A] for select all. Then on the right pan open Tab for “modifier” (the wrench symbol). Click “Add Modifier” -&gt; “Generate” -&gt; “Decimate”.</p>
 
 <p>Pulling the slider you can see the face count reducing. I’ve reduced from 40278 faces to below 10000 faces in my model. That gave me exported *.obj files that were 1,2 MB or compressed STL files with 534 kb.</p>
+
+<p>In the top left make sure we’re in “object mode”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-01.png" width="25%" />
+
+<p>then in the bottom right click on the “modifier” tab.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-02.png" width="25%" />
+
+<p>and the “add modifier” button</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-03.png" width="15%" />
+
+<p>From the menu we can select “Generate” -&gt; “Decimate”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-04.png" width="15%" />
+
+<p>It will show the current “face count” in the bottom. If we reduce too far the model will loose detail. If we don’t reduce enough, the model will produce a huge file.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-05.png" width="15%" />
+
+<p>For my file I’ll go with 0.02. This brings the mesh into the neighbourhood of 20.000 faces.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-06.png" width="15%" />
 
 <h3 id="smoothen-the-mesh">Smoothen the Mesh</h3>
 
@@ -803,11 +952,209 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>This greatly improves the visual impression of the models as it removes outliers.</p>
 
+<p>The process is nearly the same as with the “Decimate” modifier.</p>
+
+<h3 id="texture-baking">Texture Baking</h3>
+
+<p>On large detailed models Meshroom may produce two or more texture files.</p>
+
+<p>The process to bring multiple textures into one is called “texture baking”. We may need to do this in order to properly export a GLTF (<code class="language-plaintext highlighter-rouge">*.glb</code>) file.</p>
+
+<p>In the directory we may have already seen that there are two texture files <code class="language-plaintext highlighter-rouge">texture_1001.exr</code> and <code class="language-plaintext highlighter-rouge">texture_1002.exr</code>. Also in the “texture paint” tab we see that Blender shows two texture files side-by-side.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-01.png" width="25%" />
+
+<p>To setup “texture baking” we go to the “shading” tab.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-02.png" width="10%" />
+
+<p>Then on the right hand side click on the “Render” tab</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-03.png" width="10%" />
+
+<p>We need to select “Cycles” as the render engine otherwise I’m told it won’t work.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-04.png" width="15%" />
+
+<p>Next we need a second new UV Map. To add one, we go to the “data” tab</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-05.png" width="10%" />
+
+<p>and click on “+” to add a new uvmap - that is a mapping from mesh coordinates to texture (U and V) coordinates.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-07.png" width="10%" />
+
+<p>Blender shows a second UVMap <code class="language-plaintext highlighter-rouge">UVMap.001</code>, we select it.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-09.png" width="10%" />
+
+<p>Next we go to “UV Editting”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-10.png" width="25%" />
+
+<p>And via the menu or by pressing [U] and “Smart UV project” produce the UV map.</p>
+
+<p><strong><em>Note</em></strong> that there are two UV-Menu on the left and right side. We need to use the one on the right side.</p>
+
+<p>Next click on “unwrap”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-11.png" width="25%" />
+
+<p>The view on the left will look odd, that’s normal.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-12.png" width="25%" />
+
+<p>We move back to the “shading” tab</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-13.png" width="25%" />
+
+<p>By right clicking in an empty space in the node viewer in the bottom half of the screen, without another node selected, we can add a new “image texture” node</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-14.png" width="25%" />
+
+<p>Click on “new”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-15.png" width="25%" />
+
+<p>and on “New Image”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-16.png" width="10%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-17.png" width="15%" />
+
+<p>We can now “bake” the texture. To do this select the “Render” tab on the right.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-18.png" width="10%" />
+
+<p>Unfold “Bake”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-19.png" width="10%" />
+
+<p>Set the “Bake Type” to “Diffuse”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-20.png" width="10%" />
+
+<p>Deselect “Direct” and “Indirect” leaving only “Color” unless you want to bake lighting effects.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-21.png" width="10%" />
+
+<p>On the bottom left of the screen, in the image window, select the texture</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-22.png" width="10%" />
+
+<p>The image window will turn black as the texture is currently empty</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-23.png" width="10%" />
+
+<p>Make sure the mesh is selected in the top right of the screen</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-25.png" width="10%" />
+
+<p>Then back on the right lower side of the screen in the “render” tab click “bake”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-24.png" width="10%" />
+
+<p>You’ll then see the progress in the bottom center of the window</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-26.png" width="15%" />
+
+<p>Once finished the result will show up in the bottom left in the image viewer.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-27.png" width="15%" />
+
+<p>We save it by clicking on the “hamburger” icon, the three horizontal lines and select “Image” and then “save”.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-28.png" width="15%" />
+
+<p>Give the newly created texture image a filename and click “save”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-29.png" width="15%" />
+
+<p><strong><em>Remove old textures and use the new one</em></strong></p>
+
+<p>Now we need to tell Blender to use that new texture file when exporting.</p>
+
+<p>To do this go to the “Texture Paint” tab.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-30.png" width="20%" />
+
+<p>Material tab on the right.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-31.png" width="10%" />
+
+<p>Click on the “-“ sign to remove the now obsolete old materials and textures</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-32.png" width="10%" />
+
+<p>Next we add the new material.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-33.png" width="10%" />
+
+<p>To select the new texture image click on the yellow dot.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-34.png" width="15%" />
+
+<p>Select “Image texture” from the menu.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-35.png" width="10%" />
+
+<p>Click on “Open”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-36.png" width="10%" />
+
+<p>Select the file, click on “open”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-37.png" width="10%" />
+
+<p>It should then show the texture on the mesh properly again.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-38.png" width="20%" />
+
+<p><strong><em>Remove the old UV Map</em></strong></p>
+
+<p>Now we can remove the old UV map.</p>
+
+<p>For this, on the right, click on the “data” tab”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-39.png" width="10%" />
+
+<p>Unfold “UV Maps”</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-40.png" width="10%" />
+
+<p>Select the old “UVMap” and click on “-“ to remove it</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-41.png" width="10%" />
+
+<p>This should leave only the new UV map that matches with the new texture.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-42.png" width="10%" />
+
+<p>With that we’re done - it took only 45 clicks. The process could probably be scripted as Blender provides a Python API.</p>
+
 <h3 id="export-with-texture">Export with Texture</h3>
 
 <p>The texture become visible in the “Texture Paint” tab. By default Meshroom produces “texture_1001.exr” texture files. You can convert them to png with <code class="language-plaintext highlighter-rouge">convert -resize 1024x texture_1001.exr texture_1001.png</code> then set them on the “Principled BDSF”/”Base Color” as described in my guide on <a href="/3dmodeling/2023/09/23/Sa-3DModeling.html">3D Modeling</a>. Resizing to 1024x reduced the png size from 2 MB to 466 KB and worked fine.</p>
 
 <p>STL doesn’t export with texture. When exporting Wavefront *.obj, Blender additionally writes an *.mtl file with the path to the texture. Since <code class="language-plaintext highlighter-rouge">*.mtl</code> are text files we can edit and replace the <code class="language-plaintext highlighter-rouge">*.exr</code> with <code class="language-plaintext highlighter-rouge">*.png</code> there. Ideally the texture is in the same directory as many 3d viewers don’t expect paths in the *.mtl.</p>
+
+<p>In Blender we can easily export a GLTF (<code class="language-plaintext highlighter-rouge">*.glb</code>) file from the “File”/”Export” menu. Note that if the UV map isn’t properly unwrapped, there are more than one texture or too many faces in the mesh it may hang indefinitely.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/e-export-01.png" width="15%" />
+
+<p>We can just click “export”. I’m not using any special settings here.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/e-export-02.png" width="15%" />
+
+<h3 id="viewing-the-exported-mesh">Viewing the exported Mesh</h3>
+
+<p>We end up with an <code class="language-plaintext highlighter-rouge">*.glb</code> file.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/f-view-01.png" width="10%" />
+
+<p>It can be viewed in the f3d viewer.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/f-view-02.png" width="25%" />
 
 <h3 id="displaying-on-the-web">Displaying on the Web</h3>
 
@@ -815,7 +1162,7 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>After a lot of trial and error I ended up with my own JavaScript wrapper for the Three.JS viewer and exporting to  GLTF (<code class="language-plaintext highlighter-rouge">*.glb</code>). The file can also be shown with textures in the f3d viewer.</p>
 
-<p>The wrapper works works with only three JavaScript includes <code class="language-plaintext highlighter-rouge">GLTFLoader.js</code>, <code class="language-plaintext highlighter-rouge">OrbitControls.js</code> and <code class="language-plaintext highlighter-rouge">three.js</code> and the include for Jekyll.</p>
+<p>The wrapper works works with only three JavaScript includes <code class="language-plaintext highlighter-rouge">GLTFLoader.js</code>, <code class="language-plaintext highlighter-rouge">OrbitControls.js</code> and <code class="language-plaintext highlighter-rouge">three.js</code> and the custom include for Jekyll.</p>
 
 <p style="font-size: 60%;" align="right">Progress</p>
 
@@ -833,6 +1180,8 @@ The mesh is likely also has a very high polygon count and produces large files. 
 3] https://meshroom-manual.readthedocs.io/en/latest/faq/reconstruction-parameters/reconstruction-parameters.html
 4] https://github.com/alicevision/CCTag/tree/develop/markersToPrint
 5] https://github.com/omrips/viewstl
+6] https://gears.sariel.pl/#teeth
+7] https://www.princeton.edu/~mae433/DATA_SHEETS/motorlego.html
 </pre>
 
 </div>
