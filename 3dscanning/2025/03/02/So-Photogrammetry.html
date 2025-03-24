@@ -99,76 +99,56 @@
 
 let camera, scene, renderer, controls, clock;
 
-init();
+glbViewerInit("../../../../images/2025-03-02-So-Photogrammetry/elephant.glb");
 animate();
 
-function init() {
+function glbViewerInit(url) {
+  scene = new THREE.Scene();
 
   // -- camera
-  /*
-  camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 1000);
-  camera.position.set( -0.25, 0.22, -0.19 );
-  const quaternion = new THREE.Quaternion(-0.02, 0.5, 0.01, );
-  camera.applyQuaternion(quaternion);
-  camera.quaternion.normalize();
-  camera.lookAt(new THREE.Vector3(0, 3, 0));
-  */
-  scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
-  camera.position.z = 0.2;
+  camera.position.z = 0.3;
   camera.position.y = 0.1;
-
   scene = new THREE.Scene();
   scene.add(camera);
 
-
   // -- light
-
   const light2 = new THREE.AmbientLight(0xf0f0f0, 1.8 );
   scene.add(light2);
-
 /*
-{
-  const alight = new THREE.AmbientLight(0xf0f0f0, 1)
-  scene.add(alight)
-}*/
+  {
+      lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+      lights.position.set( -1, -1, 0 );
+      scene.add( lights );
+  }
 
+  {
+      lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+      lights.position.set( 1, 1, 0 );
+      scene.add( lights );
+  }
 
+  {
+      lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+      lights.position.set( -1, 1, 0 );
+      scene.add( lights );
+  }
 
+  {
+      lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+      lights.position.set( 0, 0, 10 );
+      scene.add( lights );
+  }
 
-{
-    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
-    lights.position.set( -1, -1, 0 );
-    scene.add( lights );
-}
-
-{
-    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
-    lights.position.set( 1, 1, 0 );
-    scene.add( lights );
-}
-
-{
-    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
-    lights.position.set( -1, 1, 0 );
-    scene.add( lights );
-}
-
-{
-    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
-    lights.position.set( 0, 0, 10 );
-    scene.add( lights );
-}
-
-{
-    lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
-    lights.position.set( 0, 0, -1);
-    scene.add( lights );
-}
-
+  {
+      lights = new THREE.PointLight( 0xffffff, 0.5, 0 );
+      lights.position.set( 0, 0, -1);
+      scene.add( lights );
+  }
+*/
   // -- model
   const loader = new THREE.GLTFLoader();
-  loader.load("../../../../images/2025-03-02-So-Photogrammetry/elephant.glb",
+  loader.load(url,
     function(gltf) {
 
       object = gltf.scene;
@@ -189,6 +169,7 @@ function init() {
 
   // -- render target
   container = document.getElementById('obj');
+  container.innerHTML = "";
   renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
   renderer.setSize( container.offsetWidth, container.offsetHeight );
   container.appendChild( renderer.domElement );
@@ -224,6 +205,14 @@ function animate() {
 
 <pre>(Rotate: [Click]+[Drag], Move [Shift]+[Click]+[Drag], Zoom [Mouse Wheel], Touchscreen / Pinch-to-Zoom on mobile)</pre>
 
+<p><input type="button" value="elephant (eos550d, full frame capture, 23.6mb)" onclick="glbViewerInit(&quot;../../../../images/2025-03-02-So-Photogrammetry/elephant.glb&quot;);" />
+<input type="button" value="stump (s22, 4k video capture, 3x2048px texture, 24.6mb)" onclick="glbViewerInit(&quot;../../../../images/2025-03-02-So-Photogrammetry/stump.glb&quot;);" />
+<input type="button" value="cube (eos550d, 1080p video capture, 7.3mb)" onclick="glbViewerInit(&quot;../../../../images/2025-03-02-So-Photogrammetry/wuerfel.glb&quot;);" />
+<br />
+<input type="button" value="neptun (mi8, 1080p video capture, 24.8mb)" onclick="glbViewerInit(&quot;../../../../images/2025-03-02-So-Photogrammetry/neptun.glb&quot;);" />
+<input type="button" value="head (mi8, 1080p video capture, 18.7mb)" onclick="glbViewerInit(&quot;../../../../images/2025-03-02-So-Photogrammetry/kopf.glb&quot;);" />
+<input type="button" value="hecht (mi8, 1080p video capture, 23.9mb)" onclick="glbViewerInit(&quot;../../../../images/2025-03-02-So-Photogrammetry/hecht.glb&quot;);" /></p>
+
 <img src="../../../../images/2025-03-02-So-Photogrammetry/MVI_7665-168.jpg" width="15%" />
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/2025-02-28-212957_781x669_scrot.png" width="12%" />
@@ -231,6 +220,12 @@ function animate() {
 <img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-153929_738x552_scrot.png" width="10%" />
 
 <img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" width="10%" />
+
+<p><strong><em>note:</em></strong> the 3D models shown above are scaled down below 25mb file size for uploading to GitHub and displaying on the web. The full models (248.2mb tree stump, 105.6mb neptun) look better as you can see in the screenshots:</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/stump.png" width="35%" />
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/heidelberg-neptun.png" width="35%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -247,7 +242,7 @@ function animate() {
       <li><a href="#steps-of-the-pipeline" id="markdown-toc-steps-of-the-pipeline">Steps of the Pipeline</a></li>
     </ul>
   </li>
-  <li><a href="#photography-setup" id="markdown-toc-photography-setup">Photography Setup</a>    <ul>
+  <li><a href="#turntable-photography-setup" id="markdown-toc-turntable-photography-setup">Turntable Photography Setup</a>    <ul>
       <li><a href="#1-bicycle-and-drill-turntable---spins-too-fast" id="markdown-toc-1-bicycle-and-drill-turntable---spins-too-fast">1) bicycle and drill turntable - spins too fast</a></li>
       <li><a href="#2-small-shaky-lego-turn---too-much-background" id="markdown-toc-2-small-shaky-lego-turn---too-much-background">2) small shaky Lego turn - too much background</a></li>
       <li><a href="#3-small-lego-turn-table---still-too-much-background" id="markdown-toc-3-small-lego-turn-table---still-too-much-background">3) small Lego turn table - still too much background</a></li>
@@ -258,6 +253,7 @@ function animate() {
       <li><a href="#7-best-so-far" id="markdown-toc-7-best-so-far">7) Best so far</a></li>
     </ul>
   </li>
+  <li><a href="#capturing-outdoors" id="markdown-toc-capturing-outdoors">Capturing Outdoors</a></li>
   <li><a href="#image-capture" id="markdown-toc-image-capture">Image Capture</a>    <ul>
       <li><a href="#helpful-bash-scripts" id="markdown-toc-helpful-bash-scripts">Helpful Bash scripts</a></li>
       <li><a href="#extract-every-10th-frame-of-a-video" id="markdown-toc-extract-every-10th-frame-of-a-video">Extract every 10th frame of a video</a></li>
@@ -531,7 +527,7 @@ function animate() {
 
 <p style="font-size: 60%;" align="right">How</p>
 
-<h2 id="photography-setup">Photography Setup</h2>
+<h2 id="turntable-photography-setup">Turntable Photography Setup</h2>
 
 <p>Next I’ll show how my photography setup has evolved of the past days.</p>
 
@@ -698,7 +694,15 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <p>Doing this yields about 404 images for full rotations on three heights.</p>
 
-<p>For lighting the lower portions of the object I’m using the Beurer daylight lamp from the front. Otherweise, with the higher resolution than when recording video, we would clearly see the uneven lighting.</p>
+<p>For lighting the lower portions of the object I’m using the Beurer daylight lamp from the front. Otherwise, with the higher resolution than when recording video, we would clearly see the uneven lighting.</p>
+
+<h2 id="capturing-outdoors">Capturing Outdoors</h2>
+
+<p>Capturing outside with the right weather conditions can actually be easier than with a turn table setup. Especially out in the woods there is usually a lot of contrast rich debris or leaves for the photogrammetry software to pick up. We move the camera and don’t need to fool the software as with turntable setups and a stationary camera. The right weather conditions, ideally cloudy, make for an ideal even lighting with minimal shadows. The small focal length of smart phone cameras make them great for capturing sharp images at large depth ranges.</p>
+
+<p>The tree stump shown above was captured with 4K video capture on a Samsung S22 smartphone. For this I walked around the stump three times holding the smartphone at a different height each time.</p>
+
+<img src="../../../../images/2025-03-02-So-Photogrammetry/stump.png" width="25%" />
 
 <h2 id="image-capture">Image Capture</h2>
 
