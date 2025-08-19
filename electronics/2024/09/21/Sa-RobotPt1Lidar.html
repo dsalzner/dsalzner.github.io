@@ -299,9 +299,9 @@ The baudrate is 230400 as per documentation is relatively high.</p>
 
 <p>In Python we could receive serial data like so:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ser</span> <span class="o">=</span> <span class="n">serial</span><span class="p">.</span><span class="nc">Serial</span><span class="p">(</span><span class="err">‘</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">ttyUSB0</span><span class="err">’</span> <span class="p">,</span> <span class="mi">230400</span> <span class="p">,</span> <span class="n">stopbits</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">ser</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
-<span class="nf">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ser</span> <span class="o">=</span> <span class="n">serial</span><span class="p">.</span><span class="n">Serial</span><span class="p">(</span><span class="err">‘</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">ttyUSB0</span><span class="err">’</span> <span class="p">,</span> <span class="mi">230400</span> <span class="p">,</span> <span class="n">stopbits</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ser</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>We could then decode the binary with <code class="language-plaintext highlighter-rouge">struct.unpack</code> similar to what I’ve done in the past for decoding the binary format for Command and Conquer Replays (see <a href="/gamemods/2023/11/25/Sa-DecodingCommandAndConquerReplays.html">Decoding Command and Conquer replays</a>.</p>

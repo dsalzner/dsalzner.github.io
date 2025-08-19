@@ -680,12 +680,12 @@ Die to the similarities in structure we could use NASM macros to automatically g
   <span class="k">struct</span> <span class="nc">gdt_entry</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
 <span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">));</span>
 
-<span class="k">extern</span> <span class="kt">void</span> <span class="nf">gdt_flush</span><span class="p">();</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">gdt_flush</span><span class="p">();</span>
 
 <span class="k">struct</span> <span class="nc">gdt_entry</span> <span class="n">gdt</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
 <span class="k">struct</span> <span class="nc">gdt_ptr</span> <span class="n">gp</span><span class="p">;</span>
 
-<span class="kt">void</span> <span class="nf">gdt_set_gate</span><span class="p">(</span><span class="kt">uint32_t</span> <span class="n">num</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">base</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">limit</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">access</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">gran</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">void</span> <span class="n">gdt_set_gate</span><span class="p">(</span><span class="kt">uint32_t</span> <span class="n">num</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">base</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">limit</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">access</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">gran</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_low</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">);</span>
   <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_middle</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
   <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&gt;&gt;</span> <span class="mi">24</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
@@ -697,7 +697,7 @@ Die to the similarities in structure we could use NASM macros to automatically g
   <span class="n">gdt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">access</span> <span class="o">=</span> <span class="n">access</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="nf">gdt_install</span><span class="p">()</span> <span class="p">{</span>
+<span class="kt">void</span> <span class="n">gdt_install</span><span class="p">()</span> <span class="p">{</span>
   <span class="n">gp</span><span class="p">.</span><span class="n">limit</span> <span class="o">=</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="nc">gdt_entry</span><span class="p">)</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
   <span class="n">gp</span><span class="p">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">gdt</span><span class="p">;</span>
 
@@ -730,12 +730,12 @@ Die to the similarities in structure we could use NASM macros to automatically g
   <span class="k">struct</span> <span class="nc">idt_entry</span> <span class="o">*</span><span class="n">base</span><span class="p">;</span>
 <span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">));</span>
 
-<span class="k">extern</span> <span class="kt">void</span> <span class="nf">idt_load</span><span class="p">(</span><span class="k">struct</span> <span class="nc">idt_ptr</span> <span class="o">*</span><span class="p">);</span>
+<span class="k">extern</span> <span class="kt">void</span> <span class="n">idt_load</span><span class="p">(</span><span class="k">struct</span> <span class="nc">idt_ptr</span> <span class="o">*</span><span class="p">);</span>
 
 <span class="k">struct</span> <span class="nc">idt_entry</span> <span class="n">idt</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
 <span class="k">struct</span> <span class="nc">idt_ptr</span> <span class="n">idtp</span><span class="p">;</span>
 
-<span class="kt">void</span> <span class="nf">idt_set_gate</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">num</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">base</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">sel</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">flags</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">void</span> <span class="n">idt_set_gate</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">num</span><span class="p">,</span> <span class="kt">uint32_t</span> <span class="n">base</span><span class="p">,</span> <span class="kt">uint16_t</span> <span class="n">sel</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">flags</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">idt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_low</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">);</span>
   <span class="n">idt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">base_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">base</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">;</span>
 
@@ -744,7 +744,7 @@ Die to the similarities in structure we could use NASM macros to automatically g
   <span class="n">idt</span><span class="p">[</span><span class="n">num</span><span class="p">].</span><span class="n">flags</span> <span class="o">=</span> <span class="n">flags</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="nf">idt_install</span><span class="p">()</span> <span class="p">{</span>
+<span class="kt">void</span> <span class="n">idt_install</span><span class="p">()</span> <span class="p">{</span>
   <span class="n">idtp</span><span class="p">.</span><span class="n">limit</span> <span class="o">=</span> <span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="nc">idt_entry</span><span class="p">)</span> <span class="o">*</span> <span class="mi">256</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
   <span class="n">idtp</span><span class="p">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">idt</span><span class="p">;</span>
 
@@ -913,19 +913,19 @@ Die to the similarities in structure we could use NASM macros to automatically g
   <span class="s">"Reserved"</span>
 <span class="p">};</span>
 
-<span class="kt">void</span> <span class="nf">isr_handler</span><span class="p">(</span><span class="k">struct</span> <span class="nc">regs</span> <span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">void</span> <span class="n">isr_handler</span><span class="p">(</span><span class="k">struct</span> <span class="nc">regs</span> <span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">interrupt_handlers</span><span class="p">[</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span><span class="p">])</span> <span class="p">{</span>
     <span class="n">isr</span> <span class="n">handler</span> <span class="o">=</span> <span class="n">interrupt_handlers</span><span class="p">[</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span><span class="p">];</span>
     <span class="n">handler</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
   <span class="p">}</span>
-  <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span> <span class="o">&lt;</span> <span class="mi">32</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span> <span class="o">&lt;</span> <span class="mi">32</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">terminal_putchar</span><span class="p">(</span><span class="sc">'\n'</span><span class="p">);</span>
     <span class="n">terminal_writestring</span><span class="p">(</span><span class="n">exception_messages</span><span class="p">[</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span><span class="p">]);</span>
     <span class="n">terminal_writestring</span><span class="p">(</span><span class="s">" Interrupt received!"</span><span class="p">);</span>
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="nf">irq_handler</span><span class="p">(</span><span class="k">struct</span> <span class="nc">regs</span> <span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">void</span> <span class="n">irq_handler</span><span class="p">(</span><span class="k">struct</span> <span class="nc">regs</span> <span class="o">*</span><span class="n">r</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">if</span> <span class="p">(</span><span class="n">r</span><span class="o">-&gt;</span><span class="n">int_no</span> <span class="o">&gt;=</span> <span class="mi">40</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">outportb</span><span class="p">(</span><span class="mh">0xA0</span><span class="p">,</span> <span class="mh">0x20</span><span class="p">);</span>
   <span class="p">}</span>
@@ -937,7 +937,7 @@ Die to the similarities in structure we could use NASM macros to automatically g
   <span class="p">}</span>
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="nf">register_interrupt_handler</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">n</span><span class="p">,</span> <span class="n">isr</span> <span class="n">handler</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">void</span> <span class="n">register_interrupt_handler</span><span class="p">(</span><span class="kt">uint8_t</span> <span class="n">n</span><span class="p">,</span> <span class="n">isr</span> <span class="n">handler</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">interrupt_handlers</span><span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span><span class="p">;</span>
 <span class="p">}</span></code></pre></figure>
 
@@ -966,11 +966,11 @@ Die to the similarities in structure we could use NASM macros to automatically g
   <span class="kt">uint32_t</span> <span class="n">eip</span><span class="p">,</span> <span class="n">cs</span><span class="p">,</span> <span class="n">eflags</span><span class="p">,</span> <span class="n">useresp</span><span class="p">,</span> <span class="n">ss</span><span class="p">;</span>
 <span class="p">}</span><span class="n">__attribute__</span><span class="p">((</span><span class="n">packed</span><span class="p">));</span>
 
-<span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">outportb</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">port</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="n">outportb</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">port</span><span class="p">,</span> <span class="kt">uint8_t</span> <span class="n">val</span><span class="p">)</span> <span class="p">{</span>
   <span class="k">asm</span> <span class="k">volatile</span> <span class="p">(</span><span class="s">"outb %0, %1"</span> <span class="o">:</span> <span class="o">:</span> <span class="s">"a"</span><span class="p">(</span><span class="n">val</span><span class="p">),</span> <span class="s">"Nd"</span><span class="p">(</span><span class="n">port</span><span class="p">));</span>
 <span class="p">}</span>
 
-<span class="k">static</span> <span class="kr">inline</span> <span class="kt">uint8_t</span> <span class="nf">inportb</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">port</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">uint8_t</span> <span class="n">inportb</span><span class="p">(</span><span class="kt">uint16_t</span> <span class="n">port</span><span class="p">)</span> <span class="p">{</span>
     <span class="kt">uint8_t</span> <span class="n">ret</span><span class="p">;</span>
     <span class="k">asm</span> <span class="k">volatile</span> <span class="p">(</span><span class="s">"inb %1, %0"</span> <span class="o">:</span> <span class="s">"=a"</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span> <span class="o">:</span> <span class="s">"Nd"</span><span class="p">(</span><span class="n">port</span><span class="p">));</span>
     <span class="k">return</span> <span class="n">ret</span><span class="p">;</span>

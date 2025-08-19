@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Web Scraper written in C++ - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="My Python + Selenium Web-Scraper requires Chrome, ChromeDriver, Python, xvfb (X11 virtual frame buffer) and a bunch of hacks for hidden headless mode. I want something small, ef..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/proigramming/2025/08/07/Do-CppWebScraper.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Web Scraper written in C++ - Dennis Salzner" />
+  <meta property="og:description" content="My Python + Selenium Web-Scraper requires Chrome, ChromeDriver, Python, xvfb (X11 virtual frame buffer) and a bunch of hacks for hidden headless mode. I want..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/proigramming/2025/08/07/Do-CppWebScraper.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="proigramming" />
+  <meta property="article:published_time" content="2025-08-07 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2025-08-07 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2025-08-07 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="My Python + Selenium Web-Scraper requires Chrome, ChromeDriver, Python, xvfb (X11 virtual frame buffer) and a bunch of hacks for hidden headless mode. I want something small, ef..." />
+  <meta name="twitter:title" content="Web Scraper written in C++ - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Web Scraper written in C++</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Web Scraper written in C++</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>My Python + Selenium Web-Scraper requires Chrome, ChromeDriver, Python, xvfb (X11 virtual frame buffer) and a bunch of hacks for hidden headless mode. I want something small, efficient, fast and low dependency that I can run on as Raspberry Pi or on AWS Lambda (with binary size limit). For this I need something that can render a webpage and also execute the Java-Script embedded in it. I also need to to have the ability to inject Java-Script code, so I can click away cookie-banners, fill out HTML forms and click submit automatically.</p>
+
+<p>Most browsers use WebKit underneath. Apple’s Safari and also Chrome used to use it. In order to use WebKit we need a graphical user interface toolkit. Qt is relatively large. So I’ll go with wxWidgets.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#background" id="markdown-toc-background">Background</a>    <ul>
+      <li><a href="#old-approach-python--selenium" id="markdown-toc-old-approach-python--selenium">Old Approach: Python + Selenium</a></li>
+    </ul>
+  </li>
+  <li><a href="#choice-of-tools" id="markdown-toc-choice-of-tools">Choice of Tools</a>    <ul>
+      <li><a href="#browser-engines" id="markdown-toc-browser-engines">Browser Engines</a></li>
+      <li><a href="#graphics-user-interface-library" id="markdown-toc-graphics-user-interface-library">Graphics User Interface library</a></li>
+    </ul>
+  </li>
+  <li><a href="#implementation" id="markdown-toc-implementation">Implementation</a>    <ul>
+      <li><a href="#wxwidgets-example-window" id="markdown-toc-wxwidgets-example-window">wxWidgets Example Window</a></li>
+      <li><a href="#compile-wxwidgets-ourselves" id="markdown-toc-compile-wxwidgets-ourselves">Compile wxWidgets ourselves</a></li>
+      <li><a href="#compile-flags" id="markdown-toc-compile-flags">Compile Flags</a></li>
+      <li><a href="#procedural-style" id="markdown-toc-procedural-style">Procedural Style</a></li>
+      <li><a href="#webkit" id="markdown-toc-webkit">WebKit</a></li>
+      <li><a href="#injecting-javascript" id="markdown-toc-injecting-javascript">Injecting JavaScript</a></li>
+      <li><a href="#getting-page-source" id="markdown-toc-getting-page-source">Getting Page Source</a></li>
+      <li><a href="#threads-and-blocking-calls" id="markdown-toc-threads-and-blocking-calls">Threads and Blocking Calls</a>        <ul>
+          <li><a href="#loops" id="markdown-toc-loops">Loops</a></li>
+          <li><a href="#c-timer" id="markdown-toc-c-timer">C++ Timer</a></li>
+          <li><a href="#wxbutton" id="markdown-toc-wxbutton">wxButton</a></li>
+          <li><a href="#wxtimer" id="markdown-toc-wxtimer">wxTimer</a></li>
+        </ul>
+      </li>
+      <li><a href="#automation" id="markdown-toc-automation">Automation</a></li>
+      <li><a href="#converting-wxstring-to-std-string" id="markdown-toc-converting-wxstring-to-std-string">Converting wxString to std string</a></li>
+      <li><a href="#accepting-the-cookie-banner" id="markdown-toc-accepting-the-cookie-banner">Accepting the Cookie Banner</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>Many of my hobbyist projects rely on scraping the web for data. Be it real estate listings, stock market prices or news aggregation.</p>
+
+<p>It used to be possible to just connect a TCP socket to port 80, manually craft a GET request and send it off. Nowadays we need SSL encryption and key exchange schemes. Since Web 2.0 we often need to execute JavaScript code for the pages to even display the content we’re after. Then there are advertisements and coockie accept banners that need to be automatically clicked.</p>
+
+<p>For this we need to run full browsers. In the past I’ve orchestrated Firefox or Chrome using the Python Selenium libraries. A more efficient method is to run smaller embedded browsers from C++ code and get much of the same features by injecting JavaScript, as I’ll show in the following.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="background">Background</h2>
+
+<p>Most web scrapers use Python and Selenium. This is find and a realively simple approach for the developer. It comes with a performance hit and requires a lot of dependencies. This also makes it unstable, when underlying software gets updated.</p>
+
+<h3 id="old-approach-python--selenium">Old Approach: Python + Selenium</h3>
+
+<p>When scrapping data with Python this is what I used to do:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># -- working headless mode by running in virtual frame buffer Xvfb
+</span><span class="n">display</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))</span>
+<span class="n">display</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+
+<span class="c1"># -- some covert options to hide selenium
+</span><span class="n">options</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="n">ChromeOptions</span><span class="p">()</span>
+<span class="n">options</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">"--disable-blink-features=AutomationControlled"</span><span class="p">)</span> 
+<span class="n">options</span><span class="p">.</span><span class="n">add_experimental_option</span><span class="p">(</span><span class="s">"excludeSwitches"</span><span class="p">,</span> <span class="p">[</span><span class="s">"enable-automation"</span><span class="p">])</span> 
+<span class="n">options</span><span class="p">.</span><span class="n">add_experimental_option</span><span class="p">(</span><span class="s">"useAutomationExtension"</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> 
+
+<span class="c1"># -- add UBlock Origin Extension to remove full-page ad-bloat that hinders 
+</span><span class="n">extraBrowserExtension</span> <span class="o">=</span> <span class="s">"&lt;path to ublock origin extension for this spectic browser (*.crx file)&gt;"</span>
+<span class="n">options</span><span class="p">.</span><span class="n">add_extension</span><span class="p">(</span><span class="n">extraBrowserExtension</span><span class="p">)</span>
+
+<span class="c1"># -- load Chrome
+</span><span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+
+<span class="c1"># -- some more covert options
+</span><span class="n">driver</span><span class="p">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s">"Object.defineProperty(navigator, 'webdriver', {get: () =&gt; undefined})"</span><span class="p">)</span>
+
+<span class="n">useragent</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"</span><span class="p">]</span>
+<span class="n">driver</span><span class="p">.</span><span class="n">execute_cdp_cmd</span><span class="p">(</span>
+    <span class="s">"Network.setUserAgentOverride"</span><span class="p">,</span> <span class="p">{</span><span class="s">"userAgent"</span><span class="p">:</span> <span class="n">useragent</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">stealth</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span>
+    <span class="n">languages</span><span class="o">=</span><span class="p">[</span><span class="s">"en-US"</span><span class="p">,</span> <span class="s">"en"</span><span class="p">],</span>
+    <span class="n">vendor</span><span class="o">=</span><span class="s">"Google Inc."</span><span class="p">,</span>
+    <span class="n">platform</span><span class="o">=</span><span class="s">"Win32"</span><span class="p">,</span>
+    <span class="n">webgl_vendor</span><span class="o">=</span><span class="s">"Intel Inc."</span><span class="p">,</span>
+    <span class="n">renderer</span><span class="o">=</span><span class="s">"Intel Iris OpenGL Engine"</span><span class="p">,</span>
+    <span class="n">fix_hairline</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">driver</span><span class="p">.</span><span class="n">execute_cdp_cmd</span><span class="p">(</span><span class="s">"Page.addScriptToEvaluateOnNewDocument"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s">"source"</span><span class="p">:</span> <span class="s">"""
+    Object.defineProperty(navigator, 'webdriver', {
+        get: () =&gt; undefined
+    })
+    """</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>Then load a page</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># -- open url
+</span><span class="n">driver</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">grab_url</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Using my helper functions to get the page body and HTML elements, when they are finally loaded:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">webdriver_find_element</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">cssSelector</span><span class="p">):</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+      <span class="n">element</span> <span class="o">=</span> <span class="n">root</span><span class="p">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="n">cssSelector</span><span class="p">);</span>
+      <span class="k">return</span> <span class="n">element</span>
+    <span class="k">except</span> <span class="n">NoSuchElementException</span><span class="p">:</span>
+      <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+  <span class="k">print</span><span class="p">(</span><span class="s">"timeout waiting for cookie accept"</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">webdriver_get_html_element_body</span><span class="p">(</span><span class="n">driver</span><span class="p">):</span>
+  <span class="k">return</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="mi">5</span><span class="p">).</span><span class="n">until</span><span class="p">(</span><span class="n">EC</span><span class="p">.</span><span class="n">element_to_be_clickable</span><span class="p">((</span><span class="n">By</span><span class="p">.</span><span class="n">TAG_NAME</span><span class="p">,</span> <span class="s">"body"</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>Get the page, get subelements by CSS selectors, inject javascript to change attributes and click on elements.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># -- get html body
+</span><span class="n">html_element_body</span> <span class="o">=</span> <span class="n">webdriver_get_html_element_body</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
+
+<span class="c1"># - get inner div
+</span><span class="n">html_element_table</span> <span class="o">=</span> <span class="n">webdriver_find_element</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">html_element_body</span><span class="p">,</span> <span class="s">"main[class='page-content']"</span><span class="p">)</span>
+
+<span class="p">(..)</span>
+
+<span class="c1"># -- inject javascript
+</span><span class="n">driver</span><span class="p">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s">"arguments[0].setAttribute('value', '"</span> <span class="o">+</span> <span class="n">date_start</span> <span class="o">+</span><span class="s">"')"</span><span class="p">,</span> <span class="n">html_element_dtDate1</span><span class="p">);</span>
+
+<span class="p">(..)</span>
+
+<span class="c1"># -- click submit
+</span><span class="n">html_element_submit</span><span class="p">.</span><span class="n">click</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>and finally extract the results</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># -- extract information
+</span><span class="k">print</span><span class="p">(</span><span class="n">html_element</span><span class="p">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s">'outerHTML'</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>That runs fine, but is slow and requires a lot of dependencies to be installed.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="choice-of-tools">Choice of Tools</h2>
+
+<p>So in order to stream-line that in C++ we need to first think about what C++ libraries we can use to achieve our goals.</p>
+
+<h3 id="browser-engines">Browser Engines</h3>
+
+<p>Most browsers nowadays use some form of WebKit underneath. Safari uses WebKit. The Chrome Engine is also based on WebKit. Firefox has transitioned to Chrome, thereby also settling for WebKit.</p>
+
+<p>It’s far too challenging to write a custom rendering engine and to keep it compatible with all the features the modern web contains. As mentioned above encryption and JavaScript execution is also required. So a good choice is to use WebKit.</p>
+
+<h3 id="graphics-user-interface-library">Graphics User Interface library</h3>
+
+<p>Even though the code is intended to run automatically and headless (hidden window), we need some framework to run WebKit in. My first impuls was to use Qt, my second was GTK, but then I remembered wxWidgets. It’s an older, smaller graphical user interface. It can be built statically. It has a WebKit integration called wxWebView.</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>With the choice of tools out of the way we can start building our application in C++ with wxWidgets and Webkit.</p>
+
+<h3 id="wxwidgets-example-window">wxWidgets Example Window</h3>
+
+<p>First let’s get an example [1] off the ground.</p>
+
+<!--
+People tend to approach all GUI frameworks in a purely object-oriented way, making every single label a class, causing code-bloat across multiple source and header files, then they need to keep track of the code across files - thereby distributing responsibilities -, produce more getter/setter bloat to access variables, get confused what gets cleaned up where, end up confusing themselves when moving code by mixing up what ```this``` means in another context, they introduce double frees, confuse constructor/destructor orders, then require RAII in an attempt to clean that up introducing even more bloat, then the struture doesn't fit the purpose, they restructure, but only partially, variables are already defined in other files than where they are used, now we have unused variables everywhere, because compiler warnings weren't set to ```-Wall```,and then end up with more and more of an unmaintainable mess, ... Coding is a lot about staying on top of things, keeping an overview. For small-scale single-person projects I feel there's no point in even starting with object-orientation.
+-->
+
+<p>I’ll copy the example code into a single source code file, main.cpp, for now. Later I’ll transfer most of it to a functional/procedural-style and get rid of the classes. That will make the code way more portable and useful for our web scraping purposes.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;wx/wx.h&gt;</span><span class="cp">
+</span>
+<span class="k">class</span> <span class="nc">Simple</span> <span class="o">:</span> <span class="k">public</span> <span class="n">wxFrame</span> <span class="p">{</span>
+<span class="nl">public:</span>
+    <span class="n">Simple</span><span class="p">(</span><span class="k">const</span> <span class="n">wxString</span><span class="o">&amp;</span> <span class="n">title</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="n">Simple</span><span class="o">::</span><span class="n">Simple</span><span class="p">(</span><span class="k">const</span> <span class="n">wxString</span><span class="o">&amp;</span> <span class="n">title</span><span class="p">)</span>
+       <span class="o">:</span> <span class="n">wxFrame</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">wxID_ANY</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">wxDefaultPosition</span><span class="p">,</span> <span class="n">wxSize</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">150</span><span class="p">))</span> <span class="p">{</span>
+  <span class="n">Centre</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">MyApp</span> <span class="o">:</span> <span class="k">public</span> <span class="n">wxApp</span>
+<span class="p">{</span>
+  <span class="nl">public:</span>
+    <span class="k">virtual</span> <span class="kt">bool</span> <span class="n">OnInit</span><span class="p">();</span>
+<span class="p">};</span>
+
+<span class="n">IMPLEMENT_APP</span><span class="p">(</span><span class="n">MyApp</span><span class="p">)</span>
+
+<span class="kt">bool</span> <span class="n">MyApp</span><span class="o">::</span><span class="n">OnInit</span><span class="p">()</span>
+<span class="p">{</span>
+    <span class="n">Simple</span> <span class="o">*</span><span class="n">simple</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Simple</span><span class="p">(</span><span class="n">wxT</span><span class="p">(</span><span class="s">"Simple"</span><span class="p">));</span>
+    <span class="n">simple</span><span class="o">-&gt;</span><span class="n">Show</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="nb">true</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Let’s see what the compile says, if we try to build it without specifying the depedencies.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>g++ main.cpp <span class="nt">-o</span> main
+</code></pre></div></div>
+
+<p>Similar to pkg-config, there is a wx-config tool that returns the library paths.</p>
+
+<p>We can add <code class="language-plaintext highlighter-rouge">--static=yes</code>, if we have a wxWidgets version that is statically built. This is something to remember for later.</p>
+
+<p>The version installed from the Ubuntu repositories is</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wx-config --version  
+3.2.4
+</code></pre></div></div>
+
+<p>For now this will do:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>g++ <span class="sb">`</span>wx-config <span class="nt">--libs</span><span class="sb">`</span> <span class="sb">`</span>wx-config <span class="nt">--cxxflags</span><span class="sb">`</span> main.cpp <span class="nt">-o</span> main
+</code></pre></div></div>
+
+<p>That yields a host of undefined references. Of coursse the packages in the Ubuntu repositories are once again somehow built incorrectly</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>undefined reference to <span class="sb">`</span>wxString::FromAscii<span class="o">(</span>char const<span class="k">*</span><span class="o">)</span><span class="s1">'
+</span></code></pre></div></div>
+
+<h3 id="compile-wxwidgets-ourselves">Compile wxWidgets ourselves</h3>
+
+<p>Luckily we can easiliy compile wxWidgets ourselves. This will also be useful for a static compile later on.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://github.com/wxWidgets/wxWidgets/releases/download/v3.3.1/wxWidgets-3.3.1.tar.bz2
+<span class="nb">tar</span> <span class="nt">-xvf</span> wxWidgets-3.3.1.tar.bz2
+<span class="nb">echo</span> <span class="s2">"wxWidgets-3.3.1.tar.bz2"</span> <span class="o">&gt;&gt;</span> .gitignore
+<span class="nb">echo</span> <span class="s2">"wxWidgets-3.3.1/"</span> <span class="o">&gt;&gt;</span> .gitignore
+<span class="nb">echo</span> <span class="s2">"main.o"</span> <span class="o">&gt;&gt;</span> .gitignore
+<span class="nb">echo</span> <span class="s2">"main"</span> <span class="o">&gt;&gt;</span> .gitignore
+
+<span class="nb">cd </span>wxWidgets-3.3.1/
+<span class="nb">mkdir </span>_build/ <span class="o">&amp;&amp;</span> <span class="nb">cd </span>_build/
+../configure  <span class="nt">--with-gtk</span><span class="o">=</span>3 <span class="nt">--with-opengl</span>
+</code></pre></div></div>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Configured wxWidgets 3.3.1 for `x86_64-pc-linux-gnu'
+
+  Which GUI toolkit should wxWidgets use?                 GTK+ 3 with support for GTK+ printing libnotify
+  Should wxWidgets be compiled into single library?       no
+  Should wxWidgets be linked as a shared library?         yes
+  Unicode encoding used by wxString?                      UTF-32
+  What level of wxWidgets compatibility should be enabled?
+                                       wxWidgets 3.0      no
+                                       wxWidgets 3.2      yes
+  Which libraries should wxWidgets use?
+                                       jpeg               sys
+                                       png                sys
+                                       regex              sys
+                                       tiff               sys
+                                       webp               sys
+                                       lzma               no
+                                       zlib               sys
+                                       expat              sys
+                                       libmspack          no
+                                       sdl                no
+                                       webview            yes (with backends: WebKit)
+</code></pre></div></div>
+
+<p>Make sure webview is enabled.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make <span class="nt">-j3</span> 
+</code></pre></div></div>
+
+<p>Build the sample and run it</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>wxWidgets-3.3.1/_build/samples/minimal
+make
+./minimal
+</code></pre></div></div>
+
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-150059_642x278_scrot.png" width="35%" />
+
+<h3 id="compile-flags">Compile Flags</h3>
+
+<p>By building with</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make <span class="nt">-n</span>
+</code></pre></div></div>
+
+<p>Creating a Makefile for our code with a copy of the same settings, replacing <code class="language-plaintext highlighter-rouge">minimal</code> with <code class="language-plaintext highlighter-rouge">main</code>,. removing some of the excess and introducing a variable for the path to  wxWidgets yields an extremly long command-line.</p>
+
+<!--
+wxwidgets_path = "<path to wxwidgets>/wxWidgets-3.3.1/"
+
+all:
+	g++ -c -o main.o -I ./wxWidgets-3.3.1/include/ -I$(wxwidgets_path)/_build/lib/wx/include/gtk3-unicode-3.3 -I../../../include -D_FILE_OFFSET_BITS=64 -I/usr/include/gtk-3.0 -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/fribidi -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/x86_64-linux-gnu -I/usr/include/webp -I/usr/include/gio-unix-2.0 -I/usr/include/atk-1.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include -pthread  -D__WXGTK__ -DWXUSINGDLL -pthread -Wall -Wundef -Wunused-parameter -Wno-ctor-dtor-privacy -Woverloaded-virtual -O2 -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/harfbuzz -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/fribidi -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/x86_64-linux-gnu -I/usr/include/webp -I/usr/include/gtk-3.0/unix-print -I/usr/include/gtk-3.0 -I/usr/include/gio-unix-2.0 -I/usr/include/atk-1.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include -I/usr/include/libsecret-1 -I/usr/include/webkitgtk-4.0 -I/usr/include/libsoup-2.4 -I/usr/include/libxml2  -fvisibility=hidden -fvisibility-inlines-hidden -fPIC -DPIC   main.cpp
+	g++ -o main  main.o    -L$(wxwidgets_path)/_build/lib -Wl,-rpath,$(wxwidgets_path)/_build/lib -pthread  -lwx_gtk3u_core-3.3  -lwx_baseu-3.3          -lgtk-3 -lgdk-3 -lz -lpangocairo-1.0 -lpango-1.0 -lharfbuzz -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lX11 -lgthread-2.0 -pthread -lglib-2.0 -lXxf86vm -lSM -lxkbcommon -lgtk-3 -lgdk-3 -lz -lpangocairo-1.0 -lpango-1.0 -lharfbuzz -latk-1.0 -lcairo-gobject -lcairo -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lnotify -lgdk_pixbuf-2.0 -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lXtst -lpangoft2-1.0 -lpango-1.0 -lgobject-2.0 -lglib-2.0 -lharfbuzz -lfontconfig -lfreetype -lpng -lz -ljpeg -ltiff -ljbig -lwebp -lwebpdemux    -Wl,--version-script,$(wxwidgets_path)/_build/version-script -Wl,--undefined-version -lpcre2-32   -lz -lgio-2.0 -lgobject-2.0 -lglib-2.0 -lcurl -lm
+-->
+
+<p>It’s much easier to use the <code class="language-plaintext highlighter-rouge">wx-config</code> tool:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>all:
+	g++ -std=c++11 -Wall -o main main.cpp `./wxWidgets-3.3.1/_build/wx-config \
+	--debug=yes --libs std,aui,stc --unicode=yes --cxxflags --libs`
+</code></pre></div></div>
+
+<p>We can now run our sample code the same</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make
+./main
+</code></pre></div></div>
+
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-152300_249x148_scrot.png" width="35%" />
+
+<h3 id="procedural-style">Procedural Style</h3>
+
+<p>As mentioned above, I’ll keep this procedural. <!--won't even start convoluting my code with object-orientation.--></p>
+
+<p>However there is a wxWidgets macro used that expects a class name to be given that runs some of the initialisation, e.g. <code class="language-plaintext highlighter-rouge">gdk_init()</code>.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">IMPLEMENT_APP</span><span class="p">(</span><span class="n">MyApp</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Luckily there are ways to initialize wxWidgets without that macro. This code is functionally identical to the object-oriented version. 7 lines instead of 17 to spawn the window.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;wx/wx.h&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">wxApp</span><span class="o">::</span><span class="n">SetInstance</span><span class="p">(</span><span class="k">new</span> <span class="n">wxApp</span><span class="p">());</span>
+  <span class="n">wxEntryStart</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+  <span class="n">wxTheApp</span><span class="o">-&gt;</span><span class="n">CallOnInit</span><span class="p">();</span>
+
+  <span class="n">wxFrame</span> <span class="o">*</span> <span class="n">frame</span> <span class="o">=</span> <span class="k">new</span> <span class="n">wxFrame</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">wxID_ANY</span><span class="p">,</span> <span class="s">"Simple"</span><span class="p">,</span> <span class="n">wxDefaultPosition</span><span class="p">,</span> <span class="n">wxSize</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">150</span><span class="p">));</span>
+  <span class="n">frame</span><span class="o">-&gt;</span><span class="n">Show</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+
+  <span class="n">wxTheApp</span><span class="o">-&gt;</span><span class="n">OnRun</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="webkit">WebKit</h3>
+
+<p>First we add the webkit and html libraries for wxWidgets.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>all:
+	g++ -std=c++11 -Wall -o main main.cpp `./wxWidgets-3.3.1/_build/wx-config \
+	--debug=yes --libs std,aui,stc,webview,html --unicode=yes --cxxflags --libs`
+</code></pre></div></div>
+
+<p>and change the code to this:</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;wx/wx.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;wx/webview.h&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">wxApp</span><span class="o">::</span><span class="n">SetInstance</span><span class="p">(</span><span class="k">new</span> <span class="n">wxApp</span><span class="p">());</span>
+  <span class="n">wxEntryStart</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+  <span class="n">wxTheApp</span><span class="o">-&gt;</span><span class="n">CallOnInit</span><span class="p">();</span>
+
+  <span class="n">wxFrame</span> <span class="o">*</span> <span class="n">frame</span> <span class="o">=</span> <span class="k">new</span> <span class="n">wxFrame</span><span class="p">(</span><span class="nb">NULL</span><span class="p">,</span> <span class="n">wxID_ANY</span><span class="p">,</span> <span class="s">"Simple"</span><span class="p">,</span> <span class="n">wxDefaultPosition</span><span class="p">,</span> <span class="n">wxSize</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">1000</span><span class="p">));</span>
+  <span class="n">frame</span><span class="o">-&gt;</span><span class="n">Show</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+
+  <span class="n">wxPanel</span><span class="o">*</span> <span class="n">panel</span> <span class="o">=</span> <span class="k">new</span> <span class="n">wxPanel</span><span class="p">(</span><span class="n">frame</span><span class="p">);</span>
+  <span class="n">wxBoxSizer</span><span class="o">*</span> <span class="n">sizer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">wxBoxSizer</span><span class="p">(</span><span class="n">wxVERTICAL</span><span class="p">);</span>
+
+  <span class="n">wxWebView</span> <span class="o">*</span> <span class="n">webView</span> <span class="o">=</span> <span class="n">wxWebView</span><span class="o">::</span><span class="n">New</span><span class="p">(</span><span class="n">panel</span><span class="p">,</span> <span class="n">wxID_ANY</span><span class="p">,</span> <span class="s">"https://www.google.com"</span><span class="p">);</span>
+  <span class="n">sizer</span><span class="o">-&gt;</span><span class="n">Add</span><span class="p">(</span><span class="n">webView</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">wxEXPAND</span> <span class="o">|</span> <span class="n">wxALL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+  <span class="n">panel</span><span class="o">-&gt;</span><span class="n">SetSizer</span><span class="p">(</span><span class="n">sizer</span><span class="p">);</span>
+
+  <span class="n">wxTheApp</span><span class="o">-&gt;</span><span class="n">OnRun</span><span class="p">();</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>For wxWebView to run on NVidia drivers we need to add an environment variable [4]:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>make <span class="o">&amp;&amp;</span> <span class="nv">WEBKIT_DISABLE_DMABUF_RENDERER</span><span class="o">=</span>1 ./main
+</code></pre></div></div>
+
+<p>and with that WebKit runs, can open a URL and displays one of the cookie popups.</p>
+
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-162027_797x1003_scrot.png" width="35%" />
+
+<h3 id="injecting-javascript">Injecting JavaScript</h3>
+
+<p>In order to click on cookie banner accept buttons, fill out HTML forms and click on submit we need to inject JavaScript code.</p>
+
+<p>This is easy to achieve using the <code class="language-plaintext highlighter-rouge">RunScript</code> function of <code class="language-plaintext highlighter-rouge">wxWebView</code>.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">webView</span><span class="o">-&gt;</span><span class="n">RunScript</span><span class="p">(</span><span class="s">"javascript:(function() { alert('hi');})()"</span><span class="p">);</span>
+</code></pre></div></div>
+
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-163544_797x998_scrot.png" width="35%" />
+
+<h3 id="getting-page-source">Getting Page Source</h3>
+
+<p>We can get the page html source with</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;iostream&gt;</span><span class="cp">
+</span><span class="p">(..)</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">webView</span><span class="o">-&gt;</span><span class="n">GetPageSource</span><span class="p">().</span><span class="n">utf8_str</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>The problem we encounter now is that the page may not have been loaded yet.</p>
+
+<h3 id="threads-and-blocking-calls">Threads and Blocking Calls</h3>
+
+<p>So we need to delay getting the page source. This requires some thought, because the current thread is busy rendering the web page.</p>
+
+<h4 id="loops">Loops</h4>
+
+<p>We can’t just add a <code class="language-plaintext highlighter-rouge">while(true)</code> loop as that would block wxWebView from loading the page.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"[ ] source: "</span> <span class="o">&lt;&lt;</span> <span class="n">webView</span><span class="o">-&gt;</span><span class="n">GetPageSource</span><span class="p">().</span><span class="n">utf8_str</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">seconds</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h4 id="c-timer">C++ Timer</h4>
+
+<p>We might consider making the webView pointer global and spawning a thread as a simple timer.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="kr">thread</span> <span class="nf">timeoutThread</span><span class="p">([</span><span class="o">&amp;</span><span class="p">]()</span> <span class="p">{</span>
+  <span class="k">while</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+    	<span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">milliseconds</span><span class="p">(</span><span class="mi">1500</span><span class="p">));</span>
+    	<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"."</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+    	<span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">webView</span><span class="o">-&gt;</span><span class="n">GetPageSource</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">});</span>  
+</code></pre></div></div>
+
+<p>This however locks the thread after the first call to <code class="language-plaintext highlighter-rouge">GetPageSource</code>, likely because we are calling a wxWidget widget asynchronously bypassing the event system and run into a lock within the framework.</p>
+
+<h4 id="wxbutton">wxButton</h4>
+
+<p>As a quick test we can try wiring a Button:</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">OnButton</span><span class="p">(</span><span class="n">wxCommandEvent</span><span class="o">&amp;</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"button"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>  
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">webView</span><span class="o">-&gt;</span><span class="n">GetPageSource</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">(...)</span>
+  <span class="n">wxButton</span> <span class="o">*</span> <span class="n">button</span> <span class="o">=</span> <span class="k">new</span> <span class="n">wxButton</span><span class="p">(</span><span class="n">panel</span><span class="p">,</span> <span class="n">wxID_ANY</span><span class="p">,</span> <span class="s">"Get Source"</span><span class="p">);</span>
+  <span class="n">sizer</span><span class="o">-&gt;</span><span class="n">Add</span><span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">wxALL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+  <span class="n">button</span><span class="o">-&gt;</span><span class="n">Bind</span><span class="p">(</span><span class="n">wxEVT_BUTTON</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">OnButton</span><span class="p">);</span>
+  <span class="p">(...)</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>That works great (see html source in the console in the background). But we’d have to manually click a button each for each iteration.</p>
+
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-07-100846_844x611_scrot.png" width="35%" />
+
+<h4 id="wxtimer">wxTimer</h4>
+
+<p>The solution for non-blocking retrieval of the page source with a timer is to use the timer built into wxWidgets. After figuring out the calling sequence and syntax I ended up with this:</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">wxWebView</span> <span class="o">*</span> <span class="n">webView</span><span class="p">;</span>
+
+<span class="kt">void</span> <span class="nf">OnTimer</span><span class="p">(</span><span class="n">wxTimerEvent</span><span class="o">&amp;</span> <span class="n">event</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">webView</span><span class="o">-&gt;</span><span class="n">GetPageSource</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+  <span class="p">(...)</span>
+  <span class="k">const</span> <span class="kt">int</span> <span class="n">TIMER_INTERVAL</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
+  <span class="n">wxTimer</span> <span class="o">*</span> <span class="n">timer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">wxTimer</span><span class="p">(</span><span class="n">panel</span><span class="p">,</span> <span class="n">wxID_ANY</span><span class="p">);</span>
+  <span class="n">panel</span><span class="o">-&gt;</span><span class="n">Bind</span><span class="p">(</span><span class="n">wxEVT_TIMER</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">OnTimer</span><span class="p">);</span>
+  <span class="n">timer</span><span class="o">-&gt;</span><span class="n">Start</span><span class="p">(</span><span class="n">TIMER_INTERVAL</span><span class="p">,</span> <span class="n">wxTIMER_CONTINUOUS</span><span class="p">);</span>
+  <span class="p">(...)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>and that works as expected. Every 500ms the page source is retrieved and dumped to the console.</p>
+
+<p>For lack of an easy way to get user data through the event I went with a global pointer to the <code class="language-plaintext highlighter-rouge">wxWebView</code> instance.</p>
+
+<h3 id="automation">Automation</h3>
+
+<p>From here the rest is a matter of monitoring the incoming page source for the presence of tokens and injecting JavaScript accordingly.</p>
+
+<h3 id="converting-wxstring-to-std-string">Converting wxString to std string</h3>
+
+<p>In order to use my <code class="language-plaintext highlighter-rouge">stringCompare</code>, <code class="language-plaintext highlighter-rouge">stringReplace</code>, <code class="language-plaintext highlighter-rouge">stringContains</code> functions that all operate on std::string we need to convert from <code class="language-plaintext highlighter-rouge">wxString</code> to <code class="language-plaintext highlighter-rouge">std::string</code>:</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">wxString</span> <span class="n">html_wx</span> <span class="o">=</span> <span class="n">m_webView</span><span class="o">-&gt;</span><span class="n">GetPageSource</span><span class="p">();</span>
+<span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">c</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="k">const</span> <span class="kt">char</span><span class="o">*&gt;</span><span class="p">(</span><span class="n">html_wx</span><span class="p">.</span><span class="n">ToUTF8</span><span class="p">());</span>
+<span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="nf">s</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+</code></pre></div></div>
+
+<h3 id="accepting-the-cookie-banner">Accepting the Cookie Banner</h3>
+
+<p>In order to get rid of the cookie banner we need to automatically click the “accept” button.</p>
+
+<p>We can have a look at the “I Still Don’t Care About Cookies” [6] browser extension and inject similar JavaScript code.</p>
+
+<p>The following code works perfectly to auto-click on “accept”.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">if</span><span class="p">(</span><span class="n">stringContains</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="s">"&gt;Alle akzeptieren&lt;/div&gt;"</span><span class="p">))</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"[!] Cookie Accept Button Found"</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+
+  <span class="c1">// ---</span>
+  <span class="k">const</span> <span class="kt">char</span> <span class="o">*</span> <span class="n">javascript</span> <span class="o">=</span> <span class="s">R""""(
+
+function _sl(selector, container) {
+  return (container || document).querySelector(selector);
+}
+
+const container = _sl('div[aria-modal="true"][role="dialog"]');
+
+_sl("button + button", container).click();
+
+  )""""</span><span class="p">;</span>
+  <span class="c1">// ---</span>
+  
+  <span class="n">wxString</span> <span class="n">javascript_wx</span><span class="p">(</span><span class="n">javascript</span><span class="p">);</span>
+  <span class="n">m_webView</span><span class="o">-&gt;</span><span class="n">RunScript</span><span class="p">(</span><span class="n">javascript_wx</span><span class="p">);</span>
+
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>With wxWdigets + wxWebView in C++ we can build a simple JavaScript capable web scrapper that runs fast and efficiently. JavaScript code can be injected and we could easily run advanced image recognition on screenshots of the wxWebView widget and trigger mouse and keyboard events. That is really all that is needed in most cases in order to efficiently scrape data from the web from C++, in a cross-platform way, with minimal amount of code.</p>
+
+<hr />
+
+<pre>
+1] https://zetcode.com/gui/wxwidgets/firstprograms/
+2] https://stackoverflow.com/questions/22406511/how-compiling-wxwidgets-app-staticaly
+3] https://stackoverflow.com/questions/208373/wxwidgets-how-to-initialize-wxapp-without-using-macros-and-without-entering-the
+4] https://github.com/tranxuanthang/lrcget/issues/54
+5] https://docs.wxwidgets.org/latest/classwx_string.html
+6] https://github.com/OhMyGuus/I-Still-Dont-Care-About-Cookies/blob/master/src/data/js/8_googleHandler.js
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Web Scraper written in C++"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
