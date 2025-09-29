@@ -133,7 +133,7 @@ We can run these assembly commands straight from our C-Code as inline assembly:<
   <span class="k">return</span> <span class="n">rv</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="n">outportb</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">_port</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">_data</span><span class="p">)</span> <span class="p">{</span>
+<span class="k">static</span> <span class="kr">inline</span> <span class="kt">void</span> <span class="nf">outportb</span> <span class="p">(</span><span class="kt">unsigned</span> <span class="kt">short</span> <span class="n">_port</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">char</span> <span class="n">_data</span><span class="p">)</span> <span class="p">{</span>
   <span class="n">__asm__</span> <span class="n">__volatile__</span> <span class="p">(</span><span class="s">"outb %1, %0"</span> <span class="o">:</span> <span class="o">:</span> <span class="s">"dN"</span> <span class="p">(</span><span class="n">_port</span><span class="p">),</span> <span class="s">"a"</span> <span class="p">(</span><span class="n">_data</span><span class="p">));</span>
 <span class="p">}</span></code></pre></figure>
 
@@ -188,18 +188,18 @@ This code is taken from the osdev bare bones tutorial [1].</p>
       <span class="c1">// scancode is an e0 code</span>
       <span class="n">e0_code</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
       <span class="k">return</span> <span class="p">(</span><span class="mh">0xe000</span> <span class="o">|</span> <span class="n">scancode</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">e1_code</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">e1_code</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
       <span class="c1">// scancode is first byte of e1 code</span>
       <span class="n">e1_prev</span> <span class="o">=</span> <span class="n">scancode</span><span class="p">;</span>
       <span class="n">e1_code</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span>  <span class="k">if</span> <span class="p">(</span><span class="n">e1_code</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span>  <span class="nf">if</span> <span class="p">(</span><span class="n">e1_code</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
       <span class="c1">// scancode is second byte of e1 code (first is in e1_prev)</span>
       <span class="n">e1_code</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
       <span class="k">return</span> <span class="p">(</span><span class="mh">0xe10000</span> <span class="o">|</span> <span class="n">e1_prev</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span> <span class="o">|</span> <span class="n">scancode</span><span class="p">);</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scancode</span> <span class="o">==</span> <span class="mh">0xe0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">scancode</span> <span class="o">==</span> <span class="mh">0xe0</span><span class="p">)</span> <span class="p">{</span>
       <span class="n">e0_code</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
       <span class="n">scancode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
-    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="n">scancode</span> <span class="o">==</span> <span class="mh">0xe1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span> <span class="p">(</span><span class="n">scancode</span> <span class="o">==</span> <span class="mh">0xe1</span><span class="p">)</span> <span class="p">{</span>
       <span class="n">e1_code</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
       <span class="n">scancode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
     <span class="p">}</span>
@@ -227,7 +227,7 @@ This code is taken from the osdev bare bones tutorial [1].</p>
   <span class="n">keyboardActivePolling_sendCommand</span><span class="p">(</span><span class="mh">0xEE</span><span class="p">);</span>
 <span class="p">}</span>
 
-<span class="kt">void</span> <span class="n">keyboardActivePolling_loop</span><span class="p">()</span> <span class="p">{</span>
+<span class="kt">void</span> <span class="nf">keyboardActivePolling_loop</span><span class="p">()</span> <span class="p">{</span>
   <span class="kt">uint8_t</span> <span class="n">scancode</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
   <span class="k">while</span> <span class="p">((</span><span class="n">scancode</span> <span class="o">=</span> <span class="n">keyboardActivePolling_getScancode</span><span class="p">())</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>  <span class="p">{</span> <span class="c1">// loop until we get a keypress</span>
     <span class="n">delay</span><span class="p">();</span>

@@ -299,9 +299,9 @@ The baudrate is 230400 as per documentation is relatively high.</p>
 
 <p>In Python we could receive serial data like so:</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ser</span> <span class="o">=</span> <span class="n">serial</span><span class="p">.</span><span class="n">Serial</span><span class="p">(</span><span class="err">‘</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">ttyUSB0</span><span class="err">’</span> <span class="p">,</span> <span class="mi">230400</span> <span class="p">,</span> <span class="n">stopbits</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">ser</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
-<span class="k">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ser</span> <span class="o">=</span> <span class="n">serial</span><span class="p">.</span><span class="nc">Serial</span><span class="p">(</span><span class="err">‘</span><span class="o">/</span><span class="n">dev</span><span class="o">/</span><span class="n">ttyUSB0</span><span class="err">’</span> <span class="p">,</span> <span class="mi">230400</span> <span class="p">,</span> <span class="n">stopbits</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">ser</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+<span class="nf">print</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>We could then decode the binary with <code class="language-plaintext highlighter-rouge">struct.unpack</code> similar to what I’ve done in the past for decoding the binary format for Command and Conquer Replays (see <a href="/gamemods/2023/11/25/Sa-DecodingCommandAndConquerReplays.html">Decoding Command and Conquer replays</a>.</p>
@@ -401,7 +401,7 @@ The baudrate is 230400 as per documentation is relatively high.</p>
 
 <span class="c"># -- configure ROS apt-get repo</span>
 <span class="k">RUN </span>curl <span class="nt">-sSL</span> https://raw.githubusercontent.com/ros/rosdistro/master/ros.key <span class="nt">-o</span> /usr/share/keyrings/ros-archive-keyring.gpg
-<span class="k">RUN </span><span class="nb">echo</span> <span class="nt">-e</span> <span class="s2">"deb [arch=</span><span class="si">$(</span>dpkg <span class="nt">--print-architecture</span><span class="si">)</span><span class="s2"> </span><span class="se">\
+<span class="k">RUN </span><span class="nb">echo</span> <span class="s2">"deb [arch=</span><span class="si">$(</span>dpkg <span class="nt">--print-architecture</span><span class="si">)</span><span class="s2"> </span><span class="se">\
 </span><span class="s2">signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] </span><span class="se">\
 </span><span class="s2">http://packages.ros.org/ros2/ubuntu </span><span class="si">$(</span><span class="nb">.</span> /etc/os-release <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="nv">$UBUNTU_CODENAME</span><span class="si">)</span><span class="s2"> main"</span> <span class="se">\
 </span>| <span class="nb">tee</span> /etc/apt/sources.list.d/ros2.list <span class="o">&gt;</span> /dev/null
@@ -535,9 +535,10 @@ git checkout v3.0.3
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
 
 <span class="nb">rm</span> <span class="nt">-rf</span> /root/ldlidar_ros2_ws
+<span class="nb">mkdir</span> /root/ldlidar_ros2_ws/
 <span class="nb">cd</span> /root/ldlidar_ros2_ws/
 
-<span class="nb">cp</span> <span class="nt">-R</span> /root/src/ldlidar_stl_ros2-3.0.3 /root/ldlidar_ros2_ws
+<span class="nb">cp</span> <span class="nt">-R</span> /root/src/ldlidar_stl_ros2 /root/ldlidar_ros2_ws
 
 <span class="nb">source</span> /opt/ros/foxy/setup.bash <span class="c"># -- make ROS environment available</span>
 colcon build <span class="c"># -- compile module</span>

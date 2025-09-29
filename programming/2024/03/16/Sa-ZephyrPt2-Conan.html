@@ -229,30 +229,30 @@ west build <span class="nt">-p</span> always <span class="nt">-b</span> esp32_de
 
 <p>In the <strong><em>conanfile.py</em></strong> all we need is to require the sources and SDK. In the following sections you’ll see the recipes for both.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
-<span class="kn">from</span> <span class="nn">conan.tools.files</span> <span class="kn">import</span> <span class="n">chdir</span><span class="p">,</span> <span class="n">copy</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="n">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
+<span class="kn">from</span> <span class="n">conan.tools.files</span> <span class="kn">import</span> <span class="n">chdir</span><span class="p">,</span> <span class="n">copy</span>
 
 <span class="k">class</span> <span class="nc">ZephyrExample</span><span class="p">(</span><span class="n">ConanFile</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s">"zephyr-example"</span>
-    <span class="n">version</span> <span class="o">=</span> <span class="s">"0.0.1"</span>
-    <span class="n">exports</span> <span class="o">=</span> <span class="s">"*"</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">zephyr-example</span><span class="sh">"</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="sh">"</span><span class="s">0.0.1</span><span class="sh">"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="sh">"</span><span class="s">*</span><span class="sh">"</span>
 
-    <span class="k">def</span> <span class="nf">requirements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">requires</span><span class="p">(</span><span class="s">"zephyr-sources/85b503e"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">requires</span><span class="p">(</span><span class="s">"zephyr-sdk/0.16.5-1"</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">requirements</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">requires</span><span class="p">(</span><span class="sh">"</span><span class="s">zephyr-sources/85b503e</span><span class="sh">"</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">requires</span><span class="p">(</span><span class="sh">"</span><span class="s">zephyr-sdk/0.16.5-1</span><span class="sh">"</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"*"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">recipe_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"src"</span><span class="p">)</span>    
-        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'ZEPHYR_SDK_INSTALL_DIR'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">dependencies</span><span class="p">[</span><span class="s">"zephyr-sdk"</span><span class="p">].</span><span class="n">package_folder</span>
-        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="s">'ZEPHYR_BASE'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">dependencies</span><span class="p">[</span><span class="s">"zephyr-sources"</span><span class="p">].</span><span class="n">package_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"zephyr"</span><span class="p">)</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s">"west build -p always -b esp32_devkitc_wroom src/"</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="n">self</span><span class="p">):</span>
+        <span class="nf">copy</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sh">"</span><span class="s">*</span><span class="sh">"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">recipe_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="nc">Path</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span> <span class="o">/</span> <span class="sh">"</span><span class="s">src</span><span class="sh">"</span><span class="p">)</span>    
+        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">'</span><span class="s">ZEPHYR_SDK_INSTALL_DIR</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">dependencies</span><span class="p">[</span><span class="sh">"</span><span class="s">zephyr-sdk</span><span class="sh">"</span><span class="p">].</span><span class="n">package_folder</span>
+        <span class="n">os</span><span class="p">.</span><span class="n">environ</span><span class="p">[</span><span class="sh">'</span><span class="s">ZEPHYR_BASE</span><span class="sh">'</span><span class="p">]</span> <span class="o">=</span> <span class="nf">str</span><span class="p">(</span><span class="nc">Path</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">dependencies</span><span class="p">[</span><span class="sh">"</span><span class="s">zephyr-sources</span><span class="sh">"</span><span class="p">].</span><span class="n">package_folder</span><span class="p">)</span> <span class="o">/</span> <span class="sh">"</span><span class="s">zephyr</span><span class="sh">"</span><span class="p">)</span>
+        <span class="n">self</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">west build -p always -b esp32_devkitc_wroom src/</span><span class="sh">"</span><span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"build/zephyr/zephyr.elf"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">,</span> <span class="n">keep_path</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nf">copy</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sh">"</span><span class="s">build/zephyr/zephyr.elf</span><span class="sh">"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">,</span> <span class="n">keep_path</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
         <span class="k">pass</span>
 </code></pre></div></div>
 
@@ -268,43 +268,43 @@ west build <span class="nt">-p</span> always <span class="nt">-b</span> esp32_de
 
 <p>Unfortunately, as mentioned above, I haven’t found a way to handle (multiple) toolchains without packaging them together with the SDK. For most use-cases the following is sufficient.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
-<span class="kn">from</span> <span class="nn">conan.tools.files</span> <span class="kn">import</span> <span class="n">chdir</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">get</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="n">shutil</span>
+<span class="kn">from</span> <span class="n">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
+<span class="kn">from</span> <span class="n">conan.tools.files</span> <span class="kn">import</span> <span class="n">chdir</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">get</span>
 
 <span class="k">class</span> <span class="nc">ZephyrSdkConan</span><span class="p">(</span><span class="n">ConanFile</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s">"zephyr-sdk"</span>
-    <span class="n">version</span> <span class="o">=</span> <span class="s">"0.16.5-1"</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="s">"https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_linux-x86_64_minimal.tar.xz"</span>
-    <span class="n">sha256</span> <span class="o">=</span> <span class="s">"f23836a1d35800ae7d98073f8f7c79166deeed753b5af927ef778764592d9675"</span>
-    <span class="n">exports</span> <span class="o">=</span> <span class="s">"*"</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">zephyr-sdk</span><span class="sh">"</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="sh">"</span><span class="s">0.16.5-1</span><span class="sh">"</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sh">"</span><span class="s">https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/zephyr-sdk-0.16.5-1_linux-x86_64_minimal.tar.xz</span><span class="sh">"</span>
+    <span class="n">sha256</span> <span class="o">=</span> <span class="sh">"</span><span class="s">f23836a1d35800ae7d98073f8f7c79166deeed753b5af927ef778764592d9675</span><span class="sh">"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="sh">"</span><span class="s">*</span><span class="sh">"</span>
 
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">url</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">sha256</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nf">get</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">url</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">sha256</span><span class="p">)</span>
 
         <span class="c1"># -- remove hosttools archive
-</span>        <span class="n">zephyrHostToolsSh</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"**/zephyr-sdk-*-hosttools-standalone-*.sh"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">os</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">zephyrHostToolsSh</span><span class="p">)</span>
+</span>        <span class="n">zephyrHostToolsSh</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="sh">"</span><span class="s">**/zephyr-sdk-*-hosttools-standalone-*.sh</span><span class="sh">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">os</span><span class="p">.</span><span class="nf">remove</span><span class="p">(</span><span class="n">zephyrHostToolsSh</span><span class="p">)</span>
         
         <span class="c1"># -- remove setup script
-</span>        <span class="n">setupSh</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"**/setup.sh"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">os</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">setupSh</span><span class="p">)</span>
+</span>        <span class="n">setupSh</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="sh">"</span><span class="s">**/setup.sh</span><span class="sh">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">os</span><span class="p">.</span><span class="nf">remove</span><span class="p">(</span><span class="n">setupSh</span><span class="p">)</span>
 
         <span class="c1"># -- add toolchain
-</span>        <span class="n">zephyr_sdk_directory</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"zephyr-sdk-*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">toolchain_url</span> <span class="o">=</span> <span class="s">"https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/toolchain_linux-x86_64_xtensa-espressif_esp32_zephyr-elf.tar.xz"</span>
-        <span class="n">toolchain_sha256</span> <span class="o">=</span> <span class="s">"c28062aef858681ce06899a1ff393170deed4554de94a9ed21b8719a7656d14e"</span>
-        <span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">toolchain_url</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="n">toolchain_sha256</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="n">zephyr_sdk_directory</span><span class="p">)</span>
+</span>        <span class="n">zephyr_sdk_directory</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="sh">"</span><span class="s">zephyr-sdk-*</span><span class="sh">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">toolchain_url</span> <span class="o">=</span> <span class="sh">"</span><span class="s">https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5-1/toolchain_linux-x86_64_xtensa-espressif_esp32_zephyr-elf.tar.xz</span><span class="sh">"</span>
+        <span class="n">toolchain_sha256</span> <span class="o">=</span> <span class="sh">"</span><span class="s">c28062aef858681ce06899a1ff393170deed4554de94a9ed21b8719a7656d14e</span><span class="sh">"</span>
+        <span class="nf">get</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">toolchain_url</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="n">toolchain_sha256</span><span class="p">,</span> <span class="n">destination</span><span class="o">=</span><span class="n">zephyr_sdk_directory</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">zephyr_sdk_directory</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"zephyr-sdk-*"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"*"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span> <span class="o">/</span> <span class="n">zephyr_sdk_directory</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">zephyr_sdk_directory</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="sh">"</span><span class="s">zephyr-sdk-*</span><span class="sh">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nf">copy</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sh">"</span><span class="s">*</span><span class="sh">"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="nc">Path</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span> <span class="o">/</span> <span class="n">zephyr_sdk_directory</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">env_info</span><span class="p">.</span><span class="n">ZEPHYR_SDK_INSTALL_DIR</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span>
+    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">env_info</span><span class="p">.</span><span class="n">ZEPHYR_SDK_INSTALL_DIR</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">package_folder</span>
 </code></pre></div></div>
 
 <h3 id="zephyr-sources">Zephyr-Sources</h3>
@@ -315,41 +315,41 @@ west build <span class="nt">-p</span> always <span class="nt">-b</span> esp32_de
 
 <p>That way you can use the resulting package in future without having to checkout everything again, you can easily update at a later time and control what gets cloned and from where - in case we need to mirror the repos from the west.yml to our own infrastructure.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
-<span class="kn">from</span> <span class="nn">conan.tools.files</span> <span class="kn">import</span> <span class="n">chdir</span><span class="p">,</span><span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">conan.tools.scm</span> <span class="kn">import</span> <span class="n">Git</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="n">shutil</span>
+<span class="kn">from</span> <span class="n">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
+<span class="kn">from</span> <span class="n">conan.tools.files</span> <span class="kn">import</span> <span class="n">chdir</span><span class="p">,</span><span class="n">copy</span>
+<span class="kn">from</span> <span class="n">conan.tools.scm</span> <span class="kn">import</span> <span class="n">Git</span>
 
 <span class="k">class</span> <span class="nc">ZephyrSourcesConan</span><span class="p">(</span><span class="n">ConanFile</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s">"zephyr-sources"</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="s">"https://github.com/zephyrproject-rtos/zephyr.git"</span>
-    <span class="n">commit</span> <span class="o">=</span> <span class="s">"85b503e23b17aef4e4a6d172ec99eac17a1db25e"</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">zephyr-sources</span><span class="sh">"</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sh">"</span><span class="s">https://github.com/zephyrproject-rtos/zephyr.git</span><span class="sh">"</span>
+    <span class="n">commit</span> <span class="o">=</span> <span class="sh">"</span><span class="s">85b503e23b17aef4e4a6d172ec99eac17a1db25e</span><span class="sh">"</span>
     <span class="n">version</span> <span class="o">=</span> <span class="n">commit</span><span class="p">[:</span><span class="mi">7</span><span class="p">]</span>
-    <span class="n">exports</span> <span class="o">=</span> <span class="s">"*.yml"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="sh">"</span><span class="s">*.yml</span><span class="sh">"</span>
     
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>    
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>    
         <span class="c1"># -- run west init with a specific version
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s">"west init -m </span><span class="si">{</span><span class="bp">self</span><span class="p">.</span><span class="n">url</span><span class="si">}</span><span class="s"> --mr main ."</span><span class="p">)</span> <span class="c1"># pip install west
+</span>        <span class="n">self</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">west init -m </span><span class="si">{</span><span class="n">self</span><span class="p">.</span><span class="n">url</span><span class="si">}</span><span class="s"> --mr main .</span><span class="sh">"</span><span class="p">)</span> <span class="c1"># pip install west
 </span>
         <span class="c1"># -- switch to fixed commit
-</span>        <span class="n">git</span> <span class="o">=</span> <span class="n">Git</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">"zephyr"</span><span class="p">):</span>
-          <span class="n">git</span><span class="p">.</span><span class="n">checkout</span><span class="p">(</span><span class="n">commit</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">commit</span><span class="p">)</span>
+</span>        <span class="n">git</span> <span class="o">=</span> <span class="nc">Git</span><span class="p">(</span><span class="n">self</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nf">chdir</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="sh">"</span><span class="s">zephyr</span><span class="sh">"</span><span class="p">):</span>
+          <span class="n">git</span><span class="p">.</span><span class="nf">checkout</span><span class="p">(</span><span class="n">commit</span> <span class="o">=</span> <span class="n">self</span><span class="p">.</span><span class="n">commit</span><span class="p">)</span>
 
         <span class="c1"># -- overwrite west.yml
-</span>        <span class="n">west_manifest_src</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">recipe_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"west.yml"</span>
-        <span class="n">west_manifest_dst</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"zephyr"</span> <span class="o">/</span> <span class="s">"west.yml"</span>
-        <span class="n">shutil</span><span class="p">.</span><span class="n">copy</span><span class="p">(</span><span class="n">west_manifest_src</span><span class="p">,</span> <span class="n">west_manifest_dst</span><span class="p">)</span>
+</span>        <span class="n">west_manifest_src</span> <span class="o">=</span> <span class="nc">Path</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">recipe_folder</span><span class="p">)</span> <span class="o">/</span> <span class="sh">"</span><span class="s">west.yml</span><span class="sh">"</span>
+        <span class="n">west_manifest_dst</span> <span class="o">=</span> <span class="nc">Path</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span> <span class="o">/</span> <span class="sh">"</span><span class="s">zephyr</span><span class="sh">"</span> <span class="o">/</span> <span class="sh">"</span><span class="s">west.yml</span><span class="sh">"</span>
+        <span class="n">shutil</span><span class="p">.</span><span class="nf">copy</span><span class="p">(</span><span class="n">west_manifest_src</span><span class="p">,</span> <span class="n">west_manifest_dst</span><span class="p">)</span>
 
         <span class="c1"># -- run west update to download repos configured in west.yml
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="s">"west update"</span><span class="p">)</span>
+</span>        <span class="n">self</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="sh">"</span><span class="s">west update</span><span class="sh">"</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"*"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nf">copy</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sh">"</span><span class="s">*</span><span class="sh">"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="bp">self</span><span class="p">.</span><span class="n">env_info</span><span class="p">.</span><span class="n">ZEPHYR_BASE</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span> <span class="o">/</span> <span class="s">"zephyr"</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">self</span><span class="p">.</span><span class="n">env_info</span><span class="p">.</span><span class="n">ZEPHYR_BASE</span> <span class="o">=</span> <span class="nf">str</span><span class="p">(</span><span class="nc">Path</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span> <span class="o">/</span> <span class="sh">"</span><span class="s">zephyr</span><span class="sh">"</span><span class="p">)</span>
 </code></pre></div></div>
 
 <h3 id="optional-hosttools">(Optional) Hosttools</h3>
@@ -362,54 +362,54 @@ west build <span class="nt">-p</span> always <span class="nt">-b</span> esp32_de
 
 <p>After extracting the 7zip archive from the Shell-Script, extracting it which automatically extracts the *.tar inside of that (at least on Linux - seems to behave differently on Windows), we just package the files and set all **/bin-folders in the PATH-variable.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">glob</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">import</span> <span class="nn">patoolib</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">from</span> <span class="nn">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
-<span class="kn">from</span> <span class="nn">conan.tools.files</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">get</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">glob</span>
+<span class="kn">import</span> <span class="n">os</span>
+<span class="kn">from</span> <span class="n">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="n">patoolib</span>
+<span class="kn">import</span> <span class="n">shutil</span>
+<span class="kn">from</span> <span class="n">conan</span> <span class="kn">import</span> <span class="n">ConanFile</span>
+<span class="kn">from</span> <span class="n">conan.tools.files</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">get</span>
 
 <span class="k">class</span> <span class="nc">ZephyrHosttools</span><span class="p">(</span><span class="n">ConanFile</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="s">"zephyr-hosttools"</span>
-    <span class="n">version</span> <span class="o">=</span> <span class="s">"0.16.5"</span>
-    <span class="n">url</span> <span class="o">=</span> <span class="s">"https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5/hosttools_linux-x86_64.tar.xz"</span>
-    <span class="n">sha256</span> <span class="o">=</span> <span class="s">"b9a1effc8c0bb089ac3b06e0981a04365cb3328042d766ec2715b4d7bdd4b9d0"</span>
-    <span class="n">exports</span> <span class="o">=</span> <span class="s">"*"</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">zephyr-hosttools</span><span class="sh">"</span>
+    <span class="n">version</span> <span class="o">=</span> <span class="sh">"</span><span class="s">0.16.5</span><span class="sh">"</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="sh">"</span><span class="s">https://github.com/zephyrproject-rtos/sdk-ng/releases/download/v0.16.5/hosttools_linux-x86_64.tar.xz</span><span class="sh">"</span>
+    <span class="n">sha256</span> <span class="o">=</span> <span class="sh">"</span><span class="s">b9a1effc8c0bb089ac3b06e0981a04365cb3328042d766ec2715b4d7bdd4b9d0</span><span class="sh">"</span>
+    <span class="n">exports</span> <span class="o">=</span> <span class="sh">"</span><span class="s">*</span><span class="sh">"</span>
 
-    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">url</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">sha256</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nf">get</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">url</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">url</span><span class="p">,</span> <span class="n">sha256</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">sha256</span><span class="p">)</span>
 
         <span class="c1"># -- extract hosttools 7z from sh-Archive
-</span>        <span class="n">archiveSh</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"zephyr-sdk-*-hosttools-standalone-*.sh"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archiveSh</span><span class="p">,</span> <span class="s">'rb'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">blob</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="n">read</span><span class="p">()</span>
-        <span class="n">marker</span> <span class="o">=</span> <span class="sa">b</span><span class="s">'MARKER:</span><span class="se">\n</span><span class="s">'</span>
-        <span class="n">markerPosition</span> <span class="o">=</span> <span class="n">blob</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+</span>        <span class="n">archiveSh</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="sh">"</span><span class="s">zephyr-sdk-*-hosttools-standalone-*.sh</span><span class="sh">"</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="n">archiveSh</span><span class="p">,</span> <span class="sh">'</span><span class="s">rb</span><span class="sh">'</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">blob</span> <span class="o">=</span> <span class="n">f</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+        <span class="n">marker</span> <span class="o">=</span> <span class="sa">b</span><span class="sh">'</span><span class="s">MARKER:</span><span class="se">\n</span><span class="sh">'</span>
+        <span class="n">markerPosition</span> <span class="o">=</span> <span class="n">blob</span><span class="p">.</span><span class="nf">find</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span> <span class="o">+</span> <span class="nf">len</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
         <span class="n">blob</span> <span class="o">=</span> <span class="n">blob</span><span class="p">[</span><span class="n">markerPosition</span><span class="p">:]</span>
-        <span class="n">archive7z</span> <span class="o">=</span> <span class="n">archiveSh</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">".sh"</span><span class="p">,</span> <span class="s">".7z"</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">archive7z</span><span class="p">,</span> <span class="s">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">f</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span>
+        <span class="n">archive7z</span> <span class="o">=</span> <span class="n">archiveSh</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sh">"</span><span class="s">.sh</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">.7z</span><span class="sh">"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="n">archive7z</span><span class="p">,</span> <span class="sh">"</span><span class="s">wb</span><span class="sh">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="n">blob</span><span class="p">)</span>
 
         <span class="c1"># -- extract 7z and tar inside
-</span>        <span class="bp">self</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="sa">f</span><span class="s">"patool extract </span><span class="si">{</span><span class="n">archive7z</span><span class="si">}</span><span class="s">"</span><span class="p">)</span>
-        <span class="n">archiveTar</span> <span class="o">=</span> <span class="n">archive7z</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="s">'.7z'</span><span class="p">,</span> <span class="s">'.tar'</span><span class="p">)</span>
+</span>        <span class="n">self</span><span class="p">.</span><span class="nf">run</span><span class="p">(</span><span class="sa">f</span><span class="sh">"</span><span class="s">patool extract </span><span class="si">{</span><span class="n">archive7z</span><span class="si">}</span><span class="sh">"</span><span class="p">)</span>
+        <span class="n">archiveTar</span> <span class="o">=</span> <span class="n">archive7z</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sh">'</span><span class="s">.7z</span><span class="sh">'</span><span class="p">,</span> <span class="sh">'</span><span class="s">.tar</span><span class="sh">'</span><span class="p">)</span>
 
         <span class="c1"># -- remove parent directory
-</span>        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">os</span><span class="p">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">archiveTar</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]):</span>
-            <span class="n">shutil</span><span class="p">.</span><span class="n">move</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">archiveTar</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span> <span class="o">/</span> <span class="n">element</span><span class="p">,</span> <span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span>
+</span>        <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">os</span><span class="p">.</span><span class="nf">listdir</span><span class="p">(</span><span class="n">archiveTar</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]):</span>
+            <span class="n">shutil</span><span class="p">.</span><span class="nf">move</span><span class="p">(</span><span class="nc">Path</span><span class="p">(</span><span class="n">archiveTar</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">])</span> <span class="o">/</span> <span class="n">element</span><span class="p">,</span> <span class="n">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">)</span>
 
         <span class="c1"># -- remove excluded files
-</span>        <span class="n">os</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">archiveSh</span><span class="p">)</span>
-        <span class="n">os</span><span class="p">.</span><span class="n">remove</span><span class="p">(</span><span class="n">archive7z</span><span class="p">)</span>
+</span>        <span class="n">os</span><span class="p">.</span><span class="nf">remove</span><span class="p">(</span><span class="n">archiveSh</span><span class="p">)</span>
+        <span class="n">os</span><span class="p">.</span><span class="nf">remove</span><span class="p">(</span><span class="n">archive7z</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="s">"*"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">package</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="nf">copy</span><span class="p">(</span><span class="n">self</span><span class="p">,</span> <span class="n">pattern</span><span class="o">=</span><span class="sh">"</span><span class="s">*</span><span class="sh">"</span><span class="p">,</span> <span class="n">src</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">build_folder</span><span class="p">,</span> <span class="n">dst</span><span class="o">=</span><span class="n">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">bin_folders</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="n">glob</span><span class="p">(</span><span class="s">"**/bin"</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">package_info</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="n">bin_folders</span> <span class="o">=</span> <span class="n">glob</span><span class="p">.</span><span class="nf">glob</span><span class="p">(</span><span class="sh">"</span><span class="s">**/bin</span><span class="sh">"</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">bin_folder</span> <span class="ow">in</span> <span class="n">bin_folders</span><span class="p">:</span>
-            <span class="bp">self</span><span class="p">.</span><span class="n">env_info</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span> <span class="o">/</span> <span class="n">bin_folder</span><span class="p">))</span>
+            <span class="n">self</span><span class="p">.</span><span class="n">env_info</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="nf">str</span><span class="p">(</span><span class="nc">Path</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">package_folder</span><span class="p">)</span> <span class="o">/</span> <span class="n">bin_folder</span><span class="p">))</span>
 </code></pre></div></div>
 
 <h2 id="building">Building</h2>

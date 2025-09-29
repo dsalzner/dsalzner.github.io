@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>Robot - Pt.4 - Microcontroller Wheel Odometry - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="Last time around we added wheel odometry sensing using a custom optical encoder disk, debouncing circuitry and two PCF8583 I2C realtime clock chips for counting. The mechanics w..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2025/09/25/Do-RobotPt4Odometry2.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Robot - Pt.4 - Microcontroller Wheel Odometry - Dennis Salzner" />
+  <meta property="og:description" content="Last time around we added wheel odometry sensing using a custom optical encoder disk, debouncing circuitry and two PCF8583 I2C realtime clock chips for count..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2025/09/25/Do-RobotPt4Odometry2.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Electronics" />
+  <meta property="article:published_time" content="2025-09-25 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2025-09-25 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2025-09-25 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Last time around we added wheel odometry sensing using a custom optical encoder disk, debouncing circuitry and two PCF8583 I2C realtime clock chips for counting. The mechanics w..." />
+  <meta name="twitter:title" content="Robot - Pt.4 - Microcontroller Wheel Odometry - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Robot - Pt.4 - Microcontroller Wheel Odometry</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Robot - Pt.4 - Microcontroller Wheel Odometry</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/odometry-board-1.jpg" width="45%" />
+
+<p>Last time around we added wheel odometry sensing using a custom optical encoder disk, debouncing circuitry and two PCF8583 I2C realtime clock chips for counting. The mechanics worked well, but the circuit occasionally misscounted and debouncing signals in hardware is tricky. Another approach is to use a microcontroller and debounce in software. This is what I am now moving to for more reliability.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#design-goals" id="markdown-toc-design-goals">Design Goals</a></li>
+  <li><a href="#hardware" id="markdown-toc-hardware">Hardware</a>    <ul>
+      <li><a href="#old-circuit-uses-a-realtime-clock-counter" id="markdown-toc-old-circuit-uses-a-realtime-clock-counter">Old circuit uses a realtime clock counter</a></li>
+      <li><a href="#new-circuit-uses-an-attiny2313-as-a-custom-i2c-slave" id="markdown-toc-new-circuit-uses-an-attiny2313-as-a-custom-i2c-slave">New circuit uses an Attiny2313 as a custom I<sup>2</sup>C slave</a></li>
+      <li><a href="#wiring" id="markdown-toc-wiring">Wiring</a></li>
+      <li><a href="#tests" id="markdown-toc-tests">Tests</a>        <ul>
+          <li><a href="#programmable" id="markdown-toc-programmable">Programmable</a></li>
+          <li><a href="#wheel-ticks" id="markdown-toc-wheel-ticks">Wheel Ticks</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#software" id="markdown-toc-software">Software</a>    <ul>
+      <li><a href="#script-to-upload-code" id="markdown-toc-script-to-upload-code">Script to upload code</a>        <ul>
+          <li><a href="#some-additional-helpful-commands" id="markdown-toc-some-additional-helpful-commands">Some additional helpful commands</a>            <ul>
+              <li><a href="#finding-the-correct-part-specifiers" id="markdown-toc-finding-the-correct-part-specifiers">Finding the correct part specifiers</a></li>
+              <li><a href="#reading-and-writing-fuses" id="markdown-toc-reading-and-writing-fuses">Reading and writing fuses</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#tests-1" id="markdown-toc-tests-1">Tests</a>        <ul>
+          <li><a href="#led-blink-test" id="markdown-toc-led-blink-test">LED Blink Test</a></li>
+          <li><a href="#i2c-slave-test" id="markdown-toc-i2c-slave-test">I<sup>2</sup>C Slave Test</a></li>
+        </ul>
+      </li>
+      <li><a href="#complete-firmware" id="markdown-toc-complete-firmware">Complete Firmware</a>        <ul>
+          <li><a href="#main-processor" id="markdown-toc-main-processor">Main Processor</a></li>
+          <li><a href="#odometry-controller" id="markdown-toc-odometry-controller">Odometry Controller</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>Almost exactly one year ago I had made some progress on the wheel odometry sensors of the robot. At the time I wanted to use a more or less discrete circuitry using mostly off-the-shelf components instead of programming an additional microcontroller. It seemed overkill for the application.</p>
+
+<p>While in principle the combination of a LM393 rotary counter board with a PCF8583 I2C realtime clock chip works, it would often over-count. I added an resistor-capacitor (RC)-circuit to debounce, but calibrating that, even with the oscilloscope turned out to be tedious.</p>
+
+<p>A year has passed since and I suddenly felt motivated to solder an attiny2313 circuit to a perfboard. With an ISP pin header we can program the chip in-circuit with the AVR AVRISP mkII programmer. Just like in the early days before Arduino became popular.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="design-goals">Design Goals</h2>
+
+<p>To recap I imposed some design goals for this robot in order to ensure</p>
+
+<ul>
+  <li><strong>simplicity</strong></li>
+  <li><strong>reliability</strong></li>
+  <li>and <strong>easy maintainance</strong></li>
+</ul>
+
+<p>For this I aim for</p>
+
+<ul>
+  <li><strong>modularity</strong> - every funcational component can be removed to separately test it. Even the core microcontroller can be swapped for another. This is achieveed by having all sensor and actuator controls as adressable I<sup>2</sup>C slaves on a main system bus.</li>
+  <li><strong>low complexity of the robot</strong> - a web-interface on the robot provides only raw sensor data as JSON, the ability to control the robot and a video stream. All complex algorithms are handled on a computer that connects to the robot only via WiFi. This way data can easily be recorded and replayed.</li>
+  <li><strong>simplistic programming</strong> - in the program of the main processor I’ve decided to keep the entire state in a single key-value store. The store can be read from and written to via JSON. The built-in webserver allows the JSON to be read via simple HTTP-GET and written to via HTTP-PUT requests.</li>
+</ul>
+
+<p>Even though the circuit for the wheel odometry counter needs to be a little more complex due to the use of an auxilary microcontroller, we will stay true to these design goals. The auxilary microcontroller will communicate with the main microcontroller as an I<sup>2</sup>C slave.</p>
+
+<h2 id="hardware">Hardware</h2>
+
+<p>Let’s first have a look at the modifactions I made to the hardware.</p>
+
+<h3 id="old-circuit-uses-a-realtime-clock-counter">Old circuit uses a realtime clock counter</h3>
+
+<p>The old circuit we will be replacing using the debouncing circuit, LM393 rotary counter board and PCF8583 I2C realtime clock.</p>
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/old.jpg" width="50%" />
+
+<h3 id="new-circuit-uses-an-attiny2313-as-a-custom-i2c-slave">New circuit uses an Attiny2313 as a custom I<sup>2</sup>C slave</h3>
+
+<p>The new board sits in the back of the robot. I’ve removed the two old boards from my previous blog post.</p>
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/odometry-board-1.jpg" width="35%" />
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/odometry-board-2.jpg" width="50%" />
+
+<p>The circuit became a little more complex due to the use of the microcontroller.</p>
+
+<p>We need</p>
+
+<ul>
+  <li>the microcontroller itself</li>
+  <li>power to the microcontroller</li>
+  <li>the 6-pin ISP programming header</li>
+  <li>a test LED for debugging the clock configuration</li>
+  <li>connectors to the wheel assembly light barriers with their respective resistors</li>
+</ul>
+
+<p>But still very manageable.</p>
+
+<h3 id="wiring">Wiring</h3>
+
+<p>After almost a year I had of course completly forgotton the pin configurations of the old board.</p>
+
+<p>What I usually do is create a drawing in kolour paint and just screenshot all the information I need to have at a glance during soldering.</p>
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/pin-configurations.png" width="60%" />
+
+<h3 id="tests">Tests</h3>
+
+<p>On the hardware side we can run test three things immediatly:</p>
+
+<ul>
+  <li>chip programmable</li>
+  <li>led blinking</li>
+  <li>signal from the wheel encoder</li>
+</ul>
+
+<h4 id="programmable">Programmable</h4>
+
+<p>If all is connected correctly, then the AVR mkII programmer will be able to write software to the chip.</p>
+
+<h4 id="wheel-ticks">Wheel Ticks</h4>
+
+<p>Probing the input pin of the two light barriers with the motors running reveals a clean enough signal the microcontroller shouldn’t have much trouble picking up. The signal is similar for both wheels.</p>
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/osci-wheel-ticks.jpg" width="35%" />
+
+<h2 id="software">Software</h2>
+
+<p>The software side was a little annoying:</p>
+
+<ul>
+  <li>the AVR MkII programmer had a broken ribbon cable I had to fix</li>
+  <li>the arduino-cli and -ide have a “feature” to copy all *.ino files in a directory together into one souce file for compilation which caused strange behaviour with code I had purposely set aside.</li>
+  <li>some bad solder spots were causing sporadic issues when programming the chip</li>
+  <li>we need to keep in mind to remove the SDA/SCL lines from the main processor as they are also used during programming</li>
+</ul>
+
+<p>With those issues fixed the rest was relatively straight forward.</p>
+
+<h3 id="script-to-upload-code">Script to upload code</h3>
+
+<p>To conviniently push code to the microcontroller I use a bash script. It installs everything that is required: the arduino-cli and the attiny core. It then compiles and uploads the sketch. All conveniently from command-line in an easily reprocudable manner.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/bash</span>
+<span class="nb">set</span> <span class="nt">-e</span>
+
+<span class="c"># -- enter project directory</span>
+<span class="nb">cd</span> <span class="nv">$HOME</span>/odometry/
+
+<span class="c"># -- get arduino-cli</span>
+wget <span class="nt">-O</span> <span class="nv">$HOME</span>/arduino-cli_1.3.1.tar.gz https://github.com/arduino/arduino-cli/releases/download/v1.3.1/arduino-cli_1.3.1_Linux_64bit.tar.gz
+<span class="nb">tar</span> <span class="nt">-xvf</span> <span class="nb">tar</span> <span class="nt">-xvf</span> arduino-cli_1.3.1.tar.gz
+
+<span class="c"># -- setup tool paths</span>
+<span class="nv">ACLI</span><span class="o">=</span><span class="nv">$HOME</span>/arduino-cli
+<span class="nv">AVRD</span><span class="o">=</span><span class="nv">$HOME</span>/.arduino15/packages/arduino/tools/avrdude/6.3.0-arduino17/bin/avrdude
+<span class="nv">ACRDC</span><span class="o">=</span><span class="nv">$HOME</span>/.arduino15/packages/arduino/tools/avrdude/6.3.0-arduino17/etc/avrdude.conf
+
+<span class="c"># -- add board manager url for attiny</span>
+<span class="nv">$ACLI</span> config add board_manager.additional_urls http://drazzy.com/package_drazzy.com_index.json
+
+<span class="c"># -- install the core</span>
+<span class="nv">$ACLI</span> core <span class="nb">install </span>ATTinyCore:avr
+
+<span class="c"># -- compile code</span>
+<span class="nv">$ACLI</span> compile <span class="nt">--verbose</span> <span class="nt">--fqbn</span> ATTinyCore:avr:attinyx313:chip<span class="o">=</span>2313 software/software.ino
+
+<span class="c"># -- upload with mkii programmer</span>
+<span class="nv">$ACLI</span> upload <span class="nt">--verbose</span> <span class="nt">--fqbn</span> ATTinyCore:avr:attinyx313:chip<span class="o">=</span>2313 <span class="nt">--programmer</span> avrispmkii software/software.ino
+</code></pre></div></div>
+
+<p>If writing software to the microcontroller works it will look like this in the terminal:</p>
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/flash.jpg" width="25%" />
+
+<h4 id="some-additional-helpful-commands">Some additional helpful commands</h4>
+
+<p>In order to figure out the command-lines there are some not so intuitive paramters to <code class="language-plaintext highlighter-rouge">arduino-cli</code> and <code class="language-plaintext highlighter-rouge">avrdude</code> for setting fuses, if required.</p>
+
+<h5 id="finding-the-correct-part-specifiers">Finding the correct part specifiers</h5>
+
+<p>In order to figure out the <code class="language-plaintext highlighter-rouge">fqbn</code>, after having the board manager setup, we can search for a core to install like this:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -- search for core</span>
+<span class="nv">$ACLI</span> core search attiny
+</code></pre></div></div>
+
+<p>and then search for compatible boards within the cores</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -- search compatible board</span>
+<span class="nv">$ACLI</span> board listall 2313
+</code></pre></div></div>
+
+<p>This yields <code class="language-plaintext highlighter-rouge">ATTinyCore:avr:attinyx313</code>. Interestingly, with the ATTinyCore core we the <code class="language-plaintext highlighter-rouge">attinyx313</code> is for the almost identical attiny4313 and attiny2313. We need to use the <code class="language-plaintext highlighter-rouge">chip</code> option.</p>
+
+<p>Using the <code class="language-plaintext highlighter-rouge">details</code> parameter we can get such options.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -- search option to select chip</span>
+<span class="nv">$ACLI</span> board details <span class="nt">--fqbn</span> <span class="nt">--fqbn</span> ATTinyCore:avr:attinyx313
+</code></pre></div></div>
+
+<p>This prints <code class="language-plaintext highlighter-rouge">ATtiny2313/ATtiny2313A</code> with the option <code class="language-plaintext highlighter-rouge">chip=2313</code> as seen in the script above.</p>
+
+<h5 id="reading-and-writing-fuses">Reading and writing fuses</h5>
+
+<p>We may want to read the internal clock settings (fuses)</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -- read fuses</span>
+<span class="nv">$AVRD</span> <span class="nt">-C</span> ../etc/avrdude.conf <span class="nt">-c</span> avrispmkII <span class="nt">-p</span> attiny2313 <span class="nt">-v</span>
+</code></pre></div></div>
+
+<p>Set the fuses. There is a convenient online calculator to get the fuse values here [1].</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -- set fuses</span>
+<span class="nv">$AVRD</span> <span class="nt">-C</span> <span class="nv">$ACRDC</span> <span class="nt">-c</span> avrispmkII <span class="nt">-p</span> attiny2313 <span class="nt">-U</span> lfuse:w:0x62:m <span class="nt">-U</span> hfuse:w:0xDF:m <span class="nt">-U</span> efuse:w:0xFF:m <span class="nt">-U</span> lock:w:0xFF:m 
+</code></pre></div></div>
+
+<p>If we additionaly connect the TTL pins to the FTDI and use <code class="language-plaintext highlighter-rouge">Serial.print(...)</code> in the software we may want to open the serial console.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># -- open serial console</span>
+<span class="nv">$ACLI</span> monitor <span class="nt">-p</span> /dev/ttyUSB0 <span class="nt">-c</span> <span class="nv">baudrate</span><span class="o">=</span>115200
+</code></pre></div></div>
+
+<h3 id="tests-1">Tests</h3>
+
+<p>I ran some simple test cases to make sure the circuit behaves as expected. The goal was to check if the chip can be programmed, the clock is configured correctly and that the built-in hardware I<sup>2</sup>C functionality works.</p>
+
+<h4 id="led-blink-test">LED Blink Test</h4>
+
+<p>At some point the bring-up worked out and I got that LED to blink. Measuring the signal at the LED pin revealed the internal oscillator in the micro-controller is correctly configured.</p>
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/osci.jpg" width="45%" />
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define F_CPU 1000000UL
+#define LED_PIN PB4
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;avr/io.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;util/delay.h&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">DDRB</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">LED_PIN</span><span class="p">);</span> <span class="c1">// PB3 output</span>
+
+  <span class="k">while</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">PORTB</span> <span class="o">|=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">LED_PIN</span><span class="p">);</span>  <span class="c1">// on</span>
+    <span class="n">_delay_ms</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+
+    <span class="n">PORTB</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">LED_PIN</span><span class="p">);</span> <span class="c1">// off</span>
+    <span class="n">_delay_ms</span><span class="p">(</span><span class="mi">500</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span> 
+</code></pre></div></div>
+
+<p>Having the LED blink is an important milestone, because it demonstrated:</p>
+
+<ul>
+  <li>compilation works</li>
+  <li>power works</li>
+  <li>programming works</li>
+  <li>chip is alive</li>
+  <li>internal clock/fuse bits are set to the correct rate (verified with oscilloscop on the LED pin)</li>
+</ul>
+
+<h4 id="i2c-slave-test">I<sup>2</sup>C Slave Test</h4>
+
+<p>The following code set the Attiny2313 to act as an I<sup>2</sup>C slave.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define F_CPU 1000000UL
+#define LED_PIN PB4
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;avr/io.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;util/delay.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;Wire.h&gt;</span><span class="cp">
+</span> 
+<span class="n">byte</span> <span class="n">RxByte</span><span class="p">;</span>
+ 
+<span class="kt">void</span> <span class="nf">I2C_RxHandler</span><span class="p">(</span><span class="kt">int</span> <span class="n">numBytes</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">while</span><span class="p">(</span><span class="n">Wire</span><span class="p">.</span><span class="n">available</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">RxByte</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+ 
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">DDRB</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">LED_PIN</span><span class="p">);</span> <span class="c1">// PB3 output</span>
+  
+  <span class="n">Wire</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mh">0x55</span><span class="p">);</span> <span class="c1">// slave address 0x55</span>
+  <span class="n">Wire</span><span class="p">.</span><span class="n">onReceive</span><span class="p">(</span><span class="n">I2C_RxHandler</span><span class="p">);</span>
+<span class="p">}</span>
+ 
+<span class="kt">void</span> <span class="nf">loop</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">PORTB</span> <span class="o">|=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">LED_PIN</span><span class="p">);</span>  <span class="c1">// on</span>
+    <span class="n">_delay_ms</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+
+    <span class="n">PORTB</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">LED_PIN</span><span class="p">);</span> <span class="c1">// off</span>
+    <span class="n">_delay_ms</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>In the webinterface of the main processor we can then see an I<sup>2</sup>C slave show up under the adress <code class="language-plaintext highlighter-rouge">0x55</code>.</p>
+
+<p>Note the wheel counts shown are currently both at a fixed high number due to read failure, because the old wheel odometry sensors are removed and the new one has yet to be programmed.</p>
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/webinterface.png" width="25%" />
+
+<h3 id="complete-firmware">Complete Firmware</h3>
+
+<p>With the basics out of the way it’s time to update the firmware on the main esp32cam processor and the attiny2313 auxiliary odometry controller.</p>
+
+<h4 id="main-processor">Main Processor</h4>
+
+<p>In the code for the main processor I just read 4 consecutive bytes via I<sup>2</sup>C from the attiny2313.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">String</span> <span class="n">CWheelRotaryCounter</span><span class="o">::</span><span class="n">read</span><span class="p">()</span> <span class="p">{</span>
+  <span class="c1">// --request 4 bytes from I2C slave with adress 0x55</span>
+  <span class="kt">uint16_t</span> <span class="n">value</span><span class="p">;</span>
+  <span class="n">byte</span> <span class="n">arr</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+  <span class="n">Wire</span><span class="p">.</span><span class="n">requestFrom</span><span class="p">(</span><span class="mh">0x55</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span> 
+
+  <span class="c1">// -- read 4 consecutive bytes</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">arr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">Wire</span><span class="p">.</span><span class="n">read</span><span class="p">();</span>
+  <span class="p">}</span>
+  
+  <span class="c1">// -- convert to 16bit unsigned integer</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">m_wheelno</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">|</span> <span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="nf">if</span><span class="p">(</span><span class="n">m_wheelno</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">arr</span><span class="p">[</span><span class="mi">2</span><span class="p">];</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">|</span> <span class="n">arr</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">String</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nf">String</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><strong><em>Note:</em></strong> the value is an unsigned count of the interrupts of the light barrier disc. For odometry in ROS we need to use a signed integer and add/subtract the difference of the previous count depending on the direction the motor in turning in.</p>
+
+<h4 id="odometry-controller">Odometry Controller</h4>
+
+<p>For the odometry controller I’ve enabled interrupts on for pins PB2 and PB3. In the interrupt handler I can then check if there was a change.</p>
+
+<p>Normally we could use <code class="language-plaintext highlighter-rouge">attachInterrupt(digitalPinToInterrupt(2), onWheelTickLeft, RISING);</code> and define a function <code class="language-plaintext highlighter-rouge">onWheelTickLeft</code>, but on first try I wasn’t able to get that to work. So I went old fashioned route and set the flags on the registers manually. The variable PCIE isn’t defined, so I checked the datasheet of the attiny2313, saw that it is set to 5 and defined the value myself.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">volatile</span> <span class="kt">uint16_t</span> <span class="n">m_wheelTickLeftCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="k">volatile</span> <span class="kt">uint16_t</span> <span class="n">m_wheelTickRightCount</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+<span class="k">volatile</span> <span class="kt">bool</span> <span class="n">m_lastStateLeft</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+<span class="k">volatile</span> <span class="kt">bool</span> <span class="n">m_lastStateRight</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+
+<span class="cp">#define PCIE 5
+</span>
+<span class="kt">void</span> <span class="nf">setup</span><span class="p">()</span> <span class="p">{</span>
+
+  <span class="p">(..)</span>
+  
+  <span class="c1">// -- set pins for wheel ticks as input</span>
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">PB2</span><span class="p">,</span> <span class="n">INPUT</span><span class="p">);</span>
+  <span class="n">pinMode</span><span class="p">(</span><span class="n">PB3</span><span class="p">,</span> <span class="n">INPUT</span><span class="p">);</span>
+
+  <span class="c1">// -- configure external interrupt for PCINT2 (=PB2) and PCINT3 (=PB3)</span>
+  <span class="n">PCMSK</span> <span class="o">|=</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">PCINT2</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">PCINT3</span><span class="p">);</span>
+  <span class="n">MCUCR</span> <span class="o">|=</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">ISC01</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">ISC00</span><span class="p">);</span>
+  <span class="n">GIMSK</span> <span class="o">|=</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;&lt;</span><span class="n">PCIE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="n">ISR</span> <span class="p">(</span><span class="n">PCINT0_vect</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">bool</span> <span class="n">currentStateLeft</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+  <span class="kt">bool</span> <span class="n">currentStateRight</span> <span class="o">=</span> <span class="nb">false</span><span class="p">;</span>
+  
+  <span class="c1">// -- read current states</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">PINB</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">PCINT2</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">currentStateLeft</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">PINB</span> <span class="o">&amp;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">PCINT3</span><span class="p">))</span> <span class="p">{</span>
+    <span class="n">currentStateRight</span> <span class="o">=</span> <span class="nb">true</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="c1">// -- if there was a change, increment respective counter</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">currentStateLeft</span> <span class="o">!=</span> <span class="n">m_lastStateLeft</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">m_wheelTickLeftCount</span><span class="o">++</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">currentStateRight</span> <span class="o">!=</span> <span class="n">m_lastStateRight</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">m_wheelTickRightCount</span><span class="o">++</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="c1">// -- remember current state</span>
+  <span class="n">m_lastStateLeft</span> <span class="o">=</span> <span class="n">currentStateLeft</span><span class="p">;</span>
+  <span class="n">m_lastStateRight</span> <span class="o">=</span> <span class="n">currentStateRight</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Then to transfer the data via I<sup>2</sup>C I define a <code class="language-plaintext highlighter-rouge">onI2CRequest</code> function that sends converts both 16-bit tick counts to four bytes by bit-shifting and sends them out.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">onI2CRequest</span><span class="p">()</span> <span class="p">{</span> 
+  <span class="n">byte</span> <span class="n">arr</span><span class="p">[</span><span class="mi">4</span><span class="p">];</span>
+  
+  <span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">m_wheelTickLeftCount</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
+  <span class="n">arr</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_wheelTickLeftCount</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
+  
+  <span class="n">arr</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">m_wheelTickRightCount</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
+  <span class="n">arr</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">m_wheelTickRightCount</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">;</span>
+  
+  <span class="n">Wire</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>In the <code class="language-plaintext highlighter-rouge">setup()</code> function we enable the I<sup>2</sup>C slave functionality with</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="n">Wire</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="mh">0x55</span><span class="p">);</span>
+  <span class="n">Wire</span><span class="p">.</span><span class="n">onRequest</span><span class="p">(</span><span class="n">onI2CRequest</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Not much more is required for this to work. When driving the robot around I can now see the <code class="language-plaintext highlighter-rouge">wheel_count_left</code> and <code class="language-plaintext highlighter-rouge">wheel_count_right</code> changing.</p>
+
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/working.png" width="25%" />
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Roughly a year ago I got the 360 degree lidar working in the robotic operating system (ROS). The SLAM algorithms additionally require wheel odometry. With the wheel odometry now working, I can move on to configuring the SLAM algorithms.</p>
+
+<hr />
+
+<pre>
+1] http://eleccelerator.com/fusecalc/fusecalc.php?chip=attiny2313
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Robot - Pt.4 - Microcontroller Wheel Odometry"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>

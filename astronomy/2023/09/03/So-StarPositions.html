@@ -741,50 +741,50 @@ current_el_deg --&gt; current_el_dms
 <h5 id="lon_dms---lon_deg-lat_dms---lat_deg">lon_dms -&gt; lon_deg, lat_dms -&gt; lat_deg</h5>
 
 <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">dmsToDeg</span><span class="p">(</span><span class="n">dms</span><span class="p">):</span>
-    <span class="n">res</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">dms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">dms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">dms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nf">abs</span><span class="p">(</span><span class="n">dms</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="n">dms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">dms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span>
     <span class="k">return</span> <span class="n">res</span> <span class="k">if</span> <span class="n">dms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="o">-</span><span class="n">res</span>
-<span class="n">lon_deg</span> <span class="o">=</span> <span class="n">dmsToDeg</span><span class="p">(</span><span class="n">lon_dms</span><span class="p">)</span>
-<span class="n">lat_deg</span> <span class="o">=</span> <span class="n">dmsToDeg</span><span class="p">(</span><span class="n">lat_dms</span><span class="p">)</span>
+<span class="n">lon_deg</span> <span class="o">=</span> <span class="nf">dmsToDeg</span><span class="p">(</span><span class="n">lon_dms</span><span class="p">)</span>
+<span class="n">lat_deg</span> <span class="o">=</span> <span class="nf">dmsToDeg</span><span class="p">(</span><span class="n">lat_dms</span><span class="p">)</span>
 
 <span class="k">assert</span> <span class="mf">13.404954</span> <span class="o">==</span> <span class="n">lon_deg</span>
 <span class="k">assert</span> <span class="mf">52.520008</span> <span class="o">==</span> <span class="n">lat_deg</span></code></pre></figure>
 
 <h5 id="date_dmy-time_hms---datetime_dt">date_dmy, time_hms -&gt; dateTime_dt</h5>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">datetime</span>
-<span class="n">dateTime_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">(</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="n">datetime</span>
+<span class="n">dateTime_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="nf">datetime</span><span class="p">(</span>
     <span class="n">date_dmy</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">date_dmy</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">date_dmy</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
     <span class="n">time_hms</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">time_hms</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">time_hms</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span></code></pre></figure>
 
 <h5 id="lat_deg-lon_deg-datetime_dt---offsetutc_dt">lat_deg, lon_deg, dateTime_dt -&gt; offsetUtc_dt</h5>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="nn">pytz</span>
-<span class="kn">from</span> <span class="nn">tzwhere</span> <span class="kn">import</span> <span class="n">tzwhere</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="kn">import</span> <span class="n">pytz</span>
+<span class="kn">from</span> <span class="n">tzwhere</span> <span class="kn">import</span> <span class="n">tzwhere</span>
 
-<span class="n">tzwhere</span> <span class="o">=</span> <span class="n">tzwhere</span><span class="p">.</span><span class="n">tzwhere</span><span class="p">()</span>
-<span class="n">timezone_str</span> <span class="o">=</span> <span class="n">tzwhere</span><span class="p">.</span><span class="n">tzNameAt</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">,</span> <span class="n">lon_deg</span><span class="p">)</span>
-<span class="n">timezone</span> <span class="o">=</span> <span class="n">pytz</span><span class="p">.</span><span class="n">timezone</span><span class="p">(</span><span class="n">timezone_str</span><span class="p">)</span>
-<span class="n">offsetUtc_dt</span> <span class="o">=</span> <span class="n">timezone</span><span class="p">.</span><span class="n">utcoffset</span><span class="p">(</span><span class="n">dateTime_dt</span><span class="p">)</span>
+<span class="n">tzwhere</span> <span class="o">=</span> <span class="n">tzwhere</span><span class="p">.</span><span class="nf">tzwhere</span><span class="p">()</span>
+<span class="n">timezone_str</span> <span class="o">=</span> <span class="n">tzwhere</span><span class="p">.</span><span class="nf">tzNameAt</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">,</span> <span class="n">lon_deg</span><span class="p">)</span>
+<span class="n">timezone</span> <span class="o">=</span> <span class="n">pytz</span><span class="p">.</span><span class="nf">timezone</span><span class="p">(</span><span class="n">timezone_str</span><span class="p">)</span>
+<span class="n">offsetUtc_dt</span> <span class="o">=</span> <span class="n">timezone</span><span class="p">.</span><span class="nf">utcoffset</span><span class="p">(</span><span class="n">dateTime_dt</span><span class="p">)</span>
 
-<span class="k">assert</span> <span class="s">"Europe/Berlin"</span> <span class="o">==</span> <span class="n">timezone_str</span>
-<span class="k">assert</span> <span class="s">"2:00:00"</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">offsetUtc_dt</span><span class="p">)</span></code></pre></figure>
+<span class="k">assert</span> <span class="sh">"</span><span class="s">Europe/Berlin</span><span class="sh">"</span> <span class="o">==</span> <span class="n">timezone_str</span>
+<span class="k">assert</span> <span class="sh">"</span><span class="s">2:00:00</span><span class="sh">"</span> <span class="o">==</span> <span class="nf">str</span><span class="p">(</span><span class="n">offsetUtc_dt</span><span class="p">)</span></code></pre></figure>
 
 <h5 id="datetime_dt-offsetutc_dt---datetimeutc_dt">dateTime_dt, offsetUtc_dt -&gt; dateTimeUtc_dt</h5>
 
 <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">dateTimeUtc_dt</span> <span class="o">=</span> <span class="n">dateTime_dt</span> <span class="o">-</span> <span class="n">offsetUtc_dt</span>
 
-<span class="k">assert</span> <span class="s">"2023-08-01 09:30:00"</span> <span class="o">==</span> <span class="nb">str</span><span class="p">(</span><span class="n">dateTimeUtc_dt</span><span class="p">)</span></code></pre></figure>
+<span class="k">assert</span> <span class="sh">"</span><span class="s">2023-08-01 09:30:00</span><span class="sh">"</span> <span class="o">==</span> <span class="nf">str</span><span class="p">(</span><span class="n">dateTimeUtc_dt</span><span class="p">)</span></code></pre></figure>
 
 <h5 id="datetimeutc_dt---datetimeutc0h_dt">dateTimeUtc_dt -&gt; dateTimeUtc0h_dt</h5>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">dateTimeUtc0h_dt</span> <span class="o">=</span> <span class="n">dateTimeUtc_dt</span><span class="p">.</span><span class="n">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">dateTimeUtc0h_dt</span> <span class="o">=</span> <span class="n">dateTimeUtc_dt</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="n">hour</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">minute</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<span class="k">assert</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">dateTimeUtc0h_dt</span></code></pre></figure>
+<span class="k">assert</span> <span class="n">datetime</span><span class="p">.</span><span class="nf">datetime</span><span class="p">(</span><span class="mi">2023</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="n">dateTimeUtc0h_dt</span></code></pre></figure>
 
 <h5 id="datetimeutc0h_dt---juliandateat0h_h">dateTimeUtc0h_dt -&gt; julianDateAt0h_h</h5>
 
-<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">at_2000_1_1_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<span class="n">julianDateAt0h_h</span> <span class="o">=</span> <span class="mf">2451544.5</span> <span class="o">+</span> <span class="p">((</span><span class="n">dateTimeUtc0h_dt</span> <span class="o">-</span> <span class="n">at_2000_1_1_dt</span><span class="p">).</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">));</span>
+<figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">at_2000_1_1_dt</span> <span class="o">=</span> <span class="n">datetime</span><span class="p">.</span><span class="nf">datetime</span><span class="p">(</span><span class="mi">2000</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">julianDateAt0h_h</span> <span class="o">=</span> <span class="mf">2451544.5</span> <span class="o">+</span> <span class="p">((</span><span class="n">dateTimeUtc0h_dt</span> <span class="o">-</span> <span class="n">at_2000_1_1_dt</span><span class="p">).</span><span class="nf">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="p">(</span><span class="mi">24</span><span class="o">*</span><span class="mi">60</span><span class="o">*</span><span class="mi">60</span><span class="p">));</span>
 
 <span class="k">assert</span> <span class="mf">2460157.5</span> <span class="o">==</span> <span class="n">julianDateAt0h_h</span></code></pre></figure>
 
@@ -792,16 +792,16 @@ current_el_deg --&gt; current_el_dms
 
 <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">hoursToHms</span><span class="p">(</span><span class="n">hour</span><span class="p">):</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">hour</span> <span class="o">*</span> <span class="mi">3600</span>
-    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="n">h</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="nf">divmod</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nf">divmod</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="nf">return </span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span><span class="p">)</span>
 
-<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="n">math</span>
 <span class="n">T</span> <span class="o">=</span> <span class="p">(</span><span class="n">julianDateAt0h_h</span> <span class="o">-</span> <span class="mf">2415020.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">36525.0</span><span class="p">;</span>
 <span class="n">SS</span> <span class="o">=</span> <span class="mf">6.6460656</span> <span class="o">+</span> <span class="mf">2400.051</span><span class="o">*</span><span class="n">T</span> <span class="o">+</span> <span class="mf">0.00002581</span><span class="o">*</span><span class="n">T</span><span class="o">*</span><span class="n">T</span><span class="p">;</span>
-<span class="n">siderealGreenwich0h_h</span> <span class="o">=</span> <span class="p">(</span><span class="n">SS</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">-</span> <span class="n">math</span><span class="p">.</span><span class="n">floor</span><span class="p">(</span><span class="n">SS</span> <span class="o">/</span> <span class="mi">24</span><span class="p">))</span> <span class="o">*</span> <span class="mi">24</span><span class="p">;</span>
+<span class="n">siderealGreenwich0h_h</span> <span class="o">=</span> <span class="p">(</span><span class="n">SS</span> <span class="o">/</span> <span class="mi">24</span> <span class="o">-</span> <span class="n">math</span><span class="p">.</span><span class="nf">floor</span><span class="p">(</span><span class="n">SS</span> <span class="o">/</span> <span class="mi">24</span><span class="p">))</span> <span class="o">*</span> <span class="mi">24</span><span class="p">;</span>
 
-<span class="k">assert</span> <span class="p">(</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">37.0</span><span class="p">,</span> <span class="mf">22.39818407072744</span><span class="p">)</span> <span class="o">==</span> <span class="n">hoursToHms</span><span class="p">(</span><span class="n">siderealGreenwich0h_h</span><span class="p">)</span></code></pre></figure>
+<span class="nf">assert </span><span class="p">(</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">37.0</span><span class="p">,</span> <span class="mf">22.39818407072744</span><span class="p">)</span> <span class="o">==</span> <span class="nf">hoursToHms</span><span class="p">(</span><span class="n">siderealGreenwich0h_h</span><span class="p">)</span></code></pre></figure>
 
 <h5 id="siderealgreenwich0h_h---siderealgreenwichnow_h">siderealGreenwich0h_h -&gt; siderealGreenwichNow_h</h5>
 
@@ -821,7 +821,7 @@ current_el_deg --&gt; current_el_dms
 <span class="k">assert</span> <span class="mf">7.0165519844640905</span> <span class="o">==</span> <span class="n">siderealLocationNow_h</span>
 
 <span class="c1"># more accurate result would be (7.0, 2.0, 33.22359767072271)
-</span><span class="k">assert</span> <span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">59.587144070726936</span><span class="p">)</span> <span class="o">==</span> <span class="n">hoursToHms</span><span class="p">(</span><span class="n">siderealLocationNow_h</span><span class="p">)</span> </code></pre></figure>
+</span><span class="nf">assert </span><span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">59.587144070726936</span><span class="p">)</span> <span class="o">==</span> <span class="nf">hoursToHms</span><span class="p">(</span><span class="n">siderealLocationNow_h</span><span class="p">)</span> </code></pre></figure>
 
 <h4 id="compute-position-of-star">Compute Position of Star</h4>
 
@@ -833,54 +833,54 @@ current_el_deg --&gt; current_el_dms
     <span class="k">return</span> <span class="n">deg</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">360</span><span class="p">)</span>
 
 <span class="n">siderealLocationNow_deg</span> <span class="o">=</span> <span class="n">siderealLocationNow_h</span> <span class="o">*</span> <span class="mi">15</span>
-<span class="n">siderealLocationNow_rad</span> <span class="o">=</span> <span class="n">degToRad</span><span class="p">(</span><span class="n">siderealLocationNow_deg</span><span class="p">)</span>
+<span class="n">siderealLocationNow_rad</span> <span class="o">=</span> <span class="nf">degToRad</span><span class="p">(</span><span class="n">siderealLocationNow_deg</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">hmsToDeg</span><span class="p">(</span><span class="n">hms</span><span class="p">):</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">hms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">hms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">hms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">)</span> <span class="o">*</span> <span class="mi">15</span>
+    <span class="nf">return </span><span class="p">(</span><span class="n">hms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">hms</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mi">60</span> <span class="o">+</span> <span class="n">hms</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">/</span> <span class="mi">3600</span><span class="p">)</span> <span class="o">*</span> <span class="mi">15</span>
 
-<span class="n">starRa_deg</span> <span class="o">=</span> <span class="n">hmsToDeg</span><span class="p">(</span><span class="n">starRa_hms</span><span class="p">)</span>
+<span class="n">starRa_deg</span> <span class="o">=</span> <span class="nf">hmsToDeg</span><span class="p">(</span><span class="n">starRa_hms</span><span class="p">)</span>
 <span class="k">assert</span> <span class="mf">78.63333333333333</span> <span class="o">==</span> <span class="n">starRa_deg</span>
 
-<span class="n">starDec_deg</span> <span class="o">=</span> <span class="n">dmsToDeg</span><span class="p">(</span><span class="n">starDec_dms</span><span class="p">)</span>
+<span class="n">starDec_deg</span> <span class="o">=</span> <span class="nf">dmsToDeg</span><span class="p">(</span><span class="n">starDec_dms</span><span class="p">)</span>
 <span class="k">assert</span> <span class="o">-</span><span class="mf">8.201638888888889</span> <span class="o">==</span> <span class="n">starDec_deg</span>
 
-<span class="n">starRa_rad</span> <span class="o">=</span> <span class="n">degToRad</span><span class="p">(</span><span class="n">starRa_deg</span><span class="p">)</span>
-<span class="n">starDec_rad</span> <span class="o">=</span> <span class="n">degToRad</span><span class="p">(</span><span class="n">starDec_deg</span><span class="p">)</span></code></pre></figure>
+<span class="n">starRa_rad</span> <span class="o">=</span> <span class="nf">degToRad</span><span class="p">(</span><span class="n">starRa_deg</span><span class="p">)</span>
+<span class="n">starDec_rad</span> <span class="o">=</span> <span class="nf">degToRad</span><span class="p">(</span><span class="n">starDec_deg</span><span class="p">)</span></code></pre></figure>
 
 <h4 id="apply-the-trigonometry">Apply the trigonometry</h4>
 
 <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="n">current_ra_rad</span> <span class="o">=</span> <span class="n">siderealLocationNow_rad</span> <span class="o">-</span> <span class="n">starRa_rad</span> 
 
-<span class="n">M</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="n">tan</span><span class="p">(</span><span class="n">starDec_rad</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">current_ra_rad</span><span class="p">))</span>
+<span class="n">M</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="nf">atan</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nf">tan</span><span class="p">(</span><span class="n">starDec_rad</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="n">current_ra_rad</span><span class="p">))</span>
 
-<span class="n">lat_rad</span> <span class="o">=</span> <span class="n">degToRad</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">)</span>
+<span class="n">lat_rad</span> <span class="o">=</span> <span class="nf">degToRad</span><span class="p">(</span><span class="n">lat_deg</span><span class="p">)</span>
 
-<span class="n">current_az_rad</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">atan</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">tan</span><span class="p">(</span><span class="n">current_ra_rad</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat_rad</span> <span class="o">-</span> <span class="n">M</span><span class="p">))</span>
-<span class="n">current_el_rad</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="n">asin</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">sin</span><span class="p">(</span><span class="n">starDec_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">starDec_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">cos</span><span class="p">(</span><span class="n">current_ra_rad</span><span class="p">))</span>
+<span class="n">current_az_rad</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="nf">atan</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="n">M</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="nf">tan</span><span class="p">(</span><span class="n">current_ra_rad</span><span class="p">)</span> <span class="o">/</span> <span class="n">math</span><span class="p">.</span><span class="nf">sin</span><span class="p">(</span><span class="n">lat_rad</span> <span class="o">-</span> <span class="n">M</span><span class="p">))</span>
+<span class="n">current_el_rad</span> <span class="o">=</span> <span class="n">math</span><span class="p">.</span><span class="nf">asin</span><span class="p">(</span><span class="n">math</span><span class="p">.</span><span class="nf">sin</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="nf">sin</span><span class="p">(</span><span class="n">starDec_rad</span><span class="p">)</span> <span class="o">+</span> <span class="n">math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="n">lat_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="n">starDec_rad</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="nf">cos</span><span class="p">(</span><span class="n">current_ra_rad</span><span class="p">))</span>
 <span class="n">current_az_rad</span> <span class="o">+=</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span> <span class="c1"># translate from north to south</span></code></pre></figure>
 
 <h4 id="display-result">Display result</h4>
 
 <figure class="highlight"><pre><code class="language-python" data-lang="python"><span class="k">def</span> <span class="nf">radToDeg</span><span class="p">(</span><span class="n">rad</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">rad</span> <span class="o">*</span> <span class="p">(</span><span class="mi">360</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="p">.</span><span class="n">pi</span><span class="p">))</span>
-<span class="n">current_az_deg</span> <span class="o">=</span> <span class="n">radToDeg</span><span class="p">(</span><span class="n">current_az_rad</span><span class="p">)</span>
-<span class="n">current_el_deg</span> <span class="o">=</span> <span class="n">radToDeg</span><span class="p">(</span><span class="n">current_el_rad</span><span class="p">)</span>
+<span class="n">current_az_deg</span> <span class="o">=</span> <span class="nf">radToDeg</span><span class="p">(</span><span class="n">current_az_rad</span><span class="p">)</span>
+<span class="n">current_el_deg</span> <span class="o">=</span> <span class="nf">radToDeg</span><span class="p">(</span><span class="n">current_el_rad</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">degToDms</span><span class="p">(</span><span class="n">deg</span><span class="p">):</span>
-    <span class="n">d</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">deg</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="nb">divmod</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
+    <span class="n">d</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="nf">divmod</span><span class="p">(</span><span class="n">deg</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="nf">divmod</span><span class="p">(</span><span class="n">m</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="nf">return </span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">s</span> <span class="o">*</span> <span class="mi">60</span><span class="p">)</span>
 
-<span class="n">current_az_dms</span> <span class="o">=</span> <span class="n">degToDms</span><span class="p">(</span><span class="n">current_az_deg</span><span class="p">)</span>
+<span class="n">current_az_dms</span> <span class="o">=</span> <span class="nf">degToDms</span><span class="p">(</span><span class="n">current_az_deg</span><span class="p">)</span>
 <span class="c1"># more accurate result would be +209° 27' 32.8''
-</span><span class="k">assert</span> <span class="p">(</span><span class="mf">209.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">5.142262798392494</span><span class="p">)</span> <span class="o">==</span> <span class="n">current_az_dms</span>
+</span><span class="nf">assert </span><span class="p">(</span><span class="mf">209.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">5.142262798392494</span><span class="p">)</span> <span class="o">==</span> <span class="n">current_az_dms</span>
 
-<span class="n">current_el_dms</span> <span class="o">=</span> <span class="n">degToDms</span><span class="p">(</span><span class="n">current_el_deg</span><span class="p">)</span>
+<span class="n">current_el_dms</span> <span class="o">=</span> <span class="nf">degToDms</span><span class="p">(</span><span class="n">current_el_deg</span><span class="p">)</span>
 <span class="c1"># more accurate result would be +25° 11' 38.4''
-</span><span class="k">assert</span> <span class="p">(</span><span class="mf">25.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">56.126346981354516</span><span class="p">)</span> <span class="o">==</span> <span class="n">current_el_dms</span>
+</span><span class="nf">assert </span><span class="p">(</span><span class="mf">25.0</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">,</span> <span class="mf">56.126346981354516</span><span class="p">)</span> <span class="o">==</span> <span class="n">current_el_dms</span>
 
-<span class="k">print</span><span class="p">(</span><span class="s">"result | "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">current_az_dms</span><span class="p">)</span> <span class="o">+</span> <span class="s">" | "</span> <span class="o">+</span>  <span class="nb">str</span><span class="p">(</span><span class="n">current_el_dms</span><span class="p">))</span>
-<span class="k">print</span><span class="p">(</span><span class="s">"stellarium | +209° 27' 32.8'' | +25° 11' 38.4'' |"</span><span class="p">)</span></code></pre></figure>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">result | </span><span class="sh">"</span> <span class="o">+</span> <span class="nf">str</span><span class="p">(</span><span class="n">current_az_dms</span><span class="p">)</span> <span class="o">+</span> <span class="sh">"</span><span class="s"> | </span><span class="sh">"</span> <span class="o">+</span>  <span class="nf">str</span><span class="p">(</span><span class="n">current_el_dms</span><span class="p">))</span>
+<span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">stellarium | +209° 27</span><span class="sh">'</span><span class="s"> 32.8</span><span class="sh">''</span><span class="s"> | +25° 11</span><span class="sh">'</span><span class="s"> 38.4</span><span class="sh">''</span><span class="s"> |</span><span class="sh">"</span><span class="p">)</span></code></pre></figure>
 
 <p>We get</p>
 

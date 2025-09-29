@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <title>3D Scanning & Photogrammetry  - Gaussian Splatting - Dennis Salzner</title>
+  
+  
+  <!-- search engine -->
+  <meta name="description" content="With photogrammetry we can convert images to a 3D mesh with textures. There is another method-'Gaussian Splating', that can provide superior quality. However it doesn't produce ..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/3dscanning/2025/08/31/Sa-PhotogrammetryGaussianSplatting.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="3D Scanning & Photogrammetry  - Gaussian Splatting - Dennis Salzner" />
+  <meta property="og:description" content="With photogrammetry we can convert images to a 3D mesh with textures. There is another method-'Gaussian Splating', that can provide superior quality. However..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/3dscanning/2025/08/31/Sa-PhotogrammetryGaussianSplatting.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="3DScanning" />
+  <meta property="article:published_time" content="2025-08-31 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2025-08-31 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2025-08-31 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="With photogrammetry we can convert images to a 3D mesh with textures. There is another method-'Gaussian Splating', that can provide superior quality. However it doesn't produce ..." />
+  <meta name="twitter:title" content="3D Scanning & Photogrammetry  - Gaussian Splatting - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+  
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - 3D Scanning & Photogrammetry  - Gaussian Splatting</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">3D Scanning & Photogrammetry  - Gaussian Splatting</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>With photogrammetry we can convert images to a 3D mesh with textures. There is another method-‘Gaussian Splating’, that can provide superior quality. However it doesn’t produce meshes (sets of triangles) at all, but rather ‘bubbles’ of 3D gaussian distributions. While the result can’t be used for colission detection or rigging, we can combine 3D gaussian splats with traditional meshes and there are methods to produce meshes from gaussian splats albeit without textures. These can be overlayed which is suitable for many applications.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/Peek 2025-08-31 13-31.gif" width="35%" />
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/2025-08-31-133213_1306x931_scrot.png" width="25%" />
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#background" id="markdown-toc-background">Background</a></li>
+  <li><a href="#workflow" id="markdown-toc-workflow">Workflow</a>    <ul>
+      <li><a href="#nerfstudio" id="markdown-toc-nerfstudio">NerfStudio</a></li>
+      <li><a href="#frame-extraction-from-video" id="markdown-toc-frame-extraction-from-video">Frame extraction from video</a></li>
+      <li><a href="#colmap-to-get-camera-positions-from-images" id="markdown-toc-colmap-to-get-camera-positions-from-images">ColMap to get Camera positions from images</a></li>
+      <li><a href="#training-the-gaussian-splat" id="markdown-toc-training-the-gaussian-splat">Training the Gaussian Splat</a></li>
+      <li><a href="#to-view-it-later" id="markdown-toc-to-view-it-later">To view it later</a></li>
+      <li><a href="#export-the-splat" id="markdown-toc-export-the-splat">Export the Splat</a></li>
+      <li><a href="#loading-and-cropping-splat-in-blender" id="markdown-toc-loading-and-cropping-splat-in-blender">Loading and Cropping Splat in Blender</a>        <ul>
+          <li><a href="#using-the-3dgs-render-plug-in" id="markdown-toc-using-the-3dgs-render-plug-in">Using the “3dgs render” plug-in</a>            <ul>
+              <li><a href="#install-the-plugin" id="markdown-toc-install-the-plugin">Install the Plugin</a></li>
+              <li><a href="#using-it" id="markdown-toc-using-it">Using it</a></li>
+            </ul>
+          </li>
+          <li><a href="#viewing-the-splat-in-blender" id="markdown-toc-viewing-the-splat-in-blender">Viewing the Splat in Blender</a></li>
+          <li><a href="#cropping" id="markdown-toc-cropping">Cropping</a></li>
+          <li><a href="#using-the-3d-gaussian-splatting-blender-addon-plug-in" id="markdown-toc-using-the-3d-gaussian-splatting-blender-addon-plug-in">Using the “3D Gaussian Splatting Blender Addon” plug-in</a></li>
+        </ul>
+      </li>
+      <li><a href="#editing-splat-in-cloudcompare" id="markdown-toc-editing-splat-in-cloudcompare">Editing Splat in CloudCompare</a></li>
+      <li><a href="#producing-meshes" id="markdown-toc-producing-meshes">Producing Meshes</a></li>
+    </ul>
+  </li>
+  <li><a href="#results" id="markdown-toc-results">Results</a>    <ul>
+      <li><a href="#quality--clouding" id="markdown-toc-quality--clouding">Quality &amp; Clouding</a></li>
+      <li><a href="#photogrammetry-vs-gaussian-splatting" id="markdown-toc-photogrammetry-vs-gaussian-splatting">Photogrammetry vs. Gaussian Splatting</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>3D scanning and photogrammetry have interested me for a while. I wrote about how to use photogrammetry to produce true meshes and textures from photos (see <a href="/3dscanning/2025/03/02/So-Photogrammetry.html">Photogrammetry with Meshroom</a>).</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="background">Background</h2>
+
+<p>Recently I ended up in a rabbit hole on using Neural Networks for 3D reconstruction from Photos, so called <strong><em>“Neural Radiance Fields” (NERFs)</em></strong>. The basic idea there is to “shoot” rays of light, similar to ray casting in order to train a neural network. The neural network learns the points in 3D space and can then be used to render to 2D.</p>
+
+<p>It’s slow,  inefficient and quality doesn’t look so promising. It did however lay the ground work for a new technique called ‘Gaussian Splating’.
+Here, instead of trying to create a mesh of triangles and a UV-mapping to a 2D texture file, we instead place Gaussian distributions in 3D space and, using the photos, cleverly optimize - move, rotate, split and merge - them to best adjust to the actual 3D object. In contrast to photogrammetry with Meshroom, these algorithms can be run graphics-accelerated on PyTorch and are extremly efficient.</p>
+
+<p>The down-side is that we are left with a <code class="language-plaintext highlighter-rouge">*.ply</code> file auf Gaussian ‘bubbles’. Using Plug-Ins we can display them in Game engines and Blender, but converting to a true mesh of triangles with textures is currently only partially possible.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="workflow">Workflow</h2>
+
+<p>As these techniques are still relatively software support is relatively sparse. After some days of research I found a way, using only open-source software and some software from publications on the techniques to produce and display splats.</p>
+
+<p>To capture a splat I’ve found my phone, a Samsung Galaxy S22, to work well. I record 4K video with it. Extract frames from the video and run the frames through NerfStudio as described below:</p>
+
+<h3 id="nerfstudio">NerfStudio</h3>
+
+<p>After installing <strong><em>“NerfStudio”</em></strong>.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pipx <span class="nb">install </span>nerfstudio
+</code></pre></div></div>
+
+<h3 id="frame-extraction-from-video">Frame extraction from video</h3>
+
+<p>We extract frames from a video recording.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">VIDEO_FILE</span><span class="o">=</span><span class="s2">"20250904_184452.mp4"</span>
+<span class="nb">mkdir</span> <span class="nt">-p</span> /tmp/workspace/01/
+ffmpeg <span class="nt">-i</span> <span class="nv">$VIDEO_FILE</span> <span class="nt">-vf</span> <span class="s2">"select=not(mod(n</span><span class="se">\,</span><span class="s2">10))"</span> <span class="nt">-vsync</span> vfr <span class="s2">"/tmp/workspace/01/frame-%03d.jpg"</span>
+</code></pre></div></div>
+
+<h3 id="colmap-to-get-camera-positions-from-images">ColMap to get Camera positions from images</h3>
+
+<p>Next we can use <code class="language-plaintext highlighter-rouge">ns-process-data</code> that in turn uses ColMap to get the camera positions.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$HOME</span>/.local/bin/ns-process-data images <span class="nt">--data</span> /tmp/workspace/01/ <span class="nt">--output-dir</span> /tmp/workspace/02/
+</code></pre></div></div>
+
+<p>Note: if you receive an “unexpected keyword argument ‘unbound_message’” this is likely due to the version of python flask. <code class="language-plaintext highlighter-rouge">pip install flask==2.1.3</code> fixed that for me [1].</p>
+
+<p>Similar lighting requirements apply as for photogrammetry. Even though Gaussian Splatting can handle poorer quality images, if the area covered in your images set was too large, didn’t cover the area well or lighting wasn’t even, <strong><em>“colmap”</em></strong> will display a warning like this:</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/bad_images.png" width="35%" />
+
+<h3 id="training-the-gaussian-splat">Training the Gaussian Splat</h3>
+
+<p>With a good set of images, we can move on to run the gaussian splatting</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$HOME</span>/.local/bin/ns-train splatfacto <span class="nt">--data</span> /tmp/workspace/02/
+</code></pre></div></div>
+
+<p>and watch the progress in the web interface <code class="language-plaintext highlighter-rouge">http://127.0.0.1:7007/</code></p>
+
+<h3 id="to-view-it-later">To view it later</h3>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$HOME</span>/.local/bin/ns-viewer <span class="nt">--load-config</span> outputs/02/splatfacto/&lt;<span class="nb">date</span><span class="o">&gt;</span>/config.yml
+</code></pre></div></div>
+
+<h3 id="export-the-splat">Export the Splat</h3>
+
+<p>In order to export the gaussian splat to file we can use</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir</span> /tmp/workspace/03
+<span class="nv">$HOME</span>/.local/bin/ns-export gaussian-splat <span class="nt">--load-config</span> /tmp/workspace/02/splatfacto/&lt;<span class="nb">date</span><span class="o">&gt;</span>/config.yml <span class="nt">--output-dir</span> /tmp/workspace/03
+</code></pre></div></div>
+
+<h3 id="loading-and-cropping-splat-in-blender">Loading and Cropping Splat in Blender</h3>
+
+<p>The splat can be loaded into Blender using the <strong><em>“3dgs render”</em></strong> plugin, but the <strong><em>“3D Gaussian Splatting Blender Addon”</em></strong> [2] is simpler to use and sufficient.</p>
+
+<h4 id="using-the-3dgs-render-plug-in">Using the “3dgs render” plug-in</h4>
+
+<h5 id="install-the-plugin">Install the Plugin</h5>
+
+<p>We first download the blender plugin.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender01.png" width="35%" />
+
+<p>Then add it to blender via the preferences menu.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender02.png" width="35%" />
+
+<p>There is an option to “install from disk”, where we can select the compressed archive.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender03.png" width="35%" />
+
+<p>The plugin “3DGS Render by Kiri Engine” will then show up unter “Add-ons”</p>
+
+<h5 id="using-it">Using it</h5>
+
+<p>It’s a bit tricky to find. There is a tiny arrow button in the top right in the blender user-interface.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender04.png" width="35%" />
+
+<p>Clicking it reveals a side menu.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender05a.png" width="35%" />
+
+<p>In it we can click on the plug-in.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender05b.png" width="35%" />
+
+<p>and in the plug-in options import the *.ply splat file we’ve created with NerfStudio.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender07.png" width="35%" />
+
+<h4 id="viewing-the-splat-in-blender">Viewing the Splat in Blender</h4>
+
+<p>We can then view the splat and rotate it.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender08_nocrop.png" width="35%" />
+
+<h4 id="cropping">Cropping</h4>
+
+<p>Cropping can be achieved by setting up a cube in the location we want to either include or exclude.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender09_cropcube.png" width="35%" />
+
+<p>Then use the “Crop Box” feature in the plugin.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender09b_apply.png" width="35%" />
+
+<p>This yields the cropped splat.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender10.png" width="35%" />
+
+<!-- {::nomarkdown}
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender11.png" width="35%" />
+{:/nomarkdown}
+ -->
+<!-- {::nomarkdown}
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender12.png" width="35%" />
+{:/nomarkdown}
+ -->
+
+<p>Which can be best viewed under the “shading tab”.</p>
+
+<!-- {::nomarkdown}
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender13_viewer.png" width="35%" />
+{:/nomarkdown}
+ -->
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender14.png" width="35%" />
+
+<h4 id="using-the-3d-gaussian-splatting-blender-addon-plug-in">Using the “3D Gaussian Splatting Blender Addon” plug-in</h4>
+
+<p>Alternatively we can use the much simpler “3D Gaussian Splatting Blender Addon” plug-in.#</p>
+
+<p>Installation and usage is very similar. Get the compressed archive from GitHub [2].
+Once loaded we use  the “Import Gaussian Splatting” button from the plug-in menu.</p>
+
+<p>This first shows the actual splats as Gaussian “bubbles”.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender-plugin2-01.png" width="35%" />
+
+<p>But if we select the right viewing mode and move into the center of the structure we can see it displays correctly.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender-plugin2-02.png" width="35%" />
+
+<h3 id="editing-splat-in-cloudcompare">Editing Splat in CloudCompare</h3>
+
+<p>For cropping the splat we can also use a tool called <strong><em>“CloudCompare”</em></strong>.</p>
+
+<p>We can load the splat in cloud in compare.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/cloudcompare-01.png" width="35%" />
+
+<p>Use the cut feature to cut the splat to shape.</p>
+
+<h3 id="producing-meshes">Producing Meshes</h3>
+
+<p>Now in order to produce meshes (I haven’t found a way to do this with textures) from gaussian splats, we can use the <strong><em>“Possion Reconstrution”</em></strong> feature in <strong><em>“CloudCompare”</em></strong>.</p>
+
+<p>To do this we can load the splat in Cloud Compare.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/cloudcompare-03.png" width="35%" />
+
+<p>and then select the “possin surface reconstruction” feature.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/cloudcompare-02.png" width="35%" />
+
+<p>to produce a mesh.</p>
+
+<p>A better alternative seems to be <strong><em>“SuGaR”</em></strong> [3], published just last year. It is a process for creating a Mesh from a gaussian splat, also using <strong><em>“Poisson reconstruction”</em></strong>.
+Then the resulting Mesh and the Gaussian Splat are refined to a “hybrid Mesh+Gaussians representation”. From there a Blender plug-in [4] can (probably?) be used to “bake” a texture to get a traditional mesh and texture set.</p>
+
+<h2 id="results">Results</h2>
+
+<p>The results are very impressive at first glance, but we quickly run into the issue of what to do with the data. Except for adding background to scenes we would need to convert the splat to mesh with texture. While there is tooling to do this, it is still relatively basic.</p>
+
+<h3 id="quality--clouding">Quality &amp; Clouding</h3>
+
+<p>As can be seen in my scan of a renovation, due to the nature of the Gaussian splats, if there is not enough information, we get “cloudy” vision:</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/Peek 2025-09-05 13-28.gif" width="35%" />
+
+<h3 id="photogrammetry-vs-gaussian-splatting">Photogrammetry vs. Gaussian Splatting</h3>
+
+<p>In their video, “Kiri Engine” claims gaussian splatting converted to mesh produces much better quality than photogrammetry. It may be that Gaussian splatting is the future of 3D reconstruction though I haven’t been able to get that quality of mesh reconstruction from a splat so far.</p>
+
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/kiri-comparisson.png" width="35%" />
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>The quality of Gaussian splatting over photogrammetry is remarkable, but due to the differences in data representation it’s a challenge to convert from splats to true usable meshes with textures. Methods for this, like using poisson reconstruction, are emerging. We can use the produces meshes for interaction and overlay splats for the texture. That feels a hacky, but I think we’re not far from then painting that color information onto a standard texture.</p>
+
+<hr />
+
+<pre>
+1] https://stackoverflow.com/questions/73337927/typeerror-init-got-an-unexpected-keyword-argument-unbound-message
+2] https://github.com/ReshotAI/gaussian-splatting-blender-addon
+3] https://github.com/Anttwo/SuGaR
+4] https://github.com/Anttwo/sugar_frosting_blender_addon/
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="3D Scanning & Photogrammetry  - Gaussian Splatting"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>

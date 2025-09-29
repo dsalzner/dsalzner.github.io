@@ -308,20 +308,20 @@ However for simple simulations and small games the Unity Game Engine also has a 
 
 <p>The following code is sufficient to show and rotate a cube (with lighting and shadows).</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">ursina</span> <span class="kn">import</span> <span class="o">*</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">ursina</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="n">app</span> <span class="o">=</span> <span class="n">Ursina</span><span class="p">()</span>
+<span class="n">app</span> <span class="o">=</span> <span class="nc">Ursina</span><span class="p">()</span>
 
-<span class="n">EditorCamera</span><span class="p">()</span>
-<span class="n">pivot</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">()</span>
-<span class="n">DirectionalLight</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">pivot</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">shadows</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="p">(</span><span class="mi">45</span><span class="p">,</span> <span class="o">-</span><span class="mi">45</span><span class="p">,</span> <span class="mi">45</span><span class="p">))</span>
+<span class="nc">EditorCamera</span><span class="p">()</span>
+<span class="n">pivot</span> <span class="o">=</span> <span class="nc">Entity</span><span class="p">()</span>
+<span class="nc">DirectionalLight</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">pivot</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">shadows</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="p">(</span><span class="mi">45</span><span class="p">,</span> <span class="o">-</span><span class="mi">45</span><span class="p">,</span> <span class="mi">45</span><span class="p">))</span>
 
-<span class="n">cube</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s">'cube'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">rgb</span><span class="p">(</span><span class="mi">73</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">109</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">collider</span><span class="o">=</span><span class="s">'box'</span><span class="p">)</span>
+<span class="n">cube</span> <span class="o">=</span> <span class="nc">Entity</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">'</span><span class="s">cube</span><span class="sh">'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="nf">rgb</span><span class="p">(</span><span class="mi">73</span><span class="p">,</span><span class="mi">128</span><span class="p">,</span><span class="mi">109</span><span class="p">),</span> <span class="n">scale</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">position</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">collider</span><span class="o">=</span><span class="sh">'</span><span class="s">box</span><span class="sh">'</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
-  <span class="n">cube</span><span class="p">.</span><span class="n">rotation</span> <span class="o">+=</span> <span class="n">Vec3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">time</span><span class="p">.</span><span class="n">dt</span> <span class="o">*</span> <span class="mi">100</span>
+  <span class="n">cube</span><span class="p">.</span><span class="n">rotation</span> <span class="o">+=</span> <span class="nc">Vec3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">time</span><span class="p">.</span><span class="n">dt</span> <span class="o">*</span> <span class="mi">100</span>
 
-<span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">app</span><span class="p">.</span><span class="nf">run</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p><img src="../../../../images/2023-09-23-Sa-3DModeling/ursina-cube.gif" height="240px" /></p>
@@ -418,26 +418,26 @@ Set them to 64 each.</p>
 
 <p>We first clear the initial cube</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">bpy</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">bpy</span>
 
 <span class="k">try</span><span class="p">:</span>
-    <span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="nb">object</span><span class="p">.</span><span class="n">mode_set</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s">'OBJECT'</span><span class="p">)</span>
-    <span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="nb">object</span><span class="p">.</span><span class="n">select_all</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s">'SELECT'</span><span class="p">)</span>
-    <span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="nb">object</span><span class="p">.</span><span class="n">delete</span><span class="p">(</span><span class="n">use_global</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="nb">object</span><span class="p">.</span><span class="nf">mode_set</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="sh">'</span><span class="s">OBJECT</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="nb">object</span><span class="p">.</span><span class="nf">select_all</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="sh">'</span><span class="s">SELECT</span><span class="sh">'</span><span class="p">)</span>
+    <span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="nb">object</span><span class="p">.</span><span class="nf">delete</span><span class="p">(</span><span class="n">use_global</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
 <span class="k">except</span><span class="p">:</span>
     <span class="k">pass</span>
 </code></pre></div></div>
 
 <p>then create a sphere with a set number of segments and rings.</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mesh</span> <span class="o">=</span> <span class="n">bpy</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">meshes</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="s">'Basic_Sphere'</span><span class="p">)</span>
-<span class="n">basic_sphere</span> <span class="o">=</span> <span class="n">bpy</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">new</span><span class="p">(</span><span class="s">"Basic_Sphere"</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span>
-<span class="n">bpy</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="n">link</span><span class="p">(</span><span class="n">basic_sphere</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">mesh</span> <span class="o">=</span> <span class="n">bpy</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">meshes</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="sh">'</span><span class="s">Basic_Sphere</span><span class="sh">'</span><span class="p">)</span>
+<span class="n">basic_sphere</span> <span class="o">=</span> <span class="n">bpy</span><span class="p">.</span><span class="n">data</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="sh">"</span><span class="s">Basic_Sphere</span><span class="sh">"</span><span class="p">,</span> <span class="n">mesh</span><span class="p">)</span>
+<span class="n">bpy</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">collection</span><span class="p">.</span><span class="n">objects</span><span class="p">.</span><span class="nf">link</span><span class="p">(</span><span class="n">basic_sphere</span><span class="p">)</span>
 
-<span class="n">bm</span> <span class="o">=</span> <span class="n">bmesh</span><span class="p">.</span><span class="n">new</span><span class="p">()</span>
-<span class="n">bmesh</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="n">create_uvsphere</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">u_segments</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">v_segments</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">bm</span><span class="p">.</span><span class="n">to_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
-<span class="n">bm</span><span class="p">.</span><span class="n">free</span><span class="p">()</span>
+<span class="n">bm</span> <span class="o">=</span> <span class="n">bmesh</span><span class="p">.</span><span class="nf">new</span><span class="p">()</span>
+<span class="n">bmesh</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="nf">create_uvsphere</span><span class="p">(</span><span class="n">bm</span><span class="p">,</span> <span class="n">u_segments</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">v_segments</span><span class="o">=</span><span class="mi">16</span><span class="p">,</span> <span class="n">radius</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">bm</span><span class="p">.</span><span class="nf">to_mesh</span><span class="p">(</span><span class="n">mesh</span><span class="p">)</span>
+<span class="n">bm</span><span class="p">.</span><span class="nf">free</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>Note:</p>
@@ -447,7 +447,7 @@ Set them to 64 each.</p>
 
 <p>if you wanted to import a mesh from OpenSCAD you could instead do</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">imported_object</span> <span class="o">=</span> <span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="n">import_scene</span><span class="p">.</span><span class="n">obj</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="s">"mesh.obj"</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">imported_object</span> <span class="o">=</span> <span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="n">import_scene</span><span class="p">.</span><span class="nf">obj</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="sh">"</span><span class="s">mesh.obj</span><span class="sh">"</span><span class="p">)</span>
 <span class="n">obj_object</span> <span class="o">=</span> <span class="n">bpy</span><span class="p">.</span><span class="n">context</span><span class="p">.</span><span class="n">selected_objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div></div>
 
@@ -576,7 +576,7 @@ map_Kd untitled.png
 
 <p>By scripting we get more reproducable results. Here we do the UV unwrap to map the 3D Object to the 2D Texture</p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="n">uv</span><span class="p">.</span><span class="n">smart_project</span><span class="p">(</span><span class="n">angle_limit</span><span class="o">=</span><span class="n">radians</span><span class="p">(</span><span class="mi">66</span><span class="p">),</span> <span class="n">island_margin</span> <span class="o">=</span> <span class="mf">0.00</span><span class="p">)</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">bpy</span><span class="p">.</span><span class="n">ops</span><span class="p">.</span><span class="n">uv</span><span class="p">.</span><span class="nf">smart_project</span><span class="p">(</span><span class="n">angle_limit</span><span class="o">=</span><span class="nf">radians</span><span class="p">(</span><span class="mi">66</span><span class="p">),</span> <span class="n">island_margin</span> <span class="o">=</span> <span class="mf">0.00</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>We setup a new material, set the an image file as its base color</p>
@@ -602,19 +602,19 @@ material.node_tree.links.new<span class="o">(</span>bsdf.inputs[<span class="s1"
 
 <p>In order to load and automatically rotate the 3D model we can write a short script <code class="language-plaintext highlighter-rouge">view.py</code></p>
 
-<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">ursina</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="n">app</span> <span class="o">=</span> <span class="n">Ursina</span><span class="p">()</span>
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="n">ursina</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">app</span> <span class="o">=</span> <span class="nc">Ursina</span><span class="p">()</span>
 
-<span class="n">EditorCamera</span><span class="p">()</span>
-<span class="n">pivot</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">()</span>
+<span class="nc">EditorCamera</span><span class="p">()</span>
+<span class="n">pivot</span> <span class="o">=</span> <span class="nc">Entity</span><span class="p">()</span>
 
-<span class="n">earth</span> <span class="o">=</span> <span class="n">Entity</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s">"earth.obj"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">texture</span><span class="o">=</span><span class="p">(</span><span class="s">"earth.png"</span><span class="p">))</span>
-<span class="n">earth</span><span class="p">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="n">Vec3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">earth</span> <span class="o">=</span> <span class="nc">Entity</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="sh">"</span><span class="s">earth.obj</span><span class="sh">"</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">texture</span><span class="o">=</span><span class="p">(</span><span class="sh">"</span><span class="s">earth.png</span><span class="sh">"</span><span class="p">))</span>
+<span class="n">earth</span><span class="p">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="nc">Vec3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">update</span><span class="p">():</span>
-  <span class="n">earth</span><span class="p">.</span><span class="n">rotation</span> <span class="o">+=</span> <span class="n">Vec3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="o">-</span><span class="mf">0.2</span><span class="p">)</span> <span class="o">*</span> <span class="n">time</span><span class="p">.</span><span class="n">dt</span> <span class="o">*</span> <span class="mi">100</span>
+  <span class="n">earth</span><span class="p">.</span><span class="n">rotation</span> <span class="o">+=</span> <span class="nc">Vec3</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="o">-</span><span class="mf">0.2</span><span class="p">)</span> <span class="o">*</span> <span class="n">time</span><span class="p">.</span><span class="n">dt</span> <span class="o">*</span> <span class="mi">100</span>
 
-<span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">app</span><span class="p">.</span><span class="nf">run</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>and run it by</p>

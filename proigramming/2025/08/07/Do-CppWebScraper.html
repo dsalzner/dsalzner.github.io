@@ -132,94 +132,94 @@
 <p>When scrapping data with Python this is what I used to do:</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># -- working headless mode by running in virtual frame buffer Xvfb
-</span><span class="n">display</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))</span>
-<span class="n">display</span><span class="p">.</span><span class="n">start</span><span class="p">()</span>
+</span><span class="n">display</span> <span class="o">=</span> <span class="nc">Display</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1920</span><span class="p">,</span> <span class="mi">1080</span><span class="p">))</span>
+<span class="n">display</span><span class="p">.</span><span class="nf">start</span><span class="p">()</span>
 
 <span class="c1"># -- some covert options to hide selenium
-</span><span class="n">options</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="n">ChromeOptions</span><span class="p">()</span>
-<span class="n">options</span><span class="p">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">"--disable-blink-features=AutomationControlled"</span><span class="p">)</span> 
-<span class="n">options</span><span class="p">.</span><span class="n">add_experimental_option</span><span class="p">(</span><span class="s">"excludeSwitches"</span><span class="p">,</span> <span class="p">[</span><span class="s">"enable-automation"</span><span class="p">])</span> 
-<span class="n">options</span><span class="p">.</span><span class="n">add_experimental_option</span><span class="p">(</span><span class="s">"useAutomationExtension"</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> 
+</span><span class="n">options</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="nc">ChromeOptions</span><span class="p">()</span>
+<span class="n">options</span><span class="p">.</span><span class="nf">add_argument</span><span class="p">(</span><span class="sh">"</span><span class="s">--disable-blink-features=AutomationControlled</span><span class="sh">"</span><span class="p">)</span> 
+<span class="n">options</span><span class="p">.</span><span class="nf">add_experimental_option</span><span class="p">(</span><span class="sh">"</span><span class="s">excludeSwitches</span><span class="sh">"</span><span class="p">,</span> <span class="p">[</span><span class="sh">"</span><span class="s">enable-automation</span><span class="sh">"</span><span class="p">])</span> 
+<span class="n">options</span><span class="p">.</span><span class="nf">add_experimental_option</span><span class="p">(</span><span class="sh">"</span><span class="s">useAutomationExtension</span><span class="sh">"</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span> 
 
 <span class="c1"># -- add UBlock Origin Extension to remove full-page ad-bloat that hinders 
-</span><span class="n">extraBrowserExtension</span> <span class="o">=</span> <span class="s">"&lt;path to ublock origin extension for this spectic browser (*.crx file)&gt;"</span>
-<span class="n">options</span><span class="p">.</span><span class="n">add_extension</span><span class="p">(</span><span class="n">extraBrowserExtension</span><span class="p">)</span>
+</span><span class="n">extraBrowserExtension</span> <span class="o">=</span> <span class="sh">"</span><span class="s">&lt;path to ublock origin extension for this spectic browser (*.crx file)&gt;</span><span class="sh">"</span>
+<span class="n">options</span><span class="p">.</span><span class="nf">add_extension</span><span class="p">(</span><span class="n">extraBrowserExtension</span><span class="p">)</span>
 
 <span class="c1"># -- load Chrome
-</span><span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="n">Chrome</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
+</span><span class="n">driver</span> <span class="o">=</span> <span class="n">webdriver</span><span class="p">.</span><span class="nc">Chrome</span><span class="p">(</span><span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
 
 <span class="c1"># -- some more covert options
-</span><span class="n">driver</span><span class="p">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s">"Object.defineProperty(navigator, 'webdriver', {get: () =&gt; undefined})"</span><span class="p">)</span>
+</span><span class="n">driver</span><span class="p">.</span><span class="nf">execute_script</span><span class="p">(</span><span class="sh">"</span><span class="s">Object.defineProperty(navigator, </span><span class="sh">'</span><span class="s">webdriver</span><span class="sh">'</span><span class="s">, {get: () =&gt; undefined})</span><span class="sh">"</span><span class="p">)</span>
 
 <span class="n">useragent</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36"</span><span class="p">]</span>
-<span class="n">driver</span><span class="p">.</span><span class="n">execute_cdp_cmd</span><span class="p">(</span>
-    <span class="s">"Network.setUserAgentOverride"</span><span class="p">,</span> <span class="p">{</span><span class="s">"userAgent"</span><span class="p">:</span> <span class="n">useragent</span><span class="p">}</span>
+    <span class="sh">"</span><span class="s">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36</span><span class="sh">"</span><span class="p">]</span>
+<span class="n">driver</span><span class="p">.</span><span class="nf">execute_cdp_cmd</span><span class="p">(</span>
+    <span class="sh">"</span><span class="s">Network.setUserAgentOverride</span><span class="sh">"</span><span class="p">,</span> <span class="p">{</span><span class="sh">"</span><span class="s">userAgent</span><span class="sh">"</span><span class="p">:</span> <span class="n">useragent</span><span class="p">}</span>
 <span class="p">)</span>
 
-<span class="n">stealth</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span>
-    <span class="n">languages</span><span class="o">=</span><span class="p">[</span><span class="s">"en-US"</span><span class="p">,</span> <span class="s">"en"</span><span class="p">],</span>
-    <span class="n">vendor</span><span class="o">=</span><span class="s">"Google Inc."</span><span class="p">,</span>
-    <span class="n">platform</span><span class="o">=</span><span class="s">"Win32"</span><span class="p">,</span>
-    <span class="n">webgl_vendor</span><span class="o">=</span><span class="s">"Intel Inc."</span><span class="p">,</span>
-    <span class="n">renderer</span><span class="o">=</span><span class="s">"Intel Iris OpenGL Engine"</span><span class="p">,</span>
+<span class="nf">stealth</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span>
+    <span class="n">languages</span><span class="o">=</span><span class="p">[</span><span class="sh">"</span><span class="s">en-US</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">en</span><span class="sh">"</span><span class="p">],</span>
+    <span class="n">vendor</span><span class="o">=</span><span class="sh">"</span><span class="s">Google Inc.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">platform</span><span class="o">=</span><span class="sh">"</span><span class="s">Win32</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">webgl_vendor</span><span class="o">=</span><span class="sh">"</span><span class="s">Intel Inc.</span><span class="sh">"</span><span class="p">,</span>
+    <span class="n">renderer</span><span class="o">=</span><span class="sh">"</span><span class="s">Intel Iris OpenGL Engine</span><span class="sh">"</span><span class="p">,</span>
     <span class="n">fix_hairline</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">driver</span><span class="p">.</span><span class="n">execute_cdp_cmd</span><span class="p">(</span><span class="s">"Page.addScriptToEvaluateOnNewDocument"</span><span class="p">,</span> <span class="p">{</span>
-    <span class="s">"source"</span><span class="p">:</span> <span class="s">"""
-    Object.defineProperty(navigator, 'webdriver', {
+<span class="n">driver</span><span class="p">.</span><span class="nf">execute_cdp_cmd</span><span class="p">(</span><span class="sh">"</span><span class="s">Page.addScriptToEvaluateOnNewDocument</span><span class="sh">"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="sh">"</span><span class="s">source</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"""</span><span class="s">
+    Object.defineProperty(navigator, </span><span class="sh">'</span><span class="s">webdriver</span><span class="sh">'</span><span class="s">, {
         get: () =&gt; undefined
     })
-    """</span>
+    </span><span class="sh">"""</span>
 <span class="p">})</span>
 </code></pre></div></div>
 
 <p>Then load a page</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># -- open url
-</span><span class="n">driver</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="n">grab_url</span><span class="p">)</span>
+</span><span class="n">driver</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="n">grab_url</span><span class="p">)</span>
 </code></pre></div></div>
 
 <p>Using my helper functions to get the page body and HTML elements, when they are finally loaded:</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">webdriver_find_element</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">root</span><span class="p">,</span> <span class="n">cssSelector</span><span class="p">):</span>
-  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+  <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
     <span class="k">try</span><span class="p">:</span>
-      <span class="n">element</span> <span class="o">=</span> <span class="n">root</span><span class="p">.</span><span class="n">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="n">cssSelector</span><span class="p">);</span>
+      <span class="n">element</span> <span class="o">=</span> <span class="n">root</span><span class="p">.</span><span class="nf">find_element</span><span class="p">(</span><span class="n">By</span><span class="p">.</span><span class="n">CSS_SELECTOR</span><span class="p">,</span> <span class="n">cssSelector</span><span class="p">);</span>
       <span class="k">return</span> <span class="n">element</span>
     <span class="k">except</span> <span class="n">NoSuchElementException</span><span class="p">:</span>
-      <span class="n">time</span><span class="p">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-  <span class="k">print</span><span class="p">(</span><span class="s">"timeout waiting for cookie accept"</span><span class="p">)</span>
+      <span class="n">time</span><span class="p">.</span><span class="nf">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+  <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">timeout waiting for cookie accept</span><span class="sh">"</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">webdriver_get_html_element_body</span><span class="p">(</span><span class="n">driver</span><span class="p">):</span>
-  <span class="k">return</span> <span class="n">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="mi">5</span><span class="p">).</span><span class="n">until</span><span class="p">(</span><span class="n">EC</span><span class="p">.</span><span class="n">element_to_be_clickable</span><span class="p">((</span><span class="n">By</span><span class="p">.</span><span class="n">TAG_NAME</span><span class="p">,</span> <span class="s">"body"</span><span class="p">)))</span>
+  <span class="k">return</span> <span class="nc">WebDriverWait</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="mi">5</span><span class="p">).</span><span class="nf">until</span><span class="p">(</span><span class="n">EC</span><span class="p">.</span><span class="nf">element_to_be_clickable</span><span class="p">((</span><span class="n">By</span><span class="p">.</span><span class="n">TAG_NAME</span><span class="p">,</span> <span class="sh">"</span><span class="s">body</span><span class="sh">"</span><span class="p">)))</span>
 </code></pre></div></div>
 
 <p>Get the page, get subelements by CSS selectors, inject javascript to change attributes and click on elements.</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># -- get html body
-</span><span class="n">html_element_body</span> <span class="o">=</span> <span class="n">webdriver_get_html_element_body</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
+</span><span class="n">html_element_body</span> <span class="o">=</span> <span class="nf">webdriver_get_html_element_body</span><span class="p">(</span><span class="n">driver</span><span class="p">)</span>
 
 <span class="c1"># - get inner div
-</span><span class="n">html_element_table</span> <span class="o">=</span> <span class="n">webdriver_find_element</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">html_element_body</span><span class="p">,</span> <span class="s">"main[class='page-content']"</span><span class="p">)</span>
+</span><span class="n">html_element_table</span> <span class="o">=</span> <span class="nf">webdriver_find_element</span><span class="p">(</span><span class="n">driver</span><span class="p">,</span> <span class="n">html_element_body</span><span class="p">,</span> <span class="sh">"</span><span class="s">main[class=</span><span class="sh">'</span><span class="s">page-content</span><span class="sh">'</span><span class="s">]</span><span class="sh">"</span><span class="p">)</span>
 
 <span class="p">(..)</span>
 
 <span class="c1"># -- inject javascript
-</span><span class="n">driver</span><span class="p">.</span><span class="n">execute_script</span><span class="p">(</span><span class="s">"arguments[0].setAttribute('value', '"</span> <span class="o">+</span> <span class="n">date_start</span> <span class="o">+</span><span class="s">"')"</span><span class="p">,</span> <span class="n">html_element_dtDate1</span><span class="p">);</span>
+</span><span class="n">driver</span><span class="p">.</span><span class="nf">execute_script</span><span class="p">(</span><span class="sh">"</span><span class="s">arguments[0].setAttribute(</span><span class="sh">'</span><span class="s">value</span><span class="sh">'</span><span class="s">, </span><span class="sh">'"</span> <span class="o">+</span> <span class="n">date_start</span> <span class="o">+</span><span class="sh">"'</span><span class="s">)</span><span class="sh">"</span><span class="p">,</span> <span class="n">html_element_dtDate1</span><span class="p">);</span>
 
 <span class="p">(..)</span>
 
 <span class="c1"># -- click submit
-</span><span class="n">html_element_submit</span><span class="p">.</span><span class="n">click</span><span class="p">()</span>
+</span><span class="n">html_element_submit</span><span class="p">.</span><span class="nf">click</span><span class="p">()</span>
 </code></pre></div></div>
 
 <p>and finally extract the results</p>
 
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># -- extract information
-</span><span class="k">print</span><span class="p">(</span><span class="n">html_element</span><span class="p">.</span><span class="n">get_attribute</span><span class="p">(</span><span class="s">'outerHTML'</span><span class="p">))</span>
+</span><span class="nf">print</span><span class="p">(</span><span class="n">html_element</span><span class="p">.</span><span class="nf">get_attribute</span><span class="p">(</span><span class="sh">'</span><span class="s">outerHTML</span><span class="sh">'</span><span class="p">))</span>
 </code></pre></div></div>
 
 <p>That runs fine, but is slow and requires a lot of dependencies to be installed.</p>
@@ -524,7 +524,7 @@ all:
 <span class="p">}</span>
 
 
-<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
   <span class="p">(...)</span>
   <span class="n">wxButton</span> <span class="o">*</span> <span class="n">button</span> <span class="o">=</span> <span class="k">new</span> <span class="n">wxButton</span><span class="p">(</span><span class="n">panel</span><span class="p">,</span> <span class="n">wxID_ANY</span><span class="p">,</span> <span class="s">"Get Source"</span><span class="p">);</span>
   <span class="n">sizer</span><span class="o">-&gt;</span><span class="n">Add</span><span class="p">(</span><span class="n">button</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">wxALL</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
@@ -548,7 +548,7 @@ all:
   <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">webView</span><span class="o">-&gt;</span><span class="n">GetPageSource</span><span class="p">()</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 <span class="p">}</span>
 
-<span class="kt">int</span> <span class="n">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">**</span> <span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
   <span class="p">(...)</span>
   <span class="k">const</span> <span class="kt">int</span> <span class="n">TIMER_INTERVAL</span> <span class="o">=</span> <span class="mi">500</span><span class="p">;</span>
   <span class="n">wxTimer</span> <span class="o">*</span> <span class="n">timer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">wxTimer</span><span class="p">(</span><span class="n">panel</span><span class="p">,</span> <span class="n">wxID_ANY</span><span class="p">);</span>
