@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Sim City 4 Web Interface Plug-In - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="Most would agree that Sim City 4 is by far the best city-building simulation game. It's a 20 year old game that hasn't received any updates since. But recently there have been s..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/gamemods/2024/03/31/So-SimCity4Plugins.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="Most would agree that Sim City 4 is by far the best city-building simulation game. It's a 20 year old game that hasn't received any updates since. But recently there have been s..." />
   <meta name="twitter:title" content="Sim City 4 Web Interface Plug-In - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -71,9 +74,9 @@
 
 <p style="font-size: 60%;" align="right">What</p>
 
-<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-window.png" width="40%" />
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-window.png" class="responsive-image" width="40%" />
 
-<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-webinterface-plugin.png" width="45%" />
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-webinterface-plugin.png" class="responsive-image" width="45%" />
 
 <p>Most would agree that Sim City 4 is by far the best city-building simulation game. It’s a 20 year old game that hasn’t received any updates since. But recently there have been significant advancements in plug-in development for the game. I’ve written a plug-in for Sim City 4 that allows viewing game metrics in a web browser. The web browser can run on a secondary monitor, smart phone or tablet. This adds basic second-screen/multi-monitor capabilities to the game.</p>
 
@@ -147,7 +150,7 @@ The repo contains the “Extra Cheats DLL”, an example that shows how plug-ins
 
 <p>One key aspect of the game is to continuously monitoring the in-game metrics.</p>
 
-<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-graph-budget.png" width="35%" />
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-graph-budget.png" class="responsive-image" width="35%" />
 
 <p>If these metrics like available electricity, water, RCI demand, budget significantly drop the player has to intervene. Otherwise the Sims will flee the city, tax income will depleat and the city will spiral out of control. An configurable automation that can pause the game would be nice.</p>
 
@@ -268,7 +271,7 @@ The repo contains the “Extra Cheats DLL”, an example that shows how plug-ins
 
 <p>There’s a plug-in [9] available on GitHub that opens a console from the game and shows these messages.</p>
 
-<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-messagelog-plugin.png" width="35%" />
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-messagelog-plugin.png" class="responsive-image" width="35%" />
 
 <p>The messages are sent from classes. The reverse engineering effort is in decoding the class ids [2] and understanding their contents. There are lots of them.</p>
 
@@ -584,7 +587,7 @@ So we get that</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-webinterface-plugin.png" width="35%" />
+<img src="../../../../images/2024-03-31-So-SimCity4Plugins/sc4-webinterface-plugin.png" class="responsive-image" width="35%" />
 
 <p>The C/C++ portion of the plug-in is mostly completed.</p>
 

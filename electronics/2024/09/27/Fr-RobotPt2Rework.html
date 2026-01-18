@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Robot - Pt.2 - Rework - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="In order to accomodate for the Lidar, for which the SLAM algorithms in turn require wheel odometry data and the ESP32-CAM in order to provide a video stream, I had to rework muc..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/09/27/Fr-RobotPt2Rework.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="In order to accomodate for the Lidar, for which the SLAM algorithms in turn require wheel odometry data and the ESP32-CAM in order to provide a video stream, I had to rework muc..." />
   <meta name="twitter:title" content="Robot - Pt.2 - Rework - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -78,7 +81,7 @@
 
 <p>I found that the "Simultaneous Localization and Mapping" (SLAM) algorithms implemented in the "Robotic Operating System" (ROS) will not function properly without wheel odometry data. Also since transitioning from the ESP8266-based Wemos D1 Mini to an ESP32-CAM that provides more processing power and a camera, I had less I/O pins available. So I took the time to completly overhaul the electronics of the robot to use I2C for control of the actuators and reading of sensors. This greatly simplifies the design and makes debugging issues easier.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09_2.jpg" width="20%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09_2.jpg" class="responsive-image" width="20%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -123,7 +126,7 @@
 
 <p>An lightbarrier was added to detect the front-bumper. This was fed directly into the micro-controller.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2018-07.jpg" width="30%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2018-07.jpg" class="responsive-image" width="30%" />
 
 <p style="font-size: 60%;" align="right">Background</p>
 
@@ -145,7 +148,7 @@
 
 <p>So in order to prepare for switching to the I2C components I had to re-arrange the electronics. This began some time in 2024 when I cut the perf boards and glued them down to the CNC milled wooden board.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-xx.jpg" width="30%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-xx.jpg" class="responsive-image" width="30%" />
 
 <p style="font-size: 60%;" align="right">How</p>
 
@@ -153,7 +156,7 @@
 
 <p>After soldering all the other sensor and actuator and adding them the board looked like this:</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09.jpg" width="30%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09.jpg" class="responsive-image" width="30%" />
 
 <p>We now have</p>
 
@@ -189,19 +192,19 @@
 
 <p>In total the electronics now look like this:</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/schematic-overview.png" width="70%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/schematic-overview.png" class="responsive-image" width="70%" />
 
 <h3 id="busbar">BusBar</h3>
 
 <p>Note that all sensors and actuators are connected via the same bus-bar in the center. This makes removing, replacing and debugging a lot easier and reduces the number of connections I need to the main ESP32-Cam microcontroller.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/busbar1.jpg" width="30%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/busbar1.jpg" class="responsive-image" width="30%" />
 
 <p>For this I just soldered four large pin-arrays to a board keeping two holes distance so that wires can easily be attached and removed without shorting.</p>
 
 <p>The four lanes are for 5V+ Vcc, GNC, I2C SCL and I2C SDA.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/busbar2.jpg" width="30%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/busbar2.jpg" class="responsive-image" width="30%" />
 
 <p>With this I can very easily add and remove I2C devices from the bus, measure signals and cleanly wire everything.</p>
 
@@ -223,7 +226,7 @@
   <li>and it can be modified by HTTP-POST containing the key and the new value to be given</li>
 </ul>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/software.png" width="30%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/software.png" class="responsive-image" width="30%" />
 
 <p>This gives us the ability to read the state of the robot and control it by simple HTTP requests.</p>
 
@@ -256,11 +259,11 @@ curl <span class="nt">-d</span> <span class="s1">'{ "motorRight" : "fwd"}'</span
 
 <p>The same Python controller tool I used back then can still be used to drive the robot.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/python-controller.png" width="10%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/python-controller.png" class="responsive-image" width="10%" />
 
 <p>A (currently unfinished) web interface hosted directly from the ESP32-cam can also be used to read sensor data and in future control the robot from any device on the same Wifi network with a web browser.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/webinterface.jpg" width="30%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/webinterface.jpg" class="responsive-image" width="30%" />
 
 <h3 id="ros-micro">ROS micro</h3>
 
@@ -316,20 +319,20 @@ curl <span class="nt">-d</span> <span class="s1">'{ "motorRight" : "fwd"}'</span
 
 <p>Wheel Odometry proved a bit challenging. I’ll explain the wheel odometry in a follow up (<a href="/electronics/2024/09/28/Sa-RobotPt3Odometry.html">see Wheel Odometry</a>).</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/wheel1.jpg" width="20%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/wheel1.jpg" class="responsive-image" width="20%" />
 
 <h3 id="batteries">Batteries</h3>
 
 <p>Originally I had intended to use 18650 cells from an old laptop, as I have in the past. These require a Battery-Protection-Circuit for safety as 18650 cells can potentially catch fire when shorted.
 This battery protection circuit is causing a lot of trouble. It locks up and just blocks all electicity entirely. Sometimes it resets a day later, sometimes it doesn’t</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/charging.jpg" width="20%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/charging.jpg" class="responsive-image" width="20%" />
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09.jpg" width="20%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/vacuumbot-2024-09.jpg" class="responsive-image" width="20%" />
 
 <p>So instead I put a standard USB power bank on the robot. This worked well enough that I’m considering switching to the powerbank all together. It’s safer and lighter.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/powerbank.jpg" width="20%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/powerbank.jpg" class="responsive-image" width="20%" />
 
 <p>In the image below I needed to add a counter-weight - a handle from an older server case - to keep the robot from falling backwards. Some time later I’ve printed some holders to properly fix the battery bank above the rest of the electronics.</p>
 
@@ -339,7 +342,7 @@ This battery protection circuit is causing a lot of trouble. It locks up and jus
 
 <p>The advantage of the power bank approach is that I might be able to wirelessly charge with one of these USB wireless charging smartphone adapters.</p>
 
-<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/wireless-charge.png" width="20%" />
+<img src="../../../../images/2024-09-27-Fr-RobotPt2Rework/wireless-charge.png" class="responsive-image" width="20%" />
 
 <p>That way it would be possible to have a loading bay the robot can drive onto in order to charge. It wouldn’t require being perfectly positioned to charge either. I suspect it would only charge very slowly though.</p>
 

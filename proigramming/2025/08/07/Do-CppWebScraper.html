@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Web Scraper written in C++ - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="My Python + Selenium Web-Scraper requires Chrome, ChromeDriver, Python, xvfb (X11 virtual frame buffer) and a bunch of hacks for hidden headless mode. I want something small, ef..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/proigramming/2025/08/07/Do-CppWebScraper.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="My Python + Selenium Web-Scraper requires Chrome, ChromeDriver, Python, xvfb (X11 virtual frame buffer) and a bunch of hacks for hidden headless mode. I want something small, ef..." />
   <meta name="twitter:title" content="Web Scraper written in C++ - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -359,7 +362,7 @@ make
 ./minimal
 </code></pre></div></div>
 
-<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-150059_642x278_scrot.png" width="35%" />
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-150059_642x278_scrot.png" class="responsive-image" width="35%" />
 
 <h3 id="compile-flags">Compile Flags</h3>
 
@@ -391,7 +394,7 @@ all:
 ./main
 </code></pre></div></div>
 
-<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-152300_249x148_scrot.png" width="35%" />
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-152300_249x148_scrot.png" class="responsive-image" width="35%" />
 
 <h3 id="procedural-style">Procedural Style</h3>
 
@@ -461,7 +464,7 @@ all:
 
 <p>and with that WebKit runs, can open a URL and displays one of the cookie popups.</p>
 
-<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-162027_797x1003_scrot.png" width="35%" />
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-162027_797x1003_scrot.png" class="responsive-image" width="35%" />
 
 <h3 id="injecting-javascript">Injecting JavaScript</h3>
 
@@ -472,7 +475,7 @@ all:
 <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">webView</span><span class="o">-&gt;</span><span class="n">RunScript</span><span class="p">(</span><span class="s">"javascript:(function() { alert('hi');})()"</span><span class="p">);</span>
 </code></pre></div></div>
 
-<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-163544_797x998_scrot.png" width="35%" />
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-06-163544_797x998_scrot.png" class="responsive-image" width="35%" />
 
 <h3 id="getting-page-source">Getting Page Source</h3>
 
@@ -536,7 +539,7 @@ all:
 
 <p>That works great (see html source in the console in the background). But we’d have to manually click a button each for each iteration.</p>
 
-<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-07-100846_844x611_scrot.png" width="35%" />
+<img src="../../../../images/2025-08-07-Do-CppWebScraper/2025-08-07-100846_844x611_scrot.png" class="responsive-image" width="35%" />
 
 <h4 id="wxtimer">wxTimer</h4>
 

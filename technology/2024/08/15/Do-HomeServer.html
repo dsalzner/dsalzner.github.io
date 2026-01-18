@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Home Server & Smart Home - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="My small Raspberry PI Home-Server failed once again after approx. 2 years of operation. This time the SD-Card literally burned up. I'll reinstall it, document the process and sh..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/technology/2024/08/15/Do-HomeServer.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="My small Raspberry PI Home-Server failed once again after approx. 2 years of operation. This time the SD-Card literally burned up. I'll reinstall it, document the process and sh..." />
   <meta name="twitter:title" content="Home Server & Smart Home - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -71,7 +74,7 @@
 
 <p style="font-size: 60%;" align="right">What</p>
 
-<img src="../../../../images/2024-08-15-Do-HomeServer/homeserver.jpg" width="20%" />
+<img src="../../../../images/2024-08-15-Do-HomeServer/homeserver.jpg" class="responsive-image" width="20%" />
 
 <p>My small Raspberry PI Home-Server failed once again after approx. 2 years of operation. This time the SD-Card literally burned up. I’ll reinstall it, document the process and share some insights I’ve had from over a decade of running home servers.</p>
 
@@ -826,7 +829,7 @@ quit<span class="p">;</span>
 
 <p>The termux-widget App makes it possible to run the scripts from a menu directly from the home screen.</p>
 
-<img src="../../../../images/2024-08-15-Do-HomeServer/termux.jpg" width="20%" />
+<img src="../../../../images/2024-08-15-Do-HomeServer/termux.jpg" class="responsive-image" width="20%" />
 
 <p>The best part is that the phone will directly connect to the respective smart home bridges. There is no single point of failure.</p>
 
@@ -838,7 +841,7 @@ quit<span class="p">;</span>
 <span class="nb">echo</span> <span class="s2">"television-on | bash='</span><span class="nv">$SUCKLESS_SMARTHOME</span><span class="s2">/philips_hue.py --action seton --device Television'"</span>
 </code></pre></div></div>
 
-<img src="../../../../images/2024-08-15-Do-HomeServer/argos.png" width="20%" />
+<img src="../../../../images/2024-08-15-Do-HomeServer/argos.png" class="responsive-image" width="20%" />
 
 <h4 id="influxdb">InfluxDB</h4>
 
@@ -895,7 +898,7 @@ pip <span class="nb">install </span>influxdb
 
 <p>which will yield</p>
 
-<img src="../../../../images/2024-08-15-Do-HomeServer/fridge-plot.png" width="40%" />
+<img src="../../../../images/2024-08-15-Do-HomeServer/fridge-plot.png" class="responsive-image" width="40%" />
 
 <p>Running this script either by web hook or regularly by <code class="language-plaintext highlighter-rouge">crontab</code> and storing the image in web server directory under</p>
 

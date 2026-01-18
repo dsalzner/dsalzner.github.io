@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Software Defined Radio & Building Antennas - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="Amateur radio and software defined radio is a big field with a lot to learn. It touches on various fields of technology from voice communication, but also digital transmission f..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/09/12/Do-SoftwareDefinedRadio.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="Amateur radio and software defined radio is a big field with a lot to learn. It touches on various fields of technology from voice communication, but also digital transmission f..." />
   <meta name="twitter:title" content="Software Defined Radio & Building Antennas - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -213,7 +216,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>Depening on use case different frequencies are used. Wikipedia has great image of the electromagnetic spectrum.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/spectrum.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/spectrum.png" class="responsive-image" width="30%" />
 
 <p><br /><small>(Image taken from [10])</small></p>
 
@@ -307,7 +310,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>There’s not much inside the rtl2832 reciever as most of the signal handling is done in software on the computer.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/rtl2832.jpg" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/rtl2832.jpg" class="responsive-image" width="30%" />
 
 <h3 id="antennas">Antennas</h3>
 
@@ -325,7 +328,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>WiFi-Equipement typically comes with small antennas. These are omni-directional are fine for residential use.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-equipment.jpg" width="40%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-equipment.jpg" class="responsive-image" width="40%" />
 
 <p><small>(Some of my old 2.4 GHz Wifi-Equipment and Antennas)</small></p>
 
@@ -335,7 +338,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>For fining WiFI signals or receiving over long ranges it’s better to have a directional antenna. The Wifi-Cantenna is a directional DIY Antenna that is just a can with a wire inside. There are many guides online on how to build them [12].</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-cantenna.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-cantenna.png" class="responsive-image" width="30%" />
 
 <p><small>(Image taken from [9])</small></p>
 
@@ -345,11 +348,11 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>The Pringles-Cantenna, like the one I’ve built some time around ‘09/’10 is a bit more complicated. I built this following a guide I found online. It has a threaded rod and aluminium tube spacers with washers inside at a specific distance to better filter the signal.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-pringles-cantenna-1.jpg" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-pringles-cantenna-1.jpg" class="responsive-image" width="20%" />
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-pringles-cantenna-2.jpg" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-pringles-cantenna-2.jpg" class="responsive-image" width="20%" />
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-pringles-cantenna-3.jpg" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/wifi-pringles-cantenna-3.jpg" class="responsive-image" width="20%" />
 
 <p>To build such an antenna you need</p>
 
@@ -373,7 +376,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>The RTL2832 dongles come with a cheap antenna sufficient for DVB-T reception and FM radio, but not so much else.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/realtek-sdr.jpg" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/realtek-sdr.jpg" class="responsive-image" width="30%" />
 
 <p>The connector is an MCX-Plug.</p>
 
@@ -381,7 +384,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>For Citizens Band, 27 MHz, 11-Meter-Band I purchased an antenna built for mounting on trucks.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/cb-antenna.jpg" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/cb-antenna.jpg" class="responsive-image" width="30%" />
 
 <p>It has a male PL Plug (UHF Plug).</p>
 
@@ -389,7 +392,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>The Yagi antenna design is commonly seen on TV receiver antennas mounted on house roofs. It’s  easy to build DIY antennas following this design.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/yagi-tv-antenna.png" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/yagi-tv-antenna.png" class="responsive-image" width="20%" />
 
 <p><small>(Image taken from [13])</small></p>
 
@@ -397,7 +400,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>DI-Pole Anteannas are just two wires bent in opposing directions</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/antenna-diplole.jpg" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/antenna-diplole.jpg" class="responsive-image" width="20%" />
 
 <p><small>(Image taken from [14])</small></p>
 
@@ -405,13 +408,13 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>A Colinear Antennas can be built of Coax-Wire where for each segment of specific length, the shield is soldered to the core of the next segment and vise-versa.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/colinear.png" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/colinear.png" class="responsive-image" width="20%" />
 
 <p><small>(Image taken from [15])</small></p>
 
 <h5 id="parabolic-antenna">Parabolic Antenna</h5>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/satellite-dish.png" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/satellite-dish.png" class="responsive-image" width="20%" />
 
 <p><small>(Image taken from [17])</small></p>
 
@@ -448,7 +451,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
   <li>to connect to the WiFi radio you need a “pigtail” adapter from RG316 to RP-SMA</li>
 </ul>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/pigtail-ntype-rpsma.jpg" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/pigtail-ntype-rpsma.jpg" class="responsive-image" width="20%" />
 
 <p>For connecting to the RTL-SDR</p>
 
@@ -456,7 +459,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
   <li>a “pigtail” adapter from the male MCX to female SMA</li>
 </ul>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/mcx-to-sma.jpg" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/mcx-to-sma.jpg" class="responsive-image" width="20%" />
 
 <p>For the Citizens Band Antenna</p>
 
@@ -464,7 +467,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
   <li>a female PL socket (UHF socket) to SMA (not RP-SMA)</li>
 </ul>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/pl-plug-sma.jpg" width="10%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/pl-plug-sma.jpg" class="responsive-image" width="10%" />
 
 <p>For DIY Antennas of other frequency ranges</p>
 
@@ -488,7 +491,7 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 
 <p>A convenient software for getting started with the RTL2832 is SDR-Sharp (SDR#) [18]. It has been around for some time and displays a nice diagramm where you can visually see where a signal was received.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-sharp.png" width="60%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-sharp.png" class="responsive-image" width="60%" />
 
 <p>I used to have it running on Linux, but the installation on Windows is much easier.</p>
 
@@ -499,15 +502,15 @@ In the meantime I had acquired a Netgear wg511t that I immediatly broke trying t
 <p>For this run the “install-rtlsdr.bat” scrip that comes with SdrSharp.
 It will make “zadig.exe “available”</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-01.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-01.png" class="responsive-image" width="30%" />
 
 <p>The Zadig USB driver tool can then be used to switch the driver for the RTL2832 to “WinUSB”.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-02.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-02.png" class="responsive-image" width="30%" />
 
 <p>You can then select the receiver in SdrSharp.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-03.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/sdr-03.png" class="responsive-image" width="30%" />
 
 <h3 id="websdr">WebSDR</h3>
 
@@ -519,7 +522,7 @@ It will make “zadig.exe “available”</p>
 
 <p>Common Software for WebSDR is OpenWebRX [19]. You can quickly install it with Docker. Here docker makes sense, because this application is a bit tricky to set up and there’s hardly any customization you’ll need to the software.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/openwebrx.png" width="50%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/openwebrx.png" class="responsive-image" width="50%" />
 
 <h4 id="configuring-openwebrx">Configuring OpenWebRX</h4>
 
@@ -620,7 +623,7 @@ Then, in “pavucontrol”, I set the Audicity recording input to “monitor” 
 
 <h4 id="100-to-300-mhz---inaudibledigital-signals">100 to 300 MHz - Inaudible/Digital Signals</h4>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-1.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-1.png" class="responsive-image" width="30%" />
 
 <p>Similarly at 
 115,200 MHz
@@ -631,28 +634,28 @@ Then, in “pavucontrol”, I set the Audicity recording input to “monitor” 
 
 <p>A strange signal at 179,800 MHz</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-2.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-2.png" class="responsive-image" width="30%" />
 
 <p>Some signals are distributed over a range.</p>
 
 <p>158,400 MHz</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-3.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-3.png" class="responsive-image" width="30%" />
 
 <p>333,325 MHz</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-4.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-4.png" class="responsive-image" width="30%" />
 
 <p>Some have equi-distant patterns</p>
 
 <p>234,100 MHz
 304,000 MHz</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-5.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-5.png" class="responsive-image" width="30%" />
 
 <p>289,317 MHz</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-6.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-6.png" class="responsive-image" width="30%" />
 
 <h4 id="102-mhz---fm-radio">102 MHz - FM Radio</h4>
 
@@ -660,7 +663,7 @@ Then, in “pavucontrol”, I set the Audicity recording input to “monitor” 
 
 <p>We can clearly see what an analog audio signal looks like in the diagram.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-7.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-7.png" class="responsive-image" width="30%" />
 
 <h4 id="150-mhz---esoteric-medical-equipment">150 MHz - Esoteric Medical Equipment</h4>
 
@@ -672,13 +675,13 @@ Then, in “pavucontrol”, I set the Audicity recording input to “monitor” 
 
 <p>Either somebody in my neighbourhood seems to believe in this or I’ve missinterpreted the signal and source is actually something else.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-8.png" width="10%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-8.png" class="responsive-image" width="10%" />
 
 <h4 id="122670000-hz---airport">122,670,000 Hz - Airport</h4>
 
 <p>Of course I also picked up transmission from the airport “Automatic Terminal Information Service” and was able to hear weather and runway information.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-9.png" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-9.png" class="responsive-image" width="20%" />
 
 <h4 id="224016400-hz---walkie-talkies-on-citizens-band">224,016,400 Hz - Walkie Talkies on Citizens Band</h4>
 
@@ -686,7 +689,7 @@ Then, in “pavucontrol”, I set the Audicity recording input to “monitor” 
 
 <p>on 224,016,400 MHz Wide-FM</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-10.png" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-25-10.png" class="responsive-image" width="20%" />
 
 <p>Someone speaking in a very franconian accent that the other party should “be happy he didn’t carry everything upstairs” and then concluding that “he is going to grab some coffee”.</p>
 
@@ -709,7 +712,7 @@ Your browser does not support the audio element.
 
 <p>Some music was playing on 26,985,500 MHz</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-1.png" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-1.png" class="responsive-image" width="20%" />
 
 <p>It was very hard to tune to and a lot of noise was received.</p>
 
@@ -724,7 +727,7 @@ Your browser does not support the audio element.
 
 <h4 id="30114727-hz---more-music">30,114,727 Hz - more Music</h4>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-2.png" width="20%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-2.png" class="responsive-image" width="20%" />
 
 <p>Another such radio transmission on 30 MHz.</p>
 
@@ -737,7 +740,7 @@ Your browser does not support the audio element.
 
 <p>I was eventually sucessful and received a clearly audible signal.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-3.png" width="40%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-3.png" class="responsive-image" width="40%" />
 
 <p>Someone clearly says, in a local accent, “Amateur-Radio meeting at the train bridge”.</p>
 
@@ -752,7 +755,7 @@ Your browser does not support the audio element.
 
 <p>There was more audio, but unfortunately it stopped right before I could record anything. This might have been another radio station signal though.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-4.png" width="40%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-4.png" class="responsive-image" width="40%" />
 
 <p>A big issue is that I can only monitor a relatively narrow band with my receiver and it’s easy to miss an interesting transmission.</p>
 
@@ -760,7 +763,7 @@ Your browser does not support the audio element.
 
 <p>On a freuqency a bit lower there was in fact another signal originally from a radio station.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-5.png" width="40%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-29-5.png" class="responsive-image" width="40%" />
 
 <p>I’m still confused why I’m receiving radio on 27 MHz, but it could be cross-talk in the receiver or a bounced signal.</p>
 
@@ -777,7 +780,7 @@ Your browser does not support the audio element.
 
 <p>Some barely audible transmission.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-30-1.png" width="10%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-08-30-1.png" class="responsive-image" width="10%" />
 
 <p>It is clear that it is some voice transmission.</p>
 
@@ -803,7 +806,7 @@ Your browser does not support the audio element.
 
 <h4 id="269743-mhz---voice-communication">26,9743 MHz - voice communication</h4>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-09-01-1.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-09-01-1.png" class="responsive-image" width="30%" />
 
 <p>Some people, either amateur radio enthusiasts, cab drivers or construction workers having a chat and then saying goodbye.</p>
 
@@ -816,7 +819,7 @@ Your browser does not support the audio element.
 
 <p>Some strange transmission of someone reading a book or so.</p>
 
-<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-09-01-2.png" width="30%" />
+<img src="../../../../images/2024-09-12-Do-SoftwareDefinedRadio/signals-2024-09-01-2.png" class="responsive-image" width="30%" />
 
 <p>First I though I picked up somebodies cheap unencrypted babyphone while he’s reading a book to his kids, but it seems to be someones memoirs from the 1930s or so and more like a tape playing.</p>
 

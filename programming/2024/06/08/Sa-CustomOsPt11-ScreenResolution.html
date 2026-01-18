@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>CustomOS - Pt.11 - Screen Resolution & User-Space Applications - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="At this point we can increase the screen resolution to 640x480 4 bits-per-pixel and enhance the interface for user-applications to build more interesting software for the CustomOS."/>
   <link rel="canonical" href="https://www.dennissalzner.de/programming/2024/06/08/Sa-CustomOsPt11-ScreenResolution.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="At this point we can increase the screen resolution to 640x480 4 bits-per-pixel and enhance the interface for user-applications to build more interesting software for the CustomOS." />
   <meta name="twitter:title" content="CustomOS - Pt.11 - Screen Resolution & User-Space Applications - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -75,7 +78,7 @@
 
 <p>At this point we can increase the screen resolution to 640x480 4 bits-per-pixel and enhance the interface for user-applications to build more interesting software for the CustomOS.</p>
 
-<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-colors.gif" width="45%" />
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-colors.gif" class="responsive-image" width="45%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -178,7 +181,7 @@ Each bit is on a single plane that we need to write to.</p>
 
 <p>Updating the entire screen means switching the planes very often. On QEmu this leads to crashes and artifacts.</p>
 
-<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-640x480px-almost.png" width="35%" />
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-640x480px-almost.png" class="responsive-image" width="35%" />
 
 <h3 id="efficient-double-buffering-to-write-to-screen">Efficient double-buffering to write to screen</h3>
 
@@ -275,7 +278,7 @@ I’m using only the internal buffers for the reading as reading from hardware g
 
 <p>With that we get fast and properly working 640x480 px 4 bpp mode.</p>
 
-<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-640x480px-sirpins.gif" width="45%" />
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-640x480px-sirpins.gif" class="responsive-image" width="45%" />
 
 <h2 id="user-space-applications-with-graphics-and-keyboard">User Space Applications with Graphics and Keyboard</h2>
 
@@ -300,7 +303,7 @@ I’m using only the internal buffers for the reading as reading from hardware g
 
 <p>For example this application will draw a moving green line on the screen that can be controlled with the keyboard arrow keys.</p>
 
-<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-snake.gif" width="35%" />
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-snake.gif" class="responsive-image" width="35%" />
 
 <p>It’s easy to see how this could be used to write a game like “Snake” that became popular with Nokia smartphones from the 90s.</p>
 
@@ -324,7 +327,7 @@ I’m using only the internal buffers for the reading as reading from hardware g
 
 <p>I’ve written two user space applications <code class="language-plaintext highlighter-rouge">lspci.c</code> and <code class="language-plaintext highlighter-rouge">net-macaddr.c</code> to demonstrate this. The first lists all PCI devices and detects the IDE-Controller and rtl8139 network card. The second reads the MAC (medium access control) address, also called physical network address, from the card.</p>
 
-<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-network-2.png" width="35%" />
+<img src="../../../../images/2024-06-08-Sa-CustomOsPt11-ScreenResolution/customos-network-2.png" class="responsive-image" width="35%" />
 
 <p>We can see that reading and writing bytes to the network card from a user space application is easily possible. To send and receive, for instance, web pages via HTTPS-Get-Requests, we’d need to implement a network stack.</p>
 

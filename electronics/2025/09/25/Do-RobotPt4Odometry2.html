@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Robot - Pt.4 - Microcontroller Wheel Odometry - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="Last time around we added wheel odometry sensing using a custom optical encoder disk, debouncing circuitry and two PCF8583 I2C realtime clock chips for counting. The mechanics w..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/electronics/2025/09/25/Do-RobotPt4Odometry2.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="Last time around we added wheel odometry sensing using a custom optical encoder disk, debouncing circuitry and two PCF8583 I2C realtime clock chips for counting. The mechanics w..." />
   <meta name="twitter:title" content="Robot - Pt.4 - Microcontroller Wheel Odometry - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -67,7 +70,7 @@
 <div class="post-content" itemprop="articleBody">
     <p style="font-size: 60%;" align="right">What</p>
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/odometry-board-1.jpg" width="45%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/odometry-board-1.jpg" class="responsive-image" width="45%" />
 
 <p>Last time around we added wheel odometry sensing using a custom optical encoder disk, debouncing circuitry and two PCF8583 I2C realtime clock chips for counting. The mechanics worked well, but the circuit occasionally misscounted and debouncing signals in hardware is tricky. Another approach is to use a microcontroller and debounce in software. This is what I am now moving to for more reliability.</p>
 
@@ -155,15 +158,15 @@
 
 <p>The old circuit we will be replacing using the debouncing circuit, LM393 rotary counter board and PCF8583 I2C realtime clock.</p>
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/old.jpg" width="50%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/old.jpg" class="responsive-image" width="50%" />
 
 <h3 id="new-circuit-uses-an-attiny2313-as-a-custom-i2c-slave">New circuit uses an Attiny2313 as a custom I<sup>2</sup>C slave</h3>
 
 <p>The new board sits in the back of the robot. I’ve removed the two old boards from my previous blog post.</p>
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/odometry-board-1.jpg" width="35%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/odometry-board-1.jpg" class="responsive-image" width="35%" />
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/odometry-board-2.jpg" width="50%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/odometry-board-2.jpg" class="responsive-image" width="50%" />
 
 <p>The circuit became a little more complex due to the use of the microcontroller.</p>
 
@@ -185,7 +188,7 @@
 
 <p>What I usually do is create a drawing in kolour paint and just screenshot all the information I need to have at a glance during soldering.</p>
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/pin-configurations.png" width="60%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/pin-configurations.png" class="responsive-image" width="60%" />
 
 <h3 id="tests">Tests</h3>
 
@@ -205,7 +208,7 @@
 
 <p>Probing the input pin of the two light barriers with the motors running reveals a clean enough signal the microcontroller shouldn’t have much trouble picking up. The signal is similar for both wheels.</p>
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/osci-wheel-ticks.jpg" width="35%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/osci-wheel-ticks.jpg" class="responsive-image" width="35%" />
 
 <h2 id="software">Software</h2>
 
@@ -254,7 +257,7 @@ wget <span class="nt">-O</span> <span class="nv">$HOME</span>/arduino-cli_1.3.1.
 
 <p>If writing software to the microcontroller works it will look like this in the terminal:</p>
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/flash.jpg" width="25%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/flash.jpg" class="responsive-image" width="25%" />
 
 <h4 id="some-additional-helpful-commands">Some additional helpful commands</h4>
 
@@ -312,7 +315,7 @@ wget <span class="nt">-O</span> <span class="nv">$HOME</span>/arduino-cli_1.3.1.
 
 <p>At some point the bring-up worked out and I got that LED to blink. Measuring the signal at the LED pin revealed the internal oscillator in the micro-controller is correctly configured.</p>
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/osci.jpg" width="45%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/osci.jpg" class="responsive-image" width="45%" />
 
 <div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define F_CPU 1000000UL
 #define LED_PIN PB4
@@ -382,7 +385,7 @@ wget <span class="nt">-O</span> <span class="nv">$HOME</span>/arduino-cli_1.3.1.
 
 <p>Note the wheel counts shown are currently both at a fixed high number due to read failure, because the old wheel odometry sensors are removed and the new one has yet to be programmed.</p>
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/webinterface.png" width="25%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/webinterface.png" class="responsive-image" width="25%" />
 
 <h3 id="complete-firmware">Complete Firmware</h3>
 
@@ -496,7 +499,7 @@ wget <span class="nt">-O</span> <span class="nv">$HOME</span>/arduino-cli_1.3.1.
 
 <p>Not much more is required for this to work. When driving the robot around I can now see the <code class="language-plaintext highlighter-rouge">wheel_count_left</code> and <code class="language-plaintext highlighter-rouge">wheel_count_right</code> changing.</p>
 
-<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/working.png" width="25%" />
+<img src="../../../../images/2025-09-25-Do-RobotPt4Odometry2/working.png" class="responsive-image" width="25%" />
 
 <p style="font-size: 60%;" align="right">Progress</p>
 

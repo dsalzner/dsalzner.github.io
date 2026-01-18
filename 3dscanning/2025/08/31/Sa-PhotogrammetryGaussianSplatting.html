@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>3D Scanning & Photogrammetry  - Gaussian Splatting - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="With photogrammetry we can convert images to a 3D mesh with textures. There is another method-'Gaussian Splating', that can provide superior quality. However it doesn't produce ..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/3dscanning/2025/08/31/Sa-PhotogrammetryGaussianSplatting.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="With photogrammetry we can convert images to a 3D mesh with textures. There is another method-'Gaussian Splating', that can provide superior quality. However it doesn't produce ..." />
   <meta name="twitter:title" content="3D Scanning & Photogrammetry  - Gaussian Splatting - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -69,9 +72,9 @@
 
 <p>With photogrammetry we can convert images to a 3D mesh with textures. There is another method-‘Gaussian Splating’, that can provide superior quality. However it doesn’t produce meshes (sets of triangles) at all, but rather ‘bubbles’ of 3D gaussian distributions. While the result can’t be used for colission detection or rigging, we can combine 3D gaussian splats with traditional meshes and there are methods to produce meshes from gaussian splats albeit without textures. These can be overlayed which is suitable for many applications.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/Peek 2025-08-31 13-31.gif" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/Peek 2025-08-31 13-31.gif" class="responsive-image" width="35%" />
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/2025-08-31-133213_1306x931_scrot.png" width="25%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/2025-08-31-133213_1306x931_scrot.png" class="responsive-image" width="25%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -164,7 +167,7 @@ ffmpeg <span class="nt">-i</span> <span class="nv">$VIDEO_FILE</span> <span clas
 
 <p>Similar lighting requirements apply as for photogrammetry. Even though Gaussian Splatting can handle poorer quality images, if the area covered in your images set was too large, didn’t cover the area well or lighting wasn’t even, <strong><em>“colmap”</em></strong> will display a warning like this:</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/bad_images.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/bad_images.png" class="responsive-image" width="35%" />
 
 <h3 id="training-the-gaussian-splat">Training the Gaussian Splat</h3>
 
@@ -198,15 +201,15 @@ ffmpeg <span class="nt">-i</span> <span class="nv">$VIDEO_FILE</span> <span clas
 
 <p>We first download the blender plugin.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender01.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender01.png" class="responsive-image" width="35%" />
 
 <p>Then add it to blender via the preferences menu.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender02.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender02.png" class="responsive-image" width="35%" />
 
 <p>There is an option to “install from disk”, where we can select the compressed archive.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender03.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender03.png" class="responsive-image" width="35%" />
 
 <p>The plugin “3DGS Render by Kiri Engine” will then show up unter “Add-ons”</p>
 
@@ -214,56 +217,56 @@ ffmpeg <span class="nt">-i</span> <span class="nv">$VIDEO_FILE</span> <span clas
 
 <p>It’s a bit tricky to find. There is a tiny arrow button in the top right in the blender user-interface.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender04.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender04.png" class="responsive-image" width="35%" />
 
 <p>Clicking it reveals a side menu.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender05a.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender05a.png" class="responsive-image" width="35%" />
 
 <p>In it we can click on the plug-in.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender05b.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender05b.png" class="responsive-image" width="35%" />
 
 <p>and in the plug-in options import the *.ply splat file we’ve created with NerfStudio.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender07.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender07.png" class="responsive-image" width="35%" />
 
 <h4 id="viewing-the-splat-in-blender">Viewing the Splat in Blender</h4>
 
 <p>We can then view the splat and rotate it.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender08_nocrop.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender08_nocrop.png" class="responsive-image" width="35%" />
 
 <h4 id="cropping">Cropping</h4>
 
 <p>Cropping can be achieved by setting up a cube in the location we want to either include or exclude.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender09_cropcube.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender09_cropcube.png" class="responsive-image" width="35%" />
 
 <p>Then use the “Crop Box” feature in the plugin.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender09b_apply.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender09b_apply.png" class="responsive-image" width="35%" />
 
 <p>This yields the cropped splat.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender10.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender10.png" class="responsive-image" width="35%" />
 
 <!-- {::nomarkdown}
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender11.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender11.png" class="responsive-image" width="35%" />
 {:/nomarkdown}
  -->
 <!-- {::nomarkdown}
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender12.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender12.png" class="responsive-image" width="35%" />
 {:/nomarkdown}
  -->
 
 <p>Which can be best viewed under the “shading tab”.</p>
 
 <!-- {::nomarkdown}
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender13_viewer.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender13_viewer.png" class="responsive-image" width="35%" />
 {:/nomarkdown}
  -->
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender14.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender14.png" class="responsive-image" width="35%" />
 
 <h4 id="using-the-3d-gaussian-splatting-blender-addon-plug-in">Using the “3D Gaussian Splatting Blender Addon” plug-in</h4>
 
@@ -274,11 +277,11 @@ Once loaded we use  the “Import Gaussian Splatting” button from the plug-in 
 
 <p>This first shows the actual splats as Gaussian “bubbles”.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender-plugin2-01.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender-plugin2-01.png" class="responsive-image" width="35%" />
 
 <p>But if we select the right viewing mode and move into the center of the structure we can see it displays correctly.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender-plugin2-02.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/blender-plugin2-02.png" class="responsive-image" width="35%" />
 
 <h3 id="editing-splat-in-cloudcompare">Editing Splat in CloudCompare</h3>
 
@@ -286,7 +289,7 @@ Once loaded we use  the “Import Gaussian Splatting” button from the plug-in 
 
 <p>We can load the splat in cloud in compare.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/cloudcompare-01.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/cloudcompare-01.png" class="responsive-image" width="35%" />
 
 <p>Use the cut feature to cut the splat to shape.</p>
 
@@ -296,11 +299,11 @@ Once loaded we use  the “Import Gaussian Splatting” button from the plug-in 
 
 <p>To do this we can load the splat in Cloud Compare.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/cloudcompare-03.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/cloudcompare-03.png" class="responsive-image" width="35%" />
 
 <p>and then select the “possin surface reconstruction” feature.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/cloudcompare-02.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/cloudcompare-02.png" class="responsive-image" width="35%" />
 
 <p>to produce a mesh.</p>
 
@@ -315,13 +318,13 @@ Then the resulting Mesh and the Gaussian Splat are refined to a “hybrid Mesh+G
 
 <p>As can be seen in my scan of a renovation, due to the nature of the Gaussian splats, if there is not enough information, we get “cloudy” vision:</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/Peek 2025-09-05 13-28.gif" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/Peek 2025-09-05 13-28.gif" class="responsive-image" width="35%" />
 
 <h3 id="photogrammetry-vs-gaussian-splatting">Photogrammetry vs. Gaussian Splatting</h3>
 
 <p>In their video, “Kiri Engine” claims gaussian splatting converted to mesh produces much better quality than photogrammetry. It may be that Gaussian splatting is the future of 3D reconstruction though I haven’t been able to get that quality of mesh reconstruction from a splat so far.</p>
 
-<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/kiri-comparisson.png" width="35%" />
+<img src="../../../../images/2025-08-31-Sa-PhotogrammetryGaussianSplatting/kiri-comparisson.png" class="responsive-image" width="35%" />
 
 <p style="font-size: 60%;" align="right">Progress</p>
 

@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Smart Fridge - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="Our fridge broke down. I took it apart, debugged the issue and added some smart home temperature sensors to be sure it works reliably after the repair."/>
   <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/08/10/Sa-SmartFridge.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="Our fridge broke down. I took it apart, debugged the issue and added some smart home temperature sensors to be sure it works reliably after the repair." />
   <meta name="twitter:title" content="Smart Fridge - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -67,7 +70,7 @@
 <div class="post-content" itemprop="articleBody">
     <p style="font-size: 60%;" align="right">What</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge10.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge10.jpg" class="responsive-image" width="30%" />
 
 <p>Our fridge broke down. I took it apart, debugged the issue and added some smart home temperature sensors to be sure it works reliably after the repair.</p>
 
@@ -107,17 +110,17 @@
 
 <h2 id="how-refridgerators-work">How refridgerators work</h2>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge1.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge1.jpg" class="responsive-image" width="30%" />
 
 <p>Now getting rid of a fridge is a bit of a logistical nightmare, I don’t like throwing things out, didn’t want shell out the money for a new fridge and was curious why this happens - so I debugged the issue.</p>
 
 <p>In order to fix the issue I’ve taken almost the whole machine apart and can now explain how these devices work.</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge2.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge2.jpg" class="responsive-image" width="30%" />
 
 <p>Along the way I learned how these cooler/freezer-combo machines work. It turns out there is a compressor in the bottom back of the fridge. As with any cooling device, it compresses gas (the coolant). The gas is pumped through to the inside of the fridge, where it expands and causes the cooling effect.</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge3.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge3.jpg" class="responsive-image" width="30%" />
 
 <p>For the “no-frost” feature there is actually an electric heater inside the freezer compartment alongside the grills where the coolant expands. You can see this in the image: the top fins are connected to the pipes where the coolant expands.</p>
 
@@ -127,13 +130,13 @@
 
 <p>Older devices had to be manually defrosted once a year or so. Modern devices run for years without any user action required.</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge4.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge4.jpg" class="responsive-image" width="30%" />
 
 <p>In the back there is a small opening where the melded ice can flow into a tray above the compressor. The compressor produces heat - the heat pumped out of the freezer plus some mechanical loss of the compressor. The tray is placed such that the water in the tray will vaporize automatically, when the compressor runs.</p>
 
 <h3 id="the-issue">The Issue</h3>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge7.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge7.jpg" class="responsive-image" width="30%" />
 
 <p>After many temperature measurments, testing the heating element, the freezer being cool, the compressor working I couldn’t find the issue at first.</p>
 
@@ -141,11 +144,11 @@
 
 <p>It turns out I had missed an important piece. Well two important issues actually.</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge5.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge5.jpg" class="responsive-image" width="30%" />
 
 <p>The first is in the way the cooler compartment gets cooled. The cooler compartment does not have its own compressor. Cooling there happens by a small fan that blows air from the freezer compartment to the cooler compartment. There is a small air conduit behind layers of plastic and foam in the back of the fridge. The noise from this fan got more and more audible in recent years</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge6.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge6.jpg" class="responsive-image" width="30%" />
 
 <p>What happend here is that the door seals got weak. Ambient air got into the freezer causing it to ice up. Eventually the fan that transfers the cool air from the freezer to the cooling compartment also iced up.</p>
 
@@ -157,11 +160,11 @@
 
 <p>After the third or fourth attempt at fixing the thing, each time pulling our half of antarctica, …</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge8.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge8.jpg" class="responsive-image" width="30%" />
 
 <p>and connecting tubes to pour boiling water directly into these iced up conduits</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge9.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge9.jpg" class="responsive-image" width="30%" />
 
 <p>the fridge worked flawlessly again and has for about  year now.</p>
 
@@ -185,7 +188,7 @@
   <li>Smartphone charger for power</li>
 </ul>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge11.jpg" width="40%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge11.jpg" class="responsive-image" width="40%" />
 
 <p>The temperature sensors I’ve had since 2012 or so, from when I had a custom DIY wired Smart Home based on the 1-Wire Bus.</p>
 
@@ -193,7 +196,7 @@
 
 <p>Still today I use the same 1-Wire temperature sensors in RJ12 couplings or, as in this case, with the temperature sensor branched out on a long wire that I can pass through a window or into a freezer, like here.</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge12.jpg" width="30%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge12.jpg" class="responsive-image" width="30%" />
 
 <p>The wiring is extemly simple. Vcc to Vcc, Gnd to Gnc, Data to Pin D4 (GPIO 2). I didn’t even bother to add a 4,7k Ohm resistor as suggested by the Dallas/Maxim documentation.</p>
 
@@ -213,7 +216,7 @@
 
 <p>If I wanted to make a graph of the values, though, I’d have to copy the messages over from the Telegram chat to a comma-separated *.csv-file and use something like LibreOffice Calc, GnuPlot or Python with MatplotLib to create the graph.</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge13.jpg" width="20%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fridge13.jpg" class="responsive-image" width="20%" />
 
 <h3 id="considering-shelly-sensors">Considering Shelly Sensors</h3>
 
@@ -221,11 +224,11 @@
 
 <p>Now I haven’t used them, but it seems they are very fairly priced for a pre-made solution.</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/shelly1.png" width="10%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/shelly1.png" class="responsive-image" width="10%" />
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/shelly2.png" width="10%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/shelly2.png" class="responsive-image" width="10%" />
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/shelly3.png" width="10%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/shelly3.png" class="responsive-image" width="10%" />
 
 <p>You could probably combine a “Shelly Plus” power meter with an add-on board and the same ds18b20 I’m using to get an off-the-shelf solution. It will require cutting up a power cord and should probably be placed in a proper enclosure.</p>
 
@@ -233,7 +236,7 @@
 
 <p>I’m currently running an additional FritzDect 200 Smart-Plug I still had around to measure the refridgerator power consumption. It can be bought for around 41 Eur.</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/fritz1.png" width="10%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/fritz1.png" class="responsive-image" width="10%" />
 
 <h3 id="esphome-standalone-and-homeassistant">EspHome standalone and HomeAssistant</h3>
 
@@ -309,7 +312,7 @@ web_server:
 
 <p>The documentation of EspHome is a bit hard to navigate, but eventually I found out that, when enabling “api” and “web_server” with “version: 3” there is a nice minimalist web interface.</p>
 
-<img src="../../../../images/2024-08-10-Sa-SmartFridge/esphome.jpg" width="20%" />
+<img src="../../../../images/2024-08-10-Sa-SmartFridge/esphome.jpg" class="responsive-image" width="20%" />
 
 <p>EspHome seems to generate UUIDs for the sensors. This means the address is not the 1-Wire sensor adress, but the EspHome firmware prints all found 1-Wire devices to the log, so you can find the EspHome address there.</p>
 

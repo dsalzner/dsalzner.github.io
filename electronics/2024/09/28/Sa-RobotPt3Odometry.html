@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Robot - Pt.3 - Wheel Odometry - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="In order to add wheel odometry I made additions hardware, electronics and software. For the hardware I needed to add a wheel encoder disk to the motor axles. This was 3D printed..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/09/28/Sa-RobotPt3Odometry.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="In order to add wheel odometry I made additions hardware, electronics and software. For the hardware I needed to add a wheel encoder disk to the motor axles. This was 3D printed..." />
   <meta name="twitter:title" content="Robot - Pt.3 - Wheel Odometry - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -69,11 +72,11 @@
 
 <p>In order to add wheel odometry I made additions hardware, electronics and software. For the hardware I needed to add a wheel encoder disk to the motor axles. This was 3D printed. As for the electronics, in order to pickup interruptions of that encoder disk, I needed to position a light barrier such that it doesn’t jam the moving parts. For the software I had to get that PCF8583 I2C realtime clock chip to work as an impulse counter.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel8.jpg" width="30%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel8.jpg" class="responsive-image" width="30%" />
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_8b.jpg" width="15%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_8b.jpg" class="responsive-image" width="15%" />
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debugging.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debugging.jpg" class="responsive-image" width="20%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -115,7 +118,7 @@
 
 <p>The DirtDevel Spider has modular wheel assemblies that can be easily removed by loosening a cover on the bottom of the robot.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel1.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel1.jpg" class="responsive-image" width="20%" />
 
 <p style="font-size: 60%;" align="right">Background</p>
 
@@ -138,7 +141,7 @@
 
 <p>The first idea I had was to glue a magnet into the spokes of the wheel and use a magnetic switch to measure full wheel rotations.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2.jpg" class="responsive-image" width="20%" />
 
 <p>However this approach is inaccurate and can only measure full rotations. I had to come up with something better.</p>
 
@@ -156,21 +159,21 @@
 
 <p>So I opened the wheel assembly of the robot and had a look at where I could realistically place an encoder wheel and light barrier.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel3.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel3.jpg" class="responsive-image" width="20%" />
 
 <p>There is hardly any space inside the gear box.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel5.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel5.jpg" class="responsive-image" width="20%" />
 
 <p>The main gear has to great of a width to fit a light barrier over it and that would have probably not worked well due to the teeth of the gear wheel being too small for the light barrier to pickup.</p>
 
 <p>The assembly under neath the main gear is actually a planetary gear setup connected to a worm drive. I found that quite impressive and good to know for the future: Should it ever break I’ll switch those gears.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel4.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel4.jpg" class="responsive-image" width="20%" />
 
 <p>In the end I settled for the main axle as my attack vector.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel6.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel6.jpg" class="responsive-image" width="20%" />
 
 <h3 id="encoder-wheel">Encoder wheel</h3>
 
@@ -180,23 +183,23 @@
 
 <p>A different, perhaps more accurate, solution could have been to use a regular laser printer to print to transparent overhead projector slides. They are thin and can wobble, but could have been glued to a solid 3D printed disk to make them stable. This is something to keep in mind for the future.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel7.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel7.jpg" class="responsive-image" width="20%" />
 
 <h3 id="assembly">Assembly</h3>
 
 <p>But as can be seen in this picture the 3D printed solution fits just fine. The only concern I have is that dirt might get stuck in the encoder wheel.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel8.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel8.jpg" class="responsive-image" width="20%" />
 
 <p>The light barrier had to be carefully positioned and glued along with its wire to just so get passed the other plastic ridges.</p>
 
 <p>I did have to cut into the plastic a bit to position that light barrier.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel9.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel9.jpg" class="responsive-image" width="20%" />
 
 <p>In the end it fits into the robot wheel bay perfectly.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel10.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel10.jpg" class="responsive-image" width="20%" />
 
 <h2 id="electronics">Electronics</h2>
 
@@ -208,7 +211,7 @@
 
 <p>My first attempt was just a small board connected to the light barrier on one end and to the I2C bus on the other end. For this I used a 10k and a 220 Ohm resistor on Diode+ and Emitter+ of the light barrier to pull up to 5V+. The counter chip connects to between the Diode+ and the 10k pull-up resistor. Diode- and Emitter- are connected to GND.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel11.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel11.jpg" class="responsive-image" width="20%" />
 
 <h3 id="smaller-issues">Smaller issues</h3>
 
@@ -228,7 +231,7 @@
 
 <p>In order to debug these issues I eventually even pulled out the oscilloscope to verify my light barrier circuit was working properly. For this I had to wire the light barrier part of the circuit on a bread board.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debugging.jpg" width="30%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debugging.jpg" class="responsive-image" width="30%" />
 
 <p>My circuit worked fine. At that point I was fairly sure I was just missing some signal debouncing.</p>
 
@@ -259,7 +262,7 @@
 
 <p>They contain the LM393, carefully selected capacitors and the resistors for light barriers.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debounce.png" width="10%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/debounce.png" class="responsive-image" width="10%" />
 
 <p>I immediately bought a pack of these for this and future projects.</p>
 
@@ -269,29 +272,29 @@
 
 <p>The wheel debounce needed some more attention. In order to connect the LM393 rotary counter boards I simply pulled off the plastic cap of the light barrier that comes preinstalled on the boards.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_1.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_1.jpg" class="responsive-image" width="20%" />
 
 <p>This exposes the LED and photodiode. Soldering these boards is a bit tricky probably due to solder resist coating. I found it’s easier to cut the leds of LED and photodiode and solder to them instead.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_2.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_2.jpg" class="responsive-image" width="20%" />
 
 <p>At first the contraption didn’t count wheel rotations at all. So I wired the circuit on a bread board with a separate light barrier.</p>
 
 <p>What’s nice about these LM393 rotary counter boards is that they have two leds. One for operation and one for interruption of the light barrier. As you can see they work fine with my light barriers soldered to them.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_3.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_3.jpg" class="responsive-image" width="20%" />
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_4.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_4.jpg" class="responsive-image" width="20%" />
 
 <p>So the boards seem to be working, the light barrier is compatible and the wiring is correct. So it had to be an unclean signal once again.</p>
 
 <p>So I connected my oscilloscope to see what was happening while I manually interrupt the light barrier.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_5.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_5.jpg" class="responsive-image" width="20%" />
 
 <p>I saw there was still a somewhat unclean signal. So I set up a resistor-capacitor circuit.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_6.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_6.jpg" class="responsive-image" width="20%" />
 
 <p>The idea here is to have a capacitor slowly charge and dischage with the signal thereby evening the signal out.</p>
 
@@ -299,19 +302,19 @@
 
 <p>So I soldered the circuit up and put everything back on the robot. And it didn’t work once again. Next I removed the wheel assembly and experimented some more.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_7.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_7.jpg" class="responsive-image" width="20%" />
 
 <p>Turns out the light barrier did not register the interruptions of the rotating disk. The circuit is correct though, as when pushing a piece of cardboard inbetween the light barrier, it did register interruptions.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_8.jpg" width="20%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_8.jpg" class="responsive-image" width="20%" />
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_8b.jpg" width="10%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_8b.jpg" class="responsive-image" width="10%" />
 
 <p>At that point I quickly learned why encoder disks commonly are black. After painting it black with a standard Edding marker, everything worked as expected.</p>
 
 <p>So I put the board back on the robot.</p>
 
-<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_9.jpg" width="15%" />
+<img src="../../../../images/2024-09-28-Sa-RobotPt3Odometry/wheel2_9.jpg" class="responsive-image" width="15%" />
 
 <p>And now it counted, but would sometimes still misscount. I found for manual interruptions, even quick ones, the capacitor size is perfect, but for the fast spinning wheel on the robot, the capacitor is still too large.</p>
 

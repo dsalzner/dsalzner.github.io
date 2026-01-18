@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>CustomOS - Pt.10 - Editor & Compiler - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="It would be nice to be able to extend the CustomOS without relying on other operating systems to write additional software for it. For this I've added a text editor to the Custo..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/programming/2024/05/22/Mi-CustomOsPt10-Compiler.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="It would be nice to be able to extend the CustomOS without relying on other operating systems to write additional software for it. For this I've added a text editor to the Custo..." />
   <meta name="twitter:title" content="CustomOS - Pt.10 - Editor & Compiler - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -75,7 +78,7 @@
 
 <p>It would be nice to be able to extend the CustomOS without relying on other operating systems to write additional software for it. For this I’ve added a text editor to the CustomOS. It can be used to write code. An additional built-in C-Code compiler can compile and run code. With both combined we can write, compile and run code from inside the CustomOS.</p>
 
-<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/customos-compiler.gif" width="35%" />
+<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/customos-compiler.gif" class="responsive-image" width="35%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -375,7 +378,7 @@ int dlclose<span class="o">(</span>void <span class="k">*</span>handle<span clas
 
 <p>After considering how <code class="language-plaintext highlighter-rouge">vim</code>, <code class="language-plaintext highlighter-rouge">nano</code> or even the MS-DOS Editor do this I decided to just use the function keys. This is similar to the MS-DOS Editor, but without the menus. The editor is self explanatory as it displays to the user which function keys do what in the bottom footer of the screen.</p>
 
-<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/customos-editor.gif" width="35%" />
+<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/customos-editor.gif" class="responsive-image" width="35%" />
 
 <h2 id="compiler---integration">Compiler - Integration</h2>
 
@@ -624,13 +627,13 @@ graph TD;
 
 <p>Then, by running <code class="language-plaintext highlighter-rouge">init()</code> the application code will write a string to the console using that “putChar”-callback.</p>
 
-<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/compiler-example-application.png" width="35%" />
+<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/compiler-example-application.png" class="responsive-image" width="35%" />
 
 <p style="font-size: 60%;" align="right">Progress</p>
 
 <h2 id="conclusion">Conclusion</h2>
 
-<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/customos-compiler.gif" width="35%" />
+<img src="../../../../images/2024-05-22-Mi-CustomOsPt10-Compiler/customos-compiler.gif" class="responsive-image" width="35%" />
 
 <p>Working on this really has you gain a new perspective on the Standard-C-Library we’re normally just users of.</p>
 

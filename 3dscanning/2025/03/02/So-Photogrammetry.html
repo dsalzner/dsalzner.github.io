@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>3D Scanning & Photogrammetry - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="In a post from roughly a year ago I wrote about 3D scanning and compared techniques and products on the market at the time. Instead I found that photogrammetry and, by extension..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/3dscanning/2025/03/02/So-Photogrammetry.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="In a post from roughly a year ago I wrote about 3D scanning and compared techniques and products on the market at the time. Instead I found that photogrammetry and, by extension..." />
   <meta name="twitter:title" content="3D Scanning & Photogrammetry - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -213,19 +216,19 @@ function animate() {
 <input type="button" value="head (mi8, 1080p video capture, 18.7mb)" onclick="glbViewerInit(&quot;../../../../images/2025-03-02-So-Photogrammetry/kopf.glb&quot;);" />
 <input type="button" value="hecht (mi8, 1080p video capture, 23.9mb)" onclick="glbViewerInit(&quot;../../../../images/2025-03-02-So-Photogrammetry/hecht.glb&quot;);" /></p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/MVI_7665-168.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/MVI_7665-168.jpg" class="responsive-image" width="15%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-02-28-212957_781x669_scrot.png" width="12%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-02-28-212957_781x669_scrot.png" class="responsive-image" width="12%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-153929_738x552_scrot.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-153929_738x552_scrot.png" class="responsive-image" width="10%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" class="responsive-image" width="10%" />
 
 <p><strong><em>note:</em></strong> the 3D models shown above are scaled down below 25mb file size for uploading to GitHub and displaying on the web. The full models (248.2mb tree stump, 105.6mb neptun) look better as you can see in the screenshots:</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/stump.png" width="35%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/stump.png" class="responsive-image" width="35%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/heidelberg-neptun.png" width="35%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/heidelberg-neptun.png" class="responsive-image" width="35%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -310,7 +313,7 @@ function animate() {
 
 <p>In photogrammetry we take photos of an object from a large number of varying angles. Similar to software that produced 2d panoramas - and visual robot localisation, and robot tracking for that matter - the 3D reconstruction software will try to find matching features in pairs of images. Using the coordinates of the matching features it can then calculate the relative viewing angles of the cameras that took the images.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-152250_862x574_scrot.png" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-152250_862x574_scrot.png" class="responsive-image" width="30%" />
 
 <p>Ideally we would have multiple perfectly calibrated cameras that take images from multiple equally-spaced angles at one instant.</p>
 
@@ -337,7 +340,7 @@ function animate() {
 
 <p>In the application you’ll see the data pipeline.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-115523_1799x298_scrot.png" width="90%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-115523_1799x298_scrot.png" class="responsive-image" width="90%" />
 
 <p>The software is used by adding a set of photos, ideally a couple of hundred photos from various angles, and then configuring parameters of each node and then triggering each node one-by-one left-to-right in the pipeline (right mouseclick -&gt; “compute”).</p>
 
@@ -349,7 +352,7 @@ function animate() {
 
 <p>That’s extremly useful when debugging issues when using turn tables related to the “FeatureExtraction” pickung up too much of the stationary background.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-121640_514x737_scrot.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-121640_514x737_scrot.png" class="responsive-image" width="20%" />
 
 <h3 id="steps-of-the-pipeline">Steps of the Pipeline</h3>
 
@@ -543,23 +546,23 @@ function animate() {
 
 <p>I spray painted it white - <strong><em>white is not an ideal color</em></strong> for photogrammetry due to reflections - see above. Along the edges of the wood I glued a bicycle chain. To turn it into a large cog wheel.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-1.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-1.jpg" class="responsive-image" width="15%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-2.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-2.jpg" class="responsive-image" width="15%" />
 
 <p>A bicycle sprocket attached to an old drill motor turns the table - way <strong><em>too fast</em></strong> for this use case. The motion is also <strong><em>not smooth</em></strong>.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-3.gif" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-bicycle-3.gif" class="responsive-image" width="30%" />
 
 <h3 id="2-small-shaky-lego-turn---too-much-background">2) small shaky Lego turn - too much background</h3>
 
 <p>The next quick build utilized Lego a worm-gear turns a lego tire. The motor, taken from an early Lego Mindstorms set and the power supply from an early 90s railroad set to power it. Unfortunately the electic cables are beginding to loose their insulation, but they still work.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego1-1.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego1-1.jpg" class="responsive-image" width="15%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego1-2.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego1-2.jpg" class="responsive-image" width="15%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego1-3.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego1-3.jpg" class="responsive-image" width="15%" />
 
 <p>Not great. While Lego is probably the best and easiest way I currently have at hand to build this, the table movement is janky. The table is also too small to fill the full-frame of the camera and I later realized how important that is.</p>
 
@@ -569,15 +572,15 @@ function animate() {
 
 <p>To improve on that I’ve place a DVD on the wheel. Then later covered it in kitchen roll to give less reflective surface Meshroom can better pick up on.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego2-1.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego2-1.jpg" class="responsive-image" width="15%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego2-2.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego2-2.jpg" class="responsive-image" width="15%" />
 
 <p>Using this I got my first somewhat usable model - albeit only an approximately 120 degree range of fotos from the front was usable without confusing the algorithms - but the motivation was there to continue and enhance this.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-153929_738x552_scrot.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-153929_738x552_scrot.png" class="responsive-image" width="15%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-01-154151_664x513_scrot.png" class="responsive-image" width="15%" />
 
 <h3 id="4-larger-lego-turn-table---still-too-much-background">4) larger Lego turn table - still too much background</h3>
 
@@ -585,11 +588,11 @@ function animate() {
 
 <p>The positioning in the image is not ideal. It’s better to have them shinign light in different angles, but primarily from the front.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-1.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-1.jpg" class="responsive-image" width="15%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-2.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-2.jpg" class="responsive-image" width="15%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-3.jpg" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego3-3.jpg" class="responsive-image" width="15%" />
 
 <h3 id="5-heavy-lego-turn-table-and-black-background---promising">5) heavy Lego turn table and black background - promising</h3>
 
@@ -606,19 +609,19 @@ The mouse pad is not pushed into the corner, but rather curved to not produce a 
 
 <p>Additionally I hope the black and white transition is easy to pick up. If not I’ll add the CTAG markers as well, though this requires a more complicated pipeline configuration in Meshroom.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego4-1.jpg" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego4-1.jpg" class="responsive-image" width="20%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/lego4-2.jpg" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/lego4-2.jpg" class="responsive-image" width="20%" />
 
 <p>Using that setup we can see that Meshroom now recognizes the camera locations much better.</p>
 
 <p>We get a full 360 degree Mesh of the elephant. The uneven lighting and reflections make the incomplete and uneven (see mesh above).</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-165507_877x675_scrot.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-165507_877x675_scrot.png" class="responsive-image" width="20%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-175022_801x631_scrot.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-175022_801x631_scrot.png" class="responsive-image" width="20%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-194045_680x547_scrot.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-02-194045_680x547_scrot.png" class="responsive-image" width="20%" />
 
 <h3 id="5-dining-table-setup---too-many-reflections">5) dining table setup - too many reflections</h3>
 
@@ -627,7 +630,7 @@ Two desk lamps from the front help even out shadows. The black cardboard on the 
 
 <p>Since my mouse pad isn’t perfectly uniform either and the image was overall too dark, I found that a white background that bounces the light back created better results.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250303_183507.jpg" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250303_183507.jpg" class="responsive-image" width="10%" />
 
 <p>At first I tried to capture in raw with 1/25, f10, iso1600. A lower aperture is better to keep the background out of focus, but less light arrives at the sensor meaning I need an higher ISO and lower shutter speed. The images turned outr beautifully and the <code class="language-plaintext highlighter-rouge">rembg</code> was able to remove the background almost perfectly.
 Unfortunately the camera shutter is far too slow. I ended up with 75 images and that seems to be far too few for Meshroom to work.</p>
@@ -641,13 +644,13 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <p>The “minimal 2d motion” option  on the “FeatureMatching” node in Meshroom is fantastic and making sure only evenly spaced camera positons are used, but here the “SequenceMatcher” produced perfect camera locations on the first try.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-03-221400_1563x700_scrot.png" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-03-221400_1563x700_scrot.png" class="responsive-image" width="30%" />
 
 <p>The resulting mesh was then decimated and cropped in Blender. The texture scaled to 1024px and converted to <code class="language-plaintext highlighter-rouge">*.png</code>. No further fixes were made.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-04-120918_723x526_scrot.png" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-04-120918_723x526_scrot.png" class="responsive-image" width="30%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-04-120925_697x530_scrot.png" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-04-120925_697x530_scrot.png" class="responsive-image" width="30%" />
 
 <p>We can clearly recognize the elephant, but the light reflections have chipped off parts all over. Especially on the trunk and side.</p>
 
@@ -659,11 +662,11 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <p>These were quite expensive for some time, but now - probably due to lack of use with modern large and lightweight flatplanel television - they are being sold off for cheap. It can apparantly carry up to 100 kg, which could make it possible to put a person on it which could be interesting.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-tv.png" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/turntable-tv.png" class="responsive-image" width="30%" />
 
 <p>Additionally I ordered a small light box. I’m hoping it will be nice and evenly lit with the white surface in the background reflecting much of the light onto the object. And while you can easily build such a thing with a card board box, pieces of paper an some fabric for light dispersion, this thing is foldable and ideal for temperary setups. It also has an integrated controllable ring light. Maybe I’ll be able to produce good photogrammetry results with this out of/in the box.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/photobox.png" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/photobox.png" class="responsive-image" width="30%" />
 
 <p>Now the turntable didn’t fit in the lightbox, so I stuck with the Lego turntable and some cardboard.</p>
 
@@ -676,11 +679,11 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <p>The CCTAGs are taken from the AliceVision Git-Repos [4].</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-07-075626_853x778_scrot.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-07-075626_853x778_scrot.png" class="responsive-image" width="10%" />
 
 <p>The setup looks like this:</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250307_142357.jpg" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250307_142357.jpg" class="responsive-image" width="10%" />
 
 <h3 id="7-best-so-far">7) Best so far</h3>
 
@@ -688,7 +691,7 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <p>When setting the speed to full on the train controller it rotates just slow enough for the EOS 550d camera to take still frames at 3 fps.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250316_111351.jpg" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/IMG_20250316_111351.jpg" class="responsive-image" width="20%" />
 
 <p>The camera can easily be triggered by shorting the wires of an old 2.5mm (not common the much more common 3.5mm) headphone cable. That way I don’t need to hold the camera trigger for the entire long rotation.</p>
 
@@ -702,17 +705,17 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <p>The tree stump shown above was captured with 4K video capture on a Samsung S22 smartphone. For this I walked around the stump three times holding the smartphone at a different height each time.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/stump.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/stump.png" class="responsive-image" width="25%" />
 
 <h2 id="image-capture">Image Capture</h2>
 
 <p>I’m using a Canon EOS 550d DSLR camera on a tripod. What worked best so far is to record video at 15 fps with the turntable spinning for a full rotation on three heights. Video with lots of frames is beneficial to reconstruct the shape better.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/elephant-from-video.gif" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/elephant-from-video.gif" class="responsive-image" width="30%" />
 
 <p>However the quality of the result texture greatly improves when capturing still images. The EOS 550d can manage roughly 3 fps in continuous shooting. With the turn table on the lowest possible speed and on three heights I get 109 images which is just so enough to reconstruct the elephant, but at a loss of detail in the shape. The resulting quality is much better than in video mode.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/elephant-from-stills.gif" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/elephant-from-stills.gif" class="responsive-image" width="30%" />
 
 <h3 id="helpful-bash-scripts">Helpful Bash scripts</h3>
 
@@ -778,7 +781,7 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <p>Then I had a breakthrough:</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/editing.jpg" width="50%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/editing.jpg" class="responsive-image" width="50%" />
 
 <p>Using the scripts we can first crop most of the non-moving portions of the image as before. We use <code class="language-plaintext highlighter-rouge">rembg</code> to remove the background and get only the elephant. If we take the two images seperatly and cleverly combine them, we get perfect images for Meshroom.</p>
 
@@ -786,7 +789,7 @@ Later we can cut the turn table out of the resulting mesh during post processing
 
 <p>This works so well, because now, with these modified images, the majority of features are on the elephant and the turntable. Meshroom ignores the transparent background behind the object in the upper three quarters of the image and focuses on what is relevant.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-07-123648_1912x782_scrot.png" width="30%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/2025-03-07-123648_1912x782_scrot.png" class="responsive-image" width="30%" />
 
 <p>The script to do this is a simple combination of the above scripts.</p>
 
@@ -852,39 +855,39 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>Meshroom produces three files (mesh, material file and texture) in the <code class="language-plaintext highlighter-rouge">MeshroomCache/&lt;hash&gt;/Texturing</code> directory. If the model is highly detailed you may end up with more than one texture.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-01.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-01.png" class="responsive-image" width="10%" />
 
 <p>We load Blender. I’m using version 4.3.2.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-02.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-02.png" class="responsive-image" width="20%" />
 
 <p>Remove the default cube by pressing [del] and drag and drop the *.obj file to import it.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-03.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-03.png" class="responsive-image" width="20%" />
 
 <p>We can then cycle through front, side and top views</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-04.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-04.png" class="responsive-image" width="20%" />
 
 <p>Select “Edit Mode” in the top left</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-05.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-05.png" class="responsive-image" width="20%" />
 
 <p>Make sure to “toggle x-ray” so that Blender selects not only the points in front.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-06.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-06.png" class="responsive-image" width="20%" />
 
 <p>Next we select the potion to remove.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-07.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-07.png" class="responsive-image" width="20%" />
 
 <p>and delete it by pressing [DEL] or from the menu</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-08.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-08.png" class="responsive-image" width="20%" />
 
 <p>After doing this for all four sides we have the mesh with out the excess.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-09.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/a-removeexcess-09.png" class="responsive-image" width="20%" />
 
 <h3 id="rotating-and-centering">Rotating and Centering</h3>
 
@@ -892,23 +895,23 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>Select the entire object by pressig [A] or from the menu</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-01.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-01.png" class="responsive-image" width="20%" />
 
 <p>We can then select move</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-02.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-02.png" class="responsive-image" width="20%" />
 
 <p>and drag the object into position by clicking and pulling on the arrows</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-03.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-03.png" class="responsive-image" width="20%" />
 
 <p>Next we select the rotate tool</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-04.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-04.png" class="responsive-image" width="20%" />
 
 <p>and rotate the object into position my clicking and pulling the circular arrows</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-05.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/b-center-05.png" class="responsive-image" width="20%" />
 
 <h3 id="reduce-the-mesh">Reduce the Mesh</h3>
 
@@ -928,27 +931,27 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>In the top left make sure we’re in “object mode”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-01.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-01.png" class="responsive-image" width="25%" />
 
 <p>then in the bottom right click on the “modifier” tab.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-02.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-02.png" class="responsive-image" width="25%" />
 
 <p>and the “add modifier” button</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-03.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-03.png" class="responsive-image" width="15%" />
 
 <p>From the menu we can select “Generate” -&gt; “Decimate”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-04.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-04.png" class="responsive-image" width="15%" />
 
 <p>It will show the current “face count” in the bottom. If we reduce too far the model will loose detail. If we don’t reduce enough, the model will produce a huge file.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-05.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-05.png" class="responsive-image" width="15%" />
 
 <p>For my file I’ll go with 0.02. This brings the mesh into the neighbourhood of 20.000 faces.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-06.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/c-decimate-06.png" class="responsive-image" width="15%" />
 
 <h3 id="smoothen-the-mesh">Smoothen the Mesh</h3>
 
@@ -966,35 +969,35 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>In the directory we may have already seen that there are two texture files <code class="language-plaintext highlighter-rouge">texture_1001.exr</code> and <code class="language-plaintext highlighter-rouge">texture_1002.exr</code>. Also in the “texture paint” tab we see that Blender shows two texture files side-by-side.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-01.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-01.png" class="responsive-image" width="25%" />
 
 <p>To setup “texture baking” we go to the “shading” tab.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-02.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-02.png" class="responsive-image" width="10%" />
 
 <p>Then on the right hand side click on the “Render” tab</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-03.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-03.png" class="responsive-image" width="10%" />
 
 <p>We need to select “Cycles” as the render engine otherwise I’m told it won’t work.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-04.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-04.png" class="responsive-image" width="15%" />
 
 <p>Next we need a second new UV Map. To add one, we go to the “data” tab</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-05.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-05.png" class="responsive-image" width="10%" />
 
 <p>and click on “+” to add a new uvmap - that is a mapping from mesh coordinates to texture (U and V) coordinates.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-07.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-07.png" class="responsive-image" width="10%" />
 
 <p>Blender shows a second UVMap <code class="language-plaintext highlighter-rouge">UVMap.001</code>, we select it.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-09.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-09.png" class="responsive-image" width="10%" />
 
 <p>Next we go to “UV Editting”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-10.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-10.png" class="responsive-image" width="25%" />
 
 <p>And via the menu or by pressing [U] and “Smart UV project” produce the UV map.</p>
 
@@ -1002,77 +1005,77 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>Next click on “unwrap”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-11.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-11.png" class="responsive-image" width="25%" />
 
 <p>The view on the left will look odd, that’s normal.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-12.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-12.png" class="responsive-image" width="25%" />
 
 <p>We move back to the “shading” tab</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-13.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-13.png" class="responsive-image" width="25%" />
 
 <p>By right clicking in an empty space in the node viewer in the bottom half of the screen, without another node selected, we can add a new “image texture” node</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-14.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-14.png" class="responsive-image" width="25%" />
 
 <p>Click on “new”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-15.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-15.png" class="responsive-image" width="25%" />
 
 <p>and on “New Image”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-16.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-16.png" class="responsive-image" width="10%" />
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-17.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-17.png" class="responsive-image" width="15%" />
 
 <p>We can now “bake” the texture. To do this select the “Render” tab on the right.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-18.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-18.png" class="responsive-image" width="10%" />
 
 <p>Unfold “Bake”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-19.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-19.png" class="responsive-image" width="10%" />
 
 <p>Set the “Bake Type” to “Diffuse”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-20.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-20.png" class="responsive-image" width="10%" />
 
 <p>Deselect “Direct” and “Indirect” leaving only “Color” unless you want to bake lighting effects.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-21.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-21.png" class="responsive-image" width="10%" />
 
 <p>On the bottom left of the screen, in the image window, select the texture</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-22.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-22.png" class="responsive-image" width="10%" />
 
 <p>The image window will turn black as the texture is currently empty</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-23.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-23.png" class="responsive-image" width="10%" />
 
 <p>Make sure the mesh is selected in the top right of the screen</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-25.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-25.png" class="responsive-image" width="10%" />
 
 <p>Then back on the right lower side of the screen in the “render” tab click “bake”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-24.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-24.png" class="responsive-image" width="10%" />
 
 <p>You’ll then see the progress in the bottom center of the window</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-26.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-26.png" class="responsive-image" width="15%" />
 
 <p>Once finished the result will show up in the bottom left in the image viewer.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-27.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-27.png" class="responsive-image" width="15%" />
 
 <p>We save it by clicking on the “hamburger” icon, the three horizontal lines and select “Image” and then “save”.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-28.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-28.png" class="responsive-image" width="15%" />
 
 <p>Give the newly created texture image a filename and click “save”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-29.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-29.png" class="responsive-image" width="15%" />
 
 <p><strong><em>Remove old textures and use the new one</em></strong></p>
 
@@ -1080,39 +1083,39 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>To do this go to the “Texture Paint” tab.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-30.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-30.png" class="responsive-image" width="20%" />
 
 <p>Material tab on the right.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-31.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-31.png" class="responsive-image" width="10%" />
 
 <p>Click on the “-“ sign to remove the now obsolete old materials and textures</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-32.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-32.png" class="responsive-image" width="10%" />
 
 <p>Next we add the new material.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-33.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-33.png" class="responsive-image" width="10%" />
 
 <p>To select the new texture image click on the yellow dot.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-34.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-34.png" class="responsive-image" width="15%" />
 
 <p>Select “Image texture” from the menu.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-35.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-35.png" class="responsive-image" width="10%" />
 
 <p>Click on “Open”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-36.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-36.png" class="responsive-image" width="10%" />
 
 <p>Select the file, click on “open”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-37.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-37.png" class="responsive-image" width="10%" />
 
 <p>It should then show the texture on the mesh properly again.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-38.png" width="20%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-38.png" class="responsive-image" width="20%" />
 
 <p><strong><em>Remove the old UV Map</em></strong></p>
 
@@ -1120,19 +1123,19 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>For this, on the right, click on the “data” tab”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-39.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-39.png" class="responsive-image" width="10%" />
 
 <p>Unfold “UV Maps”</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-40.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-40.png" class="responsive-image" width="10%" />
 
 <p>Select the old “UVMap” and click on “-“ to remove it</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-41.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-41.png" class="responsive-image" width="10%" />
 
 <p>This should leave only the new UV map that matches with the new texture.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-42.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/d-baking-42.png" class="responsive-image" width="10%" />
 
 <p>With that we’re done - it took only 45 clicks. The process could probably be scripted as Blender provides a Python API.</p>
 
@@ -1144,21 +1147,21 @@ The mesh is likely also has a very high polygon count and produces large files. 
 
 <p>In Blender we can easily export a GLTF (<code class="language-plaintext highlighter-rouge">*.glb</code>) file from the “File”/”Export” menu. Note that if the UV map isn’t properly unwrapped, there are more than one texture or too many faces in the mesh it may hang indefinitely.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/e-export-01.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/e-export-01.png" class="responsive-image" width="15%" />
 
 <p>We can just click “export”. I’m not using any special settings here.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/e-export-02.png" width="15%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/e-export-02.png" class="responsive-image" width="15%" />
 
 <h3 id="viewing-the-exported-mesh">Viewing the exported Mesh</h3>
 
 <p>We end up with an <code class="language-plaintext highlighter-rouge">*.glb</code> file.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/f-view-01.png" width="10%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/f-view-01.png" class="responsive-image" width="10%" />
 
 <p>It can be viewed in the f3d viewer.</p>
 
-<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/f-view-02.png" width="25%" />
+<img src="../../../../images/2025-03-02-So-Photogrammetry/blender/f-view-02.png" class="responsive-image" width="25%" />
 
 <h3 id="displaying-on-the-web">Displaying on the Web</h3>
 

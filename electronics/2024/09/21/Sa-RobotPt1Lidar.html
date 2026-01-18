@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Robot - Pt.1 - Lidar - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="For quite some time I've wanted to purchase a 360 lidar for one of my robots. They give the robot the ability to measure distances of obstacles surrounding it. 360 lidars are co..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/09/21/Sa-RobotPt1Lidar.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="For quite some time I've wanted to purchase a 360 lidar for one of my robots. They give the robot the ability to measure distances of obstacles surrounding it. 360 lidars are co..." />
   <meta name="twitter:title" content="Robot - Pt.1 - Lidar - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -69,7 +72,7 @@
 
 <p>For quite some time I’ve wanted to purchase a 360 lidar for one of my robots. They give the robot the ability to measure distances of obstacles surrounding it. 360 lidars are commonly used on robotic vacuums, but have been available for hobbyists for some time. I just couldn’t justify the price for hobbyist projects. Recently the ‘YouYeeToo’ / ‘WayPonDev’ / ‘LDRobot’ ‘FHL-LD20’ or ‘D200 Lidar Kit’ came to by attention. It costs only 48 Eur. Let’s see, if I can get it to work. If the signal is clean enough we can try Simultaneous Localization and Mapping.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-5-decayoption.png" width="20%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-5-decayoption.png" class="responsive-image" width="20%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -185,15 +188,15 @@
 
 <p>The cheap Lidar device I ordered comes with multiple brands on the box and a paper inside.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-1.jpg" width="20%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-1.jpg" class="responsive-image" width="20%" />
 
 <p>Inside the box is the lidar itself, an USB-TTL with the cheap CP2102 (not an FTDI) and a thin wire.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-2.jpg" width="20%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-2.jpg" class="responsive-image" width="20%" />
 
 <p>On the box it says what this lidar should be capable of.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-3.jpg" width="20%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-3.jpg" class="responsive-image" width="20%" />
 
 <p style="font-size: 60%;" align="right">How</p>
 
@@ -213,7 +216,7 @@
 
 <p>I don’t trust the color coding of the cable and there’s no documentation in the box of the Lidar. Luckily there is a pinout diagram given in the documentation on the manufactureres webpage [1].</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/pinout.png" width="20%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/pinout.png" class="responsive-image" width="20%" />
 
 <p>According to this the wire colours are als follows</p>
 
@@ -226,7 +229,7 @@
 
 <p>And so the colours are in fact counter-intuitive.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/connect.jpg" width="20%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/connect.jpg" class="responsive-image" width="20%" />
 
 <h4 id="powering-from-the-usb-port">Powering from the USB-Port</h4>
 
@@ -261,7 +264,7 @@ The baudrate is 230400 as per documentation is relatively high.</p>
 
 <p>In the console we receive data, but it’s not human-readble.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/serial-1.png" width="20%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/serial-1.png" class="responsive-image" width="20%" />
 
 <h4 id="protocol">Protocol</h4>
 
@@ -269,19 +272,19 @@ The baudrate is 230400 as per documentation is relatively high.</p>
 
 <p>The data is not human readble, because it is binary. The details are in the documentation [1]</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/protocol-1.png" width="40%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/protocol-1.png" class="responsive-image" width="40%" />
 
 <p><br /><small>(Screenshot of documentation from [1])</small></p>
 
 <p>The protocol is explained in writing</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/protocol-2.png" width="40%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/protocol-2.png" class="responsive-image" width="40%" />
 
 <p><br /><small>(Screenshot of documentation from [1])</small></p>
 
 <p>and there is C example code given</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/protocol-3.png" width="40%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/protocol-3.png" class="responsive-image" width="40%" />
 
 <p><br /><small>(Screenshot of documentation from [1])</small></p>
 
@@ -366,7 +369,7 @@ The baudrate is 230400 as per documentation is relatively high.</p>
 
 <p>ROS uses a publish-subscriber system. This means you will be running multiple consoles at the same time.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-ros-overview.png" width="60%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/lidar-ros-overview.png" class="responsive-image" width="60%" />
 
 <p>I’m running Docker on my Host-System to provide a compatible abstraction to ROS. ROS typically isn’t compatible with the most recent Linux distributions. A native installation of a compatible version of a common Linux distribution is of course preferred, but for 2D lidars we can get away with using Docker.</p>
 
@@ -662,26 +665,26 @@ picocom <span class="nt">-b</span> 230400 /dev/ttyUSB0
 
 <p>The visualization of the incomming data in RViz gives an impression of the quality of the sensor.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-1.jpg" width="40%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-1.jpg" class="responsive-image" width="40%" />
 
 <p>Each frame only contains a portion of the entire range.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-2.jpg" width="40%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-2.jpg" class="responsive-image" width="40%" />
 
 <p>So as a quick hack - there is a better way to do this - I took multiple screenshots with the RViz in focus and stacked them in Gimp by setting the background transparent via “color to alpha”.</p>
 
 <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">while </span><span class="nb">true</span><span class="p">;</span> <span class="k">do </span>scrot <span class="nt">-u</span> <span class="s2">"</span><span class="si">$(</span><span class="nb">date</span><span class="si">)</span><span class="s2">"</span>.jpg<span class="p">;</span> <span class="nb">sleep </span>0.5<span class="p">;</span> <span class="k">done</span>
 </code></pre></div></div>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-3-stacked.png" width="40%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-3-stacked.png" class="responsive-image" width="40%" />
 
 <p>With an actual floor plan we can see the points lining up. Note that there is furnature in the way making the points in the lidar scan apprear closer than the walls in the floor plan.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-4-groundtruth.png" width="40%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-4-groundtruth.png" class="responsive-image" width="40%" />
 
 <p>There is an option in RViz “Decay Time” which does this better. It keeps the points on the screen for some time. Setting it to 3 seconds yielded this.</p>
 
-<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-5-decayoption.png" width="40%" />
+<img src="../../../../images/2024-09-21-Sa-RobotPt1Lidar/rviz-5-decayoption.png" class="responsive-image" width="40%" />
 
 <p style="font-size: 60%;" align="right">Progress</p>
 

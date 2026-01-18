@@ -25,6 +25,11 @@ p {
   text-indent: 0ch;
   font-size: 90%;
 }
+.responsive-image {
+    max-width: 100%;
+    min-width: 300px;
+    height: auto;
+}
 .postTitle {
   font-size:110%; 
   color:rgba(120,0,0, 1);

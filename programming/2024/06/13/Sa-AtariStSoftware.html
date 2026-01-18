@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Developing Software for the Atari ST - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="With the Atari ST sitting my living room, I get asked from time to time whether I've written software for it. I'll explain the process for everyone that has a knack for retro co..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/programming/2024/06/13/Sa-AtariStSoftware.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="With the Atari ST sitting my living room, I get asked from time to time whether I've written software for it. I'll explain the process for everyone that has a knack for retro co..." />
   <meta name="twitter:title" content="Developing Software for the Atari ST - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -67,12 +70,12 @@
 <div class="post-content" itemprop="articleBody">
     <p style="font-size: 60%;" align="right">What</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-7.png" width="5%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-7.png" class="responsive-image" width="5%" />
 
 <p>With the Atari ST sitting my living room, I get asked from time to time whether I’ve written software for it. I’ll explain the process for everyone that has a knack for retro computing like I do.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atarist-windows.gif" width="35%" />
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atari-st-cross-compile.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atarist-windows.gif" class="responsive-image" width="35%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atari-st-cross-compile.png" class="responsive-image" width="25%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -157,35 +160,35 @@
 <span class="nb">sudo cp </span>tos306de/tos306de.rom /usr/share/hatari/tos.img
 </code></pre></div></div>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-1.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-1.png" class="responsive-image" width="25%" />
 
 <p>The Atari ST Mega I have has only a monochrome monitor, but with more resolution. That can be changed in the settings within TOS.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-2.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-2.png" class="responsive-image" width="25%" />
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-3.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-3.png" class="responsive-image" width="25%" />
 
 <h3 id="loading-software">Loading Software</h3>
 
 <p>Next we will need to load software from floppy disk images. The F12 will bring up Hatari’s main menu.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-4.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-4.png" class="responsive-image" width="25%" />
 
 <p>From that menu we can select the floppy disk image of, for instance, Omikron Basic (“omkbsc303.st”).</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-5.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-5.png" class="responsive-image" width="25%" />
 
 <p>The floppy disk can then be opened within TOS and “OM-BASIC.PRG” can be launched.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-6.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-6.png" class="responsive-image" width="25%" />
 
 <p>Long loading times and frequent crashes add to the realism. Computing at that day and age was not as stable as it is today.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-7.png" width="5%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-7.png" class="responsive-image" width="5%" />
 
 <p>People seeing this on the screen with the machine completely unresponsive, similar to a bluescreen on Windows, is what coined the term “it bombed”</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-8.png" width="15%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-tos306de-8.png" class="responsive-image" width="15%" />
 
 <h2 id="compilers-and-interpreters">Compilers and Interpreters</h2>
 
@@ -229,7 +232,7 @@
 
 <p>After launching Turbo C we can create a new file in the Menu under “File -&gt; New”.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-turbo-c-1.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-turbo-c-1.png" class="responsive-image" width="25%" />
 
 <p>When writing C-Code <code class="language-plaintext highlighter-rouge">void main() {</code> in German TOS with a german keyboard layout you might encounter a problem with curly braces. The key isn’t properly mapped in Hatari. Fortunately is a known issue [2] and there is a way around this.</p>
 
@@ -254,7 +257,7 @@
 
 <p>The following code will work.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-turbo-c-2.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-turbo-c-2.png" class="responsive-image" width="25%" />
 
 <p>Note that</p>
 <ul>
@@ -263,7 +266,7 @@
   <li>and with <code class="language-plaintext highlighter-rouge">getchar()</code> I’m making sure the console stays open so we can see what we have printed to the screen.</li>
 </ul>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-turbo-c-3.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-turbo-c-3.png" class="responsive-image" width="25%" />
 
 <h2 id="cross-compiling">Cross-Compiling</h2>
 
@@ -311,15 +314,15 @@
 
 <p>There we can map a folder from our host operating system into the Atari ST TOS.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-map-folder-1.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-map-folder-1.png" class="responsive-image" width="25%" />
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-map-folder-2.png" width="35%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/hatari-map-folder-2.png" class="responsive-image" width="35%" />
 
 <h3 id="running-the-code">Running the code</h3>
 
 <p>By clicking on the binary we can run it and see our message being printed at the top of the screen.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atari-st-cross-compile.png" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atari-st-cross-compile.png" class="responsive-image" width="25%" />
 
 <p style="font-size: 60%;" align="right">Progress</p>
 
@@ -327,7 +330,7 @@
 
 <p>With “Application Environment Services” (AES) and “Virtual Device Interface” (VDI) we can build multi-window applications such as this code I wrote some time around June 2011.</p>
 
-<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atarist-windows.gif" width="25%" />
+<img src="../../../../images/2024-06-15-Sa-AtariStSoftware/atarist-windows.gif" class="responsive-image" width="25%" />
 
 <p>I have a vivid memory of having extended that code to a full-blown calculator using “reverse polish notation” [5] under the hood to solve algebraic equations, but I can’t find the code anymore. Maybe it was all a dream.</p>
 

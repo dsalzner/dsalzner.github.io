@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  
+  <title>A.I, LLMs and Hype - Dennis Salzner</title>
+  
+  
+
+  <!-- search engine -->
+  <meta name="description" content="To look beyond what we call 'Artificial Intelligence (A.I)' or even 'Artificial General Intelligence (A.G.I)' is, it makes sense to first understand the underlying technologies,..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/technology/2026/01/17/Sa-BeyondAiHype.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A.I, LLMs and Hype - Dennis Salzner" />
+  <meta property="og:description" content="To look beyond what we call 'Artificial Intelligence (A.I)' or even 'Artificial General Intelligence (A.G.I)' is, it makes sense to first understand the unde..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/technology/2026/01/17/Sa-BeyondAiHype.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Technology" />
+  <meta property="article:published_time" content="2026-01-17 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2026-01-17 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2026-01-17 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="To look beyond what we call 'Artificial Intelligence (A.I)' or even 'Artificial General Intelligence (A.G.I)' is, it makes sense to first understand the underlying technologies,..." />
+  <meta name="twitter:title" content="A.I, LLMs and Hype - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+ 
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - A.I, LLMs and Hype</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">A.I, LLMs and Hype</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>To look beyond what we call <strong><em>“Artificial Intelligence (A.I)”</em></strong> or even <strong><em>“Artificial General Intelligence” (A.G.I)</em></strong>, it makes sense to first understand the underlying technologies, where it came from and what it is good for or maybe isn’t. From this understanding as a basis we can then extract real world value. In the following I will explain it as basic, with the <strong><em>fewest words</em></strong> and as <strong><em>easy to comprehend</em></strong> as I can. We will then look into <strong><em>possible sustainable real world uses</em></strong> of the technologies.</p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/stable-diffusion-generated.png" class="responsive-image" width="20%" />
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#ai-often-means-large-language-model" id="markdown-toc-ai-often-means-large-language-model">“A.I” often means “Large Language Model”</a></li>
+  <li><a href="#the-concept-generating-text-with-transformers" id="markdown-toc-the-concept-generating-text-with-transformers">The Concept: Generating Text with Transformers</a>    <ul>
+      <li><a href="#the-first-syllable" id="markdown-toc-the-first-syllable">The first Syllable</a></li>
+      <li><a href="#more-syllables" id="markdown-toc-more-syllables">More Syllables</a></li>
+      <li><a href="#the-underlying-principle-that-makes-the-magic-possible" id="markdown-toc-the-underlying-principle-that-makes-the-magic-possible">The Underlying Principle that makes the “magic” possible</a>        <ul>
+          <li><a href="#the-melody-of-language" id="markdown-toc-the-melody-of-language">The Melody of Language</a></li>
+          <li><a href="#many-periodic-sine-waves" id="markdown-toc-many-periodic-sine-waves">Many Periodic Sine Waves</a></li>
+          <li><a href="#handling-advanced-use-cases-like-tables" id="markdown-toc-handling-advanced-use-cases-like-tables">Handling Advanced Use-Cases, like Tables</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#technical-details" id="markdown-toc-technical-details">Technical Details</a>    <ul>
+      <li><a href="#transformer-architecture" id="markdown-toc-transformer-architecture">Transformer Architecture</a></li>
+      <li><a href="#training" id="markdown-toc-training">Training</a></li>
+      <li><a href="#some-more-fun" id="markdown-toc-some-more-fun">Some more fun</a></li>
+      <li><a href="#adjacent-technologies-document-retrieval-and-function-calling" id="markdown-toc-adjacent-technologies-document-retrieval-and-function-calling">Adjacent Technologies: Document Retrieval and Function Calling</a></li>
+    </ul>
+  </li>
+  <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a>    <ul>
+      <li><a href="#what-it-can-and-probably-cant-do" id="markdown-toc-what-it-can-and-probably-cant-do">What it can and probably can’t do</a></li>
+      <li><a href="#use-cases-what-is-it-good-for-no-not-absolutely-nothing" id="markdown-toc-use-cases-what-is-it-good-for-no-not-absolutely-nothing">Use-Cases: What is it good for? No, not absolutely nothing.</a></li>
+    </ul>
+  </li>
+  <li><a href="#economics-and-media-coverage" id="markdown-toc-economics-and-media-coverage">Economics and Media Coverage</a>    <ul>
+      <li><a href="#philosophy-of-artificial-general-intelligence" id="markdown-toc-philosophy-of-artificial-general-intelligence">Philosophy of “Artificial General Intelligence”</a></li>
+      <li><a href="#hype-bubble-or-even-fraud" id="markdown-toc-hype-bubble-or-even-fraud">Hype, Bubble or even Fraud</a></li>
+      <li><a href="#source-of-ai-chips" id="markdown-toc-source-of-ai-chips">Source of A.I Chips</a></li>
+      <li><a href="#competition-and-local-ai" id="markdown-toc-competition-and-local-ai">Competition and Local A.I</a></li>
+      <li><a href="#bias-censorship-ad-placement-and-data-gathering" id="markdown-toc-bias-censorship-ad-placement-and-data-gathering">Bias, Censorship, Ad Placement and Data Gathering</a></li>
+      <li><a href="#environmental-impact" id="markdown-toc-environmental-impact">Environmental Impact</a></li>
+    </ul>
+  </li>
+  <li><a href="#efficient-edge-ai-without-the-cloud-is-probably-where-its-at" id="markdown-toc-efficient-edge-ai-without-the-cloud-is-probably-where-its-at">Efficient Edge A.I without the Cloud is probably where it’s at</a></li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="ai-often-means-large-language-model">“A.I” often means “Large Language Model”</h2>
+
+<p>First off you may have already heard that what we are colloquially referring to as <strong><em>“A.I”</em></strong> is in the most cases actually a <strong><em>“Large Language Model  (LLM)”</em></strong>. ChatGPT, DeepSeek, Claude, Gemini are all actually “Large Language Models”.</p>
+
+<p>What is a Large Language Model?</p>
+
+<p>Well, in the field of <strong><em>“natural language processing”</em></strong> linguistic researchers and computer scientists have been working side by side to study how language historically evolves, but also the <strong><em>patterns in human language</em></strong>.</p>
+
+<p>To do this they have always collected large <strong><em>sets of texts</em></strong>, so called <strong><em>corpora</em></strong>. On the corpora we can then <strong><em>run statistics</em></strong> to answer questions such as what is the <strong><em>probability of a word appearing?</em></strong> This by itself is already <strong><em>useful for spelling and grammar checking</em></strong>.</p>
+
+<p>Later it was discovered that these <strong><em>probabilities of words</em></strong> appearing can also be <strong><em>used to generate text</em></strong>.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="the-concept-generating-text-with-transformers">The Concept: Generating Text with Transformers</h2>
+
+<p>Enter <strong><em>the transformer</em></strong>, the foundation of an <strong><em>LLM</em></strong>.</p>
+
+<h3 id="the-first-syllable">The first Syllable</h3>
+
+<p>What if we could design a system that, <strong><em>for a  given text, produces the next syllable</em></strong>?</p>
+
+<p>Architecturally this would look something like this:</p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/transformer1.png" class="responsive-image" width="30%" />
+
+<p>So great. With a well <strong><em>trained</em></strong> transformer we see a <strong><em>high statistical probability</em></strong> the system produces the <strong><em>next syllable that fits</em></strong> given the previous text. <strong><em>Not considering meaning</em></strong> at all. <strong><em>Meaning</em></strong> will <strong><em>hopefully transpire from the text it was trained on</em></strong>.</p>
+
+<h3 id="more-syllables">More Syllables</h3>
+
+<p>So how do we produce more text? Easy. We just run it <strong><em>again and again</em></strong>. Always <strong><em>concatenating the output with the input</em></strong> and <strong><em>re-running it</em></strong>.
+The output text will grow larger and larger. This is why <strong><em>text loads slowly when using an LLM</em></strong>.</p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/transformer2.png" class="responsive-image" width="30%" />
+
+<h3 id="the-underlying-principle-that-makes-the-magic-possible">The Underlying Principle that makes the “magic” possible</h3>
+
+<p>So <strong><em>how can</em></strong> such a <strong><em>magical syllable producing machine work</em></strong>?</p>
+
+<h4 id="the-melody-of-language">The Melody of Language</h4>
+
+<p>First off it’s important to understand that everything around us follows patterns. Whether it’s the reoccurring <strong><em>symmetry</em></strong> of leaves on a plant, the <strong><em>rhyme</em></strong> in a poem, the package header of a Wireless LAN transmission frame.
+Everything has some <strong><em>underlying pattern</em></strong>, an <strong><em>order</em></strong>, otherwise it would be random and useless.</p>
+
+<ul>
+  <li>with a probability, for instance a <strong><em>Subject</em></strong> is followed by a <strong><em>Verb</em></strong> followed by an <strong><em>Object</em></strong> as in “I drew a picture”.</li>
+  <li>or following probability a text stays in a certain <strong><em>domain language</em></strong>. A term from the automotive space will likely be followed by more terms from the automotive space.</li>
+</ul>
+
+<p>So how do we capture this?</p>
+
+<h4 id="many-periodic-sine-waves">Many Periodic Sine Waves</h4>
+
+<p>In order to capture the <strong><em>melody of language</em></strong> we need to catch <strong><em>the ordering</em></strong>. To do this we can <strong><em>annotate each word in the training with values of random(!) periodic sine waves</em></strong>. The value of each sine wave at a given location in a text is a large array of numbers between 0 and 1. It contains the values of typically 10.000+ sine waves. These indicate the likeliness of a given next syllable occurring.</p>
+
+<p>The following image demonstrates the <strong><em>simplified case</em></strong> of only <strong><em>predicting the likelihood of a subject, verb or object to follow</em></strong>.</p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/melody.png" class="responsive-image" width="60%" />
+
+<p>The magic occures when we <strong><em>train</em></strong> an LLM, that is <strong><em>show it text</em></strong>, let <strong><em>it predict</em></strong> and <strong><em>check if it was correct</em></strong>. Then adjust the <strong><em>weighting</em></strong> of the <strong><em>sine waves</em></strong> accordingly.</p>
+
+<h4 id="handling-advanced-use-cases-like-tables">Handling Advanced Use-Cases, like Tables</h4>
+
+<p>At this point some may argue: Oh wait a minute! I can have an LLM transfer a <strong><em>text to a table</em></strong>. If it’s that simple, then <strong><em>how does that work</em></strong>? I hear you, I’ve thought the same. The underlying principle extends far beyond text.</p>
+
+<p>Take this <strong><em>table</em></strong> in HTML and its underlying <strong><em>HTML code</em></strong> for example:</p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/table-html.png" class="responsive-image" width="40%" />
+
+<p>Watch what happens, wenn I put the contents of that table in <strong><em>textual sequence</em></strong>.</p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/melody-table.png" class="responsive-image" width="60%" />
+
+<p>The <strong><em>LLM doesn’t</em></strong> need to <strong><em>‘understand’</em></strong> anything to produce results. It just learned that there should be a column end <strong><em>within a certain distance</em></strong> to the column start marker. <strong><em>Tables</em></strong>, due to their rigid structure, are actually <strong><em>very easy for an LLM</em></strong> to produce.</p>
+
+<h2 id="technical-details">Technical Details</h2>
+
+<p>The above summary falls short in a lot of details.</p>
+
+<ul>
+  <li>
+    <p>What I’ve referred to as <strong><em>syllables</em></strong> are more generally <strong><em>tokens</em></strong> in LLM speak. There are different methods of splitting text into tokens. The simplest are splitting to <strong><em>words</em></strong>. A better approach are <strong><em>syllables</em></strong>. Another common method is the <strong><em>subword tokenizer</em></strong>, there is also <strong><em>Byte-Pair Encoding (BPE)</em></strong>, <strong><em>WordPiece</em></strong> and <strong><em>SentencePiece</em></strong> tokenization. The <strong><em>Unigram Language Model</em></strong> uses probabilistic approaches to select sub words. Your imagination is the limit. The methods are typically empirically evaluated. What ever works, works.</p>
+  </li>
+  <li>
+    <p>The <strong><em>Periodic Sine Waves</em></strong> or  what I called <strong><em>“melody of language”</em></strong> is handled technically by <strong><em>Positional Encoding</em></strong>, which produces a large array of numbers between 0 and 1 that are essentially the <strong><em>value of the sine wave at that position in the text</em></strong>.</p>
+  </li>
+  <li>
+    <p>The Transformer first produces an <strong><em>Embedding</em></strong>. That is a location in a high dimensional <strong><em>latent space</em></strong>.</p>
+    <ul>
+      <li>This is <strong><em>incredibly powerful by itself</em></strong>. Think a <strong><em>Cartesian coordinate system</em></strong> with many more axes. In this <strong><em>latent space</em></strong> words that relate to each other are near each other.</li>
+      <li>You can even do <strong><em>algebraic calculations</em></strong> on coordinates of the latent space. For instance the positions of “<strong><em>King - Man + Woman</em></strong>” yields the position of “<strong><em>Queen</em></strong>”. Also <strong><em>“London - England + Italy = Rome”</em></strong>.</li>
+      <li>To convince yourself, you can <strong><em>manually trace the path</em></strong> in the 2D representation produced by <strong><em>word2vec</em></strong> below:</li>
+    </ul>
+  </li>
+</ul>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/word2vec.png" class="responsive-image" width="30%" />
+
+<ul>
+  <li><strong><em>Encoder-Decoder Networks</em></strong> that were used for the <strong><em>Auto-Encoder</em></strong> were also influential to discovering the Transformer. The Transformer follows this architecture.
+    <ul>
+      <li>The idea is to train one neural network to <strong><em>“reduce” data</em></strong> and another to <strong><em>“scale back up” data</em></strong>.</li>
+      <li>We <strong><em>reduce the difference between input and output</em></strong> (minimize mean square error) until it performs well.</li>
+      <li>This can be used for <strong><em>dimensionality reduction</em></strong> like <strong><em>Principle Component Analysis (PCA)</em></strong> (for code samples see <a href="/technology/2023/11/24/Fr-UsefulAITechniques.html">Useful A.I. Techniques</a>)</li>
+      <li>but also for <strong><em>language translation</em></strong> of text: the latent spaces produced by training on the corpora of texts from two languages align. This is expected when looking at the <strong><em>word2vec</em></strong> representation above. This is exciting, because we can use the <strong><em>encoder trained with one language</em></strong> and using the <strong><em>decoder trained with another</em></strong> to <strong><em>machine translate text</em></strong>.</li>
+    </ul>
+  </li>
+</ul>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/encoder-decoder.png" class="responsive-image" width="50%" />
+
+<ul>
+  <li>
+    <p>During <strong><em>inference</em></strong>, where the Transformer is used to generate output, we <strong><em>only use the Decoder</em></strong> part. This is because we are essentially <strong><em>moving on a trajectory within the latent space</em></strong> in order to <strong><em>find the sequence of tokens to output</em></strong>.</p>
+  </li>
+  <li>
+    <p>A breakthrough for Transformers was the <strong><em>self-attention mechanism</em></strong>, another <strong><em>set of neural network layers</em></strong>, in order to <strong><em>detect</em></strong> which words have the <strong><em>most meaning</em></strong> and also which words <strong><em>may negate the sentence</em></strong>. For example in “the cat did not run through the entire house”, the words “cat” and “house” are particularly important, but especially the word “not”, as it <strong><em>inverts the entire meaning of the sentence</em></strong>.</p>
+  </li>
+</ul>
+
+<h3 id="transformer-architecture">Transformer Architecture</h3>
+
+<p>How do we <strong><em>implement the Transformer in code</em></strong>? Technically the <strong><em>the Transformer</em></strong> is a <strong><em>cleverly thought out structure</em></strong> of repeating <strong><em>Neural Networks Layers</em></strong>.</p>
+
+<p>We can write it in <strong><em>100-200 lines of Python Code</em></strong> using the <strong><em>TensorFlow Python library</em></strong>. Following the diagram given in the <strong><em>Paper “Attention is all you need”</em></strong> [1].</p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/transformer-architecture.png" class="responsive-image" width="20%" />
+
+<p><small>Transformer Architecture from [1]</small></p>
+
+<p>The steps it undergoes to produce text are the following:</p>
+
+<ol>
+  <li>
+    <p>Split text into <strong><em>tokens</em></strong>, add <strong><em>Positional Encoding</em></strong> (to not loose <strong><em>positional information</em></strong> of where words are related to each another)</p>
+  </li>
+  <li>
+    <p>Run the two through a previously <strong><em>trained</em></strong> <strong><em>Transformer</em></strong> neural network model.  The <strong><em>Embedding Layer</em></strong> of the <strong><em>Transformer</em></strong> produces the <strong><em>coordinates in the latent space</em></strong></p>
+  </li>
+  <li>
+    <p>Run the <strong><em>self-attention mechanism</em></strong> to focus on (=give a higher numerical weight to) <strong><em>the most important words</em></strong></p>
+  </li>
+  <li>
+    <p>The last layer produces <strong><em>logits</em></strong>, these are run through a <strong><em>softmax</em></strong> function to produce a <strong><em>probability distribution</em></strong>.</p>
+  </li>
+  <li>
+    <p>In order to <strong><em>produce the next token</em></strong> (=”syllable”) of the text we use the <strong><em>resulting probabilities</em></strong> and a <strong><em>decoding strategy</em></strong> (= a selection scheme), for example <strong><em>greedy selection/sampling</em></strong> (just output the token with the highest probability) or the more advanced <strong><em>Beam Search</em></strong> or even <strong><em>Random Sample</em></strong>.</p>
+  </li>
+</ol>
+
+<h3 id="training">Training</h3>
+
+<p>A lot of the <strong><em>innovation</em></strong> lies in the <strong><em>training of Neural Networks</em></strong>. That is <strong><em>observing the output</em></strong> of a Neural Network after <strong><em>feeding it input samples</em></strong> and adjusting the <strong><em>weights</em></strong> to <strong><em>reduce the amount of error</em></strong> (=typically the mean squared error) in <strong><em>the expected output</em></strong>.</p>
+
+<p>In my above simplified analogy this would mean <strong><em>adjusting the weights</em></strong> of the <strong><em>influence of the sine curves to more accurately replicate the melody of language</em></strong>.</p>
+
+<h3 id="some-more-fun">Some more fun</h3>
+
+<p>Recently there have also been highly interesting results on what happens when <strong><em>one model trains another</em></strong>. That this <strong><em>“surprisingly”</em></strong> produces <strong><em>even better models</em></strong>.</p>
+
+<p>Research has also shown what happens, when we <strong><em>“poison” a model</em></strong> by <strong><em>showing it specially crafted data during training</em></strong> that essentially <strong><em>turns it into a psychopath</em></strong>.</p>
+
+<p>We can also <strong><em>tie certain individual neurons</em></strong> in the network <strong><em>to fixed values</em></strong> to <strong><em>manipulate the entire network</em></strong> such that it will produce text that <strong><em>leans towards a political direction</em></strong>, <strong><em>acts depressive</em></strong>, <strong><em>acts overly friendly</em></strong> or <strong><em>acts cynical</em></strong> and so on. This is akin to <strong><em>“Deep brain stimulation” for humans</em></strong> that is being researched to <strong><em>treat depression or addiction</em></strong>.</p>
+
+<h3 id="adjacent-technologies-document-retrieval-and-function-calling">Adjacent Technologies: Document Retrieval and Function Calling</h3>
+
+<p>In order to use an LLM for something <strong><em>useful outside of a chat bot</em></strong> we need to support basic tasks:</p>
+
+<ul>
+  <li>
+    <p><strong><em>Retrieval-Augmented Generation (RAG)</em></strong>: The ability to add additional information from a database or an <strong><em>additional text corpus</em></strong>. So we can ask questions about the text and <strong><em>have the LLM summarize text</em></strong>.</p>
+  </li>
+  <li>
+    <p><strong><em>Tool or Function Calling</em></strong>: The ability to retrieve structured text. For example in a <strong><em>clean JSON formatted output</em></strong> that is <strong><em>guaranteed machine readable</em></strong>. So we can <strong><em>use the LLM as a function in our application code</em></strong>.</p>
+  </li>
+</ul>
+
+<p>For RAG there has been significant innovation in <strong><em>Vector Databases</em></strong>. These have moved beyond just being an <strong><em>additional layer to rational databases</em></strong> to highly <strong><em>optimized purpose build systems</em></strong>.</p>
+
+<h2 id="limitations">Limitations</h2>
+
+<p>This technology has its <strong><em>limitations by design</em></strong> with some already arguing <strong><em>LLMs have reached a plateau</em></strong>.</p>
+
+<p>I also have <strong><em>yet to find</em></strong> an <strong><em>economically viable real world use case</em></strong> beyond using it as a chat bot that or <strong><em>search engine</em></strong>.</p>
+
+<p>To find actual use-cases it’s helpful to <strong><em>derive what an LLM is good at</em></strong> and <strong><em>what it isn’t good at</em></strong>.</p>
+
+<h3 id="what-it-can-and-probably-cant-do">What it can and probably can’t do</h3>
+
+<p>Due to the <strong><em>nature of how LLMs currently work</em></strong>:</p>
+
+<ul>
+  <li>there will be <strong><em>no 100% accurate answers</em></strong></li>
+  <li>you will <strong><em>not receive truly novel thought out answers</em></strong>. The LLM only mixes text according to statistics. The answers are sometimes <strong><em>surprisingly correct</em></strong>. Some say like a <strong><em>broken clock that works twice a day</em></strong>.</li>
+  <li>it will <strong><em>often produce correct answers</em></strong>, but only due to the <strong><em>original content being in the training set</em></strong> and regurgitating it without having broken it. Of course <strong><em>without citing the source</em></strong>. Which is <strong><em>copyright infringement</em></strong>.</li>
+  <li>there is also, <strong><em>by design</em></strong>, a hard <strong><em>limit how ‘smart’ an LLM can be</em></strong>. The larger the model gets the more it turns into <strong><em>an unreliable search engine</em></strong>.
+    <ul>
+      <li>at the same time what makes an LLM interesting to the user are <strong><em>the hallucinations</em></strong> these are <strong><em>at the same time the plague of LLMs</em></strong></li>
+      <li>the point is that with <strong><em>hallucinations</em></strong> and <strong><em>randomness</em></strong> we may be able to <strong><em>find something that feels novel or is inspiring</em></strong> in the <strong><em>messy output</em></strong>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="use-cases-what-is-it-good-for-no-not-absolutely-nothing">Use-Cases: What is it good for? No, not absolutely nothing.</h3>
+
+<p>An LLM is <strong><em>useful</em></strong> for <strong><em>some things</em></strong>. Not for others. We are still <strong><em>in a phase</em></strong> collectively finding out <strong><em>where it can produce true business value</em></strong>.</p>
+
+<p><strong>You better not use it  for…</strong></p>
+
+<ul>
+  <li><strong><em>Customer communications</em></strong>: It’s being done already and sure we can fire a few employees, but for customers a text field with automatic search through a well kept <strong><em>FAQ page</em></strong>, will <strong><em>beat an LLM</em></strong> any day of the year. Also in terms of legal risks.</li>
+  <li><strong><em>Emailing Co-Workers</em></strong>: They will eventually notice, the <strong><em>A.I Slop</em></strong> is already wasting everyone’s time. You will destroy your reputation. Additionally you may, again, face legal risks.</li>
+  <li><strong><em>Curing Cancer</em></strong>: This was actually promised when LLMs were introduced to the public. It might work out by accident, if the A.I Slop inspires someone.</li>
+</ul>
+
+<p><strong>You can use it for…</strong></p>
+
+<ul>
+  <li><strong><em>Summarizing</em></strong>: With the caveat of <strong><em>inevitable grave mistakes</em></strong>.</li>
+  <li><strong><em>Categorizing Text</em></strong>: If the input set is too large to handle otherwise, it may be the best bet.</li>
+  <li><strong><em>Tagging Images</em></strong>: But here <strong><em>special purpose neural networks</em></strong> like <strong><em>You Only Look Once (YOLO)</em></strong> are <strong><em>much more reliable</em></strong> and <strong><em>consume much less resources</em></strong>.</li>
+  <li><strong><em>Vibe coding</em></strong>: But at the risk of copyright infringement and only usable productively for <strong><em>well known code samples without much modification</em></strong> that were in the training set or as a <strong><em>starting point for developers that already know what they are doing</em></strong>.</li>
+  <li><strong><em>Audio Transcription</em></strong>: Here <strong><em>special purpose neural networks</em></strong> like <strong><em>Whisper</em></strong>, used in <strong>OpenAI GPT App</strong> outperform <strong><em>the LLM for that task</em></strong>.</li>
+  <li><strong><em>Producing Lyrics or Poems</em></strong>: There the <strong><em>melody of language comes into play</em></strong>. Will it be novel or inspiring? Probably not. The LLM <strong><em>has no feelings it wants to express</em></strong>.</li>
+  <li><strong><em>Write School Essays</em></strong>: At  the <strong><em>risk of being caught</em></strong>. Then again the teacher probably <strong><em>doesn’t read it</em></strong>, so your A.I Slop won’t be found.</li>
+  <li><strong><em>Improving Text, finding Synonyms</em></strong>: Yes, here it could really shine.</li>
+</ul>
+
+<p>I’ve had successes with:</p>
+
+<ul>
+  <li>using it as a <strong><em>search engine for code samples</em></strong>. It <strong><em>finds hard to find things</em></strong>, but it also <strong><em>produces tons of garbage</em></strong>.</li>
+  <li>trying to <strong><em>map a list of names to most probable country of origin</em></strong> in order to guess the language. Often incorrect, but an <strong><em>almost impossible task and better than nothing</em></strong> due to frequent moving between all modern countries.</li>
+</ul>
+
+<h2 id="economics-and-media-coverage">Economics and Media Coverage</h2>
+
+<p>The media coverage was blown completely out of proportion. Either they didn’t know any better or companies were acting this way to generate revenue</p>
+
+<h3 id="philosophy-of-artificial-general-intelligence">Philosophy of “Artificial General Intelligence”</h3>
+
+<p>There is a philosophical discussion as to whether our human intelligence isn’t fundamentally doing the exact same thing. When LLMs were introduced there was often talk of <strong><em>“general intelligence”</em></strong>.</p>
+
+<p>But there are <strong><em>key differences of human intelligence to LLMs</em></strong>:</p>
+
+<ul>
+  <li>we are <strong><em>more than one</em></strong>. roughly 8 billion people on earth</li>
+  <li>we <strong><em>interact</em></strong> with our environment and adapt</li>
+  <li>also to and with <strong><em>each other</em></strong></li>
+  <li>we undergo <strong><em>evolution</em></strong></li>
+  <li>we have <strong><em>personality traits</em></strong> and <strong><em>basic needs</em></strong> that motivate us (see the <strong><em>Maslow Pyramid</em></strong>)</li>
+  <li>our <strong><em>nerve system is analogue, not digital</em></strong>.</li>
+  <li>we are each <strong><em>heavily biased</em></strong> towards our experiences</li>
+  <li>we are <strong><em>self motivated</em></strong> and orders of magnitude <strong><em>more complex</em></strong>, so that we don’t respond to impulses in <strong><em>highly predicable ways</em></strong>.</li>
+</ul>
+
+<p>In doing so we sometimes produce <strong><em>written text</em></strong>. The LLM is <strong><em>merely trained on that text</em></strong>.</p>
+
+<p>I’m sure <strong><em>LLM’s are here to stay</em></strong>, but I believe their <strong><em>use for individuals is highly exaggerated</em></strong>.</p>
+
+<h3 id="hype-bubble-or-even-fraud">Hype, Bubble or even Fraud</h3>
+
+<p>We may well be in an <strong><em>end phase of the next cycle of capitalism</em></strong>, where all <strong><em>wealth is concentrated on very few companies</em></strong> and where <strong><em>companies borrow more money than they can repay</em></strong>, because they are <strong><em>banking on inflation</em></strong> to <strong><em>clear their debt</em></strong> afterwards.</p>
+
+<p>Regarding <strong><em>A.I Hype</em></strong> and after having gone into the how <strong><em>LLMs fundamentally work</em></strong> and <strong><em>their limitations</em></strong>, I will post some graphs on the <strong><em>economics of A.I</em></strong>.</p>
+
+<p>You can draw your <strong><em>own conclusions</em></strong> as to whether</p>
+
+<ul>
+  <li>this technology <strong><em>provides enough value</em></strong> to customers</li>
+  <li>to what extent it will <strong><em>really shape our future</em></strong></li>
+  <li>and whether the <strong><em>spending is economically sustainable</em></strong> in the long run</li>
+</ul>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/hype01.jpg" class="responsive-image" width="30%" />
+
+<p><small>A.I spending money is traveling in circles (Image taken from cnbc.com)</small></p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/hype02.jpg" class="responsive-image" width="20%" />
+
+<p><small>Majority of wealth is concentrated on few companies indicating the risk of a bubble (Image taken from statista.de)</small></p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/hype03.png" class="responsive-image" width="20%" />
+
+<p><small>Global debt is spiraling (Image taken from statista.de)</small></p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/hype04.jpg" class="responsive-image" width="20%" />
+
+<p><small>US economic growth is negative excluding A.I (Image taken from Deutsche Bank)</small></p>
+
+<img src="../../../../images/2026-01-17-Sa-BeyondAiHype/hype05.jpg" class="responsive-image" width="20%" />
+
+<p><small>Tech firms are tying themselves to Open A.I (Image taken from Citi research, FT research)</small></p>
+
+<h3 id="source-of-ai-chips">Source of A.I Chips</h3>
+
+<p>Additionally we should keep in mind that the <strong><em>major provider of A.I chips is NVidia</em></strong> and that they in turn source their chips from <strong><em>TSMC in Taiwan</em></strong>, which is the only major manufacturer to date. <strong><em>Taiwan is merely 130 km (=81 miles) off the coast of China</em></strong>.</p>
+
+<p>This is already a bottleneck and source of international conflict and, given we stay on the same trajectory, will likely escalate further in the near future.</p>
+
+<h3 id="competition-and-local-ai">Competition and Local A.I</h3>
+
+<p>Adding to the above there have emerged <strong><em>A.I models from China</em></strong> that <strong><em>outperform western offerings</em></strong>. <strong><em>Deepseek R1</em></strong> is in many ways <strong><em>cheaper and better</em></strong>. It is <strong><em>open-source</em></strong> and you can run reduced variants <strong><em>locally on your PC</em></strong>.</p>
+
+<p>The company behind Deepseek has pioneered <strong><em>Mixture of Experts</em></strong>, that is <strong><em>loading only portions of the LLM when required</em></strong>, making <strong><em>inference</em></strong> of, for instance, the Deepseek R1 32B q4 parameter model (“DeepSeek-R1-Distill-Qwen-32B-abliterated-GGUF:Q4_K_M”) possible on my consumer grade <strong><em>NVIDIA GeForce RTX 3060 with 12 GB VRAM</em></strong> graphics card.</p>
+
+<p>Additionally there are modified variants of these models that are <strong><em>uncensored</em></strong> and <strong><em>give a little more truthful answers to political questions</em></strong> though they are <strong><em>still biased by their training data</em></strong>.</p>
+
+<p>I recently came across the <strong><em>IBM Granite 4</em></strong> models (to try them in your browser see [2]). The <strong><em>granite-4.0-h-small</em></strong> is 13 GB in total disk space. It can easily be run locally with <strong><em>ollama</em></strong> and I’ve found it to work <strong><em>extremely well</em></strong> for generating Python Flask API endpoints.</p>
+
+<h3 id="bias-censorship-ad-placement-and-data-gathering">Bias, Censorship, Ad Placement and Data Gathering</h3>
+
+<p>In general LLMs can be altered to <strong><em>produce texts with political biases</em></strong> and they are <strong><em>already biased by the selection of input texts</em></strong>, they can be <strong><em>heavily censored</em></strong>, they can contain <strong><em>sneaky ad placement</em></strong> and usage of LLMs on the cloud can <strong><em>gather data on the user</em></strong>.</p>
+
+<p>They are in <strong><em>also a tool to manipulate the way we think</em></strong>. It is important to look out for this.</p>
+
+<h3 id="environmental-impact">Environmental Impact</h3>
+
+<p>There is also growing backlash on the environmental impact of training LLMs. Data centers being built in the middle of nowhere, consuming water and electricity. Nuclear Power plants are planed to be built to power this.</p>
+
+<h2 id="efficient-edge-ai-without-the-cloud-is-probably-where-its-at">Efficient Edge A.I without the Cloud is probably where it’s at</h2>
+
+<p>I’ve mentioned above that there are some extremely <strong><em>useful, smaller, less hyped, technologies</em></strong> coming out of the <strong><em>A.I space</em></strong>. I’ve written about some years ago (see <a href="/technology/2023/11/24/Fr-UsefulAITechniques.html">Useful A.I. Techniques</a>).</p>
+
+<p>To name a few <strong><em>special purpose Neural Networks</em></strong>:</p>
+
+<ul>
+  <li><strong><em>U-Net</em></strong>: Image Segementer</li>
+  <li><strong><em>YOLO</em></strong>: Image Classification</li>
+  <li><strong><em>Whisper</em></strong>: Speech Recognition</li>
+  <li><strong><em>Stable Diffussion</em></strong>: Image Generation</li>
+</ul>
+
+<p>Some of these can be run on a smaller scale <strong><em>directly on the customer device</em></strong>, on <strong><em>smart home equipment</em></strong> or <strong><em>on IoT sensors</em></strong>. This is where there is <strong><em>real value</em></strong>.</p>
+
+<p>If we can <strong><em>tag images</em></strong> we have just taken <strong><em>offline, without uploading</em></strong> them, if we can give <strong><em>voice commands to consumer appliances</em></strong> and achieve this <strong><em>without networking delays</em></strong>, if <strong><em>sensor networks become more intelligent</em></strong> and we <strong><em>don’t rely on expensive cloud services</em></strong>.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Those were my thoughts on <strong><em>Large Language Models</em></strong>, <strong><em>A.I</em></strong>, <strong><em>the underlying technology</em></strong>, the <strong><em>hype</em></strong>, but also <strong><em>productive use cases</em></strong>. So far I’ve used LLMs as a <strong><em>search engine on steroids</em></strong> for coding tasks. I wouldn’t agree that LLMs currently or in the near future <strong><em>can fully replace developers</em></strong>. We still need to be able to define what tasks we expect the product to perform and how to structure the code. For this <strong><em>we need to know how to design - not just write - software</em></strong>. <strong><em>Retrieval-Augmented Generation</em></strong> and  <strong><em>Tool or Function Calling</em></strong> are both approaches I find exciting.</p>
+
+<p>If you’ve made it this far: thanks for reading. If you’re still interested you might like my previous more broad post on A.I tricks for your toolbox (see <a href="/technology/2023/11/24/Fr-UsefulAITechniques.html">Useful A.I. Techniques</a>).</p>
+
+<hr />
+
+<pre>
+1] https://arxiv.org/abs/1706.03762
+2] https://www.ibm.com/granite/playground
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="A.I, LLMs and Hype"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>

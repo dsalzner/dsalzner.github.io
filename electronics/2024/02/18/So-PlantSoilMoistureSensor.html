@@ -3,10 +3,13 @@
   <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   
   <title>Plant Soil Moisture Sensor - Dennis Salzner</title>
   
   
+
   <!-- search engine -->
   <meta name="description" content="Monitoring Soil Moisture with a Wemos D1 Mini, MCP3008 and cheap soil moisture probe. Some years ago I bought roughly a dozen cheap plant soil moisture probes. In the following ..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/electronics/2024/02/18/So-PlantSoilMoistureSensor.html">
@@ -25,11 +28,11 @@
   <meta name="twitter:description" content="Monitoring Soil Moisture with a Wemos D1 Mini, MCP3008 and cheap soil moisture probe. Some years ago I bought roughly a dozen cheap plant soil moisture probes. In the following ..." />
   <meta name="twitter:title" content="Plant Soil Moisture Sensor - Dennis Salzner" />
   <meta name="twitter:image" content="" />
-
+ 
   <!-- syntax highlighting in code snippets -->
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
   <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
-  
+
   <!-- jquery (for vimeo video embedding)-->
   <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
   
@@ -69,7 +72,7 @@
 
 <p>Monitoring Soil Moisture with a Wemos D1 Mini, MCP3008 and cheap soil moisture probe. Some years ago I bought roughly a dozen cheap plant soil moisture probes. In the following I’ll describe how to connect them to a Wemos D1 Mini Dev-Board with an mcp3008 Analog-Digital-Conveter and how to send messages with the readings to your Telegram chat client.</p>
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-probe.jpg" width="30%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-probe.jpg" class="responsive-image" width="30%" />
 
 <p style="font-size: 60%;" align="right">Contents</p>
 
@@ -146,9 +149,9 @@ The sensors can be connected directly to the Wemos D1 chip with an Arduino libra
 
 <p>Wiring is straight-forward: Just connect the SPI lines.</p>
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/wemos-d1-mini.png" width="20%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/wemos-d1-mini.png" class="responsive-image" width="20%" />
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/mcp3008-wemos-d1-mini.png" width="30%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/mcp3008-wemos-d1-mini.png" class="responsive-image" width="30%" />
 
 <p>We can connect a total of eight Soil Moisture Sensors to the analog input pins of the mcp3008.</p>
 
@@ -158,11 +161,11 @@ The sensors can be connected directly to the Wemos D1 chip with an Arduino libra
 
 <p>That schematic was first wired on a breadboard.</p>
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-breadboard.jpg" width="20%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-breadboard.jpg" class="responsive-image" width="20%" />
 
 <p>And later soldered to a perfboard.</p>
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-perfboard.jpg" width="20%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-perfboard.jpg" class="responsive-image" width="20%" />
 
 <h3 id="power">Power</h3>
 
@@ -176,7 +179,7 @@ The sensors can be connected directly to the Wemos D1 chip with an Arduino libra
 
 <p>To protect from water and to protect from short circuit fires I like to throw these kind of projects into simple junction boxes.</p>
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-junction-box.jpg" width="20%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-junction-box.jpg" class="responsive-image" width="20%" />
 
 <h2 id="software">Software</h2>
 
@@ -375,7 +378,7 @@ It also auto-sends readings every half hour.</p>
 
 <p style="font-size: 60%;" align="right">Progress</p>
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-telegram.jpg" width="20%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-moisture-telegram.jpg" class="responsive-image" width="20%" />
 
 <p>As you can see the messages are delivered to my phone. Mission accomplished.</p>
 
@@ -400,7 +403,7 @@ It also auto-sends readings every half hour.</p>
 
 <p>Currently I’m using these Blumat suction things.</p>
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/blumat.png" width="10%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/blumat.png" class="responsive-image" width="10%" />
 
 <p>They automatically pull water from a bottle, but are hard to properly adjust. The soil moisture sensor helps adjusting them and seeing how the plants react.</p>
 
@@ -414,13 +417,13 @@ It also auto-sends readings every half hour.</p>
 
 <p>The part is very basic. I’ll probably just use something that doesn’t corrode like copper wires or aluminium rods with some 3D printed part to keep them at an equal distance and will connect the sensor boards to that.</p>
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-probe-corrosionon.jpg" width="15%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-probe-corrosionon.jpg" class="responsive-image" width="15%" />
 
 <p><strong>Update 2024-07-16</strong></p>
 
 <p>In search for a simple and cheap fix I came up with this: Just solder regular household single-core electical wiring to the wires directly and glue it in place with hot glue. It looks bad, but since it’s in the soil it doesn’t matter. The corrosion issues should go away. I just hope I don’t poison my plants with the copper, but until now this works fine.</p>
 
-<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-probe-fix.jpg" width="45%" />
+<img src="../../../../images/2024-02-18-So-PlantSoilMoistureSensor/soil-probe-fix.jpg" class="responsive-image" width="45%" />
 
 
 </div>
