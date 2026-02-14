@@ -1,0 +1,130 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64; rv:133.0) Gecko/20100101 Firefox/133.0" version="29.3.4">
+  <diagram name="Seite-1" id="yKafsT9sr0USB0b3Msd8">
+    <mxGraphModel dx="1503" dy="1247" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-35" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="355" width="279" x="679" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-26" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="355" width="146" x="414" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;" value="" vertex="1">
+          <mxGeometry height="355" width="245" x="45" y="175" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-1" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="Text File" vertex="1">
+          <mxGeometry height="80" width="70" x="90" y="200" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-3" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="Text File" vertex="1">
+          <mxGeometry height="80" width="70" x="100" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-2" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="Text Files" vertex="1">
+          <mxGeometry height="80" width="70" x="110" y="220" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-4" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="Text File" vertex="1">
+          <mxGeometry height="80" width="70" x="110" y="320" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-5" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="Text File" vertex="1">
+          <mxGeometry height="80" width="70" x="120" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-6" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="Manual PDFs" vertex="1">
+          <mxGeometry height="80" width="70" x="130" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-8" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="Text File" vertex="1">
+          <mxGeometry height="80" width="70" x="170" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-9" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="&lt;div&gt;Transcribed&lt;/div&gt;&lt;div&gt;Videos&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="70" x="180" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-10" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="Wikipedia Entries" vertex="1">
+          <mxGeometry height="80" width="70" x="90" y="380" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-11" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;" value="&lt;div&gt;eBook&lt;/div&gt;&lt;div&gt;PDFs&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="70" x="190" y="400" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-13" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=16;" value="Text Blob&lt;br&gt;#1" vertex="1">
+          <mxGeometry height="75" width="60" x="460" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-18" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;Directory of unstructured information &lt;/b&gt;" vertex="1">
+          <mxGeometry height="37.5" width="245" x="42.5" y="132.5" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-20" edge="1" parent="1" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;endWidth=54;endSize=9.33;width=28;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="370" y="350" />
+            </Array>
+            <mxPoint x="310" y="350" as="sourcePoint" />
+            <mxPoint x="400" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-22" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;div&gt;&lt;b&gt;Converted to sequential Blobs of Text&lt;br&gt;&lt;/b&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="45" width="160" x="410" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-23" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=16;" value="Text Blob&lt;br&gt;#2" vertex="1">
+          <mxGeometry height="75" width="60" x="460" y="295" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-24" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;size=16;" value="Text Blob&lt;br&gt;#n" vertex="1">
+          <mxGeometry height="75" width="60" x="460" y="440" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-25" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;(...)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="60" x="460" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-27" edge="1" parent="1" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;endWidth=54;endSize=9.33;width=28;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="630" y="352" />
+            </Array>
+            <mxPoint x="570" y="352" as="sourcePoint" />
+            <mxPoint x="660" y="352" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-28" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" value="Chunk #1" vertex="1">
+          <mxGeometry height="30" width="120" x="707" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-34" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;b&gt;(...)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="30" width="60" x="730" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-36" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;div&gt;&lt;b&gt;Cut into (overlapping) Chunks of Data&lt;br&gt;&lt;/b&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="45" width="223" x="707" y="130" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-37" parent="1" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;" value="&lt;b&gt;Vector Database&lt;/b&gt;" vertex="1">
+          <mxGeometry height="165" width="130" x="1150" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-41" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" value="Chunk #3" vertex="1">
+          <mxGeometry height="30" width="120" x="700" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-42" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" value="Chunk #n" vertex="1">
+          <mxGeometry height="30" width="120" x="701" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-43" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" value="Chunk #2" vertex="1">
+          <mxGeometry height="30" width="120" x="827" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-44" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" value="Chunk #4" vertex="1">
+          <mxGeometry height="30" width="120" x="820" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-45" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" value="Chunk #5" vertex="1">
+          <mxGeometry height="30" width="120" x="700" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-46" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" value="Chunk #7" vertex="1">
+          <mxGeometry height="30" width="120" x="693" y="330" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-47" parent="1" style="shape=parallelogram;perimeter=parallelogramPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" value="Chunk #6" vertex="1">
+          <mxGeometry height="30" width="120" x="813" y="305" as="geometry" />
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-48" edge="1" parent="1" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;endWidth=54;endSize=9.33;width=28;" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="352" />
+            </Array>
+            <mxPoint x="970" y="352" as="sourcePoint" />
+            <mxPoint x="1120" y="350" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="wzb_X_Ya_Q9ygLOaCrpg-49" parent="1" style="strokeWidth=2;html=1;shape=mxgraph.flowchart.merge_or_storage;whiteSpace=wrap;" value="&lt;div&gt;&lt;b&gt;Compute&lt;/b&gt;&lt;/div&gt;&lt;div&gt;&lt;b&gt;Embedding&lt;/b&gt;&lt;/div&gt;&lt;div&gt;for each&lt;br&gt;&lt;/div&gt;&lt;div&gt;Chunk&lt;/div&gt;&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="80" width="130" x="980" y="250" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

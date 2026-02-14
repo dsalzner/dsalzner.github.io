@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+
+  
+  <title>A.I. - Pt.3 - RAG, Function Calling and A.I Agents - Dennis Salzner</title>
+  
+  
+
+  <!-- search engine -->
+  <meta name="description" content="In the following I'll demonstrate variations of Retrieval-Augmented Generation (RAG) pipelines and Function/Tool Calling. We will further look at how a personal AI assistant, Op..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/technology/2026/01/27/So-AiPt3RagAndFunctionCalling.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="A.I. - Pt.3 - RAG, Function Calling and A.I Agents - Dennis Salzner" />
+  <meta property="og:description" content="In the following I'll demonstrate variations of Retrieval-Augmented Generation (RAG) pipelines and Function/Tool Calling. We will further look at how a perso..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/technology/2026/01/27/So-AiPt3RagAndFunctionCalling.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="Technology" />
+  <meta property="article:published_time" content="2026-01-27 00:00:00 +0100" />
+  <meta property="article:modified_time" content="2026-01-27 00:00:00 +0100" />
+  <meta property="og:updated_time" content="2026-01-27 00:00:00 +0100" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="In the following I'll demonstrate variations of Retrieval-Augmented Generation (RAG) pipelines and Function/Tool Calling. We will further look at how a personal AI assistant, Op..." />
+  <meta name="twitter:title" content="A.I. - Pt.3 - RAG, Function Calling and A.I Agents - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+ 
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - A.I. - Pt.3 - RAG, Function Calling and A.I Agents</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">A.I. - Pt.3 - RAG, Function Calling and A.I Agents</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>After having built an understanding of <strong><em>“Large Language Models” (LLMs)</em></strong> and an intuition around which tasks they excel at, we can put that knowledge to use.</p>
+
+<p>In the following I’ll demonstrate variations of <strong><em>“Retrieval-Augmented Generation” (RAG) pipelines</em></strong> and <strong><em>“Function/Tool Calling”</em></strong>. We will further look at how a personal AI assistant, <strong><em>OpenClaw</em></strong> (formerly called Clawdbot and later Moltbot) works.</p>
+
+<!-- {::nomarkdown}
+<img src="../../../../images/2026-01-25-So-AiPt3RagAndFunctionCalling/stable-diffusion-generated.png" class="responsive-image" width="20%" />
+{:/nomarkdown}
+ -->
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#recapitulation" id="markdown-toc-recapitulation">Recapitulation</a>    <ul>
+      <li><a href="#internal-structure-of-an-llm" id="markdown-toc-internal-structure-of-an-llm">Internal Structure of an LLM</a></li>
+    </ul>
+  </li>
+  <li><a href="#putting-llms-to-productive-use" id="markdown-toc-putting-llms-to-productive-use">Putting LLMs to productive use</a></li>
+  <li><a href="#background" id="markdown-toc-background">Background</a>    <ul>
+      <li><a href="#rag" id="markdown-toc-rag">RAG</a>        <ul>
+          <li><a href="#necessity-of-contextual-information" id="markdown-toc-necessity-of-contextual-information">Necessity of Contextual Information</a></li>
+          <li><a href="#adding-information-during-training-vs-providing-context" id="markdown-toc-adding-information-during-training-vs-providing-context">Adding Information during Training vs. providing Context</a></li>
+          <li><a href="#context-window-size-and-context-selection" id="markdown-toc-context-window-size-and-context-selection">Context Window Size and Context Selection</a></li>
+          <li><a href="#how-to-add-context" id="markdown-toc-how-to-add-context">How to Add Context</a>            <ul>
+              <li><a href="#simplest-form-prompt-engineering" id="markdown-toc-simplest-form-prompt-engineering">Simplest Form: Prompt Engineering</a></li>
+              <li><a href="#auto-prepend-context-to-the-prompt" id="markdown-toc-auto-prepend-context-to-the-prompt">Auto-Prepend Context to the Prompt</a></li>
+            </ul>
+          </li>
+          <li><a href="#retrieval-augmented-generation-rag-pipeline" id="markdown-toc-retrieval-augmented-generation-rag-pipeline">Retrieval-Augmented Generation (RAG) Pipeline</a>            <ul>
+              <li><a href="#ingest-data-into-the-vector-database" id="markdown-toc-ingest-data-into-the-vector-database">Ingest data into the Vector Database</a></li>
+              <li><a href="#retrieval-from-the-vector-database" id="markdown-toc-retrieval-from-the-vector-database">Retrieval from the Vector Database</a></li>
+              <li><a href="#augmentation-of-the-prompt-using-the-vector-database" id="markdown-toc-augmentation-of-the-prompt-using-the-vector-database">Augmentation of the Prompt using the Vector Database</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#background-on-function-or-tool-calling" id="markdown-toc-background-on-function-or-tool-calling">Background on Function or Tool Calling</a>        <ul>
+          <li><a href="#response-format" id="markdown-toc-response-format">Response Format</a></li>
+          <li><a href="#prompt-structure" id="markdown-toc-prompt-structure">Prompt structure</a></li>
+        </ul>
+      </li>
+      <li><a href="#background-on-ai-assistants-and-openclaw" id="markdown-toc-background-on-ai-assistants-and-openclaw">Background on A.I Assistants and OpenClaw</a>        <ul>
+          <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
+          <li><a href="#ai-agents-and-openclaw" id="markdown-toc-ai-agents-and-openclaw">A.I Agents and OpenClaw</a>            <ul>
+              <li><a href="#calling-command-line-binaries-from-llm" id="markdown-toc-calling-command-line-binaries-from-llm">Calling command-line binaries from LLM</a></li>
+              <li><a href="#integration-with-chat-and-voice-control" id="markdown-toc-integration-with-chat-and-voice-control">Integration with Chat and Voice Control</a></li>
+              <li><a href="#schedulung" id="markdown-toc-schedulung">Schedulung</a></li>
+              <li><a href="#overall-openclaw-architecture" id="markdown-toc-overall-openclaw-architecture">Overall OpenClaw Architecture</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#implementation" id="markdown-toc-implementation">Implementation</a>    <ul>
+      <li><a href="#full-blown-rag" id="markdown-toc-full-blown-rag">Full-blown RAG</a></li>
+      <li><a href="#simple-rag-with-in-memory-database" id="markdown-toc-simple-rag-with-in-memory-database">Simple RAG with in-memory database</a></li>
+      <li><a href="#functiontool-calling" id="markdown-toc-functiontool-calling">Function/Tool Calling</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="recapitulation">Recapitulation</h2>
+
+<img src="../../../../images/2026-01-25-So-AiPt3RagAndFunctionCalling/transformer2.png" class="responsive-image" width="25%" />
+
+<p>In the previous post we’ve established that <strong><em>LLMs can generated text</em></strong>. They do this by <strong><em>predicting</em></strong> the <strong><em>statistical likelihood</em></strong> of a given <strong><em>next syllable of text</em></strong>.</p>
+
+<p>When we <strong>**re-run them</strong>* over and over again we <strong><em>can produce longer and longer text</em></strong>.</p>
+
+<h3 id="internal-structure-of-an-llm">Internal Structure of an LLM</h3>
+
+<p>Internally an LLM implements</p>
+
+<ul>
+  <li>the <strong><em>transformer architecture</em></strong>, a special-type of <strong><em>encoder-decoder neural network</em></strong>,</li>
+  <li><strong><em>positional encoding</em></strong></li>
+  <li>and <strong><em>attention layers</em></strong>.</li>
+</ul>
+
+<p>I wrote about this previously (see part 2 of the series, <a href="/technology/2026/01/17/Sa-AiPt2BeyondHype.html">“LLMs beyond the Hype”</a>).</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<p>With the background on how LLMs work, we can understand what we need to put them to use.</p>
+
+<h2 id="putting-llms-to-productive-use">Putting LLMs to productive use</h2>
+
+<p>We find that in order to use an LLM <strong><em>productively</em></strong> we <strong><em>need two things</em></strong>:</p>
+
+<ol>
+  <li>
+    <p>we need to be able to <strong><em>add our own information</em></strong> in order to enhance the <strong><em>quality of the output</em></strong></p>
+  </li>
+  <li>
+    <p>and we need to <strong><em>get structured information out</em></strong> that <strong><em>can be interpreted and used by our software</em></strong></p>
+  </li>
+</ol>
+
+<p>The information we add is more formally called context. A <strong><em>“Retrieval-Augmented Generation” (RAG)-Pipeline</em></strong> is a way to <strong><em>automatically add relevant context</em></strong> from a <strong><em>database of user data</em></strong>.</p>
+
+<p>In order to get information out of the LLM in a usable format we use <strong><em>tool or function calling</em></strong></p>
+
+<h2 id="background">Background</h2>
+
+<p>In the following I’ll <strong><em>briefly explain RAG, Function Calling and how A.I agents work</em></strong>. In the next section <strong><em>implementation</em></strong> I’ll demonstrate in code <strong><em>how these can be implemented</em></strong> as easy as possible in order to further deepen our understanding.</p>
+
+<h3 id="rag">RAG</h3>
+
+<p>Let’s first look at how <strong><em>“Retrieval-Augmented Generation” (RAG)</em></strong> works.</p>
+
+<h4 id="necessity-of-contextual-information">Necessity of Contextual Information</h4>
+
+<p>Much like with human communication an <strong><em>LLMs need context</em></strong>. <strong><em>How else would it know</em></strong> which film is your favorite? You have to <strong><em>tell it</em></strong> before hand. Keep in mind that <strong><em>A.I</em></strong> and more specifically <strong><em>LLMs do not work wonders</em></strong>.</p>
+
+<p>If you <strong><em>hire new interns</em></strong> and you <strong><em>take 3-6 months to train</em></strong> them and you expect an LLM to perform the same, you will - at the very least - have to <strong><em>provide the same level of context information</em></strong>. Surely it can <strong><em>chew through information more efficiently</em></strong>, but we also need to make sure to <strong><em>not confuse the LLM</em></strong>. That is, provide it with <strong><em>only the relevant information</em></strong> to <strong><em>minimize mistakes</em></strong>. Additionally the relevant information needs to fit in the <strong><em>very limited context window</em></strong> of the LLM.</p>
+
+<h4 id="adding-information-during-training-vs-providing-context">Adding Information during Training vs. providing Context</h4>
+
+<p>An LLM has <strong><em>two sources of information</em></strong>: The <strong><em>implicit information</em></strong> stored in the <strong><em>weights of the neurons</em></strong> within the transformer and <strong><em>additional information</em></strong> we <strong><em>put in the context window</em></strong>. The <strong>context window</strong> is in simple terms the <strong><em>text we add before our prompt</em></strong>.</p>
+
+<p>The former is <strong><em>computationally expensive</em></strong> to add and <strong><em>inflexible</em></strong> to alter and <strong><em>permanent</em></strong> after training. The later can be <strong><em>altered during use</em></strong> and <strong><em>easily reset</em></strong>. This is sort of like <strong><em>“short-term”</em></strong> and <strong><em>“long-term” memory</em></strong>.</p>
+
+<h4 id="context-window-size-and-context-selection">Context Window Size and Context Selection</h4>
+
+<p>An LLM has a limited context size. Modern state-of-the-art LLMs can handle <strong><em>up to 2 million tokens</em></strong>, but cheaper and local hosted LLMs might have <strong><em>much smaller context windows</em></strong>.</p>
+
+<p>We thus need to <strong><em>select the right information</em></strong> to <strong><em>add to the context window</em></strong>.</p>
+
+<h4 id="how-to-add-context">How to Add Context</h4>
+
+<p>So how do we <strong><em>add context</em></strong>? As we will see there are <strong><em>different levels of sophistication</em></strong>.</p>
+
+<h5 id="simplest-form-prompt-engineering">Simplest Form: Prompt Engineering</h5>
+
+<p>In the <strong><em>simplest form</em></strong> we just add <strong><em>additional information before our prompts</em></strong>. This is ideal for information that <strong><em>fits into the context window</em></strong> of the LLM.</p>
+
+<p>For example, if we prompt</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>What is my favorite movie?
+</code></pre></div></div>
+
+<p>The LLM can’t know, but if we instead prompt</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>My favorite movie is xyz (1990).
+
+What is my favorite movie?
+</code></pre></div></div>
+
+<p>It has a <strong><em>higher chance</em></strong> of giving a correct answer, because the <strong><em>relevant information</em></strong> is <strong><em>in the context window</em></strong>.</p>
+
+<h5 id="auto-prepend-context-to-the-prompt">Auto-Prepend Context to the Prompt</h5>
+
+<p>To <strong><em>automate this some more</em></strong> we can use any type of <strong><em>custom data ingestion</em></strong>. In essence this is <strong><em>searching algorithm</em></strong> to <strong><em>produce a relevant chunk of data</em></strong> and <strong><em>automatically prepend it as a text before the prompt</em></strong>.</p>
+
+<p>This is exactly what a <strong><em>Retrieval-Augmented Generation (RAG)</em></strong> pipeline does.</p>
+
+<h4 id="retrieval-augmented-generation-rag-pipeline">Retrieval-Augmented Generation (RAG) Pipeline</h4>
+
+<p>A <strong><em>RAG pipeline</em></strong> is the most sophisticated approach to <strong><em>handle large data sets</em></strong>. It must <strong><em>ingest information</em></strong> to a vector database to then use the databse to <strong><em>retrieve information</em></strong> and <strong><em>augment the prompt</em></strong> with it.</p>
+
+<h5 id="ingest-data-into-the-vector-database">Ingest data into the Vector Database</h5>
+
+<p>In order to do this <strong><em>large amounts of data</em></strong> are <strong><em>ingested</em></strong> into a <strong><em>database as chunks</em></strong>. An <strong><em>embedding</em></strong> is computed (see  <a href="/technology/2026/01/17/Sa-AiPt2BeyondHype.html">“LLMs beyond the Hype”</a>) that is used to <strong><em>locate the chunks</em></strong>.</p>
+
+<img src="../../../../images/2026-01-25-So-AiPt3RagAndFunctionCalling/ingest.png" class="responsive-image" width="45%" />
+
+<p>The <strong><em>chunks ideally overlap</em></strong>. Typical <strong><em>chunk sizes are 128 to 256 token</em></strong> for granular information or <strong><em>512 to 1024 tokens</em></strong> for more context. <strong><em>100 tokens</em></strong> correspond <strong><em>approx. to 75 words</em></strong>. This means the large range holds approximately <strong><em>one medium-sized Wikipedia article</em></strong>.</p>
+
+<h5 id="retrieval-from-the-vector-database">Retrieval from the Vector Database</h5>
+
+<p><strong><em>Retrieving information</em></strong> from the <strong><em>Vector Database</em></strong> is straight forward: an <strong><em>embedding vector</em></strong> is calculated in the same way <strong><em>for the prompt</em></strong>. It is then used to <strong><em>query the vector database</em></strong>. The database then <strong><em>returns the corresponding chunk</em></strong>.</p>
+
+<img src="../../../../images/2026-01-25-So-AiPt3RagAndFunctionCalling/retrieval.png" class="responsive-image" width="20%" />
+
+<h5 id="augmentation-of-the-prompt-using-the-vector-database">Augmentation of the Prompt using the Vector Database</h5>
+
+<p>When we <strong><em>query the LLM</em></strong> the <strong><em>RAG</em></strong> automatically <strong><em>adds the chunks of information as context</em></strong> to the <strong><em>prompt</em></strong>.</p>
+
+<img src="../../../../images/2026-01-25-So-AiPt3RagAndFunctionCalling/query.png" class="responsive-image" width="20%" />
+
+<h3 id="background-on-function-or-tool-calling">Background on Function or Tool Calling</h3>
+
+<p>With the ability to use the LLM and to <strong><em>add additional contextual information</em></strong> we are still <strong><em>lacking a key ingredient</em></strong> in order to <strong><em>use an LLM</em></strong> productively. If we want to <strong><em>integrate it into our own software</em></strong>, we need to be <strong><em>able to call it like a function</em></strong> (hence the <strong><em>term “function calling”</em></strong>) in our applications, we need it to <strong><em>return structured output that is machine readable</em></strong>.</p>
+
+<h4 id="response-format">Response Format</h4>
+
+<p>Interestingly there is a consensus on the internet that returning <strong><em>structured data in XML format</em></strong> is beneficial. The reason is probably that the LLMs are trained on the internet and HTML is <strong><em>syntactically close to XML</em></strong>. Additionally the LLMs have seen many XML sitemaps.</p>
+
+<h4 id="prompt-structure">Prompt structure</h4>
+
+<p>The core idea is to <strong><em>prompt the LLM</em></strong> in natural language, but ask it to <strong><em>return an answer</em></strong> in <strong><em>machine readable format</em></strong>.</p>
+
+<p>I’ve used the following prompt to have the LLM guesstimate the most likely country of origin of name.</p>
+
+<p>For this we need an LLM that supports “function calling”. The model <strong><em>“MFDoom/deepseek-r1-tool-calling:14b”</em></strong> does. Most (all?) <strong><em>IBM Granite</em></strong> models do as well.</p>
+
+<p>In Python using the requests library and an ollama server the prompt payload may look something like this:</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">getCountryForName</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="sh">"</span><span class="s">&lt;ollama model name&gt;</span><span class="sh">"</span>
+  <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">'</span><span class="s">What country does the name </span><span class="sh">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="sh">"</span><span class="s"> most likely originate from?</span><span class="sh">'</span>
+  <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="sh">"</span><span class="s">model</span><span class="sh">"</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
+      <span class="sh">"</span><span class="s">messages</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+          <span class="p">{</span><span class="sh">"</span><span class="s">role</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">content</span><span class="sh">"</span><span class="p">:</span> <span class="n">prompt</span> <span class="p">},</span>
+      <span class="p">],</span>
+      
+      <span class="sh">"</span><span class="s">format</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">object</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">properties</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+          <span class="sh">"</span><span class="s">country</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">string</span><span class="sh">"</span>
+          <span class="p">},</span>
+        <span class="p">},</span>
+        <span class="sh">"</span><span class="s">required</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+          <span class="sh">"</span><span class="s">name</span><span class="sh">"</span><span class="p">,</span>
+          <span class="sh">"</span><span class="s">country</span><span class="sh">"</span><span class="p">,</span> 
+        <span class="p">]</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</code></pre></div></div>
+
+<p>The point is that we have told the LLM to respond with JSON formated text containing a “country” key.</p>
+
+<p>With this we can <strong><em>call the function from our code</em></strong></p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">getCountryForName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>ollama will <strong><em>run the LLM</em></strong> and respond with <strong><em>properly formated JSON</em></strong> that we can then read the country from with</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">json</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)[</span><span class="sh">"</span><span class="s">country</span><span class="sh">"</span><span class="p">]</span>
+</code></pre></div></div>
+
+<h3 id="background-on-ai-assistants-and-openclaw">Background on A.I Assistants and OpenClaw</h3>
+
+<p>So we’ve seen how <strong><em>function/tool calling</em></strong> works in order to retrieve <strong><em>machine-readable structured output</em></strong>. What if we go further and <strong><em>ask the LLM</em></strong> to return <strong><em>structured output</em></strong> that are <strong><em>shell commands</em></strong> and can be <strong><em>run on the computer terminal</em></strong>? If we’re <strong><em>feeling lucky</em></strong> we might even go so far as to <strong><em>automatically run the commands without even checking them</em></strong>.</p>
+
+<p>Imagine a prompt like this one (taken from a blog post on medium [1]):</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&gt;&gt;&gt; Convert the following natural language request into a valid shell command.
+...     Return ONLY the shell command without any explanations.
+...
+...     Example:
+...     - Input: "List all running containers"
+...     - Output: "podman ps"
+... 
+...     - Input: "Show disk space usage"
+...     - Output: "df -h"
+... 
+...     Now convert this request: "list all text files"
+</code></pre></div></div>
+
+<p>The part</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"list all text files"
+</code></pre></div></div>
+
+<p>is my personal prompt in natural language. The rest is to make sure the LLM responds with <strong><em>shell commands</em></strong> that <strong><em>can be run</em></strong>.</p>
+
+<h4 id="limitations">Limitations</h4>
+
+<p>I tried it on <code class="language-plaintext highlighter-rouge">ibm/granite4.0-preview:tiny</code> and the result I got was this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;response&gt;
+find ./ -type f -name "*.txt" | less  # For listing text files in the  current directory; adjust as needed for subdirectories
+&lt;/response&gt;
+</code></pre></div></div>
+
+<p>Evidently we could just blindly run this response in our Linux terminal.</p>
+
+<p>But we can immediately see that <strong><em>the commands have issues</em></strong>:</p>
+
+<ul>
+  <li>the working directory is “./” - we <strong><em>never asked for this</em></strong>. we <strong><em>don’t know what directory</em></strong> the LLM is currently in.</li>
+  <li><code class="language-plaintext highlighter-rouge">less</code> applies pagination and reduces the output to 23 lines effectively <strong><em>cutting the output</em></strong> of <code class="language-plaintext highlighter-rouge">ls</code> - we <strong><em>also never asked for that</em></strong>.</li>
+</ul>
+
+<p>And if I follow up with</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>no, in my home directory
+</code></pre></div></div>
+
+<p>The Granite model responds with</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>&lt;response&gt;To list all text files within your current home directory, use the following shell command:
+
+find ~ -type f \( -name "*.txt" -o -name "*.log" \) -print  # Adjust file extensions as needed
+
+This command recursively searches for files with `.txt` or `.log` extensions in your home directory (`~`) and lists their paths. You 
+may need to adjust the file extensions according to your specific needs (e.g., adding other types like `.doc`, `.docx`, etc.). If 
+you want a plain list of just filenames without additional info, replace `-print` with `ls`.&lt;/response&gt;
+
+</code></pre></div></div>
+
+<p>Now that response</p>
+<ul>
+  <li>is not formatted in a way we can directly run - a <strong><em>violation of what we asked</em></strong></li>
+  <li>and it added *.log files - which again I <strong><em>didn’t ask for</em></strong></li>
+  <li>at least it is now searching the home directory</li>
+</ul>
+
+<h4 id="ai-agents-and-openclaw">A.I Agents and OpenClaw</h4>
+
+<p>If we <strong><em>ignore the limitations</em></strong> and <strong><em>take the risks</em></strong> we can still <strong><em>build A.I agents</em></strong>.</p>
+
+<p>OpenClaw is <strong><em>open-source experimental A.I agent</em></strong> that people use to experiment with the <strong><em>boundaries of what is possible</em></strong>. It is <strong><em>not safe to use</em></strong> or production ready. I also won’t run it, but I had a detailed look at the code and how it works. You can of course <strong><em>isolate it in a docker container</em></strong>, but as soon as you want to <strong><em>experiment with useful use-cases</em></strong>, you’ll need to <strong><em>give up private data</em></strong> to the <strong><em>vast amount of cloud APIs that OpenClaw runs in the background</em></strong>.</p>
+
+<h5 id="calling-command-line-binaries-from-llm">Calling command-line binaries from LLM</h5>
+
+<p>In the OpenClaw source code [2] we see such tool/function calls.</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">export</span> <span class="kd">function</span> <span class="nf">createBrowserTool</span><span class="p">(</span><span class="nx">opts</span><span class="p">?:</span> <span class="p">{</span>
+
+<span class="p">[..]</span>
+
+ <span class="na">name</span><span class="p">:</span> <span class="dl">"</span><span class="s2">browser</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">description</span><span class="p">:</span> <span class="p">[</span>
+      <span class="dl">"</span><span class="s2">Control the browser via OpenClaw's browser control server (status/start/stop/profiles/tabs/open/snapshot/screenshot/actions).</span><span class="dl">"</span><span class="p">,</span>
+      <span class="dl">'</span><span class="s1">Profiles: use profile="chrome" for Chrome extension relay takeover (your existing Chrome tabs). Use profile="openclaw" for the isolated openclaw-managed browser.</span><span class="dl">'</span><span class="p">,</span>
+      <span class="dl">'</span><span class="s1">If the user mentions the Chrome extension / Browser Relay / toolbar button / “attach tab”, ALWAYS use profile="chrome" (do not ask which profile).</span><span class="dl">'</span><span class="p">,</span>
+      <span class="dl">'</span><span class="s1">When a node-hosted browser proxy is available, the tool may auto-route to it. Pin a node with node=&lt;id|name&gt; or target="node".</span><span class="dl">'</span><span class="p">,</span>
+      <span class="dl">"</span><span class="s2">Chrome extension relay needs an attached tab: user must click the OpenClaw Browser Relay toolbar icon on the tab (badge ON). If no tab is connected, ask them to attach it.</span><span class="dl">"</span><span class="p">,</span>
+      <span class="dl">"</span><span class="s2">When using refs from snapshot (e.g. e12), keep the same tab: prefer passing targetId from the snapshot response into subsequent actions (act/click/type/etc).</span><span class="dl">"</span><span class="p">,</span>
+      <span class="dl">'</span><span class="s1">For stable, self-resolving refs across calls, use snapshot with refs="aria" (Playwright aria-ref ids). Default refs="role" are role+name-based.</span><span class="dl">'</span><span class="p">,</span>
+      <span class="dl">"</span><span class="s2">Use snapshot+act for UI automation. Avoid act:wait by default; use only in exceptional cases when no reliable UI state exists.</span><span class="dl">"</span><span class="p">,</span>
+      <span class="s2">`target selects browser location (sandbox|host|node). Default: </span><span class="p">${</span><span class="nx">targetDefault</span><span class="p">}</span><span class="s2">.`</span><span class="p">,</span>
+      <span class="nx">hostHint</span><span class="p">,</span>
+    <span class="p">].</span><span class="nf">join</span><span class="p">(</span><span class="dl">"</span><span class="s2"> </span><span class="dl">"</span><span class="p">),</span>
+</code></pre></div></div>
+
+<p>Essentially what they are doing is to <strong><em>provide a tool to control a web browser</em></strong>. It is <strong><em>a wrapper</em></strong> (human coded, vibe coded?) <strong><em>around the browser</em></strong> with a <strong><em>simple command set</em></strong>. It supports the commands:</p>
+
+<ul>
+  <li>status</li>
+  <li>start</li>
+  <li>stop</li>
+  <li>profiles</li>
+  <li>tabs</li>
+  <li>open</li>
+  <li>snapshot</li>
+  <li>screenshot</li>
+  <li>actions</li>
+</ul>
+
+<p>In the prompt they are telling the LLM that a browser exists and that it may use these commands.</p>
+
+<p>When the LLM, in it’s structured machine-readable text output, specifies <strong><em>it would like to invoke</em></strong>, for instance <code class="language-plaintext highlighter-rouge">browser status</code> <strong><em>OpenClaw will automatically execute it</em></strong>.</p>
+
+<h5 id="integration-with-chat-and-voice-control">Integration with Chat and Voice Control</h5>
+
+<p>In order to interact with OpenClaw they’ve added integrations for <strong><em>popular chat programs</em></strong> such as WhatsApp and Telegram.</p>
+
+<p>There is also an <strong><em>Android App</em></strong> [4] that uses Androids built-in <strong><em>speech-to-text</em></strong> to transfer voice to text, then prompt OpenClaw and transfer the text response back to speech using <strong><em>ElevenLabs Text-to-Speech</em></strong> [5].</p>
+
+<h5 id="schedulung">Schedulung</h5>
+
+<p>OpenClaw contains a module to control <strong><em>CRON</em></strong>, <strong><em>the Linux job scheduler</em></strong>. With this it can theoretically <strong><em>add tasks to be run at a later time</em></strong> and could also <strong><em>prompt itself at a later time</em></strong>. I’m unsure, if this will work reliably, but it is certainly <strong><em>an interesting thought</em></strong>.</p>
+
+<h5 id="overall-openclaw-architecture">Overall OpenClaw Architecture</h5>
+
+<p>On Reddit a user “SpearHammer” posted a great architecture image of OpenClaw [3]. It helped me greatly in understanding OpenClaw. In essence OpenClaw <strong><em>retrieves messages from chat programs</em></strong>. It <strong><em>prompts the LLM</em></strong>, <strong><em>runs commands</em></strong>, if it needs to, and <strong><em>sends the responses back</em></strong>.</p>
+
+<img src="../../../../images/2026-01-25-So-AiPt3RagAndFunctionCalling/openclaw.png" class="responsive-image" width="30%" />
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>In the following I’ll share some <strong><em>simple implementations</em></strong> to demonstrate how some of the above works and to <strong><em>accompany what was mentioned above</em></strong>.</p>
+
+<h3 id="full-blown-rag">Full-blown RAG</h3>
+
+<p>I’ve built a <strong><em>RAG</em></strong> using <strong><em>Postgres</em></strong> as a database with the <strong><em>PGVectorStore</em></strong> vector-store wrapper, the <strong><em>HuggingFaceEmbedding</em></strong> Python library and <strong><em>LlamaCPP</em></strong> to query. That all kind of worked, but was a chore to set up and <strong><em>for me it was not worth the effort</em></strong>.</p>
+
+<h3 id="simple-rag-with-in-memory-database">Simple RAG with in-memory database</h3>
+
+<p>Some time later I vibe-coded an <strong><em>in-memory database</em></strong> with DeepSeek or ChatGPT - I don’t remember. It works about as poorly as you’d expect, but it’s <strong><em>simple code that demonstrates the principle</em></strong>.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">os</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">llama_cpp</span> <span class="kn">import</span> <span class="n">Llama</span>
+<span class="kn">from</span> <span class="n">sklearn.feature_extraction.text</span> <span class="kn">import</span> <span class="n">TfidfVectorizer</span>
+<span class="kn">from</span> <span class="n">sklearn.metrics.pairwise</span> <span class="kn">import</span> <span class="n">cosine_similarity</span>
+
+<span class="c1"># Step 1: Load the text files
+</span><span class="k">def</span> <span class="nf">load_text_files</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+    <span class="n">documents</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">os</span><span class="p">.</span><span class="nf">listdir</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="p">.</span><span class="nf">endswith</span><span class="p">(</span><span class="sh">"</span><span class="s">.txt</span><span class="sh">"</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span> <span class="n">filename</span><span class="p">),</span> <span class="sh">'</span><span class="s">r</span><span class="sh">'</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="sh">'</span><span class="s">utf-8</span><span class="sh">'</span><span class="p">)</span> <span class="k">as</span> <span class="nb">file</span><span class="p">:</span>
+                <span class="n">documents</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="nb">file</span><span class="p">.</span><span class="nf">read</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">documents</span>
+
+<span class="c1"># Step 2: Embed the text using TF-IDF
+</span><span class="k">def</span> <span class="nf">embed_text</span><span class="p">(</span><span class="n">documents</span><span class="p">):</span>
+    <span class="n">vectorizer</span> <span class="o">=</span> <span class="nc">TfidfVectorizer</span><span class="p">()</span>
+    <span class="n">embeddings</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="p">.</span><span class="nf">fit_transform</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">vectorizer</span>
+
+<span class="c1"># Step 3: Retrieve relevant documents
+</span><span class="k">def</span> <span class="nf">retrieve_documents</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">vectorizer</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">query_embedding</span> <span class="o">=</span> <span class="n">vectorizer</span><span class="p">.</span><span class="nf">transform</span><span class="p">([</span><span class="n">query</span><span class="p">])</span>
+    <span class="n">similarities</span> <span class="o">=</span> <span class="nf">cosine_similarity</span><span class="p">(</span><span class="n">query_embedding</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">).</span><span class="nf">flatten</span><span class="p">()</span>
+    <span class="n">top_indices</span> <span class="o">=</span> <span class="n">similarities</span><span class="p">.</span><span class="nf">argsort</span><span class="p">()[</span><span class="o">-</span><span class="n">top_k</span><span class="p">:][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">top_indices</span><span class="p">,</span> <span class="n">similarities</span><span class="p">[</span><span class="n">top_indices</span><span class="p">]</span>
+
+<span class="c1"># Step 4: Truncate context to fit within the model's context window
+</span><span class="k">def</span> <span class="nf">truncate_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+    <span class="c1"># Split the context into words and truncate
+</span>    <span class="n">words</span> <span class="o">=</span> <span class="n">context</span><span class="p">.</span><span class="nf">split</span><span class="p">()</span>
+    <span class="n">truncated_context</span> <span class="o">=</span> <span class="sh">"</span><span class="s"> </span><span class="sh">"</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">words</span><span class="p">[:</span><span class="n">max_tokens</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">truncated_context</span>
+
+<span class="c1"># Step 5: Generate a response using llama_cpp
+</span><span class="k">def</span> <span class="nf">generate_response</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">retrieved_documents</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">500</span><span class="p">):</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="sh">"</span><span class="s"> </span><span class="sh">"</span><span class="p">.</span><span class="nf">join</span><span class="p">(</span><span class="n">retrieved_documents</span><span class="p">)</span>
+    <span class="n">context</span> <span class="o">=</span> <span class="nf">truncate_context</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">max_tokens</span><span class="p">)</span>  <span class="c1"># Truncate context
+</span>    <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">"</span><span class="s">Context: </span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="se">\n</span><span class="s">Query: </span><span class="si">{</span><span class="n">query</span><span class="si">}</span><span class="se">\n</span><span class="s">Answer:</span><span class="sh">"</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="nf">llm</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">max_tokens</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="p">[</span><span class="sh">"</span><span class="se">\n</span><span class="sh">"</span><span class="p">],</span> <span class="n">echo</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span><span class="p">[</span><span class="sh">'</span><span class="s">choices</span><span class="sh">'</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="sh">'</span><span class="s">text</span><span class="sh">'</span><span class="p">]</span>
+
+<span class="c1"># Main function
+</span><span class="k">def</span> <span class="nf">rag_pipeline</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">llm</span><span class="p">):</span>
+    <span class="c1"># Load text files
+</span>    <span class="n">documents</span> <span class="o">=</span> <span class="nf">load_text_files</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+    
+    <span class="c1"># Embed text
+</span>    <span class="n">embeddings</span><span class="p">,</span> <span class="n">vectorizer</span> <span class="o">=</span> <span class="nf">embed_text</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+    
+    <span class="c1"># Retrieve relevant documents
+</span>    <span class="n">top_indices</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="nf">retrieve_documents</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">embeddings</span><span class="p">,</span> <span class="n">vectorizer</span><span class="p">)</span>
+    <span class="n">retrieved_documents</span> <span class="o">=</span> <span class="p">[</span><span class="n">documents</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">top_indices</span><span class="p">]</span>
+    
+    <span class="c1"># Generate response
+</span>    <span class="n">response</span> <span class="o">=</span> <span class="nf">generate_response</span><span class="p">(</span><span class="n">llm</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">retrieved_documents</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">response</span>
+
+<span class="c1"># Example usage
+</span><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="sh">"</span><span class="s">__main__</span><span class="sh">"</span><span class="p">:</span>
+    <span class="c1"># Initialize llama_cpp model
+</span>    <span class="n">llm</span> <span class="o">=</span> <span class="nc">Llama</span><span class="p">(</span><span class="n">model_path</span><span class="o">=</span><span class="sh">"</span><span class="s">&lt;home&gt;/.ollama/models/blobs/sha256-&lt;ollama model to use&gt;</span><span class="sh">"</span><span class="p">,</span> <span class="n">n_ctx</span><span class="o">=</span><span class="mi">4096</span><span class="p">)</span>
+    
+    <span class="c1"># Directory containing text files
+</span>    <span class="n">directory</span> <span class="o">=</span> <span class="sh">"</span><span class="s">&lt;notes directory&gt;</span><span class="sh">"</span>
+    
+    <span class="c1"># Query
+</span>    <span class="n">query</span> <span class="o">=</span> <span class="sh">"</span><span class="s">What is good and what isn</span><span class="sh">'</span><span class="s">t?</span><span class="sh">"</span>
+    
+    <span class="c1"># Run RAG pipeline
+</span>    <span class="n">response</span> <span class="o">=</span> <span class="nf">rag_pipeline</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">llm</span><span class="p">)</span>
+    <span class="nf">print</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="functiontool-calling">Function/Tool Calling</h3>
+
+<p>In order to <strong><em>demonstrate function/tool calling</em></strong> I’ve written another small <strong><em>Python script</em></strong>. It allows us to call a function with a name as string and the LLM will be queries for the most likely origin of the name.</p>
+
+<p>When reading through the thought process of the LLM with deepseek, a model capable of <strong><em>imitating reasoning/a chain of thought</em></strong>, we actually see how it regurgitates information learned from the internet <strong><em>about name origins</em></strong> and <strong><em>meaning of names</em></strong> in different languages in order to produce a <strong><em>reasonable guess</em></strong> of the origin of the name</p>
+
+<p>This is the kind of task that is ideal for an LLM as we’re <strong><em>not in interested in 100% accurate answers</em></strong> and in this case they also do not exist. A German sounding name can be Swiss, Austrian, German, Spanish or even Brazilian, as people may have moved to these countries generations ago. It’s a <strong><em>simple example for function calling</em></strong>, where LLM hallucinations do not bother us.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="n">json</span>
+<span class="kn">import</span> <span class="n">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="sh">"</span><span class="s">http://localhost:11434/api/chat</span><span class="sh">"</span>
+
+<span class="k">def</span> <span class="nf">getCountryForName</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+  <span class="n">model</span> <span class="o">=</span> <span class="sh">"</span><span class="s">&lt;ollama model name&gt;</span><span class="sh">"</span>
+
+  <span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">'</span><span class="s">What country does the name </span><span class="sh">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="sh">"</span><span class="s"> most likely originate from?</span><span class="sh">'</span>
+  <span class="n">payload</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="sh">"</span><span class="s">model</span><span class="sh">"</span><span class="p">:</span> <span class="n">model</span><span class="p">,</span>
+      <span class="sh">"</span><span class="s">messages</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+          <span class="p">{</span><span class="sh">"</span><span class="s">role</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">user</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">content</span><span class="sh">"</span><span class="p">:</span> <span class="n">prompt</span> <span class="p">},</span>
+      <span class="p">],</span>
+      
+      <span class="sh">"</span><span class="s">format</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">object</span><span class="sh">"</span><span class="p">,</span>
+        <span class="sh">"</span><span class="s">properties</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+          <span class="sh">"</span><span class="s">country</span><span class="sh">"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="sh">"</span><span class="s">type</span><span class="sh">"</span><span class="p">:</span> <span class="sh">"</span><span class="s">string</span><span class="sh">"</span>
+          <span class="p">},</span>
+        <span class="p">},</span>
+        <span class="sh">"</span><span class="s">required</span><span class="sh">"</span><span class="p">:</span> <span class="p">[</span>
+          <span class="sh">"</span><span class="s">name</span><span class="sh">"</span><span class="p">,</span>
+          <span class="sh">"</span><span class="s">country</span><span class="sh">"</span><span class="p">,</span> 
+        <span class="p">]</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="n">result</span> <span class="o">=</span> <span class="sh">""</span>
+  <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="p">.</span><span class="nf">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="n">payload</span><span class="p">,</span> <span class="n">stream</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+  <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">response</span><span class="p">.</span><span class="nf">iter_lines</span><span class="p">():</span>
+      <span class="k">if</span> <span class="n">line</span><span class="p">:</span>
+          <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+          <span class="n">result</span> <span class="o">+=</span> <span class="n">data</span><span class="p">.</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">message</span><span class="sh">"</span><span class="p">,</span> <span class="p">{}).</span><span class="nf">get</span><span class="p">(</span><span class="sh">"</span><span class="s">content</span><span class="sh">"</span><span class="p">,</span> <span class="sh">""</span><span class="p">)</span>
+  <span class="k">return</span> <span class="n">json</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)[</span><span class="sh">"</span><span class="s">country</span><span class="sh">"</span><span class="p">]</span>
+
+<span class="n">name</span> <span class="o">=</span> <span class="sh">"</span><span class="s">Heinz Rudolf</span><span class="sh">"</span>
+<span class="nf">print</span><span class="p">(</span><span class="sa">f</span><span class="sh">'</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s">; </span><span class="si">{</span><span class="nf">getCountryForName</span><span class="p">(</span><span class="n">name</span><span class="p">)</span><span class="si">}</span><span class="sh">'</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>We’ve put LLMs to some use by <strong><em>adding context information</em></strong> to enhance the <strong><em>quality of responses</em></strong> and exploring <strong><em>function/tool calling</em></strong> in order to <strong><em>retrieve structured output</em></strong> and <strong><em>run an LLM as a function</em></strong> in our code. This also allows giving the LLM the <strong><em>ability to run binaries</em></strong> directly on our computer and, by extension, to <strong><em>build A.I agents</em></strong>. The core issue is still the reliability and quality of responses. The responses of an LLM are currently <strong><em>still too unpredictable</em></strong> for most productive use-cases. The principle is still based purely on trained statistical patterns of text and I have doubts that there can be significant increases in quality of responses with current approaches. Nevertheless all of this is a <strong><em>glimpse of what could be</em></strong> and basic <strong><em>voice controlled chat bots that used to be very hard to build work reasonably well</em></strong> now.</p>
+
+<hr />
+
+<pre>
+1] https://medium.com/@Shamimw/using-ai-agents-to-execute-shell-scripts-with-langgraph-using-ollama-a-smarter-approach-to-679fd3454b09
+2] https://github.com/openclaw/openclaw/blob/d8d69ccbf464788a3ac0406b917d422ddf0dd84e/src/agents/tools/browser-tool.ts#L245
+3] https://www.reddit.com/media?url=https%3A%2F%2Fpreview.redd.it%2Feveryone-talks-about-clawdbot-openclaw-but-not-many-people-v0-82w3z00uhxig1.jpeg%3Fwidth%3D4320%26format%3Dpjpg%26auto%3Dwebp%26s%3D75b0aafaec773655026610a61bf7d2efe02916c6
+4] https://github.com/openclaw/openclaw/blob/v2026.2.12/apps/android/app/src/main/java/ai/openclaw/android/voice/TalkModeManager.kt
+5] https://github.com/openclaw/openclaw/blob/v2026.2.12/apps/android/app/src/main/java/ai/openclaw/android/voice/TalkModeManager.kt
+</pre>
+
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="A.I. - Pt.3 - RAG, Function Calling and A.I Agents"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
