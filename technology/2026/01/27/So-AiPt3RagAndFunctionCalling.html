@@ -110,12 +110,12 @@
           </li>
         </ul>
       </li>
-      <li><a href="#background-on-function-or-tool-calling" id="markdown-toc-background-on-function-or-tool-calling">Background on Function or Tool Calling</a>        <ul>
+      <li><a href="#function-or-tool-calling" id="markdown-toc-function-or-tool-calling">Function or Tool Calling</a>        <ul>
           <li><a href="#response-format" id="markdown-toc-response-format">Response Format</a></li>
           <li><a href="#prompt-structure" id="markdown-toc-prompt-structure">Prompt structure</a></li>
         </ul>
       </li>
-      <li><a href="#background-on-ai-assistants-and-openclaw" id="markdown-toc-background-on-ai-assistants-and-openclaw">Background on A.I Assistants and OpenClaw</a>        <ul>
+      <li><a href="#ai-assistants-and-openclaw" id="markdown-toc-ai-assistants-and-openclaw">A.I Assistants and OpenClaw</a>        <ul>
           <li><a href="#limitations" id="markdown-toc-limitations">Limitations</a></li>
           <li><a href="#ai-agents-and-openclaw" id="markdown-toc-ai-agents-and-openclaw">A.I Agents and OpenClaw</a>            <ul>
               <li><a href="#calling-command-line-binaries-from-llm" id="markdown-toc-calling-command-line-binaries-from-llm">Calling command-line binaries from LLM</a></li>
@@ -260,7 +260,7 @@ What is my favorite movie?
 
 <img src="../../../../images/2026-01-25-So-AiPt3RagAndFunctionCalling/query.png" class="responsive-image" width="20%" />
 
-<h3 id="background-on-function-or-tool-calling">Background on Function or Tool Calling</h3>
+<h3 id="function-or-tool-calling">Function or Tool Calling</h3>
 
 <p>With the ability to use the LLM and to <strong><em>add additional contextual information</em></strong> we are still <strong><em>lacking a key ingredient</em></strong> in order to <strong><em>use an LLM</em></strong> productively. If we want to <strong><em>integrate it into our own software</em></strong>, we need to be <strong><em>able to call it like a function</em></strong> (hence the <strong><em>term “function calling”</em></strong>) in our applications, we need it to <strong><em>return structured output that is machine readable</em></strong>.</p>
 
@@ -314,7 +314,7 @@ What is my favorite movie?
 <div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">json</span><span class="p">.</span><span class="nf">loads</span><span class="p">(</span><span class="n">result</span><span class="p">)[</span><span class="sh">"</span><span class="s">country</span><span class="sh">"</span><span class="p">]</span>
 </code></pre></div></div>
 
-<h3 id="background-on-ai-assistants-and-openclaw">Background on A.I Assistants and OpenClaw</h3>
+<h3 id="ai-assistants-and-openclaw">A.I Assistants and OpenClaw</h3>
 
 <p>So we’ve seen how <strong><em>function/tool calling</em></strong> works in order to retrieve <strong><em>machine-readable structured output</em></strong>. What if we go further and <strong><em>ask the LLM</em></strong> to return <strong><em>structured output</em></strong> that are <strong><em>shell commands</em></strong> and can be <strong><em>run on the computer terminal</em></strong>? If we’re <strong><em>feeling lucky</em></strong> we might even go so far as to <strong><em>automatically run the commands without even checking them</em></strong>.</p>
 
