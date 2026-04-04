@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+
+  
+  <title>Floor Leveling - Pt.2 - Camera-based Method - Dennis Salzner</title>
+  
+  
+
+  <!-- search engine -->
+  <meta name="description" content="I'm in the process of renovating a small flat. The floors are in such a bad shape. We've previously established that a 2D height map would help. In the following I'll show a cam..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2025/10/25/Sa-FloorLevelingPt2CameraBased.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Floor Leveling - Pt.2 - Camera-based Method - Dennis Salzner" />
+  <meta property="og:description" content="I'm in the process of renovating a small flat. The floors are in such a bad shape. We've previously established that a 2D height map would help. In the follo..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2025/10/25/Sa-FloorLevelingPt2CameraBased.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2025-10-25 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2025-10-25 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2025-10-25 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="I'm in the process of renovating a small flat. The floors are in such a bad shape. We've previously established that a 2D height map would help. In the following I'll show a cam..." />
+  <meta name="twitter:title" content="Floor Leveling - Pt.2 - Camera-based Method - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+ 
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Floor Leveling - Pt.2 - Camera-based Method</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Floor Leveling - Pt.2 - Camera-based Method</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>I’m in the process of renovating a small flat. The floors are in such a bad shape. We’ve previously established that a 2D height map would help. In the following I’ll show a camera-based method for creating such a height map.</p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#background" id="markdown-toc-background">Background</a></li>
+  <li><a href="#hardware-setup" id="markdown-toc-hardware-setup">Hardware Setup</a>    <ul>
+      <li><a href="#improvements-over-time" id="markdown-toc-improvements-over-time">Improvements over time</a></li>
+      <li><a href="#why-smartphones" id="markdown-toc-why-smartphones">Why smartphones</a></li>
+      <li><a href="#leveling-laser" id="markdown-toc-leveling-laser">Leveling Laser</a></li>
+      <li><a href="#camera-and-ruler-rig" id="markdown-toc-camera-and-ruler-rig">Camera and Ruler Rig</a>        <ul>
+          <li><a href="#wheels" id="markdown-toc-wheels">Wheels</a></li>
+          <li><a href="#camera" id="markdown-toc-camera">Camera</a></li>
+          <li><a href="#camera-obstruction" id="markdown-toc-camera-obstruction">Camera Obstruction</a></li>
+          <li><a href="#lighting-focus-and-white-balance-is-critical" id="markdown-toc-lighting-focus-and-white-balance-is-critical">Lighting, Focus and White Balance is critical</a></li>
+          <li><a href="#samsung-pro-video-features" id="markdown-toc-samsung-pro-video-features">Samsung “Pro-Video” features</a></li>
+          <li><a href="#ruler" id="markdown-toc-ruler">Ruler</a></li>
+        </ul>
+      </li>
+      <li><a href="#positional-camera" id="markdown-toc-positional-camera">Positional Camera</a>        <ul>
+          <li><a href="#camera-1" id="markdown-toc-camera-1">Camera</a></li>
+          <li><a href="#camera-mount-on-tripod" id="markdown-toc-camera-mount-on-tripod">Camera mount on tripod</a></li>
+          <li><a href="#covering-the-room-with-two-recordings" id="markdown-toc-covering-the-room-with-two-recordings">Covering the room with two recordings</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#software-setup" id="markdown-toc-software-setup">Software Setup</a>    <ul>
+      <li><a href="#transfer-to-the-computer" id="markdown-toc-transfer-to-the-computer">Transfer to the Computer</a></li>
+      <li><a href="#combining-and-aligning-video-recordings" id="markdown-toc-combining-and-aligning-video-recordings">Combining and Aligning Video Recordings</a>        <ul>
+          <li><a href="#using-video-editing-software" id="markdown-toc-using-video-editing-software">Using Video Editing Software</a></li>
+          <li><a href="#recording-both-video-feeds-together" id="markdown-toc-recording-both-video-feeds-together">Recording both video feeds together</a></li>
+          <li><a href="#alignment-by-python-script" id="markdown-toc-alignment-by-python-script">Alignment by Python Script</a></li>
+        </ul>
+      </li>
+      <li><a href="#digitizing-the-readings" id="markdown-toc-digitizing-the-readings">Digitizing the Readings</a>        <ul>
+          <li><a href="#manually-digitizing-readings" id="markdown-toc-manually-digitizing-readings">Manually digitizing readings</a></li>
+          <li><a href="#automatically-getting-position-from-the-video" id="markdown-toc-automatically-getting-position-from-the-video">Automatically getting position from the video</a>            <ul>
+              <li><a href="#backgroud-image" id="markdown-toc-backgroud-image">Backgroud Image</a></li>
+              <li><a href="#subtracting-background" id="markdown-toc-subtracting-background">Subtracting Background</a></li>
+              <li><a href="#contour-detection" id="markdown-toc-contour-detection">Contour Detection</a></li>
+              <li><a href="#colour-filtering" id="markdown-toc-colour-filtering">Colour Filtering</a></li>
+              <li><a href="#adjusting-colour-filtering" id="markdown-toc-adjusting-colour-filtering">Adjusting Colour Filtering</a></li>
+              <li><a href="#object-detection-neural-network" id="markdown-toc-object-detection-neural-network">Object-Detection Neural Network</a></li>
+            </ul>
+          </li>
+          <li><a href="#automatically-getting-height-measurements-from-the-video" id="markdown-toc-automatically-getting-height-measurements-from-the-video">Automatically getting height measurements from the video</a></li>
+          <li><a href="#live-testing-with-opencv" id="markdown-toc-live-testing-with-opencv">Live testing with OpenCV</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>Last time I wrote about the need for a two dimensional map of the floor (see <a href="{ post_url 2025-10-19-So-FloorLevelingPt1Introduction }">my previous post</a>) to more strategically pour leveling compound and waste less material.</p>
+
+<p>My methods have evolved over time and I’ve learned alot along the way that I will share in the following.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="background">Background</h2>
+
+<p>I have since experimented with using two cameras. One pointing at the room in order to gather positional information and one pointed at a ruler from which the green line of the leveling laser is reflected.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/14-cameraOne.jpg" class="responsive-image" width="10%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/12-ruler.jpg" class="responsive-image" width="10%" />
+
+<p>We can combine the videos from both angles and annotate them to produce the desired height map of the floor.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/17-result.jpg" class="responsive-image" width="40%" />
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="hardware-setup">Hardware Setup</h2>
+
+<p>I’ve improved upon the early hardware setup over time and will share my findings.</p>
+
+<h3 id="improvements-over-time">Improvements over time</h3>
+
+<p>An early version of the rig looked like this:</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/v1_1.jpg" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/v1_2.png" class="responsive-image" width="5%" />
+
+<p>It had numerous issues due to the smartphone obstructing the laser line, the ruler reflecting the laser light, background light causing the camera to refocus, the smart phone being off-center and the construction not being sturdy enough.</p>
+
+<p>That was modified to keep the camera more inline and rubber was added to keep the smartphone more stable during recording.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/v2_1.jpg" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/13-rig.jpg" class="responsive-image" width="25%" />
+
+<p>I then moved on to improve this further by using a smartphone to camera hot shoe ball-ring adapter. Once the camera hot shoe is grinded down enough it fits directly onto the aluminium extrusion. Grinding it down can be achieved with a rotary tool and diamond cutting blade.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/v3_1.jpg" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/v3_2.jpg" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/v3_3.jpg" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/v3_4.jpg" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/v3_5.jpg" class="responsive-image" width="5%" />
+
+<h3 id="why-smartphones">Why smartphones</h3>
+
+<p>I’m using two smart phones for this project. Not webcams or industrial cameras. There are reasons for this:</p>
+
+<ul>
+  <li>webcams are typically too poor in image quality. Quick experiments have shown that the webcams I have here (Logitech C270 and Logitech StreamCam) get completly blinded by the laser line. The StreamCam refocuses too often. They also lack the resolution required for the task.</li>
+  <li>industrial cameras would have fixed focus and white-balance, but require a laptop or computer with cables going to it. They also typically don’t capture colour. For this we would need special filters. While a robust solution could be an industrial camera with a suitable filter, that setup would be too involved for what I’m trying to achieve here.</li>
+  <li>aiming the cameras without being able to view the camera image on a display at the camera would be tedious. It would mean walking back and forth between a computer and the camera rig. Or having someone help during calibratio. Smartphone are advantageous as they have displays built-in.</li>
+  <li>reliability is also an issue: I need this to work on the first attempt. If I can get a good video recording in one go, I can do the analysis with more time in my office. For this I can use the ability of smartphones to record directly to internal memory.</li>
+  <li>we also need this to work in an extremly dusty environment. I don’t want to mess up expensive equipement. Smartphones are inexpensive. They are also typically relatively sealed against dirt.</li>
+  <li>cost is also a factor: I’m experimenting and didn’t know if any of this would work. Hence I’m not willing to spend too much money at this stage.</li>
+  <li>connectivity os also another big adavantage of smartphones. We can record to internal storage, but we could also use the built in Wifi in combination with an appp to stream video to a computer running, for example “Open Broadcast Studio” (OBS) wirelessly.</li>
+</ul>
+
+<h3 id="leveling-laser">Leveling Laser</h3>
+
+<p>The leveling laser is a cheap “Huepar” brand laser. I deliberatly chose the standard line laser and non-360-degree version as that wouldn’t be of much use for this project and I presume the additional rotating mirrors would lessen the life span of the leveling laser.</p>
+
+<p>Placing it on a paint bucket put it at an ideal height.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/leveling-laser.jpg" class="responsive-image" width="25%" />
+
+<h3 id="camera-and-ruler-rig">Camera and Ruler Rig</h3>
+
+<p>I’m calling this a “rig” for the lack of a better word. It consists of a frame built from aluminum extrusions, wheels, a smartphone as camera and a ruler.</p>
+
+<p>It is pulled through the room by hand in a zig-zag pattern while the two cameras record video.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/13-rig.jpg" class="responsive-image" width="25%" />
+
+<h4 id="wheels">Wheels</h4>
+
+<p>At the bottom I’ve attached two wheels with ball bearings. I’ve designed and 3D printed the holder for a previous project.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/ball-bearing-1.png" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/ball-bearing-2.jpg" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/ball-bearing-3.jpg" class="responsive-image" width="5%" />
+
+<h4 id="camera">Camera</h4>
+
+<p>For the camera I’m using the “Samsung Galaxy S22” smartphone. It records the video and is attached to the rig. It travels along with it, recording the ruler.</p>
+
+<p>It is very important to look out for some issues with this approach. If we mess up the recording <strong><em>we will have to start all over</em></strong> again. There are a few issues to look out for:</p>
+
+<h4 id="camera-obstruction">Camera Obstruction</h4>
+
+<p>To avoid the laser light from being blocked by the smartphone, we need to elevate the leveling laser. It needs to be placed such that the laser line can never be covered by the smartphone.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/camera-obstruction.jpg" class="responsive-image" width="10%" />
+
+<h4 id="lighting-focus-and-white-balance-is-critical">Lighting, Focus and White Balance is critical</h4>
+
+<p>As the S22 is not an industrial camera with fixed white-balance and focus, it may refocus during recording. That makes reading the measurements challenging.</p>
+
+<p>I’ve found that adding cardboard behind the rig helps block incoming light from the windows.</p>
+
+<h4 id="samsung-pro-video-features">Samsung “Pro-Video” features</h4>
+
+<p>Additionally we can use the “Pro-Video” features hidden deep in the menus of the <strong><em>Samsung Camera App</em></strong>.  In this mode we can select the ISO, shutter speed and most importantly <strong><em>disable the auto-focus</em></strong>.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/samsung-camera-app-1.jpg" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/samsung-camera-app-2.jpg" class="responsive-image" width="5%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/samsung-camera-app-3.jpg" class="responsive-image" width="5%" />
+
+<h4 id="ruler">Ruler</h4>
+
+<p>I’ve found that my white folding rule provided best results. The aluminium ruler I used before that reflected the laser light too much and blinded the camera. The ruler needs be made of a non-reflecting material. The best solution would probably be a wooden ruler.</p>
+
+<h3 id="positional-camera">Positional Camera</h3>
+
+<p>The positional camera films the entire room during measurement. Its objective is to keep track of the position of the Camera and Ruler Rig during the measurement.</p>
+
+<h4 id="camera-1">Camera</h4>
+
+<p>As a camera I’m using my old “Xiaomi Mi 8” smart phone. It unforunately does not have a wide-angle/fish-eye lens to cover more area of the room. The overall image quality is also not as good as the more modern and expensive “Samsung Galaxy S22”. But I only have these two cameras. For positional information the camera quality is not as important as recording the laser line on the ruler.</p>
+
+<h4 id="camera-mount-on-tripod">Camera mount on tripod</h4>
+
+<p>The camera is placed as high up as possible to give a birds eye view of the room. In order to achieve this I’m using a standard camera tripod that is extended as far as possible.</p>
+
+<h4 id="covering-the-room-with-two-recordings">Covering the room with two recordings</h4>
+
+<p>For each recording the tripod is moved to the center of the opposite wall. We typically need two recordings to cover the entire room. The leveling laser sits directly under the tripod and is also moved along with the tripod and positional camera.</p>
+
+<h2 id="software-setup">Software Setup</h2>
+
+<p>Once the measurements have completed we have two recordings.</p>
+
+<h3 id="transfer-to-the-computer">Transfer to the Computer</h3>
+
+<p>In order to transfer the recordings to my computer I’m using Termux and SSH-Servers on the phones. I’ve written about how to install SSH servers on Android using Termux in the past (see <a href="{ post_url./2024-01-14-So-AndroidServerPt2-InstallServerSoftware }">my previous post</a>).</p>
+
+<p>Alternatively we can go old-fashioned and just copy the files over with a USB-cable. I just found the ability to use Linux bash scripts to grab the footage very convenient.</p>
+
+<h3 id="combining-and-aligning-video-recordings">Combining and Aligning Video Recordings</h3>
+
+<p>Next we need to align the two videos as the recordings start and stop at different times. At first I tried to do this visually, but I found aligning by audio waveform much easier.</p>
+
+<h4 id="using-video-editing-software">Using Video Editing Software</h4>
+
+<p>KdenLive is an excellent video editing software to do this.</p>
+
+<p>It displays the waveform making it easy to align the videos by sound. Afterwards we separate the audio from the video, delete the audio tracks, crop the video feeds and position them next to each other.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/kdenlive-video-align.png" class="responsive-image" width="5%" />
+
+<p>The result wit the two video recordings synchronizsed and placed side-by-side looks something like this:</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/16-combined.jpg" class="responsive-image" width="45%" />
+
+<h4 id="recording-both-video-feeds-together">Recording both video feeds together</h4>
+
+<p>An alternative in order to avoid having to align the video recordings could be to set up a WiFi network, have a laptop nearby install “DroidCam” App and have “Open Broadcast Studio” (OBS) record the two video feeds together automatically. But that makes the measurement process much more involved.</p>
+
+<h4 id="alignment-by-python-script">Alignment by Python Script</h4>
+
+<p>We can also use a Python script that extracts audio from video recordings and produces a wave form.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/python-waveform.png" class="responsive-image" width="5%" />
+
+<p>If we do this for both video recordings and then gradually shift them against each other and compute the difference - e.g. a mean-squared-error - we could find the video alignment by software automatically.</p>
+
+<p>The following code I’ve cobbled together produces waveform plots from video files. It could be extended in order to auto-align video files by sound.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
+Audio from video file to audio waveform functions.
+www.dennissalzner.de 2026
+
+see also
+- https://stackoverflow.com/questions/44787437/how-to-convert-a-wav-file-to-a-spectrogram-in-python3
+- https://stackoverflow.com/questions/26741116/python-extract-wav-from-video-file
+- https://stackoverflow.com/questions/43284049/spectrogram-of-a-wave-file
+</span><span class="sh">"""</span>
+
+<span class="kn">import</span> <span class="n">os.path</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="n">scipy.io.wavfile</span> <span class="k">as</span> <span class="n">wav</span>
+<span class="kn">from</span> <span class="n">numpy.lib</span> <span class="kn">import</span> <span class="n">stride_tricks</span>
+<span class="kn">import</span> <span class="n">matplotlib.pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">wave</span>
+<span class="kn">import</span> <span class="n">sys</span>
+  
+<span class="k">def</span> <span class="nf">videoToAudioMonoFile</span><span class="p">(</span><span class="n">videoFile</span><span class="p">,</span> <span class="n">audioFile</span><span class="p">):</span>
+  <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">isfile</span><span class="p">(</span><span class="n">audioFile</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="n">subprocess</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="sa">f</span><span class="sh">'</span><span class="s">ffmpeg -i </span><span class="si">{</span><span class="n">videoFile</span><span class="si">}</span><span class="s"> -ab 160k -ac 1 -ar 44100 -vn </span><span class="si">{</span><span class="n">audioFile</span><span class="si">}</span><span class="sh">'</span>
+    <span class="n">subprocess</span><span class="p">.</span><span class="nf">call</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">stft</span><span class="p">(</span><span class="n">sig</span><span class="p">,</span> <span class="n">frameSize</span><span class="p">,</span> <span class="n">overlapFac</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">window</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">hanning</span><span class="p">):</span>
+    <span class="n">win</span> <span class="o">=</span> <span class="nf">window</span><span class="p">(</span><span class="n">frameSize</span><span class="p">)</span>
+    <span class="n">hopSize</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">frameSize</span> <span class="o">-</span> <span class="n">np</span><span class="p">.</span><span class="nf">floor</span><span class="p">(</span><span class="n">overlapFac</span> <span class="o">*</span> <span class="n">frameSize</span><span class="p">))</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">floor</span><span class="p">(</span><span class="n">frameSize</span><span class="o">/</span><span class="mf">2.0</span><span class="p">))),</span> <span class="n">sig</span><span class="p">)</span>  
+    <span class="n">cols</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">ceil</span><span class="p">(</span> <span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span> <span class="o">-</span> <span class="n">frameSize</span><span class="p">)</span> <span class="o">/</span> <span class="nf">float</span><span class="p">(</span><span class="n">hopSize</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">append</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">(</span><span class="n">frameSize</span><span class="p">))</span>
+    <span class="n">frames</span> <span class="o">=</span> <span class="n">stride_tricks</span><span class="p">.</span><span class="nf">as_strided</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">cols</span><span class="p">),</span> <span class="n">frameSize</span><span class="p">),</span> <span class="n">strides</span><span class="o">=</span><span class="p">(</span><span class="n">samples</span><span class="p">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">hopSize</span><span class="p">,</span> <span class="n">samples</span><span class="p">.</span><span class="n">strides</span><span class="p">[</span><span class="mi">0</span><span class="p">])).</span><span class="nf">copy</span><span class="p">()</span>
+    <span class="n">frames</span> <span class="o">*=</span> <span class="n">win</span>
+    <span class="k">return</span> <span class="n">np</span><span class="p">.</span><span class="n">fft</span><span class="p">.</span><span class="nf">rfft</span><span class="p">(</span><span class="n">frames</span><span class="p">)</span>    
+
+<span class="k">def</span> <span class="nf">logscale_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="mi">44100</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">20.</span><span class="p">):</span>
+    <span class="n">timebins</span><span class="p">,</span> <span class="n">freqbins</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">shape</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">freqbins</span><span class="p">)</span> <span class="o">**</span> <span class="n">factor</span>
+    <span class="n">scale</span> <span class="o">*=</span> <span class="p">(</span><span class="n">freqbins</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="nf">max</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">unique</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">round</span><span class="p">(</span><span class="n">scale</span><span class="p">))</span>
+    <span class="n">newspec</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">complex128</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">zeros</span><span class="p">([</span><span class="n">timebins</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">scale</span><span class="p">)]))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">scale</span><span class="p">)):</span>        
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nf">len</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">newspec</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">spec</span><span class="p">[:,</span><span class="nf">int</span><span class="p">(</span><span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">]):],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>        
+            <span class="n">newspec</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">sum</span><span class="p">(</span><span class="n">spec</span><span class="p">[:,</span><span class="nf">int</span><span class="p">(</span><span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span><span class="nf">int</span><span class="p">(</span><span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">allfreqs</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">abs</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="n">fft</span><span class="p">.</span><span class="nf">fftfreq</span><span class="p">(</span><span class="n">freqbins</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.</span><span class="o">/</span><span class="n">sr</span><span class="p">)[:</span><span class="n">freqbins</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">freqs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nf">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nf">len</span><span class="p">(</span><span class="n">scale</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="nf">len</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">freqs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">allfreqs</span><span class="p">[</span><span class="nf">int</span><span class="p">(</span><span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">]):])]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">freqs</span> <span class="o">+=</span> <span class="p">[</span><span class="n">np</span><span class="p">.</span><span class="nf">mean</span><span class="p">(</span><span class="n">allfreqs</span><span class="p">[</span><span class="nf">int</span><span class="p">(</span><span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="p">]):</span><span class="nf">int</span><span class="p">(</span><span class="n">scale</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">])])]</span>
+    <span class="k">return</span> <span class="n">newspec</span><span class="p">,</span> <span class="n">freqs</span>
+
+<span class="k">def</span> <span class="nf">plotstft</span><span class="p">(</span><span class="n">audiopath</span><span class="p">,</span> <span class="n">binsize</span><span class="o">=</span><span class="mi">2</span><span class="o">**</span><span class="mi">10</span><span class="p">,</span> <span class="n">plotpath</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">colormap</span><span class="o">=</span><span class="sh">"</span><span class="s">jet</span><span class="sh">"</span><span class="p">):</span>
+    <span class="n">samplerate</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">wav</span><span class="p">.</span><span class="nf">read</span><span class="p">(</span><span class="n">audiopath</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nf">stft</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">binsize</span><span class="p">)</span>
+    <span class="n">sshow</span><span class="p">,</span> <span class="n">freq</span> <span class="o">=</span> <span class="nf">logscale_spec</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sr</span><span class="o">=</span><span class="n">samplerate</span><span class="p">)</span>
+    <span class="n">ims</span> <span class="o">=</span> <span class="mf">20.</span><span class="o">*</span><span class="n">np</span><span class="p">.</span><span class="nf">log10</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">abs</span><span class="p">(</span><span class="n">sshow</span><span class="p">)</span><span class="o">/</span><span class="mf">10e-6</span><span class="p">)</span> <span class="c1"># amplitude to decibel
+</span>    <span class="n">timebins</span><span class="p">,</span> <span class="n">freqbins</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">shape</span><span class="p">(</span><span class="n">ims</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">))</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">transpose</span><span class="p">(</span><span class="n">ims</span><span class="p">),</span> <span class="n">origin</span><span class="o">=</span><span class="sh">"</span><span class="s">lower</span><span class="sh">"</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="sh">"</span><span class="s">auto</span><span class="sh">"</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="n">colormap</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="sh">"</span><span class="s">none</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">colorbar</span><span class="p">()</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">xlabel</span><span class="p">(</span><span class="sh">"</span><span class="s">time (s)</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">ylabel</span><span class="p">(</span><span class="sh">"</span><span class="s">frequency (hz)</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">timebins</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">ylim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="n">freqbins</span><span class="p">])</span>
+    <span class="n">xlocs</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">float32</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">timebins</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">xticks</span><span class="p">(</span><span class="n">xlocs</span><span class="p">,</span> <span class="p">[</span><span class="sh">"</span><span class="s">%.02f</span><span class="sh">"</span> <span class="o">%</span> <span class="n">l</span> <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="p">((</span><span class="n">xlocs</span><span class="o">*</span><span class="nf">len</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span><span class="o">/</span><span class="n">timebins</span><span class="p">)</span><span class="o">+</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">binsize</span><span class="p">))</span><span class="o">/</span><span class="n">samplerate</span><span class="p">])</span>
+    <span class="n">ylocs</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">int16</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">round</span><span class="p">(</span><span class="n">np</span><span class="p">.</span><span class="nf">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">freqbins</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)))</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">yticks</span><span class="p">(</span><span class="n">ylocs</span><span class="p">,</span> <span class="p">[</span><span class="sh">"</span><span class="s">%.02f</span><span class="sh">"</span> <span class="o">%</span> <span class="n">freq</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ylocs</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">plotpath</span><span class="p">:</span>
+        <span class="n">plt</span><span class="p">.</span><span class="nf">savefig</span><span class="p">(</span><span class="n">plotpath</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="sh">"</span><span class="s">tight</span><span class="sh">"</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="p">.</span><span class="nf">show</span><span class="p">()</span>
+    <span class="n">plt</span><span class="p">.</span><span class="nf">clf</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">ims</span>
+
+<span class="k">def</span> <span class="nf">audioFileToSpectogram</span><span class="p">(</span><span class="n">audioFile</span><span class="p">,</span> <span class="n">imageFile</span><span class="p">):</span>
+  <span class="n">ims</span> <span class="o">=</span> <span class="nf">plotstft</span><span class="p">(</span><span class="n">audiopath</span><span class="o">=</span><span class="n">audioFile</span><span class="p">,</span> <span class="n">plotpath</span><span class="o">=</span><span class="n">imageFile</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">audioFileToWaveform</span><span class="p">(</span><span class="n">audioFile</span><span class="p">,</span> <span class="n">imageFile</span><span class="p">):</span>  
+  <span class="n">spf</span> <span class="o">=</span> <span class="n">wave</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="n">audioFile</span><span class="p">,</span> <span class="sh">"</span><span class="s">r</span><span class="sh">"</span><span class="p">)</span>
+  <span class="n">signal</span> <span class="o">=</span> <span class="n">spf</span><span class="p">.</span><span class="nf">readframes</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">signal</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">frombuffer</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">np</span><span class="p">.</span><span class="n">int16</span><span class="p">)</span> <span class="c1"># fromstring
+</span>  <span class="k">if</span> <span class="n">spf</span><span class="p">.</span><span class="nf">getnchannels</span><span class="p">()</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+      <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">Just mono files</span><span class="sh">"</span><span class="p">)</span>
+      <span class="n">sys</span><span class="p">.</span><span class="nf">exit</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+  <span class="n">plt</span><span class="p">.</span><span class="nf">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">plt</span><span class="p">.</span><span class="nf">title</span><span class="p">(</span><span class="n">audioFile</span><span class="p">.</span><span class="nf">replace</span><span class="p">(</span><span class="sh">"</span><span class="s">.wav</span><span class="sh">"</span><span class="p">,</span> <span class="sh">""</span><span class="p">).</span><span class="nf">split</span><span class="p">(</span><span class="sh">"</span><span class="s">/</span><span class="sh">"</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span>
+  <span class="n">plt</span><span class="p">.</span><span class="nf">plot</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span>
+  <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="p">.</span><span class="nf">gca</span><span class="p">()</span>
+  <span class="n">ax</span><span class="p">.</span><span class="nf">set_xlim</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">10e6</span><span class="p">])</span>
+  <span class="n">ax</span><span class="p">.</span><span class="nf">set_ylim</span><span class="p">([</span><span class="o">-</span><span class="mi">25000</span><span class="p">,</span> <span class="mi">25000</span><span class="p">])</span>
+  <span class="n">plt</span><span class="p">.</span><span class="nf">savefig</span><span class="p">(</span><span class="n">imageFile</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="sh">"</span><span class="s">tight</span><span class="sh">"</span><span class="p">)</span>
+  <span class="n">plt</span><span class="p">.</span><span class="nf">clf</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="digitizing-the-readings">Digitizing the Readings</h3>
+
+<p>In order to produce the two-dimensional map we need to then transfer the aligned and combined video into readings.</p>
+
+<p>This will produce a map similar to the this:</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/09-measurement.jpg" class="responsive-image" width="35%" />
+
+<h4 id="manually-digitizing-readings">Manually digitizing readings</h4>
+
+<p>In order to transfer the readings over to a *.csv file containing the position and height I wrote a Python script.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>imageX_px imageY_px height_cm
+[..]
+568 251 19.7
+637 248 19.6
+[..]
+1236 248 19.6
+1296 237 19.5
+1359 231 19.4
+[..]
+</code></pre></div></div>
+
+<p>They Python script allows me to play the video back slowly and then manually click on the location of the rig in the video and then type in the reading from the ruler. It will then automatically overlay the readings onto the video feed and colour the readings according offset from the median value.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
+Manual digitizing readings in video stream
+www.dennissalzner.de 2026
+
+dependencies
+- pip install opencv-contrib-python
+
+see also
+- https://www.geeksforgeeks.org/python/python-opencv-cv2-puttext-method/
+- https://docs.opencv.org/3.4/d0/d90/group__highgui__window__flags.html
+- https://stackoverflow.com/questions/14655969/opencv-v1-v2-error-the-function-is-not-implemented
+- https://stackoverflow.com/questions/72827341/opencv-video-not-shown-full-size
+- https://techtutorialsx.com/2020/12/13/python-opencv-add-slider-to-window/
+</span><span class="sh">"""</span>
+
+<span class="kn">import</span> <span class="n">os</span>
+<span class="kn">import</span> <span class="n">cv2</span>
+<span class="kn">import</span> <span class="n">time</span>
+<span class="n">vc</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="sh">"</span><span class="s">&lt;path-to-combined-video-file&gt;.mp4</span><span class="sh">"</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">vc</span><span class="p">.</span><span class="nf">isOpened</span><span class="p">():</span> <span class="c1"># try to get the first frame
+</span>    <span class="n">rval</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">vc</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">rval</span> <span class="o">=</span> <span class="bp">False</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># [(0, 150, "test")]
+</span>
+<span class="k">def</span> <span class="nf">draw_circle</span><span class="p">(</span><span class="n">event</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">flags</span><span class="p">,</span><span class="n">param</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">mouseX</span><span class="p">,</span><span class="n">mouseY</span><span class="p">,</span> <span class="n">labels</span>
+    <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="n">cv2</span><span class="p">.</span><span class="n">EVENT_LBUTTONDOWN</span><span class="p">:</span> <span class="c1">#EVENT_LBUTTONDBLCLK:
+</span>        <span class="nf">print</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="nf">input</span><span class="p">(</span><span class="sh">"</span><span class="s">enter height:</span><span class="sh">"</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">+=</span> <span class="p">[(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="p">)]</span>
+        <span class="n">mouseX</span><span class="p">,</span><span class="n">mouseY</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span>
+
+<span class="n">font</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span>
+<span class="n">fontScale</span> <span class="o">=</span> <span class="mf">0.6</span>
+<span class="n">thickness</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="k">if</span> <span class="n">os</span><span class="p">.</span><span class="n">path</span><span class="p">.</span><span class="nf">isfile</span><span class="p">(</span><span class="sh">"</span><span class="s">output.txt</span><span class="sh">"</span><span class="p">):</span>
+  <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">output.txt</span><span class="sh">"</span><span class="p">,</span><span class="sh">"</span><span class="s">r</span><span class="sh">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+       <span class="n">entry</span> <span class="o">=</span> <span class="n">line</span><span class="p">.</span><span class="nf">strip</span><span class="p">().</span><span class="nf">split</span><span class="p">(</span><span class="sh">"</span><span class="s"> </span><span class="sh">"</span><span class="p">)</span>
+       <span class="k">if</span> <span class="nf">len</span><span class="p">(</span><span class="n">entry</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="n">entry</span>
+        <span class="n">labels</span> <span class="o">+=</span> <span class="p">[(</span><span class="nf">int</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="nf">int</span><span class="p">(</span><span class="n">y</span><span class="p">),</span><span class="n">t</span><span class="p">)]</span>
+
+<span class="k">while</span> <span class="n">rval</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nf">open</span><span class="p">(</span><span class="sh">"</span><span class="s">output.txt</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">w</span><span class="sh">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">txt_file</span><span class="p">:</span>
+      <span class="n">summed</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="n">avg</span> <span class="o">=</span> <span class="mi">0</span>
+      <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">labels</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="n">label</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">==</span> <span class="sh">""</span><span class="p">:</span>
+          <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+          <span class="n">avg</span> <span class="o">=</span> <span class="n">summed</span> <span class="o">/</span> <span class="n">count</span>
+        <span class="k">try</span><span class="p">:</span>
+          <span class="n">summed</span> <span class="o">+=</span> <span class="nf">float</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+          <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">error float parsing, skipping</span><span class="sh">"</span><span class="p">)</span>
+          <span class="k">continue</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nf">float</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">avg</span> <span class="o">+</span> <span class="mf">0.3</span><span class="p">:</span>
+          <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nf">float</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">avg</span> <span class="o">-</span> <span class="mf">0.3</span><span class="p">:</span>
+          <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="mi">255</span><span class="p">)</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">font</span><span class="p">,</span> <span class="n">fontScale</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">thickness</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="p">.</span><span class="nf">circle</span><span class="p">(</span><span class="n">frame</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="mi">5</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">txt_file</span><span class="p">.</span><span class="nf">write</span><span class="p">(</span><span class="sh">"</span><span class="s"> </span><span class="sh">"</span><span class="p">.</span><span class="nf">join</span><span class="p">([</span><span class="nf">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">label</span><span class="p">])</span> <span class="o">+</span> <span class="sh">"</span><span class="se">\n</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">"</span><span class="s">preview</span><span class="sh">"</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="nf">setMouseCallback</span><span class="p">(</span><span class="sh">'</span><span class="s">preview</span><span class="sh">'</span><span class="p">,</span><span class="n">draw_circle</span><span class="p">)</span>
+    <span class="n">rval</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">vc</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+    <span class="n">key</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">waitKey</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="mi">27</span><span class="p">:</span> <span class="c1"># exit on ESC
+</span>        <span class="k">break</span>
+    <span class="n">time</span><span class="p">.</span><span class="nf">sleep</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+<span class="n">vc</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
+
+</code></pre></div></div>
+
+<p>After playing through the video, clicking and typing in the measurements by hand we end up with something like this:</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/17-result.jpg" class="responsive-image" width="55%" />
+
+<p>With practice and all equipment ready it takes around 15 minutes to record the videos, 10 minutes with editing to merge the videos and another 30 minutes to transfer the readings.</p>
+
+<h4 id="automatically-getting-position-from-the-video">Automatically getting position from the video</h4>
+
+<p>I’ve taken the automation a little further and have some scripts to help with the process.</p>
+
+<h5 id="backgroud-image">Backgroud Image</h5>
+
+<p>It is helpful to first produce a “background” image, that is the average image over a large number of frames. This background image can later be subtracted.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
+Produce background image from video frames
+www.dennissalzner.de 2026
+
+see also
+- https://learnopencv.com/simple-background-estimation-in-videos-using-opencv-c-python/
+- https://www.geeksforgeeks.org/python/background-subtraction-in-an-image-using-concept-of-running-average/
+</span><span class="sh">"""</span>
+
+<span class="kn">import</span> <span class="n">cv2</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">VIDEO_FILE_2</span><span class="o">=</span><span class="sh">"</span><span class="s">&lt;path-to-position-recording&gt;.mp4</span><span class="sh">"</span>
+
+<span class="k">def</span> <span class="nf">getBackgroundImage</span><span class="p">(</span><span class="n">videoFile</span><span class="p">,</span> <span class="n">weightingAlpha</span><span class="o">=</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">skipFrames</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">noFrames</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span> <span class="c1">#skipFrames=3000, noFrames=4000):
+</span>  <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="n">videoFile</span><span class="p">)</span>
+  <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+  <span class="n">averageValue1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">float32</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+      <span class="n">noFrames</span> <span class="o">=</span> <span class="n">noFrames</span> <span class="o">-</span><span class="mi">1</span>
+      <span class="k">if</span> <span class="n">noFrames</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">break</span>
+      <span class="k">if</span> <span class="n">noFrames</span> <span class="o">&lt;</span> <span class="n">skipFrames</span><span class="p">:</span>
+        <span class="k">continue</span>
+      <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+      <span class="n">cv2</span><span class="p">.</span><span class="nf">accumulateWeighted</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">averageValue1</span><span class="p">,</span> <span class="n">weightingAlpha</span><span class="p">)</span> <span class="c1">#0.02)
+</span>      <span class="n">resultingFrames1</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">convertScaleAbs</span><span class="p">(</span><span class="n">averageValue1</span><span class="p">)</span>
+
+  <span class="n">cap</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
+  <span class="n">cv2</span><span class="p">.</span><span class="nf">destroyAllWindows</span><span class="p">()</span>
+  <span class="k">return</span> <span class="n">resultingFrames1</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="sh">'</span><span class="s">__main__</span><span class="sh">'</span><span class="p">:</span>
+  <span class="n">im</span> <span class="o">=</span> <span class="nf">getBackgroundImage</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
+  <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">'</span><span class="s">Background</span><span class="sh">'</span><span class="p">,</span> <span class="n">im</span><span class="p">)</span>
+  <span class="n">cv2</span><span class="p">.</span><span class="nf">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>By running this we get an image like this:</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/digitize-background.png" class="responsive-image" width="45%" />
+
+<h5 id="subtracting-background">Subtracting Background</h5>
+
+<p>We can then use the above background function to subtract the background when displaying the video.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
+Subtract background image from video frames
+www.dennissalzner.de 2026
+
+see also
+- https://stackoverflow.com/questions/21425992/how-to-subtract-two-images-using-python-opencv2-to-get-the-foreground-object
+- https://learnopencv.com/moving-object-detection-with-opencv/
+</span><span class="sh">"""</span>
+
+<span class="kn">import</span> <span class="n">cv2</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">a02_backgroundImage</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">VIDEO_FILE_2</span><span class="o">=</span><span class="sh">"</span><span class="s">&lt;path-to-position-recording&gt;.mp4</span><span class="sh">"</span>
+
+<span class="k">def</span> <span class="nf">markPosition</span><span class="p">(</span><span class="n">videoFile</span><span class="p">,</span> <span class="n">skipFrames</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+  <span class="n">backgroundImage</span> <span class="o">=</span> <span class="nf">getBackgroundImage</span><span class="p">(</span><span class="n">videoFile</span><span class="p">)</span>
+  <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="n">videoFile</span><span class="p">)</span>
+  <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+  <span class="n">averageValue1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">float32</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+  <span class="n">frameNo</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+      <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+      <span class="n">frameNo</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">skipFrames</span> <span class="o">&gt;</span> <span class="n">frameNo</span><span class="p">:</span>
+        <span class="k">continue</span>
+      <span class="n">res</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">absdiff</span><span class="p">(</span><span class="n">backgroundImage</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
+      <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">'</span><span class="s">Frame</span><span class="sh">'</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">waitKey</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="mi">27</span><span class="p">:</span>
+          <span class="k">break</span>
+  <span class="n">cap</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
+  <span class="n">cv2</span><span class="p">.</span><span class="nf">destroyAllWindows</span><span class="p">()</span>
+
+<span class="nf">markPosition</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Which will yield video frames like the following:</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/digitize-subtracted.png" class="responsive-image" width="45%" />
+
+<p>As you can see the area containing the camera rig is highlighted. Unfortunately, so are also my feet. Distinguishing my feed from the camera rig and also dealing with the smart phone display turned out to be a real challenge.</p>
+
+<h5 id="contour-detection">Contour Detection</h5>
+
+<p>I tried to detect contours, also applying thresholding, with the goal of then computing clusters and filtering them by size.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
+Subtract background image from video frames and compute contours
+www.dennissalzner.de 2026
+
+see also
+- https://stackoverflow.com/questions/21425992/how-to-subtract-two-images-using-python-opencv2-to-get-the-foreground-object
+- https://learnopencv.com/moving-object-detection-with-opencv/
+- https://learnopencv.com/contour-detection-using-opencv-python-c/
+</span><span class="sh">"""</span>
+
+<span class="kn">from</span> <span class="n">a02_backgroundImage</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="n">cv2</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">VIDEO_FILE_2</span><span class="o">=</span><span class="sh">"</span><span class="s">&lt;path-to-position-recording&gt;.mp4</span><span class="sh">"</span>
+
+<span class="k">def</span> <span class="nf">markPosition</span><span class="p">(</span><span class="n">videoFile</span><span class="p">,</span> <span class="n">skipFrames</span><span class="o">=</span><span class="mi">2000</span><span class="p">):</span>
+  <span class="n">backgroundImage</span> <span class="o">=</span> <span class="nf">getBackgroundImage</span><span class="p">(</span><span class="n">videoFile</span><span class="p">)</span>
+  <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="n">videoFile</span><span class="p">)</span>
+  <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+  <span class="n">averageValue1</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">float32</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+  <span class="n">frameNo</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+      <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+      <span class="n">frameNo</span> <span class="o">+=</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">skipFrames</span> <span class="o">&gt;</span> <span class="n">frameNo</span><span class="p">:</span>
+        <span class="k">continue</span>
+      <span class="n">res</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">absdiff</span><span class="p">(</span><span class="n">backgroundImage</span><span class="p">,</span> <span class="n">img</span><span class="p">)</span>
+      <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">'</span><span class="s">Frame</span><span class="sh">'</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+
+      <span class="n">img_gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">cvtColor</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+      <span class="n">ret</span><span class="p">,</span> <span class="n">thresh</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">threshold</span><span class="p">(</span><span class="n">img_gray</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">THRESH_BINARY</span><span class="p">)</span>
+      <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">'</span><span class="s">Threshold</span><span class="sh">'</span><span class="p">,</span> <span class="n">thresh</span><span class="p">)</span>
+
+      <span class="n">contours</span><span class="p">,</span> <span class="n">hierarchy</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">findContours</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">thresh</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">cv2</span><span class="p">.</span><span class="n">RETR_TREE</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">cv2</span><span class="p">.</span><span class="n">CHAIN_APPROX_NONE</span><span class="p">)</span>
+      <span class="n">image_copy</span> <span class="o">=</span> <span class="n">res</span><span class="p">.</span><span class="nf">copy</span><span class="p">()</span>
+      <span class="n">cv2</span><span class="p">.</span><span class="nf">drawContours</span><span class="p">(</span><span class="n">image</span><span class="o">=</span><span class="n">image_copy</span><span class="p">,</span> <span class="n">contours</span><span class="o">=</span><span class="n">contours</span><span class="p">,</span> <span class="n">contourIdx</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">thickness</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">lineType</span><span class="o">=</span><span class="n">cv2</span><span class="p">.</span><span class="n">LINE_AA</span><span class="p">)</span>
+      <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">'</span><span class="s">contours</span><span class="sh">'</span><span class="p">,</span> <span class="n">image_copy</span><span class="p">)</span>
+
+      <span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">waitKey</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="mi">27</span><span class="p">:</span>
+          <span class="k">break</span>
+  <span class="n">cap</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
+  <span class="n">cv2</span><span class="p">.</span><span class="nf">destroyAllWindows</span><span class="p">()</span>
+
+<span class="nf">markPosition</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>This produced promising, but unrealiable results</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/digitize-contours.png" class="responsive-image" width="45%" />
+
+<h5 id="colour-filtering">Colour Filtering</h5>
+
+<p>Simply filtering by colour can also help. I’ve filtered for a colour in order to produce a mask. Then overlayed that mask as red onto the image.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
+Colour filtering, mask and overlay,
+
+www.dennissalzner.de 2026
+</span><span class="sh">"""</span>
+
+<span class="kn">import</span> <span class="n">cv2</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">a02_backgroundImage</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">VIDEO_FILE_2</span><span class="o">=</span><span class="sh">"</span><span class="s">&lt;path-to-position-recording&gt;.mp4</span><span class="sh">"</span>
+
+<span class="k">def</span> <span class="nf">getFrameNo</span><span class="p">(</span><span class="n">videoFile</span><span class="p">,</span> <span class="n">frameNo</span><span class="o">=</span><span class="mi">2000</span><span class="p">):</span>
+  <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="n">videoFile</span><span class="p">)</span>
+  <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+      <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+      <span class="n">frameNo</span> <span class="o">-=</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">frameNo</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">continue</span>
+      <span class="k">break</span>
+  <span class="n">cap</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
+  <span class="n">cv2</span><span class="p">.</span><span class="nf">destroyAllWindows</span><span class="p">()</span>
+  <span class="k">return</span> <span class="n">img</span>
+ 
+<span class="n">frame</span> <span class="o">=</span> <span class="nf">getFrameNo</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
+<span class="n">backgroundImage</span> <span class="o">=</span> <span class="nf">getBackgroundImage</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">absdiff</span><span class="p">(</span><span class="n">backgroundImage</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+
+<span class="n">hsv_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+
+<span class="n">lower_white</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
+<span class="n">upper_white</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="mi">180</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">255</span><span class="p">])</span>
+
+<span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">inRange</span><span class="p">(</span><span class="n">hsv_image</span><span class="p">,</span> <span class="n">lower_white</span><span class="p">,</span> <span class="n">upper_white</span><span class="p">)</span>
+
+<span class="n">red_overlay</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">zeros_like</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="p">.</span><span class="n">uint8</span><span class="p">)</span>
+<span class="n">red_overlay</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>  <span class="c1"># BGR format: Blue, Green, Red
+</span>
+<span class="n">red_masked</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">bitwise_and</span><span class="p">(</span><span class="n">red_overlay</span><span class="p">,</span> <span class="n">red_overlay</span><span class="p">,</span> <span class="n">mask</span><span class="o">=</span><span class="n">mask</span><span class="p">)</span>
+
+<span class="n">combined_image</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">addWeighted</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">red_masked</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">"</span><span class="s">Mask Image</span><span class="sh">"</span><span class="p">,</span> <span class="n">combined_image</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="nf">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>This produced a better result than the contours.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/digitize-masked.png" class="responsive-image" width="45%" />
+
+<h5 id="adjusting-colour-filtering">Adjusting Colour Filtering</h5>
+
+<p>In order to adjust the HSV colour ranges I’ve found some code floating around online that provides sliders for manual adjustment.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
+Sliders to find HSV colour values for colour filtering.
+Adapted from Code found on medium.com/@VinitKumarGupta.
+
+www.dennissalzner.de 2026
+
+see also
+- https://medium.com/@VinitKumarGupta/color-detection-in-opencv-a-hands-on-project-to-master-hsv-filtering-5fa9fd928561
+</span><span class="sh">"""</span>
+
+<span class="kn">import</span> <span class="n">cv2</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="n">VIDEO_FILE_2</span><span class="o">=</span><span class="sh">"</span><span class="s">&lt;path-to-position-recording&gt;.mp4</span><span class="sh">"</span>
+
+<span class="k">def</span> <span class="nf">getFrameNo</span><span class="p">(</span><span class="n">videoFile</span><span class="p">,</span> <span class="n">frameNo</span><span class="o">=</span><span class="mi">2000</span><span class="p">):</span>
+  <span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="n">videoFile</span><span class="p">)</span>
+  <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+  <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+      <span class="n">_</span><span class="p">,</span> <span class="n">img</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+      <span class="n">frameNo</span> <span class="o">-=</span> <span class="mi">1</span>
+      <span class="k">if</span> <span class="n">frameNo</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">continue</span>
+      <span class="k">break</span>
+  <span class="n">cap</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
+  <span class="n">cv2</span><span class="p">.</span><span class="nf">destroyAllWindows</span><span class="p">()</span>
+  <span class="k">return</span> <span class="n">img</span>
+
+<span class="n">image</span> <span class="o">=</span> <span class="nf">getFrameNo</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="n">a</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="nf">namedWindow</span><span class="p">(</span><span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="nf">resizeWindow</span><span class="p">(</span><span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">,</span> <span class="mi">640</span><span class="p">,</span> <span class="mi">240</span><span class="p">)</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="nf">createTrackbar</span><span class="p">(</span><span class="sh">"</span><span class="s">HUE MIN</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">179</span><span class="p">,</span> <span class="n">empty</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="nf">createTrackbar</span><span class="p">(</span><span class="sh">"</span><span class="s">HUE MAX</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">,</span> <span class="mi">179</span><span class="p">,</span> <span class="mi">179</span><span class="p">,</span> <span class="n">empty</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="nf">createTrackbar</span><span class="p">(</span><span class="sh">"</span><span class="s">SAT MIN</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">empty</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="nf">createTrackbar</span><span class="p">(</span><span class="sh">"</span><span class="s">SAT MAX</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">empty</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="nf">createTrackbar</span><span class="p">(</span><span class="sh">"</span><span class="s">VAL MIN</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">empty</span><span class="p">)</span>
+<span class="n">cv2</span><span class="p">.</span><span class="nf">createTrackbar</span><span class="p">(</span><span class="sh">"</span><span class="s">VAL MAX</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="n">empty</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">imgHSV</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">cvtColor</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2HSV</span><span class="p">)</span>
+
+    <span class="n">h_min</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">getTrackbarPos</span><span class="p">(</span><span class="sh">"</span><span class="s">HUE MIN</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">h_max</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">getTrackbarPos</span><span class="p">(</span><span class="sh">"</span><span class="s">HUE MAX</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">s_min</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">getTrackbarPos</span><span class="p">(</span><span class="sh">"</span><span class="s">SAT MIN</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">s_max</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">getTrackbarPos</span><span class="p">(</span><span class="sh">"</span><span class="s">SAT MAX</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">v_min</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">getTrackbarPos</span><span class="p">(</span><span class="sh">"</span><span class="s">VAL MIN</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">v_max</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">getTrackbarPos</span><span class="p">(</span><span class="sh">"</span><span class="s">VAL MAX</span><span class="sh">"</span><span class="p">,</span> <span class="sh">"</span><span class="s">Trackbars</span><span class="sh">"</span><span class="p">)</span>
+
+    <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="n">h_min</span><span class="p">,</span> <span class="n">s_min</span><span class="p">,</span> <span class="n">v_min</span><span class="p">])</span>
+    <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="p">.</span><span class="nf">array</span><span class="p">([</span><span class="n">h_max</span><span class="p">,</span> <span class="n">s_max</span><span class="p">,</span> <span class="n">v_max</span><span class="p">])</span>
+
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">inRange</span><span class="p">(</span><span class="n">imgHSV</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">"</span><span class="s">Original Image</span><span class="sh">"</span><span class="p">,</span> <span class="n">image</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">"</span><span class="s">HSV Image</span><span class="sh">"</span><span class="p">,</span> <span class="n">imgHSV</span><span class="p">)</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">"</span><span class="s">Mask Image</span><span class="sh">"</span><span class="p">,</span> <span class="n">mask</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="nf">ord</span><span class="p">(</span><span class="sh">'</span><span class="s">q</span><span class="sh">'</span><span class="p">):</span>
+        <span class="k">break</span>
+
+<span class="n">cv2</span><span class="p">.</span><span class="nf">destroyAllWindows</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>With that we can experiment by using the sliders to filter by different HSV upper and lower boundaries.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/digitize-filter.png" class="responsive-image" width="45%" />
+
+<h5 id="object-detection-neural-network">Object-Detection Neural Network</h5>
+
+<p>However, the best soluton by far that I was able to achieve was by “simply” using a Neural Network trained for object recognition.</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
+Object-Recognition using YOLOv11
+
+www.dennissalzner.de 2026
+</span><span class="sh">"""</span>
+
+<span class="kn">import</span> <span class="n">cv2</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">from</span> <span class="n">ultralytics</span> <span class="kn">import</span> <span class="n">YOLO</span>
+
+<span class="n">VIDEO_FILE_2</span><span class="o">=</span><span class="sh">"</span><span class="s">&lt;path-to-position-recording&gt;.mp4</span><span class="sh">"</span>
+<span class="n">MODEL_PATH</span> <span class="o">=</span> <span class="sh">"</span><span class="s">yolo11s.pt</span><span class="sh">"</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="nc">YOLO</span><span class="p">(</span><span class="n">MODEL_PATH</span><span class="p">)</span>
+<span class="n">id2name</span> <span class="o">=</span> <span class="n">model</span><span class="p">.</span><span class="n">names</span>
+<span class="n">wanted_ids</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">id2name</span><span class="p">.</span><span class="nf">items</span><span class="p">()}</span>
+
+<span class="n">skipFrames</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+<span class="n">frameNo</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+    <span class="n">frameNo</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">skipFrames</span> <span class="o">&gt;</span> <span class="n">frameNo</span><span class="p">:</span>
+      <span class="k">continue</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="nf">model</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">results</span><span class="p">.</span><span class="n">boxes</span> <span class="ow">and</span> <span class="nf">len</span><span class="p">(</span><span class="n">results</span><span class="p">.</span><span class="n">boxes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nf">for </span><span class="p">(</span><span class="n">cls_id</span><span class="p">,</span> <span class="n">conf</span><span class="p">,</span> <span class="n">xyxy</span><span class="p">)</span> <span class="ow">in</span> <span class="nf">zip</span><span class="p">(</span><span class="n">results</span><span class="p">.</span><span class="n">boxes</span><span class="p">.</span><span class="n">cls</span><span class="p">.</span><span class="nf">tolist</span><span class="p">(),</span>
+                                        <span class="n">results</span><span class="p">.</span><span class="n">boxes</span><span class="p">.</span><span class="n">conf</span><span class="p">.</span><span class="nf">tolist</span><span class="p">(),</span>
+                                        <span class="n">results</span><span class="p">.</span><span class="n">boxes</span><span class="p">.</span><span class="n">xyxy</span><span class="p">.</span><span class="nf">tolist</span><span class="p">()):</span>            
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">cls_id</span> <span class="ow">in</span> <span class="n">wanted_ids</span><span class="p">:</span>
+              <span class="k">continue</span>
+            <span class="k">if</span> <span class="n">id2name</span><span class="p">[</span><span class="n">cls_id</span><span class="p">]</span> <span class="o">==</span> <span class="sh">"</span><span class="s">person</span><span class="sh">"</span><span class="p">:</span>
+              <span class="k">continue</span>
+            
+            <span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">y2</span> <span class="o">=</span> <span class="n">xyxy</span>  
+            <span class="nf">print</span><span class="p">(</span><span class="n">id2name</span><span class="p">[</span><span class="n">cls_id</span><span class="p">])</span>
+            <span class="nf">print</span><span class="p">(</span><span class="n">xyxy</span><span class="p">)</span>
+
+            <span class="c1"># -- draw point
+</span>            <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">y2</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="nf">int</span><span class="p">(</span><span class="n">x1</span> <span class="o">+</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">cv2</span><span class="p">.</span><span class="nf">circle</span><span class="p">(</span><span class="n">frame</span><span class="p">,(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">),</span><span class="mi">5</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">'</span><span class="s">Frame</span><span class="sh">'</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">waitKey</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="mi">27</span><span class="p">:</span>
+        <span class="k">break</span>
+<span class="n">cap</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
+<span class="n">cv2</span><span class="p">.</span><span class="nf">destroyAllWindows</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>If draw rectangles at <code class="language-plaintext highlighter-rouge">x1, y1, x2, y2</code> and write <code class="language-plaintext highlighter-rouge">id2name[cls_id]`</code> into the image we get this this:</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/digitize-yolov11.png" class="responsive-image" width="45%" />
+
+<p>I found that my feet are reliably detected as “person”. The camera rig was being detected as all sorts of things: “bottle”, “skateboard”, “suitcase”, traffic light”, “cell phone”, “surf board” and so on.</p>
+
+<p>But that does not matter. We can simply check for anything that is not equal to “person”. As there is nothing in the room except for floor and walls, this works exceptionally well.</p>
+
+<p>Taking the center of the rectangle on the non-person detection lets me accurately place a red dot at the position of the camera rig.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/digitize-marking.png" class="responsive-image" width="45%" />
+
+<p>That’s pretty much exactly what I was looking for. In order to futher improve this we can apply averaging over positional values over time. It is clearly expected that they unformly increase in x and jump in y from time to time, when a new row begins. That property can be exploited to filter outliers.</p>
+
+<h4 id="automatically-getting-height-measurements-from-the-video">Automatically getting height measurements from the video</h4>
+
+<p>In order to automatically get the height readings we can make use of the “April”-Tags I’ve added to the camera rig.</p>
+
+<p>I’ve found that the april tag generator found here [1] works well. I print type “tag25h9” tags at about 70x70mm size. Some old 3D printed leftovers that I cut to a suitable shape make sturdy mounts for the printed out april tags. Make sure they are perfectly flat and facing towards the camera and there should be no problem detecting them.</p>
+
+<p>``py
+“””
+April Tag detector
+Based on code from pyimagesearch.com</p>
+
+<p>www.dennissalzner.de 2026</p>
+
+<p>see also</p>
+<ul>
+  <li>https://pyimagesearch.com/2020/11/02/apriltag-with-python/</li>
+  <li>https://chaitanyantr.github.io/apriltag.html
+“””</li>
+</ul>
+
+<p>VIDEO_FILE_2=”<path-to-position-recording>.mp4"</path-to-position-recording></p>
+
+<p>import cv2
+import numpy as np
+import apriltag
+skipFrames = 2000
+cap = cv2.VideoCapture(VIDEO_FILE_2)
+_, frame = cap.read()
+frameNo = 0
+while True:
+    _, frame = cap.read()
+    frameNo += 1
+    if skipFrames &gt; frameNo:
+      continue</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+options = apriltag.DetectorOptions(families="tag25h9")
+detector = apriltag.Detector(options)
+results = detector.detect(gray)
+
+if len(results) != 0:
+  print("[INFO] {} total AprilTags detected".format(len(results)))
+
+for r in results:
+    (ptA, ptB, ptC, ptD) = r.corners
+    ptB = (int(ptB[0]), int(ptB[1]))
+    ptC = (int(ptC[0]), int(ptC[1]))
+    ptD = (int(ptD[0]), int(ptD[1]))
+    ptA = (int(ptA[0]), int(ptA[1]))
+    cv2.line(frame, ptA, ptB, (0, 255, 0), 2)
+    cv2.line(frame, ptB, ptC, (0, 255, 0), 2)
+    cv2.line(frame, ptC, ptD, (0, 255, 0), 2)
+    cv2.line(frame, ptD, ptA, (0, 255, 0), 2)
+    (cX, cY) = (int(r.center[0]), int(r.center[1]))
+    cv2.circle(frame, (cX, cY), 5, (0, 0, 255), -1)
+    tagFamily = r.tag_family.decode("utf-8")
+    cv2.putText(frame, tagFamily, (ptA[0], ptA[1] - 15),
+        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+    print("[INFO] tag family: {}".format(tagFamily))
+cv2.imshow('Frame', frame)
+if len(results) != 0:       
+  cv2.waitKey(0) 
+if cv2.waitKey(30) &amp; 0xFF == 27:
+    break cap.release() cv2.destroyAllWindows() ```
+</code></pre></div></div>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/apriltags1.jpg" class="responsive-image" width="15%" />
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/apriltags2.png" class="responsive-image" width="15%" />
+
+<p>In order to measure the height all we need to do is move pixelwise along a line between the two tags and check for the brightest green line - that is typically the live of the leveling laser.</p>
+
+<p>We then can compute a percentage position of where the line is between the april tags. Knowing the distance they have to eachother we can convert that value into millimeters.</p>
+
+<p>How accurate this will be depends on many factors. Within &lt;2 mm precision should be achievable.</p>
+
+<h4 id="live-testing-with-opencv">Live testing with OpenCV</h4>
+
+<p>In the above snippets I often use</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>If your phone is on the same network and is running an MJPEG stream, we can alter the code to</p>
+
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="sh">"</span><span class="s">http://&lt;ip address of your phone&gt;:4747/mjpegfeed</span><span class="sh">"</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>and use the live camera feed to calibrate things instead of recording to video.</p>
+
+<p>The App “DroidCam Webcam (classic) von Dev47SApps” can provide such a stream.</p>
+
+<img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/mjpegstream-droidcam.jpg" class="responsive-image" width="10%" />
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>My goal was to produce a two dimensional map of the floor height. For this I’ve developed an accurate measurement method using cameras. We’ve also explored automatic video analysis to varying degrees.</p>
+
+<p>This experiment was a good excuse to try computer vision approaches in OpenCV and run the Yolo object recognition neural network.</p>
+
+<p>In the next parts of the series I’ll work on an electronic target plate that detects the laser line, acurately digitizes the height directly during the measurement and outputs the values by serial connection.</p>
+
+<hr />
+
+<pre>
+1] https://chaitanyantr.github.io/apriltag.html
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Floor Leveling - Pt.2 - Camera-based Method"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
