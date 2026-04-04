@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+
+  
+  <title>Floor Leveling - Pt.1 - Two-dimensional heatmaps of floor height - Dennis Salzner</title>
+  
+  
+
+  <!-- search engine -->
+  <meta name="description" content="I'm in the process of renovating a small flat. The floors are in such a bad shape that floor leveling compound couldn't solve the problem by itself. We needed a more elaborate a..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2025/10/19/So-FloorLevelingPt1Introduction.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Floor Leveling - Pt.1 - Two-dimensional heatmaps of floor height - Dennis Salzner" />
+  <meta property="og:description" content="I'm in the process of renovating a small flat. The floors are in such a bad shape that floor leveling compound couldn't solve the problem by itself. We neede..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2025/10/19/So-FloorLevelingPt1Introduction.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2025-10-19 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2025-10-19 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2025-10-19 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="I'm in the process of renovating a small flat. The floors are in such a bad shape that floor leveling compound couldn't solve the problem by itself. We needed a more elaborate a..." />
+  <meta name="twitter:title" content="Floor Leveling - Pt.1 - Two-dimensional heatmaps of floor height - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+ 
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Floor Leveling - Pt.1 - Two-dimensional heatmaps of floor height</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Floor Leveling - Pt.1 - Two-dimensional heatmaps of floor height</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>I’m in the process of renovating a small flat. The floors are in such a bad shape that floor leveling compound couldn’t solve the problem by itself. We needed a more elaborate approach. My goal is to measure the room in two dimensions. Then we can strategically pour the compound in the lowest areas. For this I need a two dimensional map of the height of the floor.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/01-laminat.jpg" class="responsive-image" width="25%" />
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#background" id="markdown-toc-background">Background</a></li>
+  <li><a href="#measurement-methods" id="markdown-toc-measurement-methods">Measurement Methods</a>    <ul>
+      <li><a href="#camera-based" id="markdown-toc-camera-based">Camera-Based</a></li>
+      <li><a href="#electronic-method" id="markdown-toc-electronic-method">Electronic-Method</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>I’ve been renovating the flat for roughly a year now. The flat was in a very outdated and bad shape overall. It’s been quite some work. While electricity, plumbing, walls, tiles, painting was all relatively straight forward and close to my expectations, the floor turned into a big issue that I had underestimated.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="background">Background</h2>
+
+<p>The building is from a few years after the war. A period where experienced workers and materials were sparse. The building was hastely constructed and the result is that the floor is off by upto 1,5cm (over 1/2 inch) in some areas.</p>
+
+<p>Unfortunately, for laminate floors, an offset of only roughly 3mm every 2m is tolerable. Otherwise you will sink in when standing on the boards, they will bend and eventually crack at connecting grooves between two boards.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/01-laminat.jpg" class="responsive-image" width="25%" />
+
+<p>It was clear from the start that the floor was extensively damaged. It had never been fixed and carpet was placed on top of an old linoleum floor. One could see the cracks through the linoleum floor.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/02-oldfloor.jpg" class="responsive-image" width="25%" />
+
+<p>After removing the old floor I was able to visually inspect the large cracks and holes in most rooms.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/03-holes.jpg" class="responsive-image" width="25%" />
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/04-holes.jpg" class="responsive-image" width="25%" />
+
+<p>Apart from the floor the building is structurally in a good shape. An image shows how floors in German buildings are typically constructed in layers.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/05-structure.png" class="responsive-image" width="25%" />
+
+<p><br /><small>(Image taken from [1])</small></p>
+
+<p>The structural components are uncoupled from the “estrich” (screed) by a thin film from. On top of that comes the actual floor. The idea is to have hard material in the lowest layers and softer materials as we move upwards.</p>
+
+<p>The holes largest holes were fixed by pouring new screed. The edges were filled with “reparatur beton” (concrete designed to fill such cracks).</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/06-fixing.jpg" class="responsive-image" width="25%" />
+
+<p>By day 52 of renovations we started pouring in leveling compound.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/07-leveling-compound.jpg" class="responsive-image" width="25%" />
+
+<p>At the time I didn’t have accurate measurements of how bad this floor really was. Leveling compound works wonders, but only to some extent. If a floor is up by a centimeter or more in some areas, we would need to fill the rest of the room with more than a centimeter of leveling compound. That is often not feasable. It would be too expensive, the doors would have to be cut, door sills would be at different heights and you’d lose ceiling space.</p>
+
+<p>What should have been done first is to grind the underlying screed with to tolerable heights with an angle grinder. A tedious, noisy and dirty task. Since I had added leveling compound too early that leveling compound had to be removed in some areas. For leveling compound removal I found using a chisel to be the most effective method.
+Using an angle grinder makes a huge mess. The chisel can be driven underneath the leveling compound causing long cracks after which the compound can be picked up and removed easily.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/08-removal.jpg" class="responsive-image" width="25%" />
+
+<p>Traditionally builders would use long measurement rods. They place them on the floor and check whether they rock back and forth, lay a spirit level on top of them and check whether light can shines underneath it in order to see, if the surface is flat. That works well, but only along the rod. We can only measure one location and one direction at a time. Another technique are floor leveling lasers. With a very messed up floor like mine, the two reference points the rod sits upon could be either too low or too high scewing the entire measurement.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/10-guide.jpg" class="responsive-image" width="35%" />
+
+<p>In practice it also doesn’t really matter whether the floor is slightly tilted to one side or not. What is more important smooth transitions. For laminate we need not more than 3mm difference on a 2m length.
+However, when we are this far away from a floor being level, it helps to have a universal “ground truth” of where the floor should be. Here the leveling lasers come in handy.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/11-laserlevel.jpg" class="responsive-image" width="35%" />
+
+<p>A leveling laser projects a line on the wall. It has an internal gimbal toi ensure that the line is perfectly straight. We can then walk around with a ruler anywhere in the room and read the height of the floor.</p>
+
+<img src="../../../../images/2025-10-19-So-FloorLevelingPt1Introduction/12-ruler.jpg" class="responsive-image" width="15%" />
+
+<p>With knowledge of where the lowest valley is, we can then strategically pour leveling compound strategically in those sections first. This is necessary with such a broken floor. It is also much more effective than trying to fill the entire room in one go.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="measurement-methods">Measurement Methods</h2>
+
+<p>A two-dimensional heatmap of the height of the room would allow me to see where there are areas on the floor that are too high or too low. This would enable use to then strategically pour smaller quantities of the leveling compound on only the regions that need to be raised.</p>
+
+<h3 id="camera-based">Camera-Based</h3>
+
+<p>In the next part of the series I’ll present my camera-based approach. The idea is to have two cameras. One filming the room from an elevated angle in order to track position in the room. Another filming the green laser line from a floor leveling laser on the ruler. The ruler is then moved through the room in a zig-zag pattern.</p>
+
+<p>By aligning the two videos and analysing it, we can create a two-dimensional height map by hand.</p>
+
+<p>This approach can be enhanced by using computer vision algorithms to produce the heatmap nearly automatically based off of the video.</p>
+
+<h3 id="electronic-method">Electronic-Method</h3>
+
+<p>A fully electronic method could involve an electronic target plate.</p>
+
+<p>This target plate is used instead of the ruler and outputs height of the laser line digitally to a computer.</p>
+
+<p>For positional information we could use a 360 degree Lidar and SLAM algorithms (see <a href="/electronics/2024/09/21/Sa-RobotPt1Lidar.html">my previous posts on Lidar</a>). These in turn require wheel odometry (see <a href="/electronics/2024/09/28/Sa-RobotPt3Odometry.html">my previous posts on Wheel Odometry</a>).</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>So far we’ve established the underlying problem. I’m in the process to designing visual and electronic measurement methods for 2D floor height measurment that I will cover in the next parts of the series.</p>
+
+<hr />
+
+<pre>
+1] https://de.wikipedia.org/wiki/Estrich
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Floor Leveling - Pt.1 - Two-dimensional heatmaps of floor height"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>

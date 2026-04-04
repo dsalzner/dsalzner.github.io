@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+
+  
+  <title>Game Automation, Neopets 'Spellseeker' - Dennis Salzner</title>
+  
+  
+
+  <!-- search engine -->
+  <meta name="description" content="Neopets is an online childrens game page that launched in '99 [1]. It's geared towards young children and teenagers. The games are simple, but captivating and intriguing. They a..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/programming/2025/08/15/Fr-NeopetsSpellseeker.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Game Automation, Neopets 'Spellseeker' - Dennis Salzner" />
+  <meta property="og:description" content="Neopets is an online childrens game page that launched in '99 [1]. It's geared towards young children and teenagers. The games are simple, but captivating an..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/programming/2025/08/15/Fr-NeopetsSpellseeker.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="programming" />
+  <meta property="article:published_time" content="2025-08-15 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2025-08-15 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2025-08-15 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Neopets is an online childrens game page that launched in '99 [1]. It's geared towards young children and teenagers. The games are simple, but captivating and intriguing. They a..." />
+  <meta name="twitter:title" content="Game Automation, Neopets 'Spellseeker' - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+ 
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Game Automation, Neopets 'Spellseeker'</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Game Automation, Neopets 'Spellseeker'</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>Neopets is an online childrens game page that launched in ‘99 [1]. It’s geared towards young children and teenagers. The games are simple, but captivating and intriguing. They are beautifully designed. I used to play some of the games as a kid in the early 2000s. It’s an interesting challenge to automate these games.</p>
+
+<!--
+***Disclaimer:*** The goal is not to cheat at the games and I don't run my software routinely once it is completed. Many games can be played without signing in or submiting the score. It's primarily an academic and intellectual challenge. I also don't publish complete code, so people can't use it to cheat on the games. I don't want to ruin the experience for other players.
+-->
+
+<p><strong><em>Disclaimer:</em></strong> The goal is not to cheat at the games and I don’t run my software routinely once it is completed. This is an academic exercise.</p>
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/old-python.gif" class="responsive-image" width="45%" />
+
+<p><small>(an old version I wrote in Python around 2012. It’s a rewrite of my VB.Net version from 2010.)</small></p>
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#history" id="markdown-toc-history">History</a></li>
+  <li><a href="#background" id="markdown-toc-background">Background</a>    <ul>
+      <li><a href="#flash-player" id="markdown-toc-flash-player">Flash Player</a></li>
+      <li><a href="#future-of-neopets" id="markdown-toc-future-of-neopets">Future of Neopets</a></li>
+      <li><a href="#technology-stack" id="markdown-toc-technology-stack">Technology Stack</a></li>
+    </ul>
+  </li>
+  <li><a href="#implementation" id="markdown-toc-implementation">Implementation</a>    <ul>
+      <li><a href="#about-the-game" id="markdown-toc-about-the-game">About the Game</a></li>
+      <li><a href="#loading-the-page" id="markdown-toc-loading-the-page">Loading the Page</a></li>
+      <li><a href="#taking-screenshots" id="markdown-toc-taking-screenshots">Taking Screenshots</a></li>
+      <li><a href="#recognizing-the-stones-on-the-playing-field" id="markdown-toc-recognizing-the-stones-on-the-playing-field">Recognizing the stones on the playing field</a></li>
+      <li><a href="#building-a-graph" id="markdown-toc-building-a-graph">Building a Graph</a>        <ul>
+          <li><a href="#coordinate-space" id="markdown-toc-coordinate-space">Coordinate Space</a></li>
+          <li><a href="#finding-neighbours" id="markdown-toc-finding-neighbours">Finding Neighbours</a></li>
+          <li><a href="#filtering-neighbours" id="markdown-toc-filtering-neighbours">Filtering Neighbours</a></li>
+        </ul>
+      </li>
+      <li><a href="#solving-algorithm" id="markdown-toc-solving-algorithm">Solving Algorithm</a></li>
+      <li><a href="#entering-the-result" id="markdown-toc-entering-the-result">Entering the Result</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<h2 id="history">History</h2>
+
+<p>Some 20 years ago I tried my hand at automating the games. I had started automating browser Flash games a long time ago and built automations for countless games. dFence (2005), “Naked Melee” (2005), Stickman Madness (2008), Facebooks “Who has the biggest brain” [2] (2008), GeoChallenge (2009) and likely some more.</p>
+
+<p>Solving simple puzzles designed for humans, purley visually and by imitating human interaction presents a bunch of unique challenges. It is comparable to robot vision, includes pattern recognition and sometimes fairly advanced algorithms. We may need to recognize a playing field, convert it into a graph, find the longest path with it, compute a sequence of clicks and then execute them. It’s a unique and interesting challenge to automate this. The things I’ve learned have been useful in other fields as well.</p>
+
+<p>I’ve come to understatnd that it’s merely important to do some thing, it doesn’t matter what, as all challenges and their solutions may be valuable lessons learned and inspire new ideas in other fields. At the very least one can learn how to write code, but also how the Flash player works, web scraping, UI toolkits and so on.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="background">Background</h2>
+
+<p>Over the last 20 years or so I’ve used many different approaches to successfully automate web-based games.</p>
+
+<h3 id="flash-player">Flash Player</h3>
+
+<p>In that time the Flash Player came and went. Originally a browser plug-in to create animations on the web made by FutureWave named “Shockwave player”, acuired by Macromedia in ‘96, then by Adobe in 2005, it was discontinued in December of 2020.</p>
+
+<p>Neopets has also been created, bought, sold and resold over that time. It was started in ‘97 by a student. In 2000 it was incorporated. 2005 to 2014 it was in possesion of Viacom. 2014 to 2023 it was acquired by JumpStart Games. In 2021 it was attmepted to start an NFT and more modern 3D remake. In 2023 it was bought by “World of Neopia Inc.” by people involved in that NFT [3].</p>
+
+<p>Currently the page looks very much like it did in the 2000s. The original flash games work the same as they used to in in a JavaScript Flash Emulator <strong><em>“Ruffle.JS”</em></strong>.</p>
+
+<h3 id="future-of-neopets">Future of Neopets</h3>
+
+<p>Being a lot older now. I wonder about the current business model of Neopets. The core users are generally a lot older (18 years and over) and probably play it purely for nostalgia. The only interesing games for these users are the original Flash games from the early days.</p>
+
+<p>Advertising is likely a legal challenge as the page, even though it has an aging user base, is geared towards children.</p>
+
+<p>Nowadays most web developers see their career chances higher with one of the newer web frameworks. Many of which are inefficient, convoluted and are routinely deprecated. The strength of Neopets lies in it’s simplicity. A Web 1.0 interface, purely HTML and flash player objects. It is probably tough to find developers that have the skill and respect for the old technology and don’t modernize to aggressively, which would turn the fan base away.</p>
+
+<p>The NFT tokens, if they generated real world money and are linked to the in-game scores would mean the games would have to be cheat proof. I don’t see how that would be possible.</p>
+
+<p>I hope they keep the page online, but I don’t see how it can generate revenue. Even funding through donations from the fans would eventually dry up.</p>
+
+<p>In my opinion there lies chance in compelling premium memberships that parents, who grew up with the games, would pay for their children. Or to open-source the entire page so that forks can be hosted here and there in a decentralized community paid way to at least keep it available for self-hosters.</p>
+
+<h3 id="technology-stack">Technology Stack</h3>
+
+<p>When automating the games, I started out developing in <strong><em>Visual Basic 6.0</em></strong> with the Flash Player ActiveX object. I would manually download the *.swf file and then load it in my software. Some time later, in <strong><em>VB.Net</em></strong>, I used the built in web browser component.</p>
+
+<p>There are generally two approaches:</p>
+
+<ul>
+  <li>one is to load the game in the browser, launch it by JavaScript code injection, make sure it’s displayed at a fixed position and size and then control it by taking automated screenshots, analysing them and then sending keyboard and mouse events.</li>
+  <li>the other is to load the page, extract the flash game link, load it into a Flash Player instance and then read and write from the internal variables.</li>
+</ul>
+
+<p>I’ve used both approaches, but tend to use the first. It’s more challenging, generally more robust and not as easy to get locked out of. I found that on some of the newer Neopets games <em>(“new” is relative, after 2002 or so)</em> they instantiate a class and throw the pointer away. That way it becomes hard to access the memory of the game.</p>
+
+<p>Over time I’ve completly transitioned from Windows to Linux for most of my hobbyist development work and needed a solutions there.</p>
+
+<p>With <strong><em>Python and Selenium</em></strong> we can control run a webbrowser and control it, in a cross-platform way. This is what you are seeing in the above image.</p>
+
+<p>I’ve also experimented with loading a full flash player in C++ using the now depecated NPAPI, the <strong><em>“Netscape Plugin Application Programming Interface (NPAPI”</em></strong>). It’s a real challenge to set up and I couldn’t get it to run stable. That would allow for more advanced interaction with the flash component, as I’ve done in the past with Visual Basic 6.0.</p>
+
+<p>Recently I found that using <strong><em>C++ with wxWidgets</em></strong> and the wxWebview component is a great way to write robost code for this purpose.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>As mentioned above I will outline how to automate a Neopets game, but I won’t provide the complete steps or code. It should be interesting nevertheless.</p>
+
+<p>In this example I’ll show how to automate the game <strong><em>“Spellseeker”</em></strong> (on the German version of Neopets: <strong><em>“Zeichen der Magie”</em></strong>).</p>
+
+<h3 id="about-the-game">About the Game</h3>
+
+<p>In the game <strong><em>“Spellseeker”</em></strong> the player needs to click on stones in order such that the values increase and decrease by a set amount.</p>
+
+<p>Within a computer science mindset: this is a perfect use case for graphs and the <strong><em>depth first search</em></strong> algorithm. But first we need to load the game, recognize the digits on the playing field and prepare transformations of the coordinate system.</p>
+
+<h3 id="loading-the-page">Loading the Page</h3>
+
+<p>In a previous post I wrote about web scraping using C++, wxWidgets and wxWebView (see <a href="/proigramming/2025/08/07/Do-CppWebScraper.html">Web-Scraping</a>). We can use that exact same approach to load a Neopets game. Since WebKit can run JavaScript and Flash is being emulated with Rumble.JS, the games load fine.</p>
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/2025-08-15-141015_799x999_scrot.png" class="responsive-image" width="45%" />
+
+<h3 id="taking-screenshots">Taking Screenshots</h3>
+
+<p>Next we need to be able to take a screenshot of the game in order for our code to analyse it.</p>
+
+<p>For this I’ve written a simple function. If we were to use <code class="language-plaintext highlighter-rouge">wxScreenDC dcScreen;</code> instead of <code class="language-plaintext highlighter-rouge">wxClientDC dcScreen(m_webView);</code> we would take a screenshot of the entire desktop. The <code class="language-plaintext highlighter-rouge">Blit</code> function copies the widgets graphics buffer to the memory location of the <code class="language-plaintext highlighter-rouge">wxBbitmap</code> we instantiate before-hand.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">screenshot</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">wxClientDC</span> <span class="n">dcScreen</span><span class="p">(</span><span class="n">m_webView</span><span class="p">);</span>
+ 
+    <span class="n">wxCoord</span> <span class="n">screenWidth</span><span class="p">,</span> <span class="n">screenHeight</span><span class="p">;</span>
+    <span class="n">dcScreen</span><span class="p">.</span><span class="n">GetSize</span><span class="p">(</span><span class="o">&amp;</span><span class="n">screenWidth</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">screenHeight</span><span class="p">);</span>
+    <span class="n">wxBitmap</span> <span class="n">screenshot</span><span class="p">(</span><span class="n">screenWidth</span><span class="p">,</span> <span class="n">screenHeight</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">wxMemoryDC</span> <span class="n">memDC</span><span class="p">;</span>
+    <span class="n">memDC</span><span class="p">.</span><span class="n">SelectObject</span><span class="p">(</span><span class="n">screenshot</span><span class="p">);</span>
+    <span class="n">memDC</span><span class="p">.</span><span class="n">Blit</span><span class="p">(</span> 
+      <span class="mi">0</span><span class="p">,</span> <span class="c1">// target x coordinate</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="c1">// target y coordinate</span>
+        <span class="n">screenWidth</span><span class="p">,</span> <span class="c1">// width</span>
+        <span class="n">screenHeight</span><span class="p">,</span> <span class="c1">// height</span>
+        <span class="o">&amp;</span><span class="n">dcScreen</span><span class="p">,</span> <span class="c1">// source</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="c1">// source x coordinate</span>
+        <span class="mi">0</span>  <span class="c1">// source y coordinate</span>
+    <span class="p">);</span>
+    <span class="n">memDC</span><span class="p">.</span><span class="n">SelectObject</span><span class="p">(</span><span class="n">wxNullBitmap</span><span class="p">);</span>
+
+    <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">fileName</span> <span class="o">=</span> <span class="s">"scrn-"</span> <span class="o">+</span> <span class="n">getTimestamp</span><span class="p">()</span> <span class="o">+</span> <span class="s">".jpg"</span><span class="p">;</span>
+    <span class="n">screenshot</span><span class="p">.</span><span class="n">SaveFile</span><span class="p">(</span><span class="n">fileName</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="n">wxBITMAP_TYPE_JPEG</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>With that code we get nice screenshots of the game such as this one:</p>
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/scrn-2025-08-14_111144.jpg" class="responsive-image" width="45%" />
+
+<h3 id="recognizing-the-stones-on-the-playing-field">Recognizing the stones on the playing field</h3>
+
+<p>In order to recognize stones on the field there are multiple ways:</p>
+
+<ul>
+  <li>I used to manually measure the pixel locations in an graphics editor like “MS Paint” or, on Linux, in “KolourPaint”. Convert the images to black and white and compare the number of overlapping black pixels with previously stored template images.</li>
+  <li>at some point I started using OCR text recognition with either <strong><em>“Tesseract OCR”</em></strong> in Python or <strong><em>“Asprise OCR”</em></strong> in VB.NET</li>
+</ul>
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/old-vbnet.gif" class="responsive-image" width="30%" />
+
+<p><small>(the VB.Net version from 2010 using an evaluation version of Asprise OCR)</small></p>
+
+<ul>
+  <li>I’ve even played with very academic approaches: a variant of the <strong><em>“Eigenfaces”</em></strong> algorithm, subtracting each image from a mean image, applying principle component analysis, clustering and then applying the function to new digits to recognize digits by their euclidean distance to the cluster centers. Basically rolling my own digit recognition.</li>
+</ul>
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/2025-08-15-143255_1009x637_scrot.png" class="responsive-image" width="30%" />
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/2025-08-15-143231_533x403_scrot.png" class="responsive-image" width="20%" />
+
+<p>This time around I’ll go with a more robust and easy method: <strong><em>Image Matching with OpenCV</em></strong>.</p>
+
+<p>By noting down the positions of elements of the playing field, we can write a simple function to retrieve “template” images.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SImages</span><span class="o">&gt;</span> <span class="n">m_images</span> <span class="p">{</span>
+  <span class="p">[...]</span>
+  <span class="p">{</span><span class="s">"play_game"</span><span class="p">,</span> <span class="s">"scrn-2025-08-14_111133.jpg"</span><span class="p">,</span> <span class="mi">292</span><span class="p">,</span> <span class="mi">770</span><span class="p">,</span> <span class="mi">406</span><span class="p">,</span> <span class="mi">794</span><span class="p">},</span>
+  <span class="p">[...]</span>
+  <span class="p">{</span><span class="s">"3"</span><span class="p">,</span> <span class="s">"scrn-2025-08-14_111144.jpg"</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">476</span><span class="p">,</span> <span class="mi">228</span><span class="o">+</span><span class="mi">34</span><span class="p">,</span> <span class="mi">476</span><span class="o">+</span><span class="mi">34</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">"1"</span><span class="p">,</span> <span class="s">"scrn-2025-08-14_111144.jpg"</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">522</span><span class="p">,</span> <span class="mi">228</span><span class="o">+</span><span class="mi">34</span><span class="p">,</span> <span class="mi">522</span><span class="o">+</span><span class="mi">34</span><span class="p">},</span>
+  <span class="p">{</span><span class="s">"2"</span><span class="p">,</span> <span class="s">"scrn-2025-08-14_111144.jpg"</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">570</span><span class="p">,</span> <span class="mi">228</span><span class="o">+</span><span class="mi">34</span><span class="p">,</span> <span class="mi">570</span><span class="o">+</span><span class="mi">34</span><span class="p">},</span>
+<span class="p">};</span>
+
+<span class="n">cv</span><span class="o">::</span><span class="n">Mat</span> <span class="nf">getImage</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">tag</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">image</span> <span class="o">:</span> <span class="n">m_images</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">tag</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">cv</span><span class="o">::</span><span class="n">Mat</span> <span class="n">original</span> <span class="o">=</span> <span class="n">cv</span><span class="o">::</span><span class="n">imread</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">source</span><span class="p">);</span>
+      <span class="n">cv</span><span class="o">::</span><span class="n">Mat</span> <span class="n">cropped</span> <span class="o">=</span> <span class="n">original</span><span class="p">(</span><span class="n">cv</span><span class="o">::</span><span class="n">Range</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">y1</span><span class="p">,</span> <span class="n">image</span><span class="p">.</span><span class="n">y2</span><span class="p">),</span> <span class="n">cv</span><span class="o">::</span><span class="n">Range</span><span class="p">(</span><span class="n">image</span><span class="p">.</span><span class="n">x1</span><span class="p">,</span> <span class="n">image</span><span class="p">.</span><span class="n">x2</span><span class="p">));</span>
+      <span class="k">return</span> <span class="n">cropped</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">cv</span><span class="o">::</span><span class="n">Mat</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Using OpenCV’s <strong><em>matchTemplate</em></strong> function we can locate template images in a screenshot. With a bit of modification we can find multiple occurrences in the image.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">struct</span> <span class="nc">SResult</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">tag</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">x</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">y</span><span class="p">;</span>
+<span class="p">};</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SResult</span><span class="o">&gt;</span> <span class="n">findMultipleInImage</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">imageFile</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">imageTag</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">Mat</span> <span class="n">image</span> <span class="o">=</span> <span class="n">cv</span><span class="o">::</span><span class="n">imread</span><span class="p">(</span><span class="n">imageFile</span><span class="p">);</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">Mat</span> <span class="n">templateImage</span> <span class="o">=</span> <span class="n">getImage</span><span class="p">(</span><span class="n">imageTag</span><span class="p">);</span>
+  
+  <span class="n">cv</span><span class="o">::</span><span class="n">Mat</span> <span class="n">res</span><span class="p">;</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">matchTemplate</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">templateImage</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">cv</span><span class="o">::</span><span class="n">TM_CCOEFF_NORMED</span><span class="p">);</span>
+  <span class="n">cv</span><span class="o">::</span><span class="n">threshold</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="n">cv</span><span class="o">::</span><span class="n">THRESH_TOZERO</span><span class="p">);</span>
+  
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SResult</span><span class="o">&gt;</span> <span class="n">results</span><span class="p">;</span>
+
+  <span class="k">while</span> <span class="p">(</span><span class="nb">true</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">double</span> <span class="n">minval</span><span class="p">,</span> <span class="n">maxval</span><span class="p">,</span> <span class="n">threshold</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">;</span>
+    <span class="n">cv</span><span class="o">::</span><span class="n">Point</span> <span class="n">minloc</span><span class="p">,</span> <span class="n">maxloc</span><span class="p">;</span>
+    <span class="n">cv</span><span class="o">::</span><span class="n">minMaxLoc</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">minval</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">maxval</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">minloc</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">maxloc</span><span class="p">);</span>    
+    <span class="k">if</span> <span class="p">(</span><span class="n">maxval</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">cv</span><span class="o">::</span><span class="n">floodFill</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">maxloc</span><span class="p">,</span> <span class="n">cv</span><span class="o">::</span><span class="n">Scalar</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="n">cv</span><span class="o">::</span><span class="n">Scalar</span><span class="p">(</span><span class="mf">.1</span><span class="p">),</span> <span class="n">cv</span><span class="o">::</span><span class="n">Scalar</span><span class="p">(</span><span class="mf">1.</span><span class="p">));</span>
+      <span class="n">results</span><span class="p">.</span><span class="n">push_back</span><span class="p">({</span><span class="n">imageTag</span><span class="p">,</span> <span class="n">maxloc</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">maxloc</span><span class="p">.</span><span class="n">y</span><span class="p">});</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>  
+  <span class="k">return</span> <span class="n">results</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This works flawlessly as can be seen when drawing rectangles around the ‘1’ digit found in the screenshot:</p>
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/2025-08-14-133024_643x580_scrot.png" class="responsive-image" width="30%" />
+
+<p>And if we run that against the entire set of known template images, collecting all locations and then sorting the result by y- and then x-coordinates, we can read out the playing field.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SResult</span><span class="o">&gt;</span> <span class="n">findAll</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">imageFile</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// -- find coordinates of all known template images</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SResult</span><span class="o">&gt;</span> <span class="n">results</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">image</span> <span class="o">:</span> <span class="n">m_images</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SResult</span><span class="o">&gt;</span> <span class="n">results_</span> <span class="o">=</span> <span class="n">findMultipleInImage</span><span class="p">(</span><span class="n">imageFile</span><span class="p">,</span> <span class="n">image</span><span class="p">.</span><span class="n">tag</span><span class="p">,</span> <span class="nb">false</span><span class="p">);</span>
+    <span class="n">results</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="n">results</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span> <span class="n">results_</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span> <span class="n">results_</span><span class="p">.</span><span class="n">end</span><span class="p">());</span>
+  <span class="p">}</span>
+  
+  <span class="c1">// -- sort by coordinates (requires stable sort)</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">stable_sort</span><span class="p">(</span><span class="n">begin</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">end</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="p">[](</span><span class="n">SResult</span> <span class="n">a</span><span class="p">,</span> <span class="n">SResult</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">;</span> <span class="p">});</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">stable_sort</span><span class="p">(</span><span class="n">begin</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="n">end</span><span class="p">(</span><span class="n">results</span><span class="p">),</span> <span class="p">[](</span><span class="n">SResult</span> <span class="n">a</span><span class="p">,</span> <span class="n">SResult</span> <span class="n">b</span><span class="p">)</span> <span class="p">{</span><span class="k">return</span> <span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">;</span> <span class="p">});</span>
+
+  <span class="c1">// -- print</span>
+  <span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">result</span> <span class="o">:</span> <span class="n">results</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">result</span><span class="p">.</span><span class="n">x</span> <span class="o">&lt;&lt;</span> <span class="s">","</span> <span class="o">&lt;&lt;</span> <span class="n">result</span><span class="p">.</span><span class="n">y</span> <span class="o">&lt;&lt;</span> <span class="s">","</span> <span class="o">&lt;&lt;</span> <span class="n">result</span><span class="p">.</span><span class="n">tag</span> <span class="o">&lt;&lt;</span> <span class="s">" | "</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="n">results</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/numbered.jpg" class="responsive-image" width="30%" />
+
+<p>The read out of <code class="language-plaintext highlighter-rouge">results.tag</code> is</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>3 1 2 3 2 1 3 1 1 1 1 3 2 3 2 3 2 2 3 1 3 2 1 1 2 3 3 2 3 3 2 3 3 3 2 1 1 3 2 3 2 2 3 3 2 3 3 2 1 3 3 1 2 1 2 3 2 1
+</code></pre></div></div>
+
+<h3 id="building-a-graph">Building a Graph</h3>
+
+<p>Next we need to somehow represent, as a graph, which moves are valid. This will serve as the input for the <strong><em>“depth first search”</em></strong> algorithm later.</p>
+
+<h4 id="coordinate-space">Coordinate Space</h4>
+
+<p>I’ve messed around with coordinate transforms a bit over time trying to come up with a mapping to find the neighbours for a given stone.</p>
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/numbered2.jpg" class="responsive-image" width="30%" />
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/2025-08-15-150414_210x275_scrot.png" class="responsive-image" width="10%" />
+
+<p>The challenge here is that you need to respect the borders and out-of-bounds conditions. Additionally every other column has a different length.</p>
+
+<p>In the end the easiest solution was to just use a for-loop and count along to get a <code class="language-plaintext highlighter-rouge">index -&gt; (field_x,field_y)</code> mapping and the reverse:</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">idxToCoor</span> <span class="o">=</span> <span class="p">[](</span><span class="kt">int</span> <span class="n">idx</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kt">int</span> <span class="n">x_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">y_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">58</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">idx</span> <span class="o">==</span> <span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">x_</span><span class="p">,</span> <span class="n">y_</span><span class="p">};</span>
+    <span class="p">}</span>
+    <span class="n">y_</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span><span class="p">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">5</span> <span class="o">||</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">12</span> <span class="o">||</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">18</span> <span class="o">||</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">25</span> <span class="o">||</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">31</span> <span class="o">||</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">38</span> <span class="o">||</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">44</span> <span class="o">||</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">51</span> <span class="o">||</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">57</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">x_</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="n">y_</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">SPoint</span><span class="p">{</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">};</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<p>A similar approach works for the reverse.</p>
+
+<h4 id="finding-neighbours">Finding Neighbours</h4>
+
+<p>We can then find all neighbouring stones. The <code class="language-plaintext highlighter-rouge">addPoint</code> function here just skips out-of-bounds conditions.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">neighboursOfNode</span> <span class="o">=</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">SPoint</span> <span class="n">coor</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SPoint</span><span class="o">&gt;</span> <span class="n">neighbours</span><span class="p">;</span>
+
+  <span class="k">if</span><span class="p">(</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span><span class="p">});</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span><span class="p">});</span>
+    <span class="n">addPoint</span><span class="p">(</span><span class="n">neighbours</span><span class="p">,</span> <span class="n">SPoint</span><span class="p">{</span><span class="n">coor</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">coor</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">});</span>
+  <span class="p">}</span>
+  
+  <span class="k">return</span> <span class="n">neighbours</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h4 id="filtering-neighbours">Filtering Neighbours</h4>
+
+<p>We can then go through all neighbouring nodes discarding the nodes which don’t have <code class="language-plaintext highlighter-rouge">+/- 1</code> as per the game rules.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">auto</span> <span class="n">adjacentEdges</span> <span class="o">=</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SResult</span><span class="o">&gt;</span> <span class="n">nodes</span><span class="p">,</span> <span class="kt">int</span> <span class="n">nodeId</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">result</span><span class="p">;</span>
+  
+  <span class="n">SResult</span> <span class="n">a</span> <span class="o">=</span> <span class="n">nodes</span><span class="p">[</span><span class="n">nodeId</span><span class="p">];</span>
+  <span class="n">SPoint</span> <span class="n">c</span> <span class="o">=</span> <span class="n">idxToCoor</span><span class="p">(</span><span class="n">nodeId</span><span class="p">);</span>
+  <span class="kt">int</span> <span class="n">nodeValue</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">stoi</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">tag</span><span class="p">);</span>
+
+  <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SPoint</span><span class="o">&gt;</span> <span class="n">neighbours</span> <span class="o">=</span> <span class="n">neighboursOfNode</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+  
+  <span class="k">for</span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span> <span class="n">n</span> <span class="o">:</span> <span class="n">neighbours</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">int</span> <span class="n">neighbourId</span> <span class="o">=</span> <span class="n">coorToIdx</span><span class="p">(</span><span class="n">n</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">.</span><span class="n">y</span><span class="p">);</span>
+    <span class="kt">int</span> <span class="n">neighbourValue</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">stoi</span><span class="p">(</span><span class="n">nodes</span><span class="p">[</span><span class="n">neighbourId</span><span class="p">].</span><span class="n">tag</span><span class="p">);</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">abs</span><span class="p">(</span><span class="n">nodeValue</span> <span class="o">-</span> <span class="n">neighbourValue</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">result</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">neighbourId</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">};</span>
+</code></pre></div></div>
+
+<h3 id="solving-algorithm">Solving Algorithm</h3>
+
+<p>With the <code class="language-plaintext highlighter-rouge">adjacentEdges</code>-function ready we can finally implement the <strong><em>depth first search</em></strong> algorithm in order to find the longest path.</p>
+
+<p>The idea here is to keep a stack of paths. In each iteration we take a path off of the stack and try to extend it by one move. If that succeeds, we re-add it to the stack, otherwise we discard the path. During this we keep track of the longest path found so far.</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+  <span class="k">auto</span> <span class="n">dfs</span> <span class="o">=</span> <span class="p">[</span><span class="o">&amp;</span><span class="p">](</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">SResult</span><span class="o">&gt;</span> <span class="n">nodes</span><span class="p">,</span> <span class="kt">int</span> <span class="n">startNode</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">longestPath</span><span class="p">;</span>
+    
+    <span class="n">std</span><span class="o">::</span><span class="n">stack</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span> <span class="n">stackOfPaths</span><span class="p">;</span>
+    <span class="n">stackOfPaths</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">{</span><span class="n">startNode</span><span class="p">});</span>
+    
+    <span class="k">while</span><span class="p">(</span><span class="o">!</span><span class="n">stackOfPaths</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span> <span class="p">{</span>
+      <span class="c1">// -- get a path from the stack</span>
+      <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">path</span> <span class="o">=</span> <span class="n">stackOfPaths</span><span class="p">.</span><span class="n">top</span><span class="p">();</span>
+        <span class="n">stackOfPaths</span><span class="p">.</span><span class="n">pop</span><span class="p">();</span> 
+        
+        <span class="c1">// -- keep copy of longest</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">path</span><span class="p">.</span><span class="n">size</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">longestPath</span><span class="p">.</span><span class="n">size</span><span class="p">())</span> <span class="p">{</span>
+          <span class="n">longestPath</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="n">path</span><span class="p">);</span>
+        <span class="p">}</span>                   
+        
+        <span class="c1">// -- try to extend current path by one adjacentEdge</span>
+        <span class="k">for</span><span class="p">(</span><span class="kt">int</span> <span class="n">n</span><span class="o">:</span> <span class="n">adjacentEdges</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">path</span><span class="p">.</span><span class="n">back</span><span class="p">()))</span> <span class="p">{</span>
+          <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="n">vectorContains</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span> <span class="n">copy</span><span class="p">(</span><span class="n">path</span><span class="p">);</span>
+            <span class="n">copy</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+            <span class="n">stackOfPaths</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">copy</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="n">longestPath</span><span class="p">;</span>
+  <span class="p">};</span>
+</code></pre></div></div>
+
+<p>A small challenge during implementation of this in <code class="language-plaintext highlighter-rouge">C++</code> was making sure we deal with copies of the vector where necessary. <code class="language-plaintext highlighter-rouge">C++</code> favors pointers over objects for performance, but sometimes we want to have a copy of the underlying data, so that it isn’t modified in the next iteration.</p>
+
+<p>In order for this to work we would need to run this from every one of the 57 stones on the field to find the overall longest path. This approach can be optimized by starting the search only on fields that have only a single neighbour as these, by definition, must be the start or ending points of the longest possible path.</p>
+
+<p>One run of this algorithm from a single starting point and visualizing the path - not necessarily the longest path - yields this:</p>
+
+<img src="../../../../images/2025-08-15-Fr-NeopetsSpellseeker/path-found.png" class="responsive-image" width="40%" />
+
+<p>We see that the path starting at the selected stone is not optimal. Starting the algorithm one stone higher or lower would have yielded a path which would have been one stone longer.</p>
+
+<h3 id="entering-the-result">Entering the Result</h3>
+
+<p>Using the <code class="language-plaintext highlighter-rouge">idxToCoor</code> function, that was also used to visualize the path, we can get the coordinates to perform mouse clicks on. Running the clicks in sequence could automatically enter the path.</p>
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>As we’ve seen automating flash games can involve interesting algorithms and computer science concepts. We’ve used a graphical user interface (using wxWidgets) to load a browser, made screenshots, built in digit recognition (using OpenCV), converted that to a graph and ran a “depth first search” algorithm on the graph to solve the game.</p>
+
+<p>There were other programming languages like VB.Net, Python with Selenium and OCR techniques, the Flash player object and so on involved in previous approaches. A lot can be learned from automating web browser games.</p>
+
+<hr />
+
+<pre>
+1] https://www.neopets.com/
+2] https://en.wikipedia.org/wiki/Who_Has_The_Biggest_Brain%3F
+3] https://en.wikipedia.org/wiki/Neopets
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Game Automation, Neopets 'Spellseeker'"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
