@@ -193,11 +193,11 @@
 <ul>
   <li>webcams are typically too poor in image quality. Quick experiments have shown that the webcams I have here (Logitech C270 and Logitech StreamCam) get completly blinded by the laser line. The StreamCam refocuses too often. They also lack the resolution required for the task.</li>
   <li>industrial cameras would have fixed focus and white-balance, but require a laptop or computer with cables going to it. They also typically don’t capture colour. For this we would need special filters. While a robust solution could be an industrial camera with a suitable filter, that setup would be too involved for what I’m trying to achieve here.</li>
-  <li>aiming the cameras without being able to view the camera image on a display at the camera would be tedious. It would mean walking back and forth between a computer and the camera rig. Or having someone help during calibratio. Smartphone are advantageous as they have displays built-in.</li>
+  <li>aiming the cameras without being able to view the camera image on a display at the camera would be tedious. It would mean walking back and forth between a computer and the camera rig. Or having someone help during calibration. Smartphone are advantageous as they have displays built-in.</li>
   <li>reliability is also an issue: I need this to work on the first attempt. If I can get a good video recording in one go, I can do the analysis with more time in my office. For this I can use the ability of smartphones to record directly to internal memory.</li>
   <li>we also need this to work in an extremly dusty environment. I don’t want to mess up expensive equipement. Smartphones are inexpensive. They are also typically relatively sealed against dirt.</li>
   <li>cost is also a factor: I’m experimenting and didn’t know if any of this would work. Hence I’m not willing to spend too much money at this stage.</li>
-  <li>connectivity os also another big adavantage of smartphones. We can record to internal storage, but we could also use the built in Wifi in combination with an appp to stream video to a computer running, for example “Open Broadcast Studio” (OBS) wirelessly.</li>
+  <li>connectivity is also another big adavantage of smartphones. We can record to internal storage, but we could also use the built in Wifi in combination with an app to stream video to a computer running, for example “Open Broadcast Studio” (OBS) wirelessly.</li>
 </ul>
 
 <h3 id="leveling-laser">Leveling Laser</h3>
@@ -240,7 +240,7 @@
 
 <h4 id="lighting-focus-and-white-balance-is-critical">Lighting, Focus and White Balance is critical</h4>
 
-<p>As the S22 is not an industrial camera with fixed white-balance and focus, it may refocus during recording. That makes reading the measurements challenging.</p>
+<p>As the “Samsung Galaxy S22” is not an industrial camera with fixed white-balance and focus, it may refocus during recording. That makes reading the measurements challenging.</p>
 
 <p>I’ve found that adding cardboard behind the rig helps block incoming light from the windows.</p>
 
@@ -256,15 +256,15 @@
 
 <h4 id="ruler">Ruler</h4>
 
-<p>I’ve found that my white folding rule provided best results. The aluminium ruler I used before that reflected the laser light too much and blinded the camera. The ruler needs be made of a non-reflecting material. The best solution would probably be a wooden ruler.</p>
+<p>I’ve found that my white folding rule provided best results. The aluminium ruler I used before that reflected the laser light too much and blinded the camera. The ruler needs to be made of a non-reflecting material. The best solution would probably be a wooden ruler.</p>
 
 <h3 id="positional-camera">Positional Camera</h3>
 
-<p>The positional camera films the entire room during measurement. Its objective is to keep track of the position of the Camera and Ruler Rig during the measurement.</p>
+<p>The positional camera films the entire room during measurement. Its objective is to keep track of the position of the rig during the measurement.</p>
 
 <h4 id="camera-1">Camera</h4>
 
-<p>As a camera I’m using my old “Xiaomi Mi 8” smart phone. It unforunately does not have a wide-angle/fish-eye lens to cover more area of the room. The overall image quality is also not as good as the more modern and expensive “Samsung Galaxy S22”. But I only have these two cameras. For positional information the camera quality is not as important as recording the laser line on the ruler.</p>
+<p>As a positional camera I’m using my old “Xiaomi Mi 8” smart phone. It unforunately does not have a wide-angle/fish-eye lens to cover more area of the room. The overall image quality is also not as good as the more modern and expensive “Samsung Galaxy S22”. But I only have these two cameras. For recording the laser line on the ruler the camera image quality is important. For positional information not so much.</p>
 
 <h4 id="camera-mount-on-tripod">Camera mount on tripod</h4>
 
@@ -272,7 +272,7 @@
 
 <h4 id="covering-the-room-with-two-recordings">Covering the room with two recordings</h4>
 
-<p>For each recording the tripod is moved to the center of the opposite wall. We typically need two recordings to cover the entire room. The leveling laser sits directly under the tripod and is also moved along with the tripod and positional camera.</p>
+<p>We typically need two recordings to cover the entire room. I start the recording with the positional camera in the center of one of the walls. After recording half of the room, I then move the positional camera to the center of the opposite wall and record a second time. The leveling laser sits directly under the tripod and is also moved along with the tripod and positional camera. I end up with two pairs of video, one is the recording of the ruler and one the position for each pair.</p>
 
 <h2 id="software-setup">Software Setup</h2>
 
@@ -280,7 +280,7 @@
 
 <h3 id="transfer-to-the-computer">Transfer to the Computer</h3>
 
-<p>In order to transfer the recordings to my computer I’m using Termux and SSH-Servers on the phones. I’ve written about how to install SSH servers on Android using Termux in the past (see <a href="{ post_url./2024-01-14-So-AndroidServerPt2-InstallServerSoftware }">my previous post</a>).</p>
+<p>In order to transfer the recordings to my computer I’m using Termux and SSH-Servers on the phones. This works without the phones having to be rooted. I’ve written about how to install SSH servers on Android using Termux in the past (see <a href="{ post_url./2024-01-14-So-AndroidServerPt2-InstallServerSoftware }">my previous post</a>).</p>
 
 <p>Alternatively we can go old-fashioned and just copy the files over with a USB-cable. I just found the ability to use Linux bash scripts to grab the footage very convenient.</p>
 
@@ -296,13 +296,13 @@
 
 <img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/kdenlive-video-align.png" class="responsive-image" width="5%" />
 
-<p>The result wit the two video recordings synchronizsed and placed side-by-side looks something like this:</p>
+<p>The result with the two video recordings synchronized and placed side-by-side looks something like this:</p>
 
 <img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/16-combined.jpg" class="responsive-image" width="45%" />
 
 <h4 id="recording-both-video-feeds-together">Recording both video feeds together</h4>
 
-<p>An alternative in order to avoid having to align the video recordings could be to set up a WiFi network, have a laptop nearby install “DroidCam” App and have “Open Broadcast Studio” (OBS) record the two video feeds together automatically. But that makes the measurement process much more involved.</p>
+<p>An alternative in order to avoid having to align the video recordings could be to set up a WiFi network, have a laptop nearby, install the “DroidCam” App on the smartphones and have “Open Broadcast Studio” (OBS) record the two video feeds together in one go automatically. But that makes the measurement process much more involved.</p>
 
 <h4 id="alignment-by-python-script">Alignment by Python Script</h4>
 
@@ -437,7 +437,7 @@ see also
 [..]
 </code></pre></div></div>
 
-<p>They Python script allows me to play the video back slowly and then manually click on the location of the rig in the video and then type in the reading from the ruler. It will then automatically overlay the readings onto the video feed and colour the readings according offset from the median value.</p>
+<p>The Python script allows me to play the video back slowly and then manually click on the location of the rig in the video and then type in the reading from the ruler. It will then automatically overlay the readings onto the video feed and colour the readings according to the measurement offset from the median height value.</p>
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
 Manual digitizing readings in video stream
@@ -623,7 +623,7 @@ see also
 
 <img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/digitize-subtracted.png" class="responsive-image" width="45%" />
 
-<p>As you can see the area containing the camera rig is highlighted. Unfortunately, so are also my feet. Distinguishing my feed from the camera rig and also dealing with the smart phone display turned out to be a real challenge.</p>
+<p>As you can see the area containing the camera rig is highlighted. Unfortunately, so are also my feet. Distinguishing my feet from the camera rig and also dealing with the changing light from the smartphone display turned out to be a real challenge for automatic image recognition.</p>
 
 <h5 id="contour-detection">Contour Detection</h5>
 
@@ -676,7 +676,7 @@ see also
 <span class="nf">markPosition</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>This produced promising, but unrealiable results</p>
+<p>This produced promising, but unrealiable results. An issue is that changing lighting conditions - sometimes I record on a bright day, sometimes in the evening - requires adjustment of these thresholds for each recording.</p>
 
 <img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/digitize-contours.png" class="responsive-image" width="45%" />
 
@@ -891,73 +891,72 @@ www.dennissalzner.de 2026
 
 <p>I’ve found that the april tag generator found here [1] works well. I print type “tag25h9” tags at about 70x70mm size. Some old 3D printed leftovers that I cut to a suitable shape make sturdy mounts for the printed out april tags. Make sure they are perfectly flat and facing towards the camera and there should be no problem detecting them.</p>
 
-<p>``py
-“””
+<div class="language-py highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="sh">"""</span><span class="s">
 April Tag detector
-Based on code from pyimagesearch.com</p>
+Based on code from pyimagesearch.com
 
-<p>www.dennissalzner.de 2026</p>
+www.dennissalzner.de 2026
 
-<p>see also</p>
-<ul>
-  <li>https://pyimagesearch.com/2020/11/02/apriltag-with-python/</li>
-  <li>https://chaitanyantr.github.io/apriltag.html
-“””</li>
-</ul>
+see also
+- https://pyimagesearch.com/2020/11/02/apriltag-with-python/
+- https://chaitanyantr.github.io/apriltag.html
+</span><span class="sh">"""</span>
 
-<p>VIDEO_FILE_2=”<path-to-position-recording>.mp4"</path-to-position-recording></p>
+<span class="n">VIDEO_FILE_2</span><span class="o">=</span><span class="sh">"</span><span class="s">&lt;path-to-position-recording&gt;.mp4</span><span class="sh">"</span>
 
-<p>import cv2
-import numpy as np
-import apriltag
-skipFrames = 2000
-cap = cv2.VideoCapture(VIDEO_FILE_2)
-_, frame = cap.read()
-frameNo = 0
-while True:
-    _, frame = cap.read()
-    frameNo += 1
-    if skipFrames &gt; frameNo:
-      continue</p>
+<span class="kn">import</span> <span class="n">cv2</span>
+<span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">np</span>
+<span class="kn">import</span> <span class="n">apriltag</span>
+<span class="n">skipFrames</span> <span class="o">=</span> <span class="mi">2000</span>
+<span class="n">cap</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nc">VideoCapture</span><span class="p">(</span><span class="n">VIDEO_FILE_2</span><span class="p">)</span>
+<span class="n">_</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+<span class="n">frameNo</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">cap</span><span class="p">.</span><span class="nf">read</span><span class="p">()</span>
+    <span class="n">frameNo</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">skipFrames</span> <span class="o">&gt;</span> <span class="n">frameNo</span><span class="p">:</span>
+      <span class="k">continue</span>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-options = apriltag.DetectorOptions(families="tag25h9")
-detector = apriltag.Detector(options)
-results = detector.detect(gray)
+    <span class="n">gray</span> <span class="o">=</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">cvtColor</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">cv2</span><span class="p">.</span><span class="n">COLOR_BGR2GRAY</span><span class="p">)</span>
+    <span class="n">options</span> <span class="o">=</span> <span class="n">apriltag</span><span class="p">.</span><span class="nc">DetectorOptions</span><span class="p">(</span><span class="n">families</span><span class="o">=</span><span class="sh">"</span><span class="s">tag25h9</span><span class="sh">"</span><span class="p">)</span>
+    <span class="n">detector</span> <span class="o">=</span> <span class="n">apriltag</span><span class="p">.</span><span class="nc">Detector</span><span class="p">(</span><span class="n">options</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">detector</span><span class="p">.</span><span class="nf">detect</span><span class="p">(</span><span class="n">gray</span><span class="p">)</span>
 
-if len(results) != 0:
-  print("[INFO] {} total AprilTags detected".format(len(results)))
+    <span class="k">if</span> <span class="nf">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+      <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">[INFO] {} total AprilTags detected</span><span class="sh">"</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="nf">len</span><span class="p">(</span><span class="n">results</span><span class="p">)))</span>
 
-for r in results:
-    (ptA, ptB, ptC, ptD) = r.corners
-    ptB = (int(ptB[0]), int(ptB[1]))
-    ptC = (int(ptC[0]), int(ptC[1]))
-    ptD = (int(ptD[0]), int(ptD[1]))
-    ptA = (int(ptA[0]), int(ptA[1]))
-    cv2.line(frame, ptA, ptB, (0, 255, 0), 2)
-    cv2.line(frame, ptB, ptC, (0, 255, 0), 2)
-    cv2.line(frame, ptC, ptD, (0, 255, 0), 2)
-    cv2.line(frame, ptD, ptA, (0, 255, 0), 2)
-    (cX, cY) = (int(r.center[0]), int(r.center[1]))
-    cv2.circle(frame, (cX, cY), 5, (0, 0, 255), -1)
-    tagFamily = r.tag_family.decode("utf-8")
-    cv2.putText(frame, tagFamily, (ptA[0], ptA[1] - 15),
-        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-    print("[INFO] tag family: {}".format(tagFamily))
-cv2.imshow('Frame', frame)
-if len(results) != 0:       
-  cv2.waitKey(0) 
-if cv2.waitKey(30) &amp; 0xFF == 27:
-    break cap.release() cv2.destroyAllWindows() ```
+    <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+        <span class="p">(</span><span class="n">ptA</span><span class="p">,</span> <span class="n">ptB</span><span class="p">,</span> <span class="n">ptC</span><span class="p">,</span> <span class="n">ptD</span><span class="p">)</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">corners</span>
+        <span class="n">ptB</span> <span class="o">=</span> <span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">ptB</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nf">int</span><span class="p">(</span><span class="n">ptB</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">ptC</span> <span class="o">=</span> <span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">ptC</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nf">int</span><span class="p">(</span><span class="n">ptC</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">ptD</span> <span class="o">=</span> <span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">ptD</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nf">int</span><span class="p">(</span><span class="n">ptD</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">ptA</span> <span class="o">=</span> <span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">ptA</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nf">int</span><span class="p">(</span><span class="n">ptA</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">cv2</span><span class="p">.</span><span class="nf">line</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">ptA</span><span class="p">,</span> <span class="n">ptB</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="p">.</span><span class="nf">line</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">ptB</span><span class="p">,</span> <span class="n">ptC</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="p">.</span><span class="nf">line</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">ptC</span><span class="p">,</span> <span class="n">ptD</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="p">.</span><span class="nf">line</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">ptD</span><span class="p">,</span> <span class="n">ptA</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">cX</span><span class="p">,</span> <span class="n">cY</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="nf">int</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">center</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span> <span class="nf">int</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">center</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">cv2</span><span class="p">.</span><span class="nf">circle</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="p">(</span><span class="n">cX</span><span class="p">,</span> <span class="n">cY</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">tagFamily</span> <span class="o">=</span> <span class="n">r</span><span class="p">.</span><span class="n">tag_family</span><span class="p">.</span><span class="nf">decode</span><span class="p">(</span><span class="sh">"</span><span class="s">utf-8</span><span class="sh">"</span><span class="p">)</span>
+        <span class="n">cv2</span><span class="p">.</span><span class="nf">putText</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">tagFamily</span><span class="p">,</span> <span class="p">(</span><span class="n">ptA</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ptA</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">15</span><span class="p">),</span>
+            <span class="n">cv2</span><span class="p">.</span><span class="n">FONT_HERSHEY_SIMPLEX</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="nf">print</span><span class="p">(</span><span class="sh">"</span><span class="s">[INFO] tag family: {}</span><span class="sh">"</span><span class="p">.</span><span class="nf">format</span><span class="p">(</span><span class="n">tagFamily</span><span class="p">))</span>
+    <span class="n">cv2</span><span class="p">.</span><span class="nf">imshow</span><span class="p">(</span><span class="sh">'</span><span class="s">Frame</span><span class="sh">'</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nf">len</span><span class="p">(</span><span class="n">results</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>       
+      <span class="n">cv2</span><span class="p">.</span><span class="nf">waitKey</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> 
+    <span class="k">if</span> <span class="n">cv2</span><span class="p">.</span><span class="nf">waitKey</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span> <span class="o">==</span> <span class="mi">27</span><span class="p">:</span>
+        <span class="k">break</span>
+<span class="n">cap</span><span class="p">.</span><span class="nf">release</span><span class="p">()</span>
+<span class="n">cv2</span><span class="p">.</span><span class="nf">destroyAllWindows</span><span class="p">()</span>
 </code></pre></div></div>
 
 <img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/apriltags1.jpg" class="responsive-image" width="15%" />
 
 <img src="../../../../images/2025-10-25-Sa-FloorLevelingPt2CameraBased/apriltags2.png" class="responsive-image" width="15%" />
 
-<p>In order to measure the height all we need to do is move pixelwise along a line between the two tags and check for the brightest green line - that is typically the live of the leveling laser.</p>
+<p>In order to measure the height all we would need to do is move pixelwise along a line between the two April tags and check for the brightest green pixels. That should yield the location of the laser line relative to the April tags.</p>
 
-<p>We then can compute a percentage position of where the line is between the april tags. Knowing the distance they have to eachother we can convert that value into millimeters.</p>
+<p>We then can compute a percentage position of where the line is between the April tags. Knowing the distance they have to eachother we can convert that value into millimeters.</p>
 
 <p>How accurate this will be depends on many factors. Within &lt;2 mm precision should be achievable.</p>
 

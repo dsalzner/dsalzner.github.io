@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
+
+  
+  <title>Floor Leveling - Pt.3 - Electronic Laser Target for two dimensional floor height measurement - sponsored by PCBWay - Dennis Salzner</title>
+  
+  
+
+  <!-- search engine -->
+  <meta name="description" content="Last time we designed a camera-based solution to the problem of mapping floor height. This time, with the help of sponsorship from PCBWay, we will design an elecronic target boa..."/>
+  <link rel="canonical" href="https://www.dennissalzner.de/electronics/2025/10/26/So-FloorLevelingPt3ElectronicLaserTarget.html">
+  <meta property="og:locale" content="en_EN" />
+  <meta property="og:type" content="article" />
+  <meta property="og:title" content="Floor Leveling - Pt.3 - Electronic Laser Target for two dimensional floor height measurement - sponsored by PCBWay - Dennis Salzner" />
+  <meta property="og:description" content="Last time we designed a camera-based solution to the problem of mapping floor height. This time, with the help of sponsorship from PCBWay, we will design an ..." />
+  <meta property="og:url" content="https://www.dennissalzner.de/electronics/2025/10/26/So-FloorLevelingPt3ElectronicLaserTarget.html" />
+  <meta property="og:site_name" content="Dennis Salzner" />
+  <meta property="article:section" content="electronics" />
+  <meta property="article:published_time" content="2025-10-26 00:00:00 +0200" />
+  <meta property="article:modified_time" content="2025-10-26 00:00:00 +0200" />
+  <meta property="og:updated_time" content="2025-10-26 00:00:00 +0200" />
+  <meta property="og:image" content="" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:description" content="Last time we designed a camera-based solution to the problem of mapping floor height. This time, with the help of sponsorship from PCBWay, we will design an elecronic target boa..." />
+  <meta name="twitter:title" content="Floor Leveling - Pt.3 - Electronic Laser Target for two dimensional floor height measurement - sponsored by PCBWay - Dennis Salzner" />
+  <meta name="twitter:image" content="" />
+ 
+  <!-- syntax highlighting in code snippets -->
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/main.css">
+  <link rel="stylesheet" href="https://www.dennissalzner.de/css/style.css">
+
+  <!-- jquery (for vimeo video embedding)-->
+  <script src="https://www.dennissalzner.de/js/jquery.min.js"></script>
+  
+  <!-- photos -->
+  <script src="https://www.dennissalzner.de/js/lightbox.js"></script>
+  <link href="https://www.dennissalzner.de/css/lightbox.css" rel="stylesheet">
+  
+  <!-- diagramms -->
+  <script src="https://www.dennissalzner.de/js/mermaid.min.js"></script>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-P2BRPNLLXQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-P2BRPNLLXQ');
+</script>
+
+
+</head>
+
+  <body>
+    <div style="margin: 32px;">
+    
+
+<h1>Dennis Salzner - Floor Leveling - Pt.3 - Electronic Laser Target for two dimensional floor height measurement - sponsored by PCBWay</h1>
+<p align="right" style="font-size:80%"><a href="https://www.dennissalzner.de/"><< Back Home</a></p>
+
+<div class="page-title">Floor Leveling - Pt.3 - Electronic Laser Target for two dimensional floor height measurement - sponsored by PCBWay</div>
+<div class="page-subtitle"></div>
+<div class="page-seperator"></div>
+
+<div class="post-content" itemprop="articleBody">
+    <p style="font-size: 60%;" align="right">What</p>
+
+<p>Last time we designed a camera-based solution to the problem of mapping floor height. This time, with the help of sponsorship from PCBWay, we will design an elecronic target board. The target board can convert the height of the laser line directly to digital readings and send them to a computer over serial communication.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/v1.png" class="responsive-image" width="35%" />
+
+<p style="font-size: 60%;" align="right">Contents</p>
+
+<h2 id="contents">Contents</h2>
+
+<nav>
+  <h4>Table of Contents</h4>
+<ul id="markdown-toc">
+  <li><a href="#contents" id="markdown-toc-contents">Contents</a></li>
+  <li><a href="#background" id="markdown-toc-background">Background</a>    <ul>
+      <li><a href="#sponsorship" id="markdown-toc-sponsorship">Sponsorship</a></li>
+      <li><a href="#challenges-with-the-camera-based-approach" id="markdown-toc-challenges-with-the-camera-based-approach">Challenges with the camera-based approach</a></li>
+      <li><a href="#other-options" id="markdown-toc-other-options">Other Options</a>        <ul>
+          <li><a href="#market-analysis" id="markdown-toc-market-analysis">Market Analysis</a></li>
+          <li><a href="#inexpensive-consumer-grade-laser-targets" id="markdown-toc-inexpensive-consumer-grade-laser-targets">Inexpensive consumer grade laser targets</a></li>
+          <li><a href="#professional-grade-laser-targets" id="markdown-toc-professional-grade-laser-targets">Professional grade laser targets</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#hardware-considerations" id="markdown-toc-hardware-considerations">Hardware Considerations</a>    <ul>
+      <li><a href="#positional-information" id="markdown-toc-positional-information">Positional Information</a></li>
+      <li><a href="#design-goals" id="markdown-toc-design-goals">Design Goals</a>        <ul>
+          <li><a href="#testing-and-reusablility" id="markdown-toc-testing-and-reusablility">Testing and Reusablility</a></li>
+          <li><a href="#iterative-improvements-agile-design" id="markdown-toc-iterative-improvements-agile-design">Iterative improvements, Agile Design</a></li>
+          <li><a href="#usage-levels" id="markdown-toc-usage-levels">Usage Levels</a>            <ul>
+              <li><a href="#level-0---sections-can-be-used-individually" id="markdown-toc-level-0---sections-can-be-used-individually">Level 0 - sections can be used individually</a></li>
+              <li><a href="#level-1---computer-and-alternative-micro-controller-with-webcam" id="markdown-toc-level-1---computer-and-alternative-micro-controller-with-webcam">Level 1 - computer and alternative micro controller with webcam</a></li>
+              <li><a href="#level-2---computer-and-alternative-micro-controller-with-lidar" id="markdown-toc-level-2---computer-and-alternative-micro-controller-with-lidar">Level 2 - computer and alternative micro controller with lidar</a></li>
+              <li><a href="#level-3---board-works-with-computer" id="markdown-toc-level-3---board-works-with-computer">Level 3 - board works with computer</a></li>
+              <li><a href="#level-4---all-computation-on-the-board" id="markdown-toc-level-4---all-computation-on-the-board">Level 4 - all computation on the board</a></li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="#measusing-green-laser-light" id="markdown-toc-measusing-green-laser-light">Measusing Green Laser Light</a>        <ul>
+          <li><a href="#i2c-ambient-light-sensors" id="markdown-toc-i2c-ambient-light-sensors">I<sup>2</sup>C Ambient Light sensors</a></li>
+          <li><a href="#cmos" id="markdown-toc-cmos">CMOS</a></li>
+          <li><a href="#linear-photodiodes" id="markdown-toc-linear-photodiodes">Linear Photodiodes</a></li>
+          <li><a href="#custom-photodiode-array" id="markdown-toc-custom-photodiode-array">Custom Photodiode Array</a></li>
+          <li><a href="#types-of-photodiodes" id="markdown-toc-types-of-photodiodes">Types of Photodiodes</a></li>
+        </ul>
+      </li>
+      <li><a href="#sensing-window" id="markdown-toc-sensing-window">Sensing Window</a>        <ul>
+          <li><a href="#area-to-cover" id="markdown-toc-area-to-cover">Area to cover</a></li>
+        </ul>
+      </li>
+      <li><a href="#microcontroller" id="markdown-toc-microcontroller">Microcontroller</a></li>
+      <li><a href="#photodiode-to-microcontroller" id="markdown-toc-photodiode-to-microcontroller">Photodiode to Microcontroller</a></li>
+    </ul>
+  </li>
+  <li><a href="#hardware-design" id="markdown-toc-hardware-design">Hardware Design</a>    <ul>
+      <li><a href="#schematic" id="markdown-toc-schematic">Schematic</a>        <ul>
+          <li><a href="#three-sections" id="markdown-toc-three-sections">Three sections</a></li>
+          <li><a href="#pin-headers-allow-for-debugging-and-reuse" id="markdown-toc-pin-headers-allow-for-debugging-and-reuse">Pin Headers allow for debugging and reuse</a></li>
+        </ul>
+      </li>
+      <li><a href="#pcb-routing" id="markdown-toc-pcb-routing">PCB routing</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
+</ul>
+
+</nav>
+
+<p style="font-size: 60%;" align="right">When</p>
+
+<p>Recently I was approached by a PCB manufacturer from Shenzhen, China. They found my blog and offered to sponsor a project. With this sponsorship, we can take the project up a notch and design an electronic target board in order to fully automate the digitization of the laser line height.</p>
+
+<p style="font-size: 60%;" align="right">Background</p>
+
+<h2 id="background">Background</h2>
+
+<p>In order to pour leveling compound more strategically during my renovations, I needed a way of creating a two dimensional map of the floor height (see <a href="/electronics/2025/10/19/So-FloorLevelingPt1Introduction.html">part 1 introduction</a>).
+This was solved by a camera-based method. It uses two cameras, one to cover the position in the room and one to record a laser line on a ruler (see <a href="/electronics/2025/10/25/Sa-FloorLevelingPt2CameraBased.html">part 2 camera-based solution</a>). However the method is still tedious. An electronic target board that outputs the height values via serial communication would make the process much more efficient.</p>
+
+<h3 id="sponsorship">Sponsorship</h3>
+
+<p>When PCBWay approached me for sponsorship I researched the company and found that they offer PCB manufacturing services and sponsor “45.000 hobbyists all over the world”. I can say already that I’ve received the boards and that the experience was pleasant. There were also almost no strings attached: I merely promised to promote them on a series of posts regarding this project.</p>
+
+<p>So what is the gain for me?</p>
+
+<ul>
+  <li>they cover the costs of PCB production and even assembly</li>
+  <li>mention on PCBWay’s webseite means publicity</li>
+  <li>the project becomes easier to replicate for my readers as PCBWay has the design files</li>
+  <li>I will have learned how to use their service for similar projects in the future.</li>
+  <li>it motivates me to design and complete this project on a more professional level</li>
+</ul>
+
+<p>What do they gain by supporting hobbyists?</p>
+
+<ul>
+  <li>they receive referal from hobbysits mentioning them in their projects</li>
+  <li>the customer feedback they receive from sponsored projects is typically more favourable</li>
+  <li>others are more likely to order the same PCBs when reproducing the projects. PCBWay gains customers and saves time in manufacturing, because they’ve been through the process with that exact design.</li>
+  <li>PCBWay can improve their production capabilities and processes and align more closely with their customer base</li>
+  <li>they gain access to the designs, could theoretically sell them directly or via sub-contractors themselves</li>
+  <li>the early rapid expansion helps them establish a strong foothold in the market, as engineers learn how to use their services and are more likely to come back</li>
+</ul>
+
+<p>As for this project</p>
+
+<ul>
+  <li>an electronic target board will allow me to measure floor height more efficiently</li>
+  <li>I’ve designed the board to use the popular stm32f103 micro-controller in a “bluepill” style configuration. I’ve tried this in the past for anther project (see <a href="/electronics/2023/06/18/So-lqfp48-desoldering.html">lqfp48</a> and <a href="/retrocomp/2022/02/17/Do-AtariStMegaAcsiSdCard.html">AtariStMegaAcsiSdCard</a>))</li>
+  <li>and I’ve designed the PCB in sections in other to be able to test and use each section individually also for other projects.</li>
+</ul>
+
+<p>Due to the nature of the sponsoring some of my design constraints were:</p>
+
+<ul>
+  <li>build something not too trivial and novel, but that fits into the 61.5 x 99.5 mm size constraint</li>
+  <li>use only two layers so that I can reach both sides with the soldering iron, can cut traces and add jumper wires, if needed</li>
+  <li>keep the board in sections with pins easily accessible</li>
+  <li>design the board in sections so that each section can be tested and used individually. This way we can use early prototype board and hack them to be useful after production, even if they only partially work.</li>
+  <li>use SMD components in order to use the limited space effectively and because though-hole is an issue in PCB production, but smd is where it excels.</li>
+  <li>something that I can open-source and don’t mind giving the design files away</li>
+  <li>that can be of use to others</li>
+  <li>and that will work in a reasonable amount of time with out causing too much work on my end</li>
+</ul>
+
+<p>The last point, the amount of work involved, was particularly important, as I have many things going on at the moment. Some years ago I had written about etching custom PCBs at home (see <a href="/electronics/2016/04/14/Do-PcbEtching.html">PCB etching</a>)). Back then I had intended not to go down that route anymore and rather design my hobbyist projects to use off-the-shelf hobbyist microcontroller and power boards, hot-glueing and hot-wiring them instead of going through all the work of PCB production.</p>
+
+<p>The sponsorship along a suitable project idea and previous experience with custom PCBs gave me the motivation to follow through and try modern PCB production. A lot of the process was streamlined, software has improved and the process became less-expensive since I was etching my own boards.</p>
+
+<h3 id="challenges-with-the-camera-based-approach">Challenges with the camera-based approach</h3>
+
+<p>With the camera-based method I was able to completly achieve the goals I had, but there are drawbacks:</p>
+
+<ul>
+  <li>I choose smartphones over webcams and industrial cameras, as they are more practical in this project, but they also make image quality hard to control.</li>
+  <li>we needed to synchronize the two video feeds, which is either manual labour or requires software. Either way it is an additional step.</li>
+  <li>during recordings cameras often slipped which would lead for important areas not being in frame</li>
+  <li>lighting, auto-focus and white-balance was consistantly an issue.</li>
+  <li>the setup is also somewhat tedious</li>
+  <li>and we had to go great lengths to automatically digitize the readings, that is get x,y,z (z=height) coordinates from the material</li>
+</ul>
+
+<h3 id="other-options">Other Options</h3>
+
+<p>The biggest issue with the camera-based approach was getting accurate readings of the laser line height. I researched online extensively for equipment that can provide digital readings of laser line height.</p>
+
+<p>What I found were three types of “laser target boards”:</p>
+
+<ul>
+  <li>a) simple reflective surfaces that make visually reading the height easier</li>
+  <li>b) devices that reflect laser light perpendicular and use a single photodiode to only signal highest intensity when the target is centered</li>
+  <li>c) or extremly expensive “laser targets” typically containing photo diode arrays that are expensive and difficult to find.</li>
+</ul>
+
+<p>Option a) is what we already have with the non-reflective ruler I’m using. b) is not of much value as it would require mechanically moving the target board up and down, and then use a distance measure when it’s at the right value c) is close to what I need, but expensive and specialized.</p>
+
+<p>In the end I ended up building my own make-shift “photo diode array” by adding a 24 automotive light sensors in a grid configuration and reading them with three 8-channel analog-digital converter chips</p>
+
+<h4 id="market-analysis">Market Analysis</h4>
+
+<p>Expensive and proprietary equipment for measing the height of a line laser does exist. As do cheap laser targets that only signal the presense of the laser line close to center of the board.</p>
+
+<h4 id="inexpensive-consumer-grade-laser-targets">Inexpensive consumer grade laser targets</h4>
+
+<p>The inexpensive “Laser Targets” or “Laser Receivers” give an acoustic sound and can be bought for around 40 Eur.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/18-laserReceiver.png" class="responsive-image" width="15%" />
+
+<p>My first throught was to just record the audio output of such a device and analyse the frequency.</p>
+
+<p>But then I looked further into how they work. Behind the “sensing window” these cheap laser targets contain a “light tube” that directs incoming laser light onto a single photodiode [2].</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/20-laser-target-inside.jpg" class="responsive-image" width="25%" />
+
+<p><br /><small>(Image taken from [2])</small></p>
+
+<p>The tube is constructed such that the intensity of the light that reaches the photodiode varys with distance to the center of the tube.</p>
+
+<p>Thus, unfortunately, these devices don’t yield information to which side the laser line line is offset from center.</p>
+
+<p>We could theoretically place the target board such that the laser line reaches only only half of the tube and cover the other half of the tube, but then the sensing windows would be very small.</p>
+
+<p>I’ve also thought about using two or more such tubes offset to one another.</p>
+
+<h4 id="professional-grade-laser-targets">Professional grade laser targets</h4>
+
+<p>There are also more expensive devices that display the offset in millimeters. These cost upwards of 250 Eur.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/19-laserReceiver2.png" class="responsive-image" width="15%" />
+
+<p>Some can transfer the height measurements via bluetooth, but they cost even more.</p>
+
+<p style="font-size: 60%;" align="right">How</p>
+
+<h2 id="hardware-considerations">Hardware Considerations</h2>
+
+<p>We need to first make some concious decisions on the parts we want to use for the board. They have to be suitable, available and afforable.</p>
+
+<h3 id="positional-information">Positional Information</h3>
+
+<p>The electronic laser target is one part of the project. It will yield measurement values of the laser height. For positional information of where in the room the laser target is located, we can use the 360 degree Lidar and SLAM algorithms (see <a href="/electronics/2024/09/21/Sa-RobotPt1Lidar.html">my previous posts on Lidar</a>). This in turn requires wheel odometry (see <a href="/electronics/2024/09/28/Sa-RobotPt3Odometry.html">my previous posts on Wheel Odometry</a>).</p>
+
+<p>Both the height and positional information would be evaluated in software. Either on a powerful micro controller or transferred to a PC running SLAM in the robotics operating system (ROS), smartphone App via serial connection (RS232) or bluetooth.</p>
+
+<p>I intend to use my “WayPonDEV LD14P” 360 Degree Lidar. Accuracy is not too much of a concern here. I know I can run it in ROS (see <a href="/electronics/2024/09/21/Sa-RobotPt1Lidar.html">Lidar in ROS</a>).</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/07-lidar.jpg" class="responsive-image" width="15%" />
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/08-ros.png" class="responsive-image" width="15%" />
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/23-lidar.jpg" class="responsive-image" width="15%" />
+
+<p>But for now let’s focus on the electronic laser target.</p>
+
+<h3 id="design-goals">Design Goals</h3>
+
+<p>I’ve designed some design goals for this project.</p>
+
+<h4 id="testing-and-reusablility">Testing and Reusablility</h4>
+
+<p>As mentioned above I intend to keep design the board in reusable and easily testable sections. Each section can be used individually. Between each sections will be easily accessable pin headers. This way boards can be cut and hot-wired during testing and also for other projects in the future.</p>
+
+<h4 id="iterative-improvements-agile-design">Iterative improvements, Agile Design</h4>
+
+<p>With hardware designs such as this one it is safe to assume that the first iteration will almost certainly contain errors.</p>
+
+<p>This is why I’ve structured the board in three sections, as mentioned above, in order to be able to debug and/or use each section individually.</p>
+
+<p>Additionally I’ve added lots of pin headers to the design so that I can add jumper wires where I need them.</p>
+
+<h4 id="usage-levels">Usage Levels</h4>
+
+<p>For this design I came up with what I call “levels of usage”. Depending on what works and what doesn’t the early board revisions will be somewhat usable.</p>
+
+<h5 id="level-0---sections-can-be-used-individually">Level 0 - sections can be used individually</h5>
+
+<p>In this case I can</p>
+
+<ul>
+  <li>cut the board into three halves: the micro controller circuit, analog digital circuit, the photo diode array</li>
+  <li>then test each individually, add jumper wires where necessary and bodge the board to be usable</li>
+  <li>use it to learn from mistakes for future revisions</li>
+</ul>
+
+<h5 id="level-1---computer-and-alternative-micro-controller-with-webcam">Level 1 - computer and alternative micro controller with webcam</h5>
+
+<p>If the photo diode array and analog digital circuit work, but the micro controller does not, we can replace the micro controller with a hand soldered auxiliary board with serial connection to get the measurements into a computer.</p>
+
+<ul>
+  <li>connect a separate micro controller hand soldered board containing an ATmega8 or similar</li>
+  <li>it can be connected to the SPI connections of the analog digital converters.</li>
+  <li>this can be used to test the two of the three sections of the board</li>
+  <li>the hand soldered board can be connected to a computer via serial connection</li>
+</ul>
+
+<p>This would already be usable for measuring floor height, as I can get the height readings in into a laptop computer via serial connection. The software side could run on the computer.</p>
+
+<p>A webcam, also connected to the laptop, could record my position in the room similar to the camera-based method (see <a href="post_url 2025-10-25-Sa-FloorLevelingPt2CameraBased">my previous post</a>). To automatically gather the data without manual steps an April tag could be printed onto the rig in order to automatically track position in the room from the video.</p>
+
+<h5 id="level-2---computer-and-alternative-micro-controller-with-lidar">Level 2 - computer and alternative micro controller with lidar</h5>
+
+<p>The webcam can in Level 1 can replaced with the 360 degree Lidar, also connected to the computer, with the software running on the computer. The robotic operating system (ROS) could be used. The computer can produce the 2D map with height information.</p>
+
+<h5 id="level-3---board-works-with-computer">Level 3 - board works with computer</h5>
+
+<p>If all sections of the board work we won’t need the auxiliary micro controller board and can directly transfer measurements to a computer as in levels 1 and 2.</p>
+
+<h5 id="level-4---all-computation-on-the-board">Level 4 - all computation on the board</h5>
+
+<p>Once the entire board works, the Lidar data cane be read by the stm32f103 and mapping is computed directly on the micro controller we will have reached the full build.</p>
+
+<h3 id="measusing-green-laser-light">Measusing Green Laser Light</h3>
+
+<p>There are few options to measure laser light.</p>
+
+<ul>
+  <li>inexpensive consumer grade laser targets. These unfortunately use light tubes and single photo diodes inside that we can’t easily reuse for our purposes.</li>
+  <li>I<sup>2</sup>C Ambient Light sensors as used in smart home devices that contain a photo diode and digitization circuitry in one package. However they generally don’t have peak sensitivity at the wavelength I need.</li>
+  <li>Linear Photo diodes or photo diode arrays would be perfect. Large ones are prohibitively expensive for a hobbyist project.</li>
+  <li>CMOS sensors from cameras are not suited for the purpose due to size and builtin color filtering.</li>
+</ul>
+
+<h4 id="i2c-ambient-light-sensors">I<sup>2</sup>C Ambient Light sensors</h4>
+
+<p>My first thought was to use I<sup>2</sup>C ambient light sensors like those found in smart home appliances. They contain a photodiode and the circuitry to digitize the result and make it available on an I<sup>2</sup>C bus.</p>
+
+<p>These chips could be used to pickup the laser line. Placing them in an array or grid would allow reading values along a line. A microcontroller could then compute the laser line height.</p>
+
+<p>The Everlight ALS-DPDIC17-78C costs roughly 1 Eur at a German electronics online store. The chip is 2 by 2 mm in size and could be positioned in two or more columns on a PCB. Each column could be shifted to the one before it in order to capture with sub-millimeter performance.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/21-ambientLightSensor.png" class="responsive-image" width="10%" />
+
+<h4 id="cmos">CMOS</h4>
+
+<p>We could use a CMOS camera sensor without a lense and point it directly at the laser. I don’t know if that would damage the sensor. Consumer CMOS sensors are coated with colors in order to pickup red, blue and green. Additionally we need a sensing window of two or three centimeters and CMOS sensors are typically smaller. This would not be suitable.</p>
+
+<h4 id="linear-photodiodes">Linear Photodiodes</h4>
+
+<p>Another option could be “linear photo-diodes” or “photo-diode arrays” [3].</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/22-linearPhotodiode.png" class="responsive-image" width="10%" />
+
+<p>Interestingly such linear photo diodes in a grid is what make up CMOS sensors in modern digital cameras.</p>
+
+<h4 id="custom-photodiode-array">Custom Photodiode Array</h4>
+
+<p>As linear photo-diodes are somewhat rare and expensive, I<sup>2</sup>C ambient light sensors seem a little too much for such a project, I’d probably have to design a custom board that holds multiple photo diodes in an array that array connected to a micro-controller to get the intensity readings.</p>
+
+<p>Green lasers typically <strong><em>emit “wavelengths of 505 nm, 510 nm, 514.5 nm and 520 nm”</em></strong> [4]. So we need photo diodes that cover that range.</p>
+
+<p>Vishay seems to be a common producer of SMD photo diodes. They typically cost around 25 cents and have dimensions of 3.9 x 4.4mm.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/24-photodiode.png" class="responsive-image" width="10%" />
+
+<p>VBPW34S is a common one, but the wavelength of this particular photo diode is not suitable to pickup green light, as can be seen from the data sheet [5].</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/25-wavelength.png" class="responsive-image" width="30%" />
+
+<p><br /><small>(Image modified, original taken from datasheet [5])</small></p>
+
+<h4 id="types-of-photodiodes">Types of Photodiodes</h4>
+
+<p>My leveling laser has a green laser. Green lasers have a wavelength of roughly between <strong><em>495nm and 550nm</em></strong>. So we need photo diodes that have good sensitivity at that wavelength.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/04-photodiode.jpg" class="responsive-image" width="15%" />
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/05-photodiode.jpg" class="responsive-image" width="15%" />
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/06-photodiode.jpg" class="responsive-image" width="15%" />
+
+<p>But it’s not just that. The photo diodes need:</p>
+
+<ul>
+  <li>sensitivity at the correct wave length</li>
+  <li>needs to be affordable</li>
+  <li>readily available</li>
+  <li>small in size</li>
+  <li>surface mountable</li>
+</ul>
+
+<p>First I had planed to use the vemd5510fx01, but to do availability concerns and a missing footprint in KiCAD I went with sfh2430 photodiodes. These are so common they can be found on eBay.</p>
+
+<h3 id="sensing-window">Sensing Window</h3>
+
+<p>The sensing window is the area in which the light from the leveling laser can be detected. Here we need to place the sensors that are then evaluated by the micro-controller.</p>
+
+<h4 id="area-to-cover">Area to cover</h4>
+
+<p>In order to have a reasonably large “sensing window” with at least 1mm accuracy, the photo diodes need to be creatively placed.</p>
+
+<p>The photodiodes have a width of 4.3mm and height of 3.7mm.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/09-dimensions.png" class="responsive-image" width="15%" />
+
+<p>With clever placement, by placing four offset by a quarter and assuming the device is held perfectly straight, we can compute the the height based on which photo diodes receive light and which don’t.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/08-placement.png" class="responsive-image" width="25%" />
+
+<p>As seen in the image, if the laser line is at the pictured height, then photo diodes A, B, C and not D should read higher values than the rest of the board.</p>
+
+<p>If the line was a millimeter higher D would register a value, but not A. If it was a millimeter lower, then E would register a value.</p>
+
+<p>The disadvantage of this method is that we need to assume the device to be held perfectly perpendicular to the floor, but even when that is not the case, we can apply averaging to the values. The readings would likely be close enough for my purposes.</p>
+
+<h3 id="microcontroller">Microcontroller</h3>
+
+<p>Starting out the onboard micro controller might only provide the height measurements to a connected computer via RS-232. A Python script could combine the 2D location with the height measurement. Ideally it would also handle the LIDAR data and compute the 2D map on device.</p>
+
+<p>For this I need a micro controller that has the performance and has a secondary USART for the Lidar RS-232/TTL connection.</p>
+
+<p>The stm32f103c8t6 should be a good fit. I’ve wanted to use it in projects for a long time, but due to the tfqp-48 packaging and the issue of availability of genuine bluepill boards (see <a href="/electronics/2023/06/18/So-lqfp48-desoldering.html">lqfp48</a>, it’s not easily possible without custom PCB fabrication which I now have.</p>
+
+<h3 id="photodiode-to-microcontroller">Photodiode to Microcontroller</h3>
+
+<p>Connecting the photo diodes to the micro controller directly is not feasible for 24 diodes. We would need 24 analog input pins. I want to use analog signals and not threshold the signal to digital 0..1 in hardware as that would require a comparator that would be difficult to calibrate in hardware. I rather record analog values and then compute the threshold dynamically with averaging in software.</p>
+
+<p>The photo diodes could be connected in a multiplexed fashion so save analog digital converters, but the risk and reduced ability to reuse the board for other purposes doesn’t outweigh the cost of the analog digital converters for me. A 24-port analog-digital board is useful for many projects by itself.</p>
+
+<h2 id="hardware-design">Hardware Design</h2>
+
+<p>With the above in mind, I started designing a circuit in KiCad. I had a look at some other sponsored submissions of other people to PCBWay and found they are made with KiCAD. I’ve used it in the past, it’s free and open-source and so it is also my tool of choice.</p>
+
+<h3 id="schematic">Schematic</h3>
+
+<p>In order to get the first schematic done efficiently I looked around for open-source stm32 BluePill type boards made with KiCad. I found this one (see GitHub flamerten/Basic_STM32_Bluepill [1]).</p>
+
+<p>I took over only the schematic, but not the PCB layout and heavily modified it. This way I could be relatively sure that the basic stm32f103 circuitry would work from the start.</p>
+
+<h4 id="three-sections">Three sections</h4>
+
+<p>The schematic is separated into three sections:</p>
+
+<ul>
+  <li>the <strong><em>stm32f103</em></strong> circuit: it connects to the rest only via SPI - if I need to debug or can’t get it to work, I can still use the board by hand soldering, for instance an ATMega board, to the SPI wires.</li>
+  <li>the <strong><em>analog digital converters</em></strong>: I chose not to multiplex the photodiodes, but rather daisy-chain the more expensive 8-channel mcp3008 analog digital converters - if the project fails, I can use the 24 analog inputs for something else, like soil moisture sensing (see <a href="/electronics/2024/02/18/So-PlantSoilMoistureSensor.html">Soil Moisture Sensor</a>).</li>
+  <li>the <strong><em>photodiode array</em></strong>: 24 photo diodes that have sensitivity in green wavelengths, but are actually ambient light sensors - in case of issues here, they could be removed, rewired or used for other projects.</li>
+</ul>
+
+<h4 id="pin-headers-allow-for-debugging-and-reuse">Pin Headers allow for debugging and reuse</h4>
+
+<p>To make modifying connections easy I’ve added a few pin headers:</p>
+
+<ul>
+  <li>for the secondary UART and I<sup>2</sup>C</li>
+  <li>an SPI connection and three chip-select wires to the analog-digital converters</li>
+  <li>pin headers for all pins PA0 to PA15 and PB0 to PB15</li>
+</ul>
+
+<p>The pin headers allow me to easily modify connections in early stages of the project. I can easily cut traces and just hand solder jumper wires where I need them.</p>
+
+<p>The secondary UART may be used in the future to connect to the TTL ports of the 360 LIDAR.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/09-schematic1.png" class="responsive-image" width="45%" />
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/10-schematic2.png" class="responsive-image" width="45%" />
+
+<h3 id="pcb-routing">PCB routing</h3>
+
+<p>PCB routing took most of the time. Modern tools like KiCad make it as easy as possible, but the process of untangling wires such that they can be routed onto two layers without crossing is still mostly a manual task.</p>
+
+<p>There is a feature in KiCAD to quickly assign footprints to the components in the schematic. This works exceptionally well and makes the process really easy. The table for this is also the basis for the BOM table we will need to submit to the PCB production service. It may make sense to make decisions on the exact manufacturers and part numbers and enter them there.</p>
+
+<p>In the PCB editor of KiCAD there is a menu item up top to <strong><em>“Update PCB from Schematic”</em></strong>. With it we can go back and forth between schematic and PCB until we arrive at a point where the PCB can be routed.</p>
+
+<p>I separated many of the pin arrays into smaller ones to be able to route the wires.</p>
+
+<p>After 1,5 evenings of moving components around I finally arrived at a design I am happy with. I couldn’t place Vias (connections to the other side of the board) on the TFQP-48 package of the stm32f103 chip as it is too small, so I used single pin headers in order to make such connections. These were used primarily for 3.3V lines and GND that tend to need to go all over the place. This way the back of the PCB connects mostly only the single pin headers to one another for 3.3V and GND lines respectively. The front does the rest. This adds the benefit of being able to probe these rather important connections with a multi meter when debugging. If I need to expand the board I can connect to the power lines there.</p>
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/11-pcb.png" class="responsive-image" width="15%" />
+
+<img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/02-electronic-laser-target.png" class="responsive-image" width="15%" />
+
+<p style="font-size: 60%;" align="right">Progress</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>I’ve submitted the design of the electronic laser target to PCBWay for production. In the next part of the series, when I receive the boards, I will describe the order process with PCBWay and fixes to my design. We will then attempt to bring up the board in the fifth part of the series.</p>
+
+<hr />
+
+<pre>
+1] https://chaitanyantr.github.io/apriltag.html
+1] https://de.wikipedia.org/wiki/Estrich
+2] https://electronics.stackexchange.com/questions/218023/laser-detector-parts
+3] https://de.wikipedia.org/wiki/Photodiodenzeile
+4] https://www.rp-photonics.com/green_lasers.html
+5] https://www.vishay.com/docs/81128/vbpw34s.pdf
+</pre>
+
+</div>
+
+<script src="https://utteranc.es/client.js"
+  repo="dsalzner/dsalzner.github.io"
+	issue-term="Floor Leveling - Pt.3 - Electronic Laser Target for two dimensional floor height measurement - sponsored by PCBWay"
+	theme="boxy-light"
+	crossorigin="anonymous"
+	async>
+</script>
+
+
+</div>
+
+
+
+    <div class="footer">
+  D.Salzner : www.dennissalzner.de : 2024 <a href="/impr.html">imp</a><a href="/impr.html">ressum</a>
+</div>
+
+  </body>
+</html>
