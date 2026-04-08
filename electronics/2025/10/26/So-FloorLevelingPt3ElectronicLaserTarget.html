@@ -11,12 +11,12 @@
   
 
   <!-- search engine -->
-  <meta name="description" content="Last time we designed a camera-based solution to the problem of mapping floor height. This time, with the help of sponsorship from PCBWay, we will design an elecronic target boa..."/>
+  <meta name="description" content="Last time we designed a camera-based solution to the problem of mapping floor height. This time we will design an elecronic target board. The board will be manufactured with the..."/>
   <link rel="canonical" href="https://www.dennissalzner.de/electronics/2025/10/26/So-FloorLevelingPt3ElectronicLaserTarget.html">
   <meta property="og:locale" content="en_EN" />
   <meta property="og:type" content="article" />
   <meta property="og:title" content="Floor Leveling - Pt.3 - Electronic Laser Target for two dimensional floor height measurement - sponsored by PCBWay - Dennis Salzner" />
-  <meta property="og:description" content="Last time we designed a camera-based solution to the problem of mapping floor height. This time, with the help of sponsorship from PCBWay, we will design an ..." />
+  <meta property="og:description" content="Last time we designed a camera-based solution to the problem of mapping floor height. This time we will design an elecronic target board. The board will be m..." />
   <meta property="og:url" content="https://www.dennissalzner.de/electronics/2025/10/26/So-FloorLevelingPt3ElectronicLaserTarget.html" />
   <meta property="og:site_name" content="Dennis Salzner" />
   <meta property="article:section" content="electronics" />
@@ -25,7 +25,7 @@
   <meta property="og:updated_time" content="2025-10-26 00:00:00 +0200" />
   <meta property="og:image" content="" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:description" content="Last time we designed a camera-based solution to the problem of mapping floor height. This time, with the help of sponsorship from PCBWay, we will design an elecronic target boa..." />
+  <meta name="twitter:description" content="Last time we designed a camera-based solution to the problem of mapping floor height. This time we will design an elecronic target board. The board will be manufactured with the..." />
   <meta name="twitter:title" content="Floor Leveling - Pt.3 - Electronic Laser Target for two dimensional floor height measurement - sponsored by PCBWay - Dennis Salzner" />
   <meta name="twitter:image" content="" />
  
@@ -70,7 +70,7 @@
 <div class="post-content" itemprop="articleBody">
     <p style="font-size: 60%;" align="right">What</p>
 
-<p>Last time we designed a camera-based solution to the problem of mapping floor height. This time, with the help of sponsorship from PCBWay, we will design an elecronic target board. The target board can convert the height of the laser line directly to digital readings and send them to a computer over serial communication.</p>
+<p>Last time we designed a camera-based solution to the problem of mapping floor height. This time we will design an elecronic target board. The board will be manufactured with the help of sponsorship from PCBWay. It will convert the height of the laser line directly to digital readings and send them to a computer over serial communication. This new approach should be more accurate and convenient than the camera-based approach.</p>
 
 <img src="../../../../images/2025-10-26-So-FloorLevelingPt3ElectronicLaserTarget/v1.png" class="responsive-image" width="35%" />
 
@@ -140,7 +140,7 @@
 
 <p style="font-size: 60%;" align="right">When</p>
 
-<p>Recently I was approached by a PCB manufacturer from Shenzhen, China. They found my blog and offered to sponsor a project. With this sponsorship, we can take the project up a notch and design an electronic target board in order to fully automate the digitization of the laser line height.</p>
+<p>Recently I was approached by a PCB manufacturer from Hangzhou, China. They found my blog and offered to sponsor a project. With this sponsorship, we can take the project up a notch and design an electronic target board in order to fully automate the digitization of the laser line height.</p>
 
 <p style="font-size: 60%;" align="right">Background</p>
 
@@ -170,7 +170,6 @@ This was solved by a camera-based method. It uses two cameras, one to cover the 
   <li>the customer feedback they receive from sponsored projects is typically more favourable</li>
   <li>others are more likely to order the same PCBs when reproducing the projects. PCBWay gains customers and saves time in manufacturing, because they’ve been through the process with that exact design.</li>
   <li>PCBWay can improve their production capabilities and processes and align more closely with their customer base</li>
-  <li>they gain access to the designs, could theoretically sell them directly or via sub-contractors themselves</li>
   <li>the early rapid expansion helps them establish a strong foothold in the market, as engineers learn how to use their services and are more likely to come back</li>
 </ul>
 
@@ -186,6 +185,7 @@ This was solved by a camera-based method. It uses two cameras, one to cover the 
 
 <ul>
   <li>build something not too trivial and novel, but that fits into the 61.5 x 99.5 mm size constraint</li>
+  <li>keep the number of revisions to get to a useful result minimal</li>
   <li>use only two layers so that I can reach both sides with the soldering iron, can cut traces and add jumper wires, if needed</li>
   <li>keep the board in sections with pins easily accessible</li>
   <li>design the board in sections so that each section can be tested and used individually. This way we can use early prototype board and hack them to be useful after production, even if they only partially work.</li>
